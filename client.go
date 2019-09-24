@@ -63,6 +63,7 @@ func (client *GraphClient) Connect(username, password string) error {
 	}
 
 	if resp, err := client.graph.Authenticate(username, password); err != nil {
+		// TODO(yee): Check whether to close transport
 		log.Printf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
 		return err
 	} else {
@@ -71,12 +72,15 @@ func (client *GraphClient) Connect(username, password string) error {
 	}
 }
 
-// Close transport and signout
-func (client *GraphClient) Disconnect() error {
-	if err := client.graph.Close(); err != nil {
-		return err
+// Signout and close transport
+func (client *GraphClient) Disconnect() {
+	if err := client.graph.Signout(client.sessionID); err != nil {
+		log.Println("Fail to signout")
 	}
-	return client.graph.Signout(client.sessionID)
+
+	if err := client.graph.Close(); err != nil {
+		log.Println("Fail to close transport")
+	}
 }
 
 func (client *GraphClient) Execute(stmt string) (*graph.ExecutionResponse, error) {
