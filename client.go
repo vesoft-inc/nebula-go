@@ -9,6 +9,7 @@ package ngdb
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -105,9 +106,30 @@ func (client *GraphClient) Execute(stmt string) (*graph.ExecutionResponse, error
 	return client.graph.Execute(client.sessionID, stmt)
 }
 
-func (client *GraphClient) ConvertExecResultToString(response *graph.ExecutionResponse) (string, error) {
-	// TODO(yee):
-	return response.String(), nil
+func (client *GraphClient) ConvertExecResultToString(response *graph.ExecutionResponse) string {
+	widths, formats := computeColumnWidths(response)
+	if len(widths) == 0 {
+		return ""
+	}
+
+	sum := 0
+	for _, width := range widths {
+		sum += width
+	}
+	len := sum + 3*len(widths) + 1
+	headerLine := strings.Repeat("=", len)
+	rowLine := strings.Repeat("-", len)
+
+	builder := strings.Builder{}
+	builder.WriteString(headerLine)
+	builder.WriteString("\n|")
+	builder.WriteString(printHeader(response.GetColumnNames(), widths))
+	builder.WriteString(headerLine)
+	builder.WriteString("\n")
+
+	builder.WriteString(printData(response.GetRows(), rowLine, widths, formats))
+
+	return builder.String()
 }
 
 func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats []string) {
@@ -359,4 +381,72 @@ func columnTypeString(columnType int) string {
 	default:
 		return ""
 	}
+}
+
+func printHeader(columnNames [][]byte, widths []int) string {
+	if len(columnNames) == 0 {
+		return ""
+	}
+
+	builder := strings.Builder{}
+
+	for idx, columnName := range columnNames {
+		format := fmt.Sprintf(" %%-%lds |", widths[idx])
+		builder.WriteString(fmt.Sprintf(format, string(columnName)))
+	}
+
+	return builder.String()
+}
+
+func printData(rows []graph.RowValue, rowLine string, widths []int, formats []string) string {
+	if len(rows) == 0 {
+		return ""
+	}
+
+	builder := strings.Builder{}
+
+	for _, row := range rows {
+		builder.WriteString("|")
+		for colIdx, column := range row.GetColumns() {
+			var str string
+			if column.IsSetBoolVal() {
+				if column.GetBoolVal() {
+					str = fmt.Sprintf(formats[colIdx], "true")
+				} else {
+					str = fmt.Sprintf(formats[colIdx], "false")
+				}
+			} else if column.IsSetInteger() {
+				str = fmt.Sprintf(formats[colIdx], column.GetInteger())
+			} else if column.IsSetId() {
+				str = fmt.Sprintf(formats[colIdx], column.GetId())
+			} else if column.IsSetSinglePrecision() {
+				str = fmt.Sprintf(formats[colIdx], column.GetSinglePrecision())
+			} else if column.IsSetDoublePrecision() {
+				str = fmt.Sprintf(formats[colIdx], column.GetDoublePrecision())
+			} else if column.IsSetStr() {
+				str = fmt.Sprintf(formats[colIdx], column.GetStr())
+			} else if column.IsSetTimestamp() {
+				timestamp := column.GetTimestamp()
+				tm := time.Unix(int64(timestamp), 0)
+				str = fmt.Sprintf(formats[colIdx], tm.Year()+1900, tm.Month()+1, tm.Day(), tm.Hour(), tm.Minute(), tm.Second())
+			} else if column.IsSetYear() {
+				str = fmt.Sprintf(formats[colIdx], column.GetYear())
+			} else if column.IsSetMonth() {
+				month := column.GetMonth()
+				str = fmt.Sprintf(formats[colIdx], month.GetYear(), month.GetMonth())
+			} else if column.IsSetDate() {
+				date := column.GetDate()
+				str = fmt.Sprintf(formats[colIdx], date.GetYear(), date.GetMonth(), date.GetDay())
+			} else if column.IsSetDatetime() {
+				dt := column.GetDatetime()
+				str = fmt.Sprintf(formats[colIdx], dt.GetYear(), dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(), dt.GetSecond(), dt.GetMicrosec())
+			} else {
+				format := fmt.Sprintf(" %%-%ldc |", widths[colIdx])
+				str = fmt.Sprintf(format, " ")
+			}
+			builder.WriteString(str)
+		}
+	}
+
+	return builder.String()
 }
