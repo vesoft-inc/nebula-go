@@ -7,10 +7,11 @@
 package ngdb
 
 import (
-	"fmt"
+	"log"
+	"time"
+
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
 	"github.com/vesoft-inc/nebula-go/graph"
-	"time"
 )
 
 type GraphOptions struct {
@@ -24,8 +25,9 @@ var defaultGraphOptions = GraphOptions{
 }
 
 type GraphClient struct {
-	graph  graph.GraphServiceClient
-	option GraphOptions
+	graph     graph.GraphServiceClient
+	option    GraphOptions
+	sessionID int64
 }
 
 func WithTimeout(duration time.Duration) GraphOption {
@@ -43,7 +45,6 @@ func NewClient(address string, opts ...GraphOption) (client *GraphClient, err er
 	timeoutOption := thrift.SocketTimeout(options.Timeout)
 	addressOption := thrift.SocketAddr(address)
 	transport, err := thrift.NewSocket(timeoutOption, addressOption)
-
 	if err != nil {
 		return nil, err
 	}
@@ -55,36 +56,33 @@ func NewClient(address string, opts ...GraphOption) (client *GraphClient, err er
 	return graph, nil
 }
 
-func (client *GraphClient) Open() error {
-	err := client.graph.Transport.Open()
-	if err != nil {
+// Open transport and authenticate
+func (client *GraphClient) Connect(username, password string) error {
+	if err := client.graph.Transport.Open(); err != nil {
 		return err
 	}
-	return nil
-}
 
-func (client *GraphClient) Close() {
-	client.graph.Close()
-}
-
-func (client *GraphClient) Authenticate(username string, password string) (response *graph.AuthResponse, err error) {
-	if response, err := client.graph.Authenticate(username, password); err != nil {
-		return nil, err
+	if resp, err := client.graph.Authenticate(username, password); err != nil {
+		// TODO(yee): Check whether to close transport
+		log.Printf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
+		return err
 	} else {
-		return response, nil
+		client.sessionID = resp.GetSessionID()
+		return nil
 	}
 }
 
-func (client *GraphClient) Signout(sessionID int64) {
-	if err := client.graph.Signout(sessionID); err != nil {
-		fmt.Printf("Signout Failed : %v", err)
+// Signout and close transport
+func (client *GraphClient) Disconnect() {
+	if err := client.graph.Signout(client.sessionID); err != nil {
+		log.Println("Fail to signout")
+	}
+
+	if err := client.graph.Close(); err != nil {
+		log.Println("Fail to close transport")
 	}
 }
 
-func (client *GraphClient) Execute(sessionID int64, stmt string) (response *graph.ExecutionResponse, err error) {
-	if response, err := client.graph.Execute(sessionID, stmt); err != nil {
-		return nil, err
-	} else {
-		return response, nil
-	}
+func (client *GraphClient) Execute(stmt string) (*graph.ExecutionResponse, error) {
+	return client.graph.Execute(client.sessionID, stmt)
 }
