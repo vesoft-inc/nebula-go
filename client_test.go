@@ -13,6 +13,10 @@ const (
 )
 
 func TestClient(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping client test in short mode")
+	}
+
 	client, err := NewClient(fmt.Sprintf("%s:%d", address, port))
 	if err != nil {
 		t.Errorf("Fail to create client, address: %s, port: %d", address, port)
