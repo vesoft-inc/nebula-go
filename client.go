@@ -343,7 +343,7 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 				formats[idx] = fmt.Sprintf(" %%%ldd/%%02d/%%02d %%02d:%%02d:%%02d.%%03d%%03d |", widths[idx]-22)
 			} else {
 				if types[idx] != kColumnTypeEmpty {
-					log.Fatal("Wrong column type: %d", columnTypeString(types[idx]))
+					log.Fatal("Wrong column type: %s", columnTypeString(types[idx]))
 				}
 			}
 		}
@@ -379,6 +379,7 @@ func columnTypeString(columnType int) string {
 	case kColumnTypeDatetime:
 		return "Datetime"
 	default:
+		log.Printf("Invalid column type %d", columnType)
 		return ""
 	}
 }
@@ -398,7 +399,7 @@ func printHeader(columnNames [][]byte, widths []int) string {
 	return builder.String()
 }
 
-func printData(rows []graph.RowValue, rowLine string, widths []int, formats []string) string {
+func printData(rows []*graph.RowValue, rowLine string, widths []int, formats []string) string {
 	if len(rows) == 0 {
 		return ""
 	}
