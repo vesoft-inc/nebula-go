@@ -7,7 +7,7 @@ import (
 
 const (
 	address  = "127.0.0.1"
-	port     = 3699
+	port     = 6699
 	username = "user"
 	password = "password"
 )
@@ -26,5 +26,16 @@ func TestClient(t *testing.T) {
 
 	if resp, err := client.Execute("SHOW HOSTS;"); err != nil {
 		t.Errorf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
+	} else {
+		const expectedResult = `=============================================================================================
+| Ip         | Port  | Status | Leader count | Leader distribution | Partition distribution |
+=============================================================================================
+| 172.28.1.2 | 44500 | online | 0            |                     |                        |
+---------------------------------------------------------------------------------------------
+`
+		result := client.PrintResult(resp)
+		if result != expectedResult {
+			t.Errorf("\nexpected\n%s\nreal\n%s", expectedResult, result)
+		}
 	}
 }
