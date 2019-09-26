@@ -134,8 +134,8 @@ func (client *GraphClient) PrintResult(response *graph.ExecutionResponse) string
 
 func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats []string) {
 	widths = make([]int, len(resp.ColumnNames))
-	for _, columnName := range resp.ColumnNames {
-		widths = append(widths, len(string(columnName)))
+	for idx, columnName := range resp.ColumnNames {
+		widths[idx] = len(string(columnName))
 	}
 
 	formats = make([]string, len(widths))
@@ -144,14 +144,14 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 	}
 
 	types := make([]int, len(widths))
-	for i := 0; i < len(widths); i++ {
-		formats = append(formats, "")
-		types = append(types, kColumnTypeEmpty)
+	for idx := range widths {
+		types[idx] = kColumnTypeEmpty
+		formats[idx] = " "
 	}
 
 	for rowIdx, row := range resp.Rows {
 		if len(widths) != len(row.GetColumns()) {
-			log.Fatalf("Wrong number of columns in row(%d)", rowIdx)
+			log.Fatalf("Wrong number of columns(%d) in row(%d), expected %d", len(row.GetColumns()), rowIdx, len(widths))
 		}
 		for idx, column := range row.GetColumns() {
 			genFmt := types[idx] == kColumnTypeEmpty
@@ -169,7 +169,7 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 					genFmt = true
 				}
 				if genFmt {
-					formats[idx] = fmt.Sprintf(" %%-%lds |", widths[idx])
+					formats[idx] = fmt.Sprintf(" %%-%ds |", widths[idx])
 				}
 			} else if column.IsSetInteger() {
 				if types[idx] == kColumnTypeEmpty {
@@ -181,14 +181,14 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 				}
 
 				val := column.GetInteger()
-				len := len(fmt.Sprintf("%ld", val))
+				len := len(fmt.Sprintf("%d", val))
 				if widths[idx] < len {
 					widths[idx] = len
 					genFmt = true
 				}
 
 				if genFmt {
-					formats[idx] = fmt.Sprintf(" %%-%ldld |", widths[idx])
+					formats[idx] = fmt.Sprintf(" %%-%dd |", widths[idx])
 				}
 			} else if column.IsSetId() {
 				if types[idx] == kColumnTypeEmpty {
@@ -200,14 +200,14 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 				}
 
 				val := column.GetId()
-				len := len(fmt.Sprintf("%ld", val))
+				len := len(fmt.Sprintf("%d", val))
 				if widths[idx] < len {
 					widths[idx] = len
 					genFmt = true
 				}
 
 				if genFmt {
-					formats[idx] = fmt.Sprintf(" %%-%ldld |", widths[idx])
+					formats[idx] = fmt.Sprintf(" %%-%dd |", widths[idx])
 				}
 			} else if column.IsSetSinglePrecision() {
 				if types[idx] == kColumnTypeEmpty {
@@ -225,7 +225,7 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 					genFmt = true
 				}
 				if genFmt {
-					formats[idx] = fmt.Sprintf(" %%-%ldf |", widths[idx])
+					formats[idx] = fmt.Sprintf(" %%-%df |", widths[idx])
 				}
 			} else if column.IsSetDoublePrecision() {
 				if types[idx] == kColumnTypeEmpty {
@@ -237,13 +237,13 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 				}
 
 				val := column.GetDoublePrecision()
-				len := len(fmt.Sprintf("%lf", val))
+				len := len(fmt.Sprintf("%f", val))
 				if widths[idx] < len {
 					widths[idx] = len
 					genFmt = true
 				}
 				if genFmt {
-					formats[idx] = fmt.Sprintf(" %%-%ldlf |", widths[idx])
+					formats[idx] = fmt.Sprintf(" %%-%df |", widths[idx])
 				}
 			} else if column.IsSetStr() {
 				if types[idx] == kColumnTypeEmpty {
@@ -262,7 +262,7 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 				}
 
 				if genFmt {
-					formats[idx] = fmt.Sprintf(" %%-%lds |", widths[idx])
+					formats[idx] = fmt.Sprintf(" %%-%ds |", widths[idx])
 				}
 			} else if column.IsSetTimestamp() {
 				if types[idx] == kColumnTypeEmpty {
@@ -279,7 +279,7 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 				}
 
 				if genFmt {
-					formats[idx] = fmt.Sprintf(" %%%ldd-%%02d-%%02d %%02d:%%02d:%%02d |", widths[idx]-15)
+					formats[idx] = fmt.Sprintf(" %%%dd-%%02d-%%02d %%02d:%%02d:%%02d |", widths[idx]-15)
 				}
 			} else if column.IsSetYear() {
 				if types[idx] == kColumnTypeEmpty {
@@ -296,7 +296,7 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 				}
 
 				if genFmt {
-					formats[idx] = fmt.Sprintf(" %%-%ldd |", widths[idx])
+					formats[idx] = fmt.Sprintf(" %%-%dd |", widths[idx])
 				}
 			} else if column.IsSetMonth() {
 				if types[idx] == kColumnTypeEmpty {
@@ -312,7 +312,7 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 					genFmt = true
 				}
 				if genFmt {
-					formats[idx] = fmt.Sprintf(" %%%ldd/%%02d |", widths[idx]-3)
+					formats[idx] = fmt.Sprintf(" %%%dd/%%02d |", widths[idx]-3)
 				}
 			} else if column.IsSetDate() {
 				if types[idx] == kColumnTypeEmpty {
@@ -329,7 +329,7 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 				}
 
 				if genFmt {
-					formats[idx] = fmt.Sprintf(" %%%ldd/%%02d/%%02d |", widths[idx]-6)
+					formats[idx] = fmt.Sprintf(" %%%dd/%%02d/%%02d |", widths[idx]-6)
 				}
 			} else if column.IsSetDatetime() {
 				if types[idx] == kColumnTypeEmpty {
@@ -340,10 +340,10 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 					}
 				}
 
-				formats[idx] = fmt.Sprintf(" %%%ldd/%%02d/%%02d %%02d:%%02d:%%02d.%%03d%%03d |", widths[idx]-22)
+				formats[idx] = fmt.Sprintf(" %%%dd/%%02d/%%02d %%02d:%%02d:%%02d.%%03d%%03d |", widths[idx]-22)
 			} else {
 				if types[idx] != kColumnTypeEmpty {
-					log.Fatal("Wrong column type: %s", columnTypeString(types[idx]))
+					log.Fatalf("Wrong column type: %s", columnTypeString(types[idx]))
 				}
 			}
 		}
@@ -392,9 +392,11 @@ func printHeader(columnNames [][]byte, widths []int) string {
 	builder := strings.Builder{}
 
 	for idx, columnName := range columnNames {
-		format := fmt.Sprintf(" %%-%lds |", widths[idx])
+		format := fmt.Sprintf(" %%-%ds |", widths[idx])
 		builder.WriteString(fmt.Sprintf(format, string(columnName)))
 	}
+
+	builder.WriteString("\n")
 
 	return builder.String()
 }
@@ -442,11 +444,14 @@ func printData(rows []*graph.RowValue, rowLine string, widths []int, formats []s
 				dt := column.GetDatetime()
 				str = fmt.Sprintf(formats[colIdx], dt.GetYear(), dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(), dt.GetSecond(), dt.GetMicrosec())
 			} else {
-				format := fmt.Sprintf(" %%-%ldc |", widths[colIdx])
+				format := fmt.Sprintf(" %%-%dc |", widths[colIdx])
 				str = fmt.Sprintf(format, " ")
 			}
 			builder.WriteString(str)
 		}
+		builder.WriteString("\n")
+		builder.WriteString(rowLine)
+		builder.WriteString("\n")
 	}
 
 	return builder.String()
