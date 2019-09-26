@@ -106,7 +106,7 @@ func (client *GraphClient) Execute(stmt string) (*graph.ExecutionResponse, error
 	return client.graph.Execute(client.sessionID, stmt)
 }
 
-func (client *GraphClient) ConvertExecResultToString(response *graph.ExecutionResponse) string {
+func (client *GraphClient) PrintResult(response *graph.ExecutionResponse) string {
 	widths, formats := computeColumnWidths(response)
 	if len(widths) == 0 {
 		return ""
@@ -343,7 +343,7 @@ func computeColumnWidths(resp *graph.ExecutionResponse) (widths []int, formats [
 				formats[idx] = fmt.Sprintf(" %%%ldd/%%02d/%%02d %%02d:%%02d:%%02d.%%03d%%03d |", widths[idx]-22)
 			} else {
 				if types[idx] != kColumnTypeEmpty {
-					log.Fatal("Wrong column type: %d", types[idx])
+					log.Fatal("Wrong column type: %d", columnTypeString(types[idx]))
 				}
 			}
 		}
