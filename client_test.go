@@ -3,6 +3,8 @@ package ngdb
 import (
 	"fmt"
 	"testing"
+
+	"github.com/vesoft-inc/nebula-go/graph"
 )
 
 const (
@@ -19,27 +21,28 @@ func TestClient(t *testing.T) {
 
 	client, err := NewClient(fmt.Sprintf("%s:%d", address, port))
 	if err != nil {
-		t.Errorf("Fail to create client, address: %s, port: %d", address, port)
+		t.Errorf("Fail to create client, address: %s, port: %d, %s", address, port, err.Error())
 	}
 
 	if err = client.Connect(username, password); err != nil {
-		t.Errorf("Fail to connect server, username: %s, password: %s", username, password)
+		t.Errorf("Fail to connect server, username: %s, password: %s, %s", username, password, err.Error())
 	}
 
 	defer client.Disconnect()
 
 	if resp, err := client.Execute("SHOW HOSTS;"); err != nil {
-		t.Errorf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
+		t.Errorf(err.Error())
 	} else {
-		const expectedResult = `=============================================================================================
-| Ip         | Port  | Status | Leader count | Leader distribution | Partition distribution |
-=============================================================================================
-| 172.28.1.2 | 44500 | online | 0            |                     |                        |
----------------------------------------------------------------------------------------------
-`
 		result := client.PrintResult(resp)
-		if result != expectedResult {
-			t.Errorf("\nexpected\n%s\nreal\n%s", expectedResult, result)
+		t.Logf("show hosts:\n%s\nErrorCode: %v, ErrorMsg: %s", result, resp.GetErrorCode(), resp.GetErrorMsg())
+	}
+
+	if resp, err := client.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1);"); err != nil {
+		t.Error(err.Error())
+	} else {
+		t.Logf("create space response: %s", client.PrintResult(resp))
+		if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
+			t.Logf("create space: ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
 		}
 	}
 }
