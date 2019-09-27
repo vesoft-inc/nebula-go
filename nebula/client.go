@@ -4,7 +4,7 @@
  * attached with Common Clause Condition 1.0, found in the LICENSES directory.
  */
 
-package ngdb
+package nebula
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
-	"github.com/vesoft-inc/nebula-go/graph"
+	"github.com/vesoft-inc/nebula-go/nebula/graph"
 )
 
 const (
