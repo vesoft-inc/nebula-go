@@ -9,3 +9,32 @@ Please be careful do not to modify the files in the graph directory, these codes
 ```shell
 $ go get -u -v github.com/vesoft-inc/nebula-go
 ```
+
+## Usage example
+
+```go
+import (
+  "fmt"
+
+  "github.com/vesoft-inc/nebula-go/nebula"
+)
+
+func main() {
+  client, err := nebula.NewClient("127.0.0.1:3699")
+  if err != nil {
+    panic(err)
+  }
+
+  if err = client.Connect("username", "password"); err != nil {
+    panic(err)
+  }
+  defer client.Disconnect()
+
+  if resp, err := client.Execute("SHOW HOSTS;"); err != nil {
+    panic(err)
+  } else {
+    result := client.PrintResult(resp)
+    fmt.Println(result)
+  }
+}
+```
