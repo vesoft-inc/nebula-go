@@ -13,30 +13,32 @@ $ go get -u -v github.com/vesoft-inc/nebula-go
 ## Usage example
 
 ```go
-import (
-  "log"
+package main
 
-  nebula "github.com/vesoft-inc/nebula-go"
+import (
+	"log"
+
+	nebula "github.com/vesoft-inc/nebula-go"
 	"github.com/vesoft-inc/nebula-go/graph"
 )
 
 func main() {
-  client, err := nebula.NewClient("127.0.0.1:3699")
-  if err != nil {
-    panic(err)
-  }
+	client, err := nebula.NewClient("127.0.0.1:3699")
+	if err != nil {
+		panic(err)
+	}
 
-  if err = client.Connect("username", "password"); err != nil {
-    panic(err)
-  }
-  defer client.Disconnect()
+	if err = client.Connect("username", "password"); err != nil {
+		panic(err)
+	}
+	defer client.Disconnect()
 
-  if resp, err := client.Execute("SHOW HOSTS;"); err != nil {
-    panic(err)
-  } else {
+	if resp, err := client.Execute("SHOW HOSTS;"); err != nil {
+		panic(err)
+	} else {
 		if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
-      log.Printf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
-    }
-  }
+			log.Printf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
+		}
+	}
 }
 ```

@@ -41,17 +41,21 @@ func TestClient(t *testing.T) {
 
 	defer client.Disconnect()
 
+	checkResp := func(prefix string, resp *graph.ExecutionResponse) {
+		if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
+			t.Logf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, resp.GetErrorCode(), resp.GetErrorMsg())
+		}
+	}
+
 	if resp, err := client.Execute("SHOW HOSTS;"); err != nil {
 		t.Errorf(err.Error())
 	} else {
-		t.Logf("show hosts, ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
+		checkResp("show hosts", resp)
 	}
 
 	if resp, err := client.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1);"); err != nil {
 		t.Error(err.Error())
 	} else {
-		if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
-			t.Logf("create space, ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
-		}
+		checkResp("create space", resp)
 	}
 }
