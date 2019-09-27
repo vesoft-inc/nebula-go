@@ -16,7 +16,7 @@ $ go get -u -v github.com/vesoft-inc/nebula-go
 import (
   "fmt"
 
-  "github.com/vesoft-inc/nebula-go/nebula"
+  nebula "github.com/vesoft-inc/nebula-go"
 )
 
 func main() {
