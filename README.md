@@ -25,16 +25,16 @@ import (
 func main() {
 	client, err := nebula.NewClient("127.0.0.1:3699")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	if err = client.Connect("username", "password"); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	defer client.Disconnect()
 
 	if resp, err := client.Execute("SHOW HOSTS;"); err != nil {
-		panic(err)
+		log.Fatal(err)
 	} else {
 		if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
 			log.Printf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
