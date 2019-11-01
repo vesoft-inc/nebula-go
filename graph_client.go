@@ -4,40 +4,22 @@
  * attached with Common Clause Condition 1.0, found in the LICENSES directory.
  */
 
-package ngdb
+package nebula_client
 
 import (
-	"log"
-	"time"
-
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
-	"github.com/vesoft-inc/nebula-go/graph"
+	"github.com/vesoft-inc/nebula-go/gen-go/nebula/graph"
+	"log"
 )
 
-type GraphOptions struct {
-	Timeout time.Duration
-}
-
-type GraphOption func(*GraphOptions)
-
-var defaultGraphOptions = GraphOptions{
-	Timeout: 30 * time.Second,
-}
-
 type GraphClient struct {
-	graph     graph.GraphServiceClient
-	option    GraphOptions
-	sessionID int64
+	graph   graph.GraphServiceClient
+	option  Options
+	session int64
 }
 
-func WithTimeout(duration time.Duration) GraphOption {
-	return func(options *GraphOptions) {
-		options.Timeout = duration
-	}
-}
-
-func NewClient(address string, opts ...GraphOption) (client *GraphClient, err error) {
-	options := defaultGraphOptions
+func NewGraphClient(address string, opts ...Option) (client *GraphClient, err error) {
+	options := defaultOptions
 	for _, opt := range opts {
 		opt(&options)
 	}
@@ -67,14 +49,14 @@ func (client *GraphClient) Connect(username, password string) error {
 		log.Printf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
 		return err
 	} else {
-		client.sessionID = resp.GetSessionID()
+		client.session = resp.GetSessionID()
 		return nil
 	}
 }
 
 // Signout and close transport
 func (client *GraphClient) Disconnect() {
-	if err := client.graph.Signout(client.sessionID); err != nil {
+	if err := client.graph.Signout(client.session); err != nil {
 		log.Println("Fail to signout")
 	}
 
@@ -83,6 +65,6 @@ func (client *GraphClient) Disconnect() {
 	}
 }
 
-func (client *GraphClient) Execute(stmt string) (*graph.ExecutionResponse, error) {
-	return client.graph.Execute(client.sessionID, stmt)
+func (client *GraphClient) Execute(statement string) (*graph.ExecutionResponse, error) {
+	return client.graph.Execute(client.session, statement)
 }
