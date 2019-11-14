@@ -20,7 +20,7 @@ const (
 	password = "password"
 )
 
-// Before run `go test -v`, you should start a nebula server listening on 6699 port.
+// Before run `go test -v`, you should start a nebula server listening on port 6699.
 // Using docker-compose is the easiest way and you can reference this file:
 //   https://github.com/vesoft-inc/nebula/blob/master/docker/docker-compose.yaml
 //
