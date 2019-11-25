@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/vesoft-inc/nebula-go/graph"
+	graph "github.com/vesoft-inc/nebula-go/nebula/graph"
 )
 
 const (

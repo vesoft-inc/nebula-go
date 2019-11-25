@@ -19,7 +19,7 @@ import (
   "log"
 
   nebula "github.com/vesoft-inc/nebula-go"
-  "github.com/vesoft-inc/nebula-go/graph"
+  graph "github.com/vesoft-inc/nebula-go/nebula/graph"
 )
 
 func main() {
