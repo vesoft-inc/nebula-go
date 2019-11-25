@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
-	"github.com/vesoft-inc/nebula-go/graph"
+	graph "github.com/vesoft-inc/nebula-go/nebula/graph"
 )
 
 type GraphOptions struct {

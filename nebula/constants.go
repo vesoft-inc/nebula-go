@@ -2,7 +2,7 @@
 // DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 // @generated
 
-package graph
+package nebula
 
 import (
 	"bytes"
@@ -17,7 +17,12 @@ var _ = fmt.Printf
 var _ = sync.Mutex{}
 var _ = bytes.Equal
 
+var KInvalidValueType *ValueType
 
 func init() {
+KInvalidValueType = &ValueType{
+  Type:   0,
+}
+
 }
 
