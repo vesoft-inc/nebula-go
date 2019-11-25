@@ -9,6 +9,8 @@ import (
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
+	nebula0 "github.com/vesoft-inc/nebula-go/nebula"
+
 )
 
 // (needed to ensure safety because of naive import list construction.)
@@ -17,6 +19,7 @@ var _ = fmt.Printf
 var _ = sync.Mutex{}
 var _ = bytes.Equal
 
+var _ = nebula0.GoUnusedProtection__
 type GraphService interface {
   // Parameters:
   //  - Username
@@ -112,16 +115,16 @@ func (p *GraphServiceClient) recvAuthenticate() (value *AuthResponse, err error)
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error3 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error4 error
-    error4, err = error3.Read(iprot)
+    error5 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error6 error
+    error6, err = error5.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error4
+    err = error6
     return
   }
   if mTypeId != thrift.REPLY {
@@ -219,16 +222,16 @@ func (p *GraphServiceClient) recvExecute() (value *ExecutionResponse, err error)
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error5 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error6 error
-    error6, err = error5.Read(iprot)
+    error7 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error8 error
+    error8, err = error7.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error6
+    err = error8
     return
   }
   if mTypeId != thrift.REPLY {
@@ -329,16 +332,16 @@ func (p *GraphServiceThreadsafeClient) recvAuthenticate() (value *AuthResponse, 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error7 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error8 error
-    error8, err = error7.Read(iprot)
+    error9 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error10 error
+    error10, err = error9.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error8
+    err = error10
     return
   }
   if mTypeId != thrift.REPLY {
@@ -440,16 +443,16 @@ func (p *GraphServiceThreadsafeClient) recvExecute() (value *ExecutionResponse, 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error9 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error10 error
-    error10, err = error9.Read(iprot)
+    error11 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error12 error
+    error12, err = error11.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error10
+    err = error12
     return
   }
   if mTypeId != thrift.REPLY {
@@ -489,11 +492,11 @@ func (p *GraphServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFuncti
 }
 
 func NewGraphServiceProcessor(handler GraphService) *GraphServiceProcessor {
-  self11 := &GraphServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
-  self11.processorMap["authenticate"] = &graphServiceProcessorAuthenticate{handler:handler}
-  self11.processorMap["signout"] = &graphServiceProcessorSignout{handler:handler}
-  self11.processorMap["execute"] = &graphServiceProcessorExecute{handler:handler}
-  return self11
+  self13 := &GraphServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
+  self13.processorMap["authenticate"] = &graphServiceProcessorAuthenticate{handler:handler}
+  self13.processorMap["signout"] = &graphServiceProcessorSignout{handler:handler}
+  self13.processorMap["execute"] = &graphServiceProcessorExecute{handler:handler}
+  return self13
 }
 
 type graphServiceProcessorAuthenticate struct {
@@ -1138,3 +1141,5 @@ func (p *GraphServiceExecuteResult) String() string {
   }
   return fmt.Sprintf("GraphServiceExecuteResult(%+v)", *p)
 }
+
+
