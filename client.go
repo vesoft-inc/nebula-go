@@ -7,6 +7,7 @@
 package ngdb
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -68,6 +69,9 @@ func (client *GraphClient) Connect(username, password string) error {
 			log.Printf("Fail to close transport, error: %s", e.Error())
 		}
 		return err
+	} else if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
+		log.Printf("Authentication fails, ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
+		return fmt.Errorf(resp.GetErrorMsg())
 	} else {
 		client.sessionID = resp.GetSessionID()
 		return nil
