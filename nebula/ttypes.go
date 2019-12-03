@@ -28,11 +28,11 @@ const (
   SupportedType_FLOAT SupportedType = 4
   SupportedType_DOUBLE SupportedType = 5
   SupportedType_STRING SupportedType = 6
-  SupportedType_TIMESTAMP SupportedType = 7
-  SupportedType_YEAR SupportedType = 8
-  SupportedType_YEARMONTH SupportedType = 9
-  SupportedType_DATE SupportedType = 10
-  SupportedType_DATETIME SupportedType = 11
+  SupportedType_TIMESTAMP SupportedType = 21
+  SupportedType_YEAR SupportedType = 22
+  SupportedType_YEARMONTH SupportedType = 23
+  SupportedType_DATE SupportedType = 24
+  SupportedType_DATETIME SupportedType = 25
   SupportedType_PATH SupportedType = 41
 )
 
@@ -291,11 +291,243 @@ func (p *ValueType) String() string {
 }
 
 // Attributes:
+//  - IntValue
+//  - BoolValue
+//  - DoubleValue
+//  - StringValue
+type Value struct {
+  IntValue *int64 `thrift:"int_value,1" db:"int_value" json:"int_value,omitempty"`
+  BoolValue *bool `thrift:"bool_value,2" db:"bool_value" json:"bool_value,omitempty"`
+  DoubleValue *float64 `thrift:"double_value,3" db:"double_value" json:"double_value,omitempty"`
+  StringValue *string `thrift:"string_value,4" db:"string_value" json:"string_value,omitempty"`
+}
+
+func NewValue() *Value {
+  return &Value{}
+}
+
+var Value_IntValue_DEFAULT int64
+func (p *Value) GetIntValue() int64 {
+  if !p.IsSetIntValue() {
+    return Value_IntValue_DEFAULT
+  }
+return *p.IntValue
+}
+var Value_BoolValue_DEFAULT bool
+func (p *Value) GetBoolValue() bool {
+  if !p.IsSetBoolValue() {
+    return Value_BoolValue_DEFAULT
+  }
+return *p.BoolValue
+}
+var Value_DoubleValue_DEFAULT float64
+func (p *Value) GetDoubleValue() float64 {
+  if !p.IsSetDoubleValue() {
+    return Value_DoubleValue_DEFAULT
+  }
+return *p.DoubleValue
+}
+var Value_StringValue_DEFAULT string
+func (p *Value) GetStringValue() string {
+  if !p.IsSetStringValue() {
+    return Value_StringValue_DEFAULT
+  }
+return *p.StringValue
+}
+func (p *Value) CountSetFieldsValue() int {
+  count := 0
+  if (p.IsSetIntValue()) {
+    count++
+  }
+  if (p.IsSetBoolValue()) {
+    count++
+  }
+  if (p.IsSetDoubleValue()) {
+    count++
+  }
+  if (p.IsSetStringValue()) {
+    count++
+  }
+  return count
+
+}
+
+func (p *Value) IsSetIntValue() bool {
+  return p.IntValue != nil
+}
+
+func (p *Value) IsSetBoolValue() bool {
+  return p.BoolValue != nil
+}
+
+func (p *Value) IsSetDoubleValue() bool {
+  return p.DoubleValue != nil
+}
+
+func (p *Value) IsSetStringValue() bool {
+  return p.StringValue != nil
+}
+
+func (p *Value) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    case 4:
+      if err := p.ReadField4(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *Value)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.IntValue = &v
+}
+  return nil
+}
+
+func (p *Value)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBool(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.BoolValue = &v
+}
+  return nil
+}
+
+func (p *Value)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadDouble(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  p.DoubleValue = &v
+}
+  return nil
+}
+
+func (p *Value)  ReadField4(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 4: ", err)
+} else {
+  p.StringValue = &v
+}
+  return nil
+}
+
+func (p *Value) Write(oprot thrift.Protocol) error {
+  if c := p.CountSetFieldsValue(); c != 1 {
+    return fmt.Errorf("%T write union: exactly one field must be set (%d set).", p, c)
+  }
+  if err := oprot.WriteStructBegin("Value"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := p.writeField4(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *Value) writeField1(oprot thrift.Protocol) (err error) {
+  if p.IsSetIntValue() {
+    if err := oprot.WriteFieldBegin("int_value", thrift.I64, 1); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:int_value: ", p), err) }
+    if err := oprot.WriteI64(int64(*p.IntValue)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.int_value (1) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 1:int_value: ", p), err) }
+  }
+  return err
+}
+
+func (p *Value) writeField2(oprot thrift.Protocol) (err error) {
+  if p.IsSetBoolValue() {
+    if err := oprot.WriteFieldBegin("bool_value", thrift.BOOL, 2); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:bool_value: ", p), err) }
+    if err := oprot.WriteBool(bool(*p.BoolValue)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.bool_value (2) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 2:bool_value: ", p), err) }
+  }
+  return err
+}
+
+func (p *Value) writeField3(oprot thrift.Protocol) (err error) {
+  if p.IsSetDoubleValue() {
+    if err := oprot.WriteFieldBegin("double_value", thrift.DOUBLE, 3); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:double_value: ", p), err) }
+    if err := oprot.WriteDouble(float64(*p.DoubleValue)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.double_value (3) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 3:double_value: ", p), err) }
+  }
+  return err
+}
+
+func (p *Value) writeField4(oprot thrift.Protocol) (err error) {
+  if p.IsSetStringValue() {
+    if err := oprot.WriteFieldBegin("string_value", thrift.STRING, 4); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:string_value: ", p), err) }
+    if err := oprot.WriteString(string(*p.StringValue)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.string_value (4) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 4:string_value: ", p), err) }
+  }
+  return err
+}
+
+func (p *Value) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("Value(%+v)", *p)
+}
+
+// Attributes:
 //  - Name
 //  - Type
+//  - DefaultValue
 type ColumnDef struct {
   Name string `thrift:"name,1,required" db:"name" json:"name"`
   Type *ValueType `thrift:"type,2,required" db:"type" json:"type"`
+  DefaultValue *Value `thrift:"default_value,3" db:"default_value" json:"default_value,omitempty"`
 }
 
 func NewColumnDef() *ColumnDef {
@@ -313,8 +545,19 @@ func (p *ColumnDef) GetType() *ValueType {
   }
 return p.Type
 }
+var ColumnDef_DefaultValue_DEFAULT *Value
+func (p *ColumnDef) GetDefaultValue() *Value {
+  if !p.IsSetDefaultValue() {
+    return ColumnDef_DefaultValue_DEFAULT
+  }
+return p.DefaultValue
+}
 func (p *ColumnDef) IsSetType() bool {
   return p.Type != nil
+}
+
+func (p *ColumnDef) IsSetDefaultValue() bool {
+  return p.DefaultValue != nil
 }
 
 func (p *ColumnDef) Read(iprot thrift.Protocol) error {
@@ -342,6 +585,10 @@ func (p *ColumnDef) Read(iprot thrift.Protocol) error {
         return err
       }
       issetType = true
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
     default:
       if err := iprot.Skip(fieldTypeId); err != nil {
         return err
@@ -380,11 +627,20 @@ func (p *ColumnDef)  ReadField2(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *ColumnDef)  ReadField3(iprot thrift.Protocol) error {
+  p.DefaultValue = NewValue()
+  if err := p.DefaultValue.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.DefaultValue), err)
+  }
+  return nil
+}
+
 func (p *ColumnDef) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("ColumnDef"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -410,6 +666,19 @@ func (p *ColumnDef) writeField2(oprot thrift.Protocol) (err error) {
   }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 2:type: ", p), err) }
+  return err
+}
+
+func (p *ColumnDef) writeField3(oprot thrift.Protocol) (err error) {
+  if p.IsSetDefaultValue() {
+    if err := oprot.WriteFieldBegin("default_value", thrift.STRUCT, 3); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:default_value: ", p), err) }
+    if err := p.DefaultValue.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.DefaultValue), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 3:default_value: ", p), err) }
+  }
   return err
 }
 
