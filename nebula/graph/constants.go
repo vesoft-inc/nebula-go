@@ -6,11 +6,11 @@ package graph
 
 import (
 	"bytes"
-	"sync"
 	"fmt"
+	"sync"
+
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
 	nebula0 "github.com/vesoft-inc/nebula-go/nebula"
-
 )
 
 // (needed to ensure safety because of naive import list construction.)
@@ -23,4 +23,3 @@ var _ = nebula0.GoUnusedProtection__
 
 func init() {
 }
-
