@@ -84,6 +84,54 @@ func SupportedTypeFromString(s string) (SupportedType, error) {
 
 func SupportedTypePtr(v SupportedType) *SupportedType { return &v }
 
+//* GOD is A global senior administrator.like root of Linux systems.
+//* ADMIN is an administrator for a given Graph Space.
+//* DBA is an schema administrator for a given Graph Space.
+//* USER is a normal user for a given Graph Space. A User can access (read and write) the data in the Graph Space.
+//* GUEST is a read-only role for a given Graph Space. A Guest cannot modify the data in the Graph Space.
+//* Refer to header file src/graph/PermissionManager.h for details.
+//
+type RoleType int64
+const (
+  RoleType_GOD RoleType = 1
+  RoleType_ADMIN RoleType = 2
+  RoleType_DBA RoleType = 3
+  RoleType_USER RoleType = 4
+  RoleType_GUEST RoleType = 5
+)
+
+var RoleTypeToName = map[RoleType]string {
+  RoleType_GOD: "GOD",
+  RoleType_ADMIN: "ADMIN",
+  RoleType_DBA: "DBA",
+  RoleType_USER: "USER",
+  RoleType_GUEST: "GUEST",
+}
+
+var RoleTypeToValue = map[string]RoleType {
+  "GOD": RoleType_GOD,
+  "ADMIN": RoleType_ADMIN,
+  "DBA": RoleType_DBA,
+  "USER": RoleType_USER,
+  "GUEST": RoleType_GUEST,
+}
+
+func (p RoleType) String() string {
+  if v, ok := RoleTypeToName[p]; ok {
+    return v
+  }
+  return "<UNSET>"
+}
+
+func RoleTypeFromString(s string) (RoleType, error) {
+  if v, ok := RoleTypeToValue[s]; ok {
+    return v, nil
+  }
+  return RoleType(0), fmt.Errorf("not a valid RoleType string")
+}
+
+func RoleTypePtr(v RoleType) *RoleType { return &v }
+
 type GraphSpaceID int32
 
 func GraphSpaceIDPtr(v GraphSpaceID) *GraphSpaceID { return &v }
@@ -123,10 +171,6 @@ func PortPtr(v Port) *Port { return &v }
 type SchemaVer int64
 
 func SchemaVerPtr(v SchemaVer) *SchemaVer { return &v }
-
-type UserID int32
-
-func UserIDPtr(v UserID) *UserID { return &v }
 
 type ClusterID int64
 
@@ -1611,5 +1655,150 @@ func (p *Pair) String() string {
     return "<nil>"
   }
   return fmt.Sprintf("Pair(%+v)", *p)
+}
+
+// Attributes:
+//  - User
+//  - SpaceID
+//  - RoleType
+type RoleItem struct {
+  User string `thrift:"user,1" db:"user" json:"user"`
+  SpaceID GraphSpaceID `thrift:"space_id,2" db:"space_id" json:"space_id"`
+  RoleType RoleType `thrift:"role_type,3" db:"role_type" json:"role_type"`
+}
+
+func NewRoleItem() *RoleItem {
+  return &RoleItem{}
+}
+
+
+func (p *RoleItem) GetUser() string {
+  return p.User
+}
+
+func (p *RoleItem) GetSpaceID() GraphSpaceID {
+  return p.SpaceID
+}
+
+func (p *RoleItem) GetRoleType() RoleType {
+  return p.RoleType
+}
+func (p *RoleItem) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *RoleItem)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.User = v
+}
+  return nil
+}
+
+func (p *RoleItem)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  temp := GraphSpaceID(v)
+  p.SpaceID = temp
+}
+  return nil
+}
+
+func (p *RoleItem)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  temp := RoleType(v)
+  p.RoleType = temp
+}
+  return nil
+}
+
+func (p *RoleItem) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("RoleItem"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *RoleItem) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("user", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:user: ", p), err) }
+  if err := oprot.WriteString(string(p.User)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.user (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:user: ", p), err) }
+  return err
+}
+
+func (p *RoleItem) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("space_id", thrift.I32, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:space_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.SpaceID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.space_id (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:space_id: ", p), err) }
+  return err
+}
+
+func (p *RoleItem) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("role_type", thrift.I32, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:role_type: ", p), err) }
+  if err := oprot.WriteI32(int32(p.RoleType)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.role_type (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:role_type: ", p), err) }
+  return err
+}
+
+func (p *RoleItem) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("RoleItem(%+v)", *p)
 }
 
