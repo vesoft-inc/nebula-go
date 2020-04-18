@@ -35,12 +35,14 @@ func main() {
   }
   defer client.Disconnect()
 
-  if resp, err := client.Execute("SHOW HOSTS;"); err != nil {
+  resp, err := client.Execute("SHOW HOSTS;")
+  if err != nil {
     log.Fatal(err)
-  } else {
-    if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
-      log.Printf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
-    }
   }
+  
+  if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
+    log.Printf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
+  }
+  
 }
 ```
