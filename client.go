@@ -63,19 +63,23 @@ func (client *GraphClient) Connect(username, password string) error {
 		return err
 	}
 
-	if resp, err := client.graph.Authenticate(username, password); err != nil {
+	resp, err := client.graph.Authenticate(username, password)
+	if err != nil {
 		log.Printf("Authentication fails, ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
 		if e := client.graph.Close(); e != nil {
 			log.Printf("Fail to close transport, error: %s", e.Error())
 		}
 		return err
-	} else if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
+	}
+
+	if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
 		log.Printf("Authentication fails, ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
 		return fmt.Errorf(resp.GetErrorMsg())
-	} else {
-		client.sessionID = resp.GetSessionID()
-		return nil
 	}
+
+	client.sessionID = resp.GetSessionID()
+
+	return nil
 }
 
 // Signout and close transport

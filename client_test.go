@@ -47,15 +47,20 @@ func TestClient(t *testing.T) {
 		}
 	}
 
-	if resp, err := client.Execute("SHOW HOSTS;"); err != nil {
+	resp, err := client.Execute("SHOW HOSTS;")
+	if err != nil {
 		t.Errorf(err.Error())
-	} else {
-		checkResp("show hosts", resp)
+		return
 	}
 
-	if resp, err := client.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1);"); err != nil {
+	checkResp("show hosts", resp)
+
+	resp, err = client.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1);")
+	if err != nil {
 		t.Error(err.Error())
-	} else {
-		checkResp("create space", resp)
+		return
 	}
+
+	checkResp("create space", resp)
+
 }
