@@ -15,12 +15,12 @@ import (
 
 const (
 	address  = "127.0.0.1"
-	port     = 6699
+	port     = 3699
 	username = "user"
 	password = "password"
 )
 
-// Before run `go test -v`, you should start a nebula server listening on 6699 port.
+// Before run `go test -v`, you should start a nebula server listening on 3699 port.
 // Using docker-compose is the easiest way and you can reference this file:
 //   https://github.com/vesoft-inc/nebula/blob/master/docker/docker-compose.yaml
 //
