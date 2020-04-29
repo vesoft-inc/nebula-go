@@ -1,6 +1,7 @@
 # nebula-go
 
 ![build status](https://github.com/vesoft-inc/nebula-go/workflows/build/badge.svg)
+![test status](https://github.com/vesoft-inc/nebula-go/workflows/test/badge.svg)
 
 Official Nebula Go client which communicates with the server using [fbthrift](https://github.com/facebook/fbthrift/).
 
