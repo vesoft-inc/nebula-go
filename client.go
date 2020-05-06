@@ -96,3 +96,7 @@ func (client *GraphClient) Disconnect() {
 func (client *GraphClient) Execute(stmt string) (*graph.ExecutionResponse, error) {
 	return client.graph.Execute(client.sessionID, stmt)
 }
+
+func (client *GraphClient) GetSessionID() int64 {
+	return client.sessionID
+}
