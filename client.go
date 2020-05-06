@@ -65,7 +65,7 @@ func (client *GraphClient) Connect(username, password string) error {
 
 	resp, err := client.graph.Authenticate(username, password)
 	if err != nil {
-		log.Printf("Authentication fails, ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
+		log.Printf("Authentication fails, %s", err.Error())
 		if e := client.graph.Close(); e != nil {
 			log.Printf("Fail to close transport, error: %s", e.Error())
 		}
