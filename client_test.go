@@ -31,6 +31,11 @@ func TestClient(t *testing.T) {
 	}
 
 	client, err := NewClient(fmt.Sprintf("%s:%d", address, port))
+
+	if client.GetSessionID() != 0 {
+		t.Errorf("Needed SessionID")
+	}
+
 	if err != nil {
 		t.Errorf("Fail to create client, address: %s, port: %d, %s", address, port, err.Error())
 	}
