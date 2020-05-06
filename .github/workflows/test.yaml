@@ -28,6 +28,7 @@ jobs:
       run: |
         git clone https://github.com/vesoft-inc/nebula-docker-compose.git
         cd nebula-docker-compose/
+        docker-compose pull
         docker-compose up -d
         sleep 5
     - name: test nebual-go 
