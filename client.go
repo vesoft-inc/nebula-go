@@ -45,14 +45,16 @@ func NewClient(address string, opts ...GraphOption) (client *GraphClient, err er
 
 	timeoutOption := thrift.SocketTimeout(options.Timeout)
 	addressOption := thrift.SocketAddr(address)
-	transport, err := thrift.NewSocket(timeoutOption, addressOption)
+	sock, err := thrift.NewSocket(timeoutOption, addressOption)
 	if err != nil {
 		return nil, err
 	}
 
-	protocol := thrift.NewBinaryProtocolFactoryDefault()
+	transport := thrift.NewBufferedTransport(sock, 128<<10)
+
+	pf := thrift.NewBinaryProtocolFactoryDefault()
 	graph := &GraphClient{
-		graph: *graph.NewGraphServiceClientFactory(transport, protocol),
+		graph: *graph.NewGraphServiceClientFactory(transport, pf),
 	}
 	return graph, nil
 }
