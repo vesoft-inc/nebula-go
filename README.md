@@ -1,5 +1,7 @@
 # nebula-go
 
+[![star this repo](http://githubbadges.com/star.svg?user=vesoft-inc&repo=nebula-go&style=default)](https://github.com/vesoft-inc/nebula-go)
+[![fork this repo](http://githubbadges.com/fork.svg?user=vesoft-inc&repo=nebula-go&style=default)](https://github.com/vesoft-inc/nebula-go/fork)
 ![build status](https://github.com/vesoft-inc/nebula-go/workflows/build/badge.svg)
 ![test status](https://github.com/vesoft-inc/nebula-go/workflows/test/badge.svg)
 
