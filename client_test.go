@@ -10,17 +10,17 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/vesoft-inc/nebula-go/graph"
+	graph "github.com/vesoft-inc/nebula-go/nebula/graph"
 )
 
 const (
 	address  = "127.0.0.1"
-	port     = 6699
+	port     = 3699
 	username = "user"
 	password = "password"
 )
 
-// Before run `go test -v`, you should start a nebula server listening on 6699 port.
+// Before run `go test -v`, you should start a nebula server listening on 3699 port.
 // Using docker-compose is the easiest way and you can reference this file:
 //   https://github.com/vesoft-inc/nebula/blob/master/docker/docker-compose.yaml
 //
@@ -31,6 +31,11 @@ func TestClient(t *testing.T) {
 	}
 
 	client, err := NewClient(fmt.Sprintf("%s:%d", address, port))
+
+	if client.GetSessionID() != 0 {
+		t.Errorf("Needed SessionID")
+	}
+
 	if err != nil {
 		t.Errorf("Fail to create client, address: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -47,15 +52,20 @@ func TestClient(t *testing.T) {
 		}
 	}
 
-	if resp, err := client.Execute("SHOW HOSTS;"); err != nil {
+	resp, err := client.Execute("SHOW HOSTS;")
+	if err != nil {
 		t.Errorf(err.Error())
-	} else {
-		checkResp("show hosts", resp)
+		return
 	}
 
-	if resp, err := client.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1);"); err != nil {
+	checkResp("show hosts", resp)
+
+	resp, err = client.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1);")
+	if err != nil {
 		t.Error(err.Error())
-	} else {
-		checkResp("create space", resp)
+		return
 	}
+
+	checkResp("create space", resp)
+
 }

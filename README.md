@@ -2,6 +2,8 @@
 
 [![star this repo](http://githubbadges.com/star.svg?user=vesoft-inc&repo=nebula-go&style=default)](https://github.com/vesoft-inc/nebula-go)
 [![fork this repo](http://githubbadges.com/fork.svg?user=vesoft-inc&repo=nebula-go&style=default)](https://github.com/vesoft-inc/nebula-go/fork)
+![build status](https://github.com/vesoft-inc/nebula-go/workflows/build/badge.svg)
+![test status](https://github.com/vesoft-inc/nebula-go/workflows/test/badge.svg)
 
 Official Nebula Go client which communicates with the server using [fbthrift](https://github.com/facebook/fbthrift/).
 
@@ -22,7 +24,7 @@ import (
   "log"
 
   nebula "github.com/vesoft-inc/nebula-go"
-  "github.com/vesoft-inc/nebula-go/graph"
+  graph "github.com/vesoft-inc/nebula-go/nebula/graph"
 )
 
 func main() {
@@ -36,12 +38,14 @@ func main() {
   }
   defer client.Disconnect()
 
-  if resp, err := client.Execute("SHOW HOSTS;"); err != nil {
+  resp, err := client.Execute("SHOW HOSTS;")
+  if err != nil {
     log.Fatal(err)
-  } else {
-    if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
-      log.Printf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
-    }
   }
+  
+  if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
+    log.Printf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
+  }
+  
 }
 ```

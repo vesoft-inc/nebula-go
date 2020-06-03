@@ -7,11 +7,12 @@
 package ngdb
 
 import (
+	"fmt"
 	"log"
 	"time"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
-	"github.com/vesoft-inc/nebula-go/graph"
+	graph "github.com/vesoft-inc/nebula-go/nebula/graph"
 )
 
 type GraphOptions struct {
@@ -44,14 +45,16 @@ func NewClient(address string, opts ...GraphOption) (client *GraphClient, err er
 
 	timeoutOption := thrift.SocketTimeout(options.Timeout)
 	addressOption := thrift.SocketAddr(address)
-	transport, err := thrift.NewSocket(timeoutOption, addressOption)
+	sock, err := thrift.NewSocket(timeoutOption, addressOption)
 	if err != nil {
 		return nil, err
 	}
 
-	protocol := thrift.NewBinaryProtocolFactoryDefault()
+	transport := thrift.NewBufferedTransport(sock, 128<<10)
+
+	pf := thrift.NewBinaryProtocolFactoryDefault()
 	graph := &GraphClient{
-		graph: *graph.NewGraphServiceClientFactory(transport, protocol),
+		graph: *graph.NewGraphServiceClientFactory(transport, pf),
 	}
 	return graph, nil
 }
@@ -62,16 +65,23 @@ func (client *GraphClient) Connect(username, password string) error {
 		return err
 	}
 
-	if resp, err := client.graph.Authenticate(username, password); err != nil {
-		log.Printf("Authentication fails, ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
+	resp, err := client.graph.Authenticate(username, password)
+	if err != nil {
+		log.Printf("Authentication fails, %s", err.Error())
 		if e := client.graph.Close(); e != nil {
 			log.Printf("Fail to close transport, error: %s", e.Error())
 		}
 		return err
-	} else {
-		client.sessionID = resp.GetSessionID()
-		return nil
 	}
+
+	if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
+		log.Printf("Authentication fails, ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
+		return fmt.Errorf(resp.GetErrorMsg())
+	}
+
+	client.sessionID = resp.GetSessionID()
+
+	return nil
 }
 
 // Signout and close transport
@@ -87,4 +97,8 @@ func (client *GraphClient) Disconnect() {
 
 func (client *GraphClient) Execute(stmt string) (*graph.ExecutionResponse, error) {
 	return client.graph.Execute(client.sessionID, stmt)
+}
+
+func (client *GraphClient) GetSessionID() int64 {
+	return client.sessionID
 }
