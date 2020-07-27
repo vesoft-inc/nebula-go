@@ -136,8 +136,8 @@ func main() {
       fmt.Fprintln(os.Stderr, "Signout requires 1 args")
       flag.Usage()
     }
-    argvalue0, err17 := (strconv.ParseInt(flag.Arg(1), 10, 64))
-    if err17 != nil {
+    argvalue0, err24 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err24 != nil {
       Usage()
       return
     }
@@ -150,8 +150,8 @@ func main() {
       fmt.Fprintln(os.Stderr, "Execute requires 2 args")
       flag.Usage()
     }
-    argvalue0, err18 := (strconv.ParseInt(flag.Arg(1), 10, 64))
-    if err18 != nil {
+    argvalue0, err25 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err25 != nil {
       Usage()
       return
     }
@@ -166,8 +166,8 @@ func main() {
       fmt.Fprintln(os.Stderr, "ExecuteJson requires 2 args")
       flag.Usage()
     }
-    argvalue0, err20 := (strconv.ParseInt(flag.Arg(1), 10, 64))
-    if err20 != nil {
+    argvalue0, err27 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err27 != nil {
       Usage()
       return
     }

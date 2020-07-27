@@ -58,6 +58,9 @@ const (
   ErrorCode_E_BLOCK_WRITE_FAILURE ErrorCode = -52
   ErrorCode_E_REBUILD_INDEX_FAILURE ErrorCode = -53
   ErrorCode_E_INDEX_WITH_TTL ErrorCode = -54
+  ErrorCode_E_ADD_JOB_FAILURE ErrorCode = -55
+  ErrorCode_E_STOP_JOB_FAILURE ErrorCode = -56
+  ErrorCode_E_SAVE_JOB_FAILURE ErrorCode = -57
   ErrorCode_E_UNKNOWN ErrorCode = -99
 )
 
@@ -96,6 +99,9 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_BLOCK_WRITE_FAILURE: "E_BLOCK_WRITE_FAILURE",
   ErrorCode_E_REBUILD_INDEX_FAILURE: "E_REBUILD_INDEX_FAILURE",
   ErrorCode_E_INDEX_WITH_TTL: "E_INDEX_WITH_TTL",
+  ErrorCode_E_ADD_JOB_FAILURE: "E_ADD_JOB_FAILURE",
+  ErrorCode_E_STOP_JOB_FAILURE: "E_STOP_JOB_FAILURE",
+  ErrorCode_E_SAVE_JOB_FAILURE: "E_SAVE_JOB_FAILURE",
   ErrorCode_E_UNKNOWN: "E_UNKNOWN",
 }
 
@@ -134,6 +140,9 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_BLOCK_WRITE_FAILURE": ErrorCode_E_BLOCK_WRITE_FAILURE,
   "E_REBUILD_INDEX_FAILURE": ErrorCode_E_REBUILD_INDEX_FAILURE,
   "E_INDEX_WITH_TTL": ErrorCode_E_INDEX_WITH_TTL,
+  "E_ADD_JOB_FAILURE": ErrorCode_E_ADD_JOB_FAILURE,
+  "E_STOP_JOB_FAILURE": ErrorCode_E_STOP_JOB_FAILURE,
+  "E_SAVE_JOB_FAILURE": ErrorCode_E_SAVE_JOB_FAILURE,
   "E_UNKNOWN": ErrorCode_E_UNKNOWN,
 }
 
@@ -12297,11 +12306,9 @@ func (p *ListEdgeIndexesResp) String() string {
 // Attributes:
 //  - SpaceID
 //  - IndexName
-//  - IsOffline
 type RebuildIndexReq struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
   IndexName []byte `thrift:"index_name,2" db:"index_name" json:"index_name"`
-  IsOffline bool `thrift:"is_offline,3" db:"is_offline" json:"is_offline"`
 }
 
 func NewRebuildIndexReq() *RebuildIndexReq {
@@ -12315,10 +12322,6 @@ func (p *RebuildIndexReq) GetSpaceID() nebula0.GraphSpaceID {
 
 func (p *RebuildIndexReq) GetIndexName() []byte {
   return p.IndexName
-}
-
-func (p *RebuildIndexReq) GetIsOffline() bool {
-  return p.IsOffline
 }
 func (p *RebuildIndexReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
@@ -12339,10 +12342,6 @@ func (p *RebuildIndexReq) Read(iprot thrift.Protocol) error {
       }
     case 2:
       if err := p.ReadField2(iprot); err != nil {
-        return err
-      }
-    case 3:
-      if err := p.ReadField3(iprot); err != nil {
         return err
       }
     default:
@@ -12379,21 +12378,11 @@ func (p *RebuildIndexReq)  ReadField2(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *RebuildIndexReq)  ReadField3(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  p.IsOffline = v
-}
-  return nil
-}
-
 func (p *RebuildIndexReq) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("RebuildIndexReq"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := p.writeField2(oprot); err != nil { return err }
-  if err := p.writeField3(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -12418,16 +12407,6 @@ func (p *RebuildIndexReq) writeField2(oprot thrift.Protocol) (err error) {
   return thrift.PrependError(fmt.Sprintf("%T.index_name (2) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 2:index_name: ", p), err) }
-  return err
-}
-
-func (p *RebuildIndexReq) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("is_offline", thrift.BOOL, 3); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:is_offline: ", p), err) }
-  if err := oprot.WriteBool(bool(p.IsOffline)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.is_offline (3) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:is_offline: ", p), err) }
   return err
 }
 
