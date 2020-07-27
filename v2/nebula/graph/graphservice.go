@@ -119,16 +119,16 @@ func (p *GraphServiceClient) recvAuthenticate() (value *AuthResponse, err error)
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error1 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error2 error
-    error2, err = error1.Read(iprot)
+    error8 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error9 error
+    error9, err = error8.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error2
+    err = error9
     return
   }
   if mTypeId != thrift.REPLY {
@@ -226,16 +226,16 @@ func (p *GraphServiceClient) recvExecute() (value *ExecutionResponse, err error)
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error3 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error4 error
-    error4, err = error3.Read(iprot)
+    error10 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error11 error
+    error11, err = error10.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error4
+    err = error11
     return
   }
   if mTypeId != thrift.REPLY {
@@ -304,16 +304,16 @@ func (p *GraphServiceClient) recvExecuteJson() (value []byte, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error5 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error6 error
-    error6, err = error5.Read(iprot)
+    error12 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error13 error
+    error13, err = error12.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error6
+    err = error13
     return
   }
   if mTypeId != thrift.REPLY {
@@ -414,16 +414,16 @@ func (p *GraphServiceThreadsafeClient) recvAuthenticate() (value *AuthResponse, 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error7 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error8 error
-    error8, err = error7.Read(iprot)
+    error14 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error15 error
+    error15, err = error14.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error8
+    err = error15
     return
   }
   if mTypeId != thrift.REPLY {
@@ -525,16 +525,16 @@ func (p *GraphServiceThreadsafeClient) recvExecute() (value *ExecutionResponse, 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error9 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error10 error
-    error10, err = error9.Read(iprot)
+    error16 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error17 error
+    error17, err = error16.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error10
+    err = error17
     return
   }
   if mTypeId != thrift.REPLY {
@@ -605,16 +605,16 @@ func (p *GraphServiceThreadsafeClient) recvExecuteJson() (value []byte, err erro
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error11 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error12 error
-    error12, err = error11.Read(iprot)
+    error18 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error19 error
+    error19, err = error18.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error12
+    err = error19
     return
   }
   if mTypeId != thrift.REPLY {
@@ -654,12 +654,12 @@ func (p *GraphServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFuncti
 }
 
 func NewGraphServiceProcessor(handler GraphService) *GraphServiceProcessor {
-  self13 := &GraphServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
-  self13.processorMap["authenticate"] = &graphServiceProcessorAuthenticate{handler:handler}
-  self13.processorMap["signout"] = &graphServiceProcessorSignout{handler:handler}
-  self13.processorMap["execute"] = &graphServiceProcessorExecute{handler:handler}
-  self13.processorMap["executeJson"] = &graphServiceProcessorExecuteJson{handler:handler}
-  return self13
+  self20 := &GraphServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
+  self20.processorMap["authenticate"] = &graphServiceProcessorAuthenticate{handler:handler}
+  self20.processorMap["signout"] = &graphServiceProcessorSignout{handler:handler}
+  self20.processorMap["execute"] = &graphServiceProcessorExecute{handler:handler}
+  self20.processorMap["executeJson"] = &graphServiceProcessorExecuteJson{handler:handler}
+  return self20
 }
 
 type graphServiceProcessorAuthenticate struct {
