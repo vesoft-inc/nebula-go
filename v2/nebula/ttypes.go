@@ -25,6 +25,9 @@ const (
   NullType_NaN NullType = 1
   NullType_BAD_DATA NullType = 2
   NullType_BAD_TYPE NullType = 3
+  NullType_ERR_OVERFLOW NullType = 4
+  NullType_UNKNOWN_PROP NullType = 5
+  NullType_DIV_BY_ZERO NullType = 6
 )
 
 var NullTypeToName = map[NullType]string {
@@ -32,6 +35,9 @@ var NullTypeToName = map[NullType]string {
   NullType_NaN: "NaN",
   NullType_BAD_DATA: "BAD_DATA",
   NullType_BAD_TYPE: "BAD_TYPE",
+  NullType_ERR_OVERFLOW: "ERR_OVERFLOW",
+  NullType_UNKNOWN_PROP: "UNKNOWN_PROP",
+  NullType_DIV_BY_ZERO: "DIV_BY_ZERO",
 }
 
 var NullTypeToValue = map[string]NullType {
@@ -39,6 +45,9 @@ var NullTypeToValue = map[string]NullType {
   "NaN": NullType_NaN,
   "BAD_DATA": NullType_BAD_DATA,
   "BAD_TYPE": NullType_BAD_TYPE,
+  "ERR_OVERFLOW": NullType_ERR_OVERFLOW,
+  "UNKNOWN_PROP": NullType_UNKNOWN_PROP,
+  "DIV_BY_ZERO": NullType_DIV_BY_ZERO,
 }
 
 func (p NullType) String() string {
