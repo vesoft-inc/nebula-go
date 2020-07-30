@@ -40,27 +40,31 @@ const (
   ErrorCode_E_INVALID_FIELD_VALUE ErrorCode = -18
   ErrorCode_E_REBUILD_INDEX_FAILED ErrorCode = -19
   ErrorCode_E_INVALID_OPERATION ErrorCode = -20
-  ErrorCode_E_EDGE_PROP_NOT_FOUND ErrorCode = -21
-  ErrorCode_E_TAG_PROP_NOT_FOUND ErrorCode = -22
-  ErrorCode_E_IMPROPER_DATA_TYPE ErrorCode = -23
-  ErrorCode_E_EDGE_NOT_FOUND ErrorCode = -24
-  ErrorCode_E_TAG_NOT_FOUND ErrorCode = -25
-  ErrorCode_E_INVALID_SPACEVIDLEN ErrorCode = -26
-  ErrorCode_E_INDEX_NOT_FOUND ErrorCode = -27
-  ErrorCode_E_INVALID_FILTER ErrorCode = -31
-  ErrorCode_E_INVALID_UPDATER ErrorCode = -32
-  ErrorCode_E_INVALID_STORE ErrorCode = -33
-  ErrorCode_E_INVALID_PEER ErrorCode = -34
-  ErrorCode_E_RETRY_EXHAUSTED ErrorCode = -35
-  ErrorCode_E_TRANSFER_LEADER_FAILED ErrorCode = -36
-  ErrorCode_E_INVALID_STAT_TYPE ErrorCode = -37
-  ErrorCode_E_INVALID_VID ErrorCode = -38
-  ErrorCode_E_LOAD_META_FAILED ErrorCode = -41
-  ErrorCode_E_FAILED_TO_CHECKPOINT ErrorCode = -50
-  ErrorCode_E_CHECKPOINT_BLOCKED ErrorCode = -51
-  ErrorCode_E_PARTIAL_RESULT ErrorCode = -61
-  ErrorCode_E_FILTER_OUT ErrorCode = -71
-  ErrorCode_E_INVALID_DATA ErrorCode = -72
+  ErrorCode_E_NOT_NULLABLE ErrorCode = -21
+  ErrorCode_E_FIELD_UNSET ErrorCode = -22
+  ErrorCode_E_OUT_OF_RANGE ErrorCode = -23
+  ErrorCode_E_ATOMIC_OP_FAILED ErrorCode = -24
+  ErrorCode_E_EDGE_PROP_NOT_FOUND ErrorCode = -31
+  ErrorCode_E_TAG_PROP_NOT_FOUND ErrorCode = -32
+  ErrorCode_E_IMPROPER_DATA_TYPE ErrorCode = -33
+  ErrorCode_E_EDGE_NOT_FOUND ErrorCode = -34
+  ErrorCode_E_TAG_NOT_FOUND ErrorCode = -35
+  ErrorCode_E_INVALID_SPACEVIDLEN ErrorCode = -36
+  ErrorCode_E_INDEX_NOT_FOUND ErrorCode = -37
+  ErrorCode_E_INVALID_FILTER ErrorCode = -41
+  ErrorCode_E_INVALID_UPDATER ErrorCode = -42
+  ErrorCode_E_INVALID_STORE ErrorCode = -43
+  ErrorCode_E_INVALID_PEER ErrorCode = -44
+  ErrorCode_E_RETRY_EXHAUSTED ErrorCode = -45
+  ErrorCode_E_TRANSFER_LEADER_FAILED ErrorCode = -46
+  ErrorCode_E_INVALID_STAT_TYPE ErrorCode = -47
+  ErrorCode_E_INVALID_VID ErrorCode = -48
+  ErrorCode_E_LOAD_META_FAILED ErrorCode = -51
+  ErrorCode_E_FAILED_TO_CHECKPOINT ErrorCode = -60
+  ErrorCode_E_CHECKPOINT_BLOCKED ErrorCode = -61
+  ErrorCode_E_PARTIAL_RESULT ErrorCode = -71
+  ErrorCode_E_FILTER_OUT ErrorCode = -81
+  ErrorCode_E_INVALID_DATA ErrorCode = -82
   ErrorCode_E_INVALID_TASK_PARA ErrorCode = -90
   ErrorCode_E_USER_CANCEL ErrorCode = -99
   ErrorCode_E_UNKNOWN ErrorCode = -100
@@ -81,6 +85,10 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_INVALID_FIELD_VALUE: "E_INVALID_FIELD_VALUE",
   ErrorCode_E_REBUILD_INDEX_FAILED: "E_REBUILD_INDEX_FAILED",
   ErrorCode_E_INVALID_OPERATION: "E_INVALID_OPERATION",
+  ErrorCode_E_NOT_NULLABLE: "E_NOT_NULLABLE",
+  ErrorCode_E_FIELD_UNSET: "E_FIELD_UNSET",
+  ErrorCode_E_OUT_OF_RANGE: "E_OUT_OF_RANGE",
+  ErrorCode_E_ATOMIC_OP_FAILED: "E_ATOMIC_OP_FAILED",
   ErrorCode_E_EDGE_PROP_NOT_FOUND: "E_EDGE_PROP_NOT_FOUND",
   ErrorCode_E_TAG_PROP_NOT_FOUND: "E_TAG_PROP_NOT_FOUND",
   ErrorCode_E_IMPROPER_DATA_TYPE: "E_IMPROPER_DATA_TYPE",
@@ -122,6 +130,10 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_INVALID_FIELD_VALUE": ErrorCode_E_INVALID_FIELD_VALUE,
   "E_REBUILD_INDEX_FAILED": ErrorCode_E_REBUILD_INDEX_FAILED,
   "E_INVALID_OPERATION": ErrorCode_E_INVALID_OPERATION,
+  "E_NOT_NULLABLE": ErrorCode_E_NOT_NULLABLE,
+  "E_FIELD_UNSET": ErrorCode_E_FIELD_UNSET,
+  "E_OUT_OF_RANGE": ErrorCode_E_OUT_OF_RANGE,
+  "E_ATOMIC_OP_FAILED": ErrorCode_E_ATOMIC_OP_FAILED,
   "E_EDGE_PROP_NOT_FOUND": ErrorCode_E_EDGE_PROP_NOT_FOUND,
   "E_TAG_PROP_NOT_FOUND": ErrorCode_E_TAG_PROP_NOT_FOUND,
   "E_IMPROPER_DATA_TYPE": ErrorCode_E_IMPROPER_DATA_TYPE,
