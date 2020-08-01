@@ -44,6 +44,5 @@ func main() {
   if nebula.IsError(resp) {
     log.Printf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
   }
-
 }
 ```
