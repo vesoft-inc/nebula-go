@@ -102,3 +102,7 @@ func (client *GraphClient) Execute(stmt string) (*graph.ExecutionResponse, error
 func (client *GraphClient) GetSessionID() int64 {
 	return client.sessionID
 }
+
+func IsError(resp *graph.ExecutionResponse) bool {
+	return resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED
+}

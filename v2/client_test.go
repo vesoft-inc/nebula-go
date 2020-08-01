@@ -47,7 +47,7 @@ func TestClient(t *testing.T) {
 	defer client.Disconnect()
 
 	checkResp := func(prefix string, resp *graph.ExecutionResponse) {
-		if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
+		if IsError(resp) {
 			t.Logf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, resp.GetErrorCode(), resp.GetErrorMsg())
 		}
 	}

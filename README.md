@@ -1,7 +1,5 @@
 # nebula-go
 
-[![star this repo](http://githubbadges.com/star.svg?user=vesoft-inc&repo=nebula-go&style=default)](https://github.com/vesoft-inc/nebula-go)
-[![fork this repo](http://githubbadges.com/fork.svg?user=vesoft-inc&repo=nebula-go&style=default)](https://github.com/vesoft-inc/nebula-go/fork)
 ![build status](https://github.com/vesoft-inc/nebula-go/workflows/build/badge.svg)
 ![test status](https://github.com/vesoft-inc/nebula-go/workflows/test/badge.svg)
 
@@ -42,10 +40,10 @@ func main() {
   if err != nil {
     log.Fatal(err)
   }
-  
-  if resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
+
+  if nebula.IsError(resp) {
     log.Printf("ErrorCode: %v, ErrorMsg: %s", resp.GetErrorCode(), resp.GetErrorMsg())
   }
-  
+
 }
 ```
