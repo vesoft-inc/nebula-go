@@ -84,12 +84,13 @@ func (p *SimpleConnectionPool) start() {
 				Resp: resp,
 				Err:  err,
 			}
+			close(req.respCh)
 		}()
 	}
 }
 
 func (p *SimpleConnectionPool) Execute(gql string) <-chan RespData {
-	ch := make(chan RespData)
+	ch := make(chan RespData, 1)
 	p.reqCh <- reqData{
 		gql:    gql,
 		respCh: ch,
