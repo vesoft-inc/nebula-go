@@ -9,7 +9,7 @@ package connpool
 import (
 	"fmt"
 
-	ngdb "github.com/vesoft-inc/nebula-go"
+	nebula "github.com/vesoft-inc/nebula-go"
 	"github.com/vesoft-inc/nebula-go/nebula/graph"
 )
 
@@ -18,8 +18,28 @@ type RespData struct {
 	Err  error
 }
 
+type SpaceDesc struct {
+	Name          string
+	NumPartitions int
+	ReplicaFactor int
+	Charset       string
+	Collate       string
+}
+
+type Connection struct {
+	Ip       string
+	Port     int
+	User     string
+	Password string
+}
+
+type ConnectionPool interface {
+	Close()
+	Execute(stmt string) <-chan RespData
+}
+
 func (rsp RespData) IsError() bool {
-	return rsp.Err != nil || ngdb.IsError(rsp.Resp)
+	return rsp.Err != nil || nebula.IsError(rsp.Resp)
 }
 
 func (rsp RespData) String() string {
@@ -29,7 +49,11 @@ func (rsp RespData) String() string {
 	return rsp.Resp.String()
 }
 
-type ConnectionPool interface {
-	Close()
-	Execute(stmt string) <-chan RespData
+func (s SpaceDesc) CreateSpaceString() string {
+	return fmt.Sprintf("CREATE SPACE IF NOT EXISTS `%s`(partition_num=%d, replica_factor=%d, charset=%s, collate=%s)",
+		s.Name, s.NumPartitions, s.ReplicaFactor, s.Charset, s.Collate)
+}
+
+func (s SpaceDesc) UseSpaceString() string {
+	return fmt.Sprintf("Use `%s`", s.Name)
 }

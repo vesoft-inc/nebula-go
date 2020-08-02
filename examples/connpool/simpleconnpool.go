@@ -7,9 +7,9 @@
 package connpool
 
 import (
-	"strings"
+	"fmt"
 
-	ngdb "github.com/vesoft-inc/nebula-go"
+	nebula "github.com/vesoft-inc/nebula-go"
 )
 
 type reqData struct {
@@ -19,27 +19,45 @@ type reqData struct {
 
 type SimpleConnectionPool struct {
 	stop             bool
-	clients          []*ngdb.GraphClient
-	idleClientsQueue chan *ngdb.GraphClient
+	clients          []*nebula.GraphClient
+	idleClientsQueue chan *nebula.GraphClient
 	reqCh            chan reqData
 }
 
-func New(size int, addr, username, passwd string) (ConnectionPool, error) {
+func New(size int, conn Connection, spaceDesc SpaceDesc) (ConnectionPool, error) {
+	if size <= 0 {
+		return nil, fmt.Errorf("Invalid pool size: %d", size)
+	}
+
 	pool := &SimpleConnectionPool{
 		stop:             false,
-		idleClientsQueue: make(chan *ngdb.GraphClient, size),
+		idleClientsQueue: make(chan *nebula.GraphClient, size),
 		reqCh:            make(chan reqData),
 	}
 
+	createSpace := true
 	for i := 0; i < size; i++ {
-		client, err := ngdb.NewClient(addr)
+		client, err := nebula.NewClient(fmt.Sprintf("%s:%d", conn.Ip, conn.Port))
 		if err != nil {
 			return nil, err
 		}
 
-		err = client.Connect(username, passwd)
+		err = client.Connect(conn.User, conn.Password)
 		if err != nil {
 			return nil, err
+		}
+
+		if createSpace {
+			resp, err := client.Execute(spaceDesc.CreateSpaceString())
+			if err != nil || nebula.IsError(resp) {
+				return nil, fmt.Errorf("Fail to create space %s", spaceDesc.Name)
+			}
+			createSpace = false
+		}
+
+		resp, err := client.Execute(spaceDesc.UseSpaceString())
+		if err != nil || nebula.IsError(resp) {
+			return nil, fmt.Errorf("Fail to use space %s", spaceDesc.Name)
 		}
 
 		pool.clients = append(pool.clients, client)
@@ -52,16 +70,8 @@ func New(size int, addr, username, passwd string) (ConnectionPool, error) {
 }
 
 func (p *SimpleConnectionPool) start() {
-	var useSpace string
 	for !p.stop {
 		req := <-p.reqCh
-		gql := req.gql
-		// switch space
-		if strings.HasPrefix(strings.ToUpper(req.gql), "USE ") {
-			useSpace = req.gql
-		} else {
-			gql = useSpace + ";" + req.gql
-		}
 		// wait an idle client from queue
 		client := <-p.idleClientsQueue
 		go func() {
@@ -69,7 +79,7 @@ func (p *SimpleConnectionPool) start() {
 				// Enqueue client after execution
 				p.idleClientsQueue <- client
 			}()
-			resp, err := client.Execute(gql)
+			resp, err := client.Execute(req.gql)
 			req.respCh <- RespData{
 				Resp: resp,
 				Err:  err,

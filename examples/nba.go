@@ -98,15 +98,27 @@ func printResp(resp *graph.ExecutionResponse) {
 }
 
 func main() {
-	pool, err := connpool.New(3, "127.0.0.1:4910", "user", "password")
+	pool, err := connpool.New(3,
+		connpool.Connection{
+			Ip:       "127.0.0.1",
+			Port:     4910,
+			User:     "user",
+			Password: "password",
+		},
+		connpool.SpaceDesc{
+			Name:          "nba",
+			NumPartitions: 10,
+			ReplicaFactor: 1,
+			Charset:       "utf8",
+			Collate:       "utf8_bin",
+		},
+	)
 	if err != nil {
 		panic(err)
 	}
 	defer pool.Close()
 
 	// create schema
-	check(pool.Execute("CREATE SPACE IF NOT EXISTS nba2"))
-	check(pool.Execute("USE nba2"))
 	check(pool.Execute("CREATE TAG IF NOT EXISTS person(name string, age int)"))
 	check(pool.Execute("CREATE EDGE IF NOT EXISTS like(likeness double)"))
 
