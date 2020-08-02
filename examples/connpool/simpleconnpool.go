@@ -47,6 +47,8 @@ func New(size int, conn Connection, spaceDesc SpaceDesc) (ConnectionPool, error)
 			return nil, err
 		}
 
+		pool.clients = append(pool.clients, client)
+
 		if createSpace {
 			resp, err := client.Execute(spaceDesc.CreateSpaceString())
 			if err != nil || nebula.IsError(resp) {
@@ -60,7 +62,6 @@ func New(size int, conn Connection, spaceDesc SpaceDesc) (ConnectionPool, error)
 			return nil, fmt.Errorf("Fail to use space %s", spaceDesc.Name)
 		}
 
-		pool.clients = append(pool.clients, client)
 		pool.idleClientsQueue <- client
 	}
 
