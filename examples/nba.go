@@ -107,6 +107,7 @@ func main() {
 		},
 		connpool.SpaceDesc{
 			Name:          "nba",
+			Exists:        false,
 			NumPartitions: 10,
 			ReplicaFactor: 1,
 			Charset:       "utf8",

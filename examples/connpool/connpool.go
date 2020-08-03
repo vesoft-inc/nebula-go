@@ -20,6 +20,7 @@ type RespData struct {
 
 type SpaceDesc struct {
 	Name          string
+	Exists        bool
 	NumPartitions int
 	ReplicaFactor int
 	Charset       string

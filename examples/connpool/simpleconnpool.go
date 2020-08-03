@@ -35,26 +35,24 @@ func New(size int, conn Connection, spaceDesc SpaceDesc) (ConnectionPool, error)
 		reqCh:            make(chan reqData),
 	}
 
-	createSpace := true
 	for i := 0; i < size; i++ {
 		client, err := nebula.NewClient(fmt.Sprintf("%s:%d", conn.Ip, conn.Port))
 		if err != nil {
 			return nil, err
 		}
 
-		err = client.Connect(conn.User, conn.Password)
-		if err != nil {
+		if err = client.Connect(conn.User, conn.Password); err != nil {
 			return nil, err
 		}
 
 		pool.clients = append(pool.clients, client)
 
-		if createSpace {
+		if !spaceDesc.Exists {
 			resp, err := client.Execute(spaceDesc.CreateSpaceString())
 			if err != nil || nebula.IsError(resp) {
 				return nil, fmt.Errorf("Fail to create space %s", spaceDesc.Name)
 			}
-			createSpace = false
+			spaceDesc.Exists = true
 		}
 
 		resp, err := client.Execute(spaceDesc.UseSpaceString())
