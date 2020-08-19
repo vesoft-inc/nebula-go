@@ -10,7 +10,7 @@ Please be careful do not to modify the files in the graph directory, these codes
 ## Install
 
 ```shell
-$ go get -u -v github.com/vesoft-inc/nebula-go
+$ go get -u -v github.com/vesoft-inc/nebula-go@master
 ```
 
 ## Usage example
