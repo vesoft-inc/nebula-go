@@ -13,7 +13,7 @@ Please be careful do not to modify the files in the graph directory, these codes
 $ go get -u -v github.com/vesoft-inc/nebula-go@master
 ```
 
-If you get a message like `cannot use path@version syntax in GOPATH mode`, see the instructions below for [enabling go modules]((#enabling-go-modules)).
+If you get a message like `cannot use path@version syntax in GOPATH mode`, see the instructions below for [enabling go modules](#enabling-go-modules).
 
 ### Enabling go modules
 
