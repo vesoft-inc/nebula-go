@@ -645,47 +645,6 @@ func ConfigModuleFromString(s string) (ConfigModule, error) {
 
 func ConfigModulePtr(v ConfigModule) *ConfigModule { return &v }
 
-type ConfigType int64
-const (
-  ConfigType_INT64 ConfigType = 0
-  ConfigType_DOUBLE ConfigType = 1
-  ConfigType_BOOL ConfigType = 2
-  ConfigType_STRING ConfigType = 3
-  ConfigType_NESTED ConfigType = 4
-)
-
-var ConfigTypeToName = map[ConfigType]string {
-  ConfigType_INT64: "INT64",
-  ConfigType_DOUBLE: "DOUBLE",
-  ConfigType_BOOL: "BOOL",
-  ConfigType_STRING: "STRING",
-  ConfigType_NESTED: "NESTED",
-}
-
-var ConfigTypeToValue = map[string]ConfigType {
-  "INT64": ConfigType_INT64,
-  "DOUBLE": ConfigType_DOUBLE,
-  "BOOL": ConfigType_BOOL,
-  "STRING": ConfigType_STRING,
-  "NESTED": ConfigType_NESTED,
-}
-
-func (p ConfigType) String() string {
-  if v, ok := ConfigTypeToName[p]; ok {
-    return v
-  }
-  return "<UNSET>"
-}
-
-func ConfigTypeFromString(s string) (ConfigType, error) {
-  if v, ok := ConfigTypeToValue[s]; ok {
-    return v, nil
-  }
-  return ConfigType(0), fmt.Errorf("not a valid ConfigType string")
-}
-
-func ConfigTypePtr(v ConfigType) *ConfigType { return &v }
-
 type ConfigMode int64
 const (
   ConfigMode_IMMUTABLE ConfigMode = 0
@@ -1639,49 +1598,57 @@ func (p *IdName) String() string {
 //  - SpaceName
 //  - PartitionNum
 //  - ReplicaFactor
-//  - VidSize
 //  - CharsetName
 //  - CollateName
-type SpaceProperties struct {
+//  - VidSize
+//  - VidType
+type SpaceDesc struct {
   SpaceName []byte `thrift:"space_name,1" db:"space_name" json:"space_name"`
   PartitionNum int32 `thrift:"partition_num,2" db:"partition_num" json:"partition_num"`
   ReplicaFactor int32 `thrift:"replica_factor,3" db:"replica_factor" json:"replica_factor"`
-  VidSize int32 `thrift:"vid_size,4" db:"vid_size" json:"vid_size"`
-  CharsetName []byte `thrift:"charset_name,5" db:"charset_name" json:"charset_name"`
-  CollateName []byte `thrift:"collate_name,6" db:"collate_name" json:"collate_name"`
+  CharsetName []byte `thrift:"charset_name,4" db:"charset_name" json:"charset_name"`
+  CollateName []byte `thrift:"collate_name,5" db:"collate_name" json:"collate_name"`
+  VidSize int16 `thrift:"vid_size,6" db:"vid_size" json:"vid_size"`
+  VidType PropertyType `thrift:"vid_type,7" db:"vid_type" json:"vid_type"`
 }
 
-func NewSpaceProperties() *SpaceProperties {
-  return &SpaceProperties{
+func NewSpaceDesc() *SpaceDesc {
+  return &SpaceDesc{
 VidSize: 8,
+
+VidType: 7,
 }
 }
 
 
-func (p *SpaceProperties) GetSpaceName() []byte {
+func (p *SpaceDesc) GetSpaceName() []byte {
   return p.SpaceName
 }
 
-func (p *SpaceProperties) GetPartitionNum() int32 {
+func (p *SpaceDesc) GetPartitionNum() int32 {
   return p.PartitionNum
 }
 
-func (p *SpaceProperties) GetReplicaFactor() int32 {
+func (p *SpaceDesc) GetReplicaFactor() int32 {
   return p.ReplicaFactor
 }
 
-func (p *SpaceProperties) GetVidSize() int32 {
-  return p.VidSize
-}
-
-func (p *SpaceProperties) GetCharsetName() []byte {
+func (p *SpaceDesc) GetCharsetName() []byte {
   return p.CharsetName
 }
 
-func (p *SpaceProperties) GetCollateName() []byte {
+func (p *SpaceDesc) GetCollateName() []byte {
   return p.CollateName
 }
-func (p *SpaceProperties) Read(iprot thrift.Protocol) error {
+
+func (p *SpaceDesc) GetVidSize() int16 {
+  return p.VidSize
+}
+
+func (p *SpaceDesc) GetVidType() PropertyType {
+  return p.VidType
+}
+func (p *SpaceDesc) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -1718,6 +1685,10 @@ func (p *SpaceProperties) Read(iprot thrift.Protocol) error {
       if err := p.ReadField6(iprot); err != nil {
         return err
       }
+    case 7:
+      if err := p.ReadField7(iprot); err != nil {
+        return err
+      }
     default:
       if err := iprot.Skip(fieldTypeId); err != nil {
         return err
@@ -1733,7 +1704,7 @@ func (p *SpaceProperties) Read(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *SpaceProperties)  ReadField1(iprot thrift.Protocol) error {
+func (p *SpaceDesc)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
@@ -1742,7 +1713,7 @@ func (p *SpaceProperties)  ReadField1(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *SpaceProperties)  ReadField2(iprot thrift.Protocol) error {
+func (p *SpaceDesc)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 2: ", err)
 } else {
@@ -1751,7 +1722,7 @@ func (p *SpaceProperties)  ReadField2(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *SpaceProperties)  ReadField3(iprot thrift.Protocol) error {
+func (p *SpaceDesc)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 3: ", err)
 } else {
@@ -1760,35 +1731,45 @@ func (p *SpaceProperties)  ReadField3(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *SpaceProperties)  ReadField4(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  p.VidSize = v
-}
-  return nil
-}
-
-func (p *SpaceProperties)  ReadField5(iprot thrift.Protocol) error {
+func (p *SpaceDesc)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 5: ", err)
+  return thrift.PrependError("error reading field 4: ", err)
 } else {
   p.CharsetName = v
 }
   return nil
 }
 
-func (p *SpaceProperties)  ReadField6(iprot thrift.Protocol) error {
+func (p *SpaceDesc)  ReadField5(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 6: ", err)
+  return thrift.PrependError("error reading field 5: ", err)
 } else {
   p.CollateName = v
 }
   return nil
 }
 
-func (p *SpaceProperties) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("SpaceProperties"); err != nil {
+func (p *SpaceDesc)  ReadField6(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI16(); err != nil {
+  return thrift.PrependError("error reading field 6: ", err)
+} else {
+  p.VidSize = v
+}
+  return nil
+}
+
+func (p *SpaceDesc)  ReadField7(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 7: ", err)
+} else {
+  temp := PropertyType(v)
+  p.VidType = temp
+}
+  return nil
+}
+
+func (p *SpaceDesc) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("SpaceDesc"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := p.writeField2(oprot); err != nil { return err }
@@ -1796,6 +1777,7 @@ func (p *SpaceProperties) Write(oprot thrift.Protocol) error {
   if err := p.writeField4(oprot); err != nil { return err }
   if err := p.writeField5(oprot); err != nil { return err }
   if err := p.writeField6(oprot); err != nil { return err }
+  if err := p.writeField7(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -1803,7 +1785,7 @@ func (p *SpaceProperties) Write(oprot thrift.Protocol) error {
   return nil
 }
 
-func (p *SpaceProperties) writeField1(oprot thrift.Protocol) (err error) {
+func (p *SpaceDesc) writeField1(oprot thrift.Protocol) (err error) {
   if err := oprot.WriteFieldBegin("space_name", thrift.STRING, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_name: ", p), err) }
   if err := oprot.WriteBinary(p.SpaceName); err != nil {
@@ -1813,7 +1795,7 @@ func (p *SpaceProperties) writeField1(oprot thrift.Protocol) (err error) {
   return err
 }
 
-func (p *SpaceProperties) writeField2(oprot thrift.Protocol) (err error) {
+func (p *SpaceDesc) writeField2(oprot thrift.Protocol) (err error) {
   if err := oprot.WriteFieldBegin("partition_num", thrift.I32, 2); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:partition_num: ", p), err) }
   if err := oprot.WriteI32(int32(p.PartitionNum)); err != nil {
@@ -1823,7 +1805,7 @@ func (p *SpaceProperties) writeField2(oprot thrift.Protocol) (err error) {
   return err
 }
 
-func (p *SpaceProperties) writeField3(oprot thrift.Protocol) (err error) {
+func (p *SpaceDesc) writeField3(oprot thrift.Protocol) (err error) {
   if err := oprot.WriteFieldBegin("replica_factor", thrift.I32, 3); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:replica_factor: ", p), err) }
   if err := oprot.WriteI32(int32(p.ReplicaFactor)); err != nil {
@@ -1833,41 +1815,51 @@ func (p *SpaceProperties) writeField3(oprot thrift.Protocol) (err error) {
   return err
 }
 
-func (p *SpaceProperties) writeField4(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("vid_size", thrift.I32, 4); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:vid_size: ", p), err) }
-  if err := oprot.WriteI32(int32(p.VidSize)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.vid_size (4) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:vid_size: ", p), err) }
-  return err
-}
-
-func (p *SpaceProperties) writeField5(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("charset_name", thrift.STRING, 5); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:charset_name: ", p), err) }
+func (p *SpaceDesc) writeField4(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("charset_name", thrift.STRING, 4); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:charset_name: ", p), err) }
   if err := oprot.WriteBinary(p.CharsetName); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.charset_name (5) field write error: ", p), err) }
+  return thrift.PrependError(fmt.Sprintf("%T.charset_name (4) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 5:charset_name: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:charset_name: ", p), err) }
   return err
 }
 
-func (p *SpaceProperties) writeField6(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("collate_name", thrift.STRING, 6); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 6:collate_name: ", p), err) }
+func (p *SpaceDesc) writeField5(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("collate_name", thrift.STRING, 5); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:collate_name: ", p), err) }
   if err := oprot.WriteBinary(p.CollateName); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.collate_name (6) field write error: ", p), err) }
+  return thrift.PrependError(fmt.Sprintf("%T.collate_name (5) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 6:collate_name: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 5:collate_name: ", p), err) }
   return err
 }
 
-func (p *SpaceProperties) String() string {
+func (p *SpaceDesc) writeField6(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("vid_size", thrift.I16, 6); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 6:vid_size: ", p), err) }
+  if err := oprot.WriteI16(int16(p.VidSize)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.vid_size (6) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 6:vid_size: ", p), err) }
+  return err
+}
+
+func (p *SpaceDesc) writeField7(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("vid_type", thrift.I32, 7); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 7:vid_type: ", p), err) }
+  if err := oprot.WriteI32(int32(p.VidType)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.vid_type (7) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 7:vid_type: ", p), err) }
+  return err
+}
+
+func (p *SpaceDesc) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("SpaceProperties(%+v)", *p)
+  return fmt.Sprintf("SpaceDesc(%+v)", *p)
 }
 
 // Attributes:
@@ -1875,7 +1867,7 @@ func (p *SpaceProperties) String() string {
 //  - Properties
 type SpaceItem struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
-  Properties *SpaceProperties `thrift:"properties,2" db:"properties" json:"properties"`
+  Properties *SpaceDesc `thrift:"properties,2" db:"properties" json:"properties"`
 }
 
 func NewSpaceItem() *SpaceItem {
@@ -1886,8 +1878,8 @@ func NewSpaceItem() *SpaceItem {
 func (p *SpaceItem) GetSpaceID() nebula0.GraphSpaceID {
   return p.SpaceID
 }
-var SpaceItem_Properties_DEFAULT *SpaceProperties
-func (p *SpaceItem) GetProperties() *SpaceProperties {
+var SpaceItem_Properties_DEFAULT *SpaceDesc
+func (p *SpaceItem) GetProperties() *SpaceDesc {
   if !p.IsSetProperties() {
     return SpaceItem_Properties_DEFAULT
   }
@@ -1944,7 +1936,7 @@ func (p *SpaceItem)  ReadField1(iprot thrift.Protocol) error {
 }
 
 func (p *SpaceItem)  ReadField2(iprot thrift.Protocol) error {
-  p.Properties = NewSpaceProperties()
+  p.Properties = NewSpaceDesc()
   if err := p.Properties.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Properties), err)
   }
@@ -4803,7 +4795,7 @@ func (p *AdminJobResp) String() string {
 //  - Properties
 //  - IfNotExists
 type CreateSpaceReq struct {
-  Properties *SpaceProperties `thrift:"properties,1" db:"properties" json:"properties"`
+  Properties *SpaceDesc `thrift:"properties,1" db:"properties" json:"properties"`
   IfNotExists bool `thrift:"if_not_exists,2" db:"if_not_exists" json:"if_not_exists"`
 }
 
@@ -4811,8 +4803,8 @@ func NewCreateSpaceReq() *CreateSpaceReq {
   return &CreateSpaceReq{}
 }
 
-var CreateSpaceReq_Properties_DEFAULT *SpaceProperties
-func (p *CreateSpaceReq) GetProperties() *SpaceProperties {
+var CreateSpaceReq_Properties_DEFAULT *SpaceDesc
+func (p *CreateSpaceReq) GetProperties() *SpaceDesc {
   if !p.IsSetProperties() {
     return CreateSpaceReq_Properties_DEFAULT
   }
@@ -4863,7 +4855,7 @@ func (p *CreateSpaceReq) Read(iprot thrift.Protocol) error {
 }
 
 func (p *CreateSpaceReq)  ReadField1(iprot thrift.Protocol) error {
-  p.Properties = NewSpaceProperties()
+  p.Properties = NewSpaceDesc()
   if err := p.Properties.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Properties), err)
   }
@@ -14271,15 +14263,13 @@ func (p *LeaderBalanceReq) String() string {
 // Attributes:
 //  - Module
 //  - Name
-//  - Type
 //  - Mode
 //  - Value
 type ConfigItem struct {
   Module ConfigModule `thrift:"module,1" db:"module" json:"module"`
   Name []byte `thrift:"name,2" db:"name" json:"name"`
-  Type ConfigType `thrift:"type,3" db:"type" json:"type"`
-  Mode ConfigMode `thrift:"mode,4" db:"mode" json:"mode"`
-  Value []byte `thrift:"value,5" db:"value" json:"value"`
+  Mode ConfigMode `thrift:"mode,3" db:"mode" json:"mode"`
+  Value *nebula0.Value `thrift:"value,4" db:"value" json:"value"`
 }
 
 func NewConfigItem() *ConfigItem {
@@ -14295,17 +14285,20 @@ func (p *ConfigItem) GetName() []byte {
   return p.Name
 }
 
-func (p *ConfigItem) GetType() ConfigType {
-  return p.Type
-}
-
 func (p *ConfigItem) GetMode() ConfigMode {
   return p.Mode
 }
-
-func (p *ConfigItem) GetValue() []byte {
-  return p.Value
+var ConfigItem_Value_DEFAULT *nebula0.Value
+func (p *ConfigItem) GetValue() *nebula0.Value {
+  if !p.IsSetValue() {
+    return ConfigItem_Value_DEFAULT
+  }
+return p.Value
 }
+func (p *ConfigItem) IsSetValue() bool {
+  return p.Value != nil
+}
+
 func (p *ConfigItem) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -14333,10 +14326,6 @@ func (p *ConfigItem) Read(iprot thrift.Protocol) error {
       }
     case 4:
       if err := p.ReadField4(iprot); err != nil {
-        return err
-      }
-    case 5:
-      if err := p.ReadField5(iprot); err != nil {
         return err
       }
     default:
@@ -14377,28 +14366,17 @@ func (p *ConfigItem)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 3: ", err)
 } else {
-  temp := ConfigType(v)
-  p.Type = temp
-}
-  return nil
-}
-
-func (p *ConfigItem)  ReadField4(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
   temp := ConfigMode(v)
   p.Mode = temp
 }
   return nil
 }
 
-func (p *ConfigItem)  ReadField5(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 5: ", err)
-} else {
-  p.Value = v
-}
+func (p *ConfigItem)  ReadField4(iprot thrift.Protocol) error {
+  p.Value = nebula0.NewValue()
+  if err := p.Value.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Value), err)
+  }
   return nil
 }
 
@@ -14409,7 +14387,6 @@ func (p *ConfigItem) Write(oprot thrift.Protocol) error {
   if err := p.writeField2(oprot); err != nil { return err }
   if err := p.writeField3(oprot); err != nil { return err }
   if err := p.writeField4(oprot); err != nil { return err }
-  if err := p.writeField5(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -14438,32 +14415,23 @@ func (p *ConfigItem) writeField2(oprot thrift.Protocol) (err error) {
 }
 
 func (p *ConfigItem) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("type", thrift.I32, 3); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:type: ", p), err) }
-  if err := oprot.WriteI32(int32(p.Type)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.type (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("mode", thrift.I32, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:mode: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Mode)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.mode (3) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:type: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:mode: ", p), err) }
   return err
 }
 
 func (p *ConfigItem) writeField4(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("mode", thrift.I32, 4); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:mode: ", p), err) }
-  if err := oprot.WriteI32(int32(p.Mode)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.mode (4) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("value", thrift.STRUCT, 4); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:value: ", p), err) }
+  if err := p.Value.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Value), err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:mode: ", p), err) }
-  return err
-}
-
-func (p *ConfigItem) writeField5(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("value", thrift.STRING, 5); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:value: ", p), err) }
-  if err := oprot.WriteBinary(p.Value); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.value (5) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 5:value: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:value: ", p), err) }
   return err
 }
 
@@ -14840,10 +14808,8 @@ func (p *GetConfigResp) String() string {
 
 // Attributes:
 //  - Item
-//  - Force
 type SetConfigReq struct {
   Item *ConfigItem `thrift:"item,1" db:"item" json:"item"`
-  Force bool `thrift:"force,2" db:"force" json:"force"`
 }
 
 func NewSetConfigReq() *SetConfigReq {
@@ -14856,10 +14822,6 @@ func (p *SetConfigReq) GetItem() *ConfigItem {
     return SetConfigReq_Item_DEFAULT
   }
 return p.Item
-}
-
-func (p *SetConfigReq) GetForce() bool {
-  return p.Force
 }
 func (p *SetConfigReq) IsSetItem() bool {
   return p.Item != nil
@@ -14880,10 +14842,6 @@ func (p *SetConfigReq) Read(iprot thrift.Protocol) error {
     switch fieldId {
     case 1:
       if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    case 2:
-      if err := p.ReadField2(iprot); err != nil {
         return err
       }
     default:
@@ -14909,20 +14867,10 @@ func (p *SetConfigReq)  ReadField1(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *SetConfigReq)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Force = v
-}
-  return nil
-}
-
 func (p *SetConfigReq) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("SetConfigReq"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
-  if err := p.writeField2(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -14938,16 +14886,6 @@ func (p *SetConfigReq) writeField1(oprot thrift.Protocol) (err error) {
   }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 1:item: ", p), err) }
-  return err
-}
-
-func (p *SetConfigReq) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("force", thrift.BOOL, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:force: ", p), err) }
-  if err := oprot.WriteBool(bool(p.Force)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.force (2) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:force: ", p), err) }
   return err
 }
 
