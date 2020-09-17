@@ -3159,7 +3159,7 @@ func (p *NewTag_) String() string {
 //  - Id
 //  - Tags
 type NewVertex_ struct {
-  Id nebula0.VertexID `thrift:"id,1" db:"id" json:"id"`
+  Id *nebula0.Value `thrift:"id,1" db:"id" json:"id"`
   Tags []*NewTag_ `thrift:"tags,2" db:"tags" json:"tags"`
 }
 
@@ -3167,14 +3167,21 @@ func NewNewVertex_() *NewVertex_ {
   return &NewVertex_{}
 }
 
-
-func (p *NewVertex_) GetId() nebula0.VertexID {
-  return p.Id
+var NewVertex__Id_DEFAULT *nebula0.Value
+func (p *NewVertex_) GetId() *nebula0.Value {
+  if !p.IsSetId() {
+    return NewVertex__Id_DEFAULT
+  }
+return p.Id
 }
 
 func (p *NewVertex_) GetTags() []*NewTag_ {
   return p.Tags
 }
+func (p *NewVertex_) IsSetId() bool {
+  return p.Id != nil
+}
+
 func (p *NewVertex_) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -3212,12 +3219,10 @@ func (p *NewVertex_) Read(iprot thrift.Protocol) error {
 }
 
 func (p *NewVertex_)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.VertexID(v)
-  p.Id = temp
-}
+  p.Id = nebula0.NewValue()
+  if err := p.Id.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Id), err)
+  }
   return nil
 }
 
@@ -3254,10 +3259,11 @@ func (p *NewVertex_) Write(oprot thrift.Protocol) error {
 }
 
 func (p *NewVertex_) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("id", thrift.STRING, 1); err != nil {
+  if err := oprot.WriteFieldBegin("id", thrift.STRUCT, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:id: ", p), err) }
-  if err := oprot.WriteBinary(p.Id); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.id (1) field write error: ", p), err) }
+  if err := p.Id.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Id), err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 1:id: ", p), err) }
   return err
@@ -3295,19 +3301,22 @@ func (p *NewVertex_) String() string {
 //  - Ranking
 //  - Dst
 type EdgeKey struct {
-  Src nebula0.VertexID `thrift:"src,1" db:"src" json:"src"`
+  Src *nebula0.Value `thrift:"src,1" db:"src" json:"src"`
   EdgeType nebula0.EdgeType `thrift:"edge_type,2" db:"edge_type" json:"edge_type"`
   Ranking nebula0.EdgeRanking `thrift:"ranking,3" db:"ranking" json:"ranking"`
-  Dst nebula0.VertexID `thrift:"dst,4" db:"dst" json:"dst"`
+  Dst *nebula0.Value `thrift:"dst,4" db:"dst" json:"dst"`
 }
 
 func NewEdgeKey() *EdgeKey {
   return &EdgeKey{}
 }
 
-
-func (p *EdgeKey) GetSrc() nebula0.VertexID {
-  return p.Src
+var EdgeKey_Src_DEFAULT *nebula0.Value
+func (p *EdgeKey) GetSrc() *nebula0.Value {
+  if !p.IsSetSrc() {
+    return EdgeKey_Src_DEFAULT
+  }
+return p.Src
 }
 
 func (p *EdgeKey) GetEdgeType() nebula0.EdgeType {
@@ -3317,10 +3326,21 @@ func (p *EdgeKey) GetEdgeType() nebula0.EdgeType {
 func (p *EdgeKey) GetRanking() nebula0.EdgeRanking {
   return p.Ranking
 }
-
-func (p *EdgeKey) GetDst() nebula0.VertexID {
-  return p.Dst
+var EdgeKey_Dst_DEFAULT *nebula0.Value
+func (p *EdgeKey) GetDst() *nebula0.Value {
+  if !p.IsSetDst() {
+    return EdgeKey_Dst_DEFAULT
+  }
+return p.Dst
 }
+func (p *EdgeKey) IsSetSrc() bool {
+  return p.Src != nil
+}
+
+func (p *EdgeKey) IsSetDst() bool {
+  return p.Dst != nil
+}
+
 func (p *EdgeKey) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -3366,12 +3386,10 @@ func (p *EdgeKey) Read(iprot thrift.Protocol) error {
 }
 
 func (p *EdgeKey)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.VertexID(v)
-  p.Src = temp
-}
+  p.Src = nebula0.NewValue()
+  if err := p.Src.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Src), err)
+  }
   return nil
 }
 
@@ -3396,12 +3414,10 @@ func (p *EdgeKey)  ReadField3(iprot thrift.Protocol) error {
 }
 
 func (p *EdgeKey)  ReadField4(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  temp := nebula0.VertexID(v)
-  p.Dst = temp
-}
+  p.Dst = nebula0.NewValue()
+  if err := p.Dst.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Dst), err)
+  }
   return nil
 }
 
@@ -3420,10 +3436,11 @@ func (p *EdgeKey) Write(oprot thrift.Protocol) error {
 }
 
 func (p *EdgeKey) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("src", thrift.STRING, 1); err != nil {
+  if err := oprot.WriteFieldBegin("src", thrift.STRUCT, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:src: ", p), err) }
-  if err := oprot.WriteBinary(p.Src); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.src (1) field write error: ", p), err) }
+  if err := p.Src.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Src), err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 1:src: ", p), err) }
   return err
@@ -3450,10 +3467,11 @@ func (p *EdgeKey) writeField3(oprot thrift.Protocol) (err error) {
 }
 
 func (p *EdgeKey) writeField4(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("dst", thrift.STRING, 4); err != nil {
+  if err := oprot.WriteFieldBegin("dst", thrift.STRUCT, 4); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:dst: ", p), err) }
-  if err := oprot.WriteBinary(p.Dst); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.dst (4) field write error: ", p), err) }
+  if err := p.Dst.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Dst), err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 4:dst: ", p), err) }
   return err
@@ -4132,7 +4150,7 @@ func (p *AddEdgesRequest) String() string {
 //  - Parts
 type DeleteVerticesRequest struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
-  Parts map[nebula0.PartitionID][]nebula0.VertexID `thrift:"parts,2" db:"parts" json:"parts"`
+  Parts map[nebula0.PartitionID][]*nebula0.Value `thrift:"parts,2" db:"parts" json:"parts"`
 }
 
 func NewDeleteVerticesRequest() *DeleteVerticesRequest {
@@ -4144,7 +4162,7 @@ func (p *DeleteVerticesRequest) GetSpaceID() nebula0.GraphSpaceID {
   return p.SpaceID
 }
 
-func (p *DeleteVerticesRequest) GetParts() map[nebula0.PartitionID][]nebula0.VertexID {
+func (p *DeleteVerticesRequest) GetParts() map[nebula0.PartitionID][]*nebula0.Value {
   return p.Parts
 }
 func (p *DeleteVerticesRequest) Read(iprot thrift.Protocol) error {
@@ -4198,7 +4216,7 @@ func (p *DeleteVerticesRequest)  ReadField2(iprot thrift.Protocol) error {
   if err != nil {
     return thrift.PrependError("error reading map begin: ", err)
   }
-  tMap := make(map[nebula0.PartitionID][]nebula0.VertexID, size)
+  tMap := make(map[nebula0.PartitionID][]*nebula0.Value, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
 var _key36 nebula0.PartitionID
@@ -4212,16 +4230,13 @@ var _key36 nebula0.PartitionID
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
     }
-    tSlice := make([]nebula0.VertexID, 0, size)
+    tSlice := make([]*nebula0.Value, 0, size)
     _val37 :=  tSlice
     for i := 0; i < size; i ++ {
-var _elem38 nebula0.VertexID
-      if v, err := iprot.ReadBinary(); err != nil {
-      return thrift.PrependError("error reading field 0: ", err)
-} else {
-      temp := nebula0.VertexID(v)
-      _elem38 = temp
-}
+      _elem38 := nebula0.NewValue()
+      if err := _elem38.Read(iprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem38), err)
+      }
       _val37 = append(_val37, _elem38)
     }
     if err := iprot.ReadListEnd(); err != nil {
@@ -4266,12 +4281,13 @@ func (p *DeleteVerticesRequest) writeField2(oprot thrift.Protocol) (err error) {
   for k, v := range p.Parts {
     if err := oprot.WriteI32(int32(k)); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
-    if err := oprot.WriteListBegin(thrift.STRING, len(v)); err != nil {
+    if err := oprot.WriteListBegin(thrift.STRUCT, len(v)); err != nil {
       return thrift.PrependError("error writing list begin: ", err)
     }
     for _, v := range v {
-      if err := oprot.WriteBinary(v); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+      if err := v.Write(oprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+      }
     }
     if err := oprot.WriteListEnd(); err != nil {
       return thrift.PrependError("error writing list end: ", err)
@@ -4724,7 +4740,7 @@ func (p *UpdatedProp) String() string {
 type UpdateVertexRequest struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
   PartID nebula0.PartitionID `thrift:"part_id,2" db:"part_id" json:"part_id"`
-  VertexID nebula0.VertexID `thrift:"vertex_id,3" db:"vertex_id" json:"vertex_id"`
+  VertexID *nebula0.Value `thrift:"vertex_id,3" db:"vertex_id" json:"vertex_id"`
   TagID nebula0.TagID `thrift:"tag_id,4,required" db:"tag_id" json:"tag_id"`
   UpdatedProps []*UpdatedProp `thrift:"updated_props,5" db:"updated_props" json:"updated_props"`
   Insertable bool `thrift:"insertable,6" db:"insertable" json:"insertable,omitempty"`
@@ -4744,9 +4760,12 @@ func (p *UpdateVertexRequest) GetSpaceID() nebula0.GraphSpaceID {
 func (p *UpdateVertexRequest) GetPartID() nebula0.PartitionID {
   return p.PartID
 }
-
-func (p *UpdateVertexRequest) GetVertexID() nebula0.VertexID {
-  return p.VertexID
+var UpdateVertexRequest_VertexID_DEFAULT *nebula0.Value
+func (p *UpdateVertexRequest) GetVertexID() *nebula0.Value {
+  if !p.IsSetVertexID() {
+    return UpdateVertexRequest_VertexID_DEFAULT
+  }
+return p.VertexID
 }
 
 func (p *UpdateVertexRequest) GetTagID() nebula0.TagID {
@@ -4771,6 +4790,10 @@ var UpdateVertexRequest_Condition_DEFAULT []byte
 func (p *UpdateVertexRequest) GetCondition() []byte {
   return p.Condition
 }
+func (p *UpdateVertexRequest) IsSetVertexID() bool {
+  return p.VertexID != nil
+}
+
 func (p *UpdateVertexRequest) IsSetInsertable() bool {
   return p.Insertable != UpdateVertexRequest_Insertable_DEFAULT
 }
@@ -4869,12 +4892,10 @@ func (p *UpdateVertexRequest)  ReadField2(iprot thrift.Protocol) error {
 }
 
 func (p *UpdateVertexRequest)  ReadField3(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  temp := nebula0.VertexID(v)
-  p.VertexID = temp
-}
+  p.VertexID = nebula0.NewValue()
+  if err := p.VertexID.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.VertexID), err)
+  }
   return nil
 }
 
@@ -4987,10 +5008,11 @@ func (p *UpdateVertexRequest) writeField2(oprot thrift.Protocol) (err error) {
 }
 
 func (p *UpdateVertexRequest) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("vertex_id", thrift.STRING, 3); err != nil {
+  if err := oprot.WriteFieldBegin("vertex_id", thrift.STRUCT, 3); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:vertex_id: ", p), err) }
-  if err := oprot.WriteBinary(p.VertexID); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.vertex_id (3) field write error: ", p), err) }
+  if err := p.VertexID.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.VertexID), err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 3:vertex_id: ", p), err) }
   return err
