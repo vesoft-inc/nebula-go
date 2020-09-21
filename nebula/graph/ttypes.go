@@ -1855,6 +1855,7 @@ func (p *RowValue) String() string {
 //  - ColumnNames
 //  - Rows
 //  - SpaceName
+//  - WarningMsg
 type ExecutionResponse struct {
   ErrorCode ErrorCode `thrift:"error_code,1,required" db:"error_code" json:"error_code"`
   LatencyInUs int32 `thrift:"latency_in_us,2,required" db:"latency_in_us" json:"latency_in_us"`
@@ -1862,6 +1863,7 @@ type ExecutionResponse struct {
   ColumnNames [][]byte `thrift:"column_names,4" db:"column_names" json:"column_names,omitempty"`
   Rows []*RowValue `thrift:"rows,5" db:"rows" json:"rows,omitempty"`
   SpaceName *string `thrift:"space_name,6" db:"space_name" json:"space_name,omitempty"`
+  WarningMsg *string `thrift:"warning_msg,7" db:"warning_msg" json:"warning_msg,omitempty"`
 }
 
 func NewExecutionResponse() *ExecutionResponse {
@@ -1900,6 +1902,13 @@ func (p *ExecutionResponse) GetSpaceName() string {
   }
 return *p.SpaceName
 }
+var ExecutionResponse_WarningMsg_DEFAULT string
+func (p *ExecutionResponse) GetWarningMsg() string {
+  if !p.IsSetWarningMsg() {
+    return ExecutionResponse_WarningMsg_DEFAULT
+  }
+return *p.WarningMsg
+}
 func (p *ExecutionResponse) IsSetErrorMsg() bool {
   return p.ErrorMsg != nil
 }
@@ -1914,6 +1923,10 @@ func (p *ExecutionResponse) IsSetRows() bool {
 
 func (p *ExecutionResponse) IsSetSpaceName() bool {
   return p.SpaceName != nil
+}
+
+func (p *ExecutionResponse) IsSetWarningMsg() bool {
+  return p.WarningMsg != nil
 }
 
 func (p *ExecutionResponse) Read(iprot thrift.Protocol) error {
@@ -1955,6 +1968,10 @@ func (p *ExecutionResponse) Read(iprot thrift.Protocol) error {
       }
     case 6:
       if err := p.ReadField6(iprot); err != nil {
+        return err
+      }
+    case 7:
+      if err := p.ReadField7(iprot); err != nil {
         return err
       }
     default:
@@ -2057,6 +2074,15 @@ func (p *ExecutionResponse)  ReadField6(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *ExecutionResponse)  ReadField7(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 7: ", err)
+} else {
+  p.WarningMsg = &v
+}
+  return nil
+}
+
 func (p *ExecutionResponse) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("ExecutionResponse"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
@@ -2066,6 +2092,7 @@ func (p *ExecutionResponse) Write(oprot thrift.Protocol) error {
   if err := p.writeField4(oprot); err != nil { return err }
   if err := p.writeField5(oprot); err != nil { return err }
   if err := p.writeField6(oprot); err != nil { return err }
+  if err := p.writeField7(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -2154,6 +2181,18 @@ func (p *ExecutionResponse) writeField6(oprot thrift.Protocol) (err error) {
     return thrift.PrependError(fmt.Sprintf("%T.space_name (6) field write error: ", p), err) }
     if err := oprot.WriteFieldEnd(); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T write field end error 6:space_name: ", p), err) }
+  }
+  return err
+}
+
+func (p *ExecutionResponse) writeField7(oprot thrift.Protocol) (err error) {
+  if p.IsSetWarningMsg() {
+    if err := oprot.WriteFieldBegin("warning_msg", thrift.STRING, 7); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 7:warning_msg: ", p), err) }
+    if err := oprot.WriteString(string(*p.WarningMsg)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.warning_msg (7) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 7:warning_msg: ", p), err) }
   }
   return err
 }
