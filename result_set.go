@@ -187,22 +187,22 @@ func genPathWrapper(path *nebula.Path) (*PathWrapper, error) {
 		}
 		relationshipList = append(relationshipList, relationship)
 
+		// Check segments
+		if len(segList) > 0 {
+			prevStart := string(segList[len(segList)-1].startNode.GetID())
+			prevEnd := string(segList[len(segList)-1].endNode.GetID())
+			nextStart := string(segStartNode.GetID())
+			nextEnd := string(segEndNode.GetID())
+			if prevStart != nextStart && prevStart != nextEnd && prevEnd != nextStart && prevEnd != nextEnd {
+				return nil, fmt.Errorf("Failed to generate PathWrapper, Path received is invalid")
+			}
+		}
 		segList = append(segList, segment{
 			startNode:    segStartNode,
 			relationship: relationship,
 			endNode:      segEndNode,
 		})
 		src = dst
-	}
-	// var temp []string
-	for i := 0; i < len(segList)-1; i++ {
-		prevStart := string(segList[i].startNode.GetID())
-		prevEnd := string(segList[i].endNode.GetID())
-		nextStart := string(segList[i+1].startNode.GetID())
-		nextEnd := string(segList[i+1].endNode.GetID())
-		if prevStart != nextStart && prevStart != nextEnd && prevEnd != nextStart && prevEnd != nextEnd {
-			return nil, fmt.Errorf("Failed to generate PathWrapper, Path received is invalid")
-		}
 	}
 	return &PathWrapper{
 		path:             path,
@@ -334,7 +334,7 @@ func (res ResultSet) GetErrorMsg() string {
 }
 
 func (res ResultSet) GetPlanDesc() *graph.PlanDescription {
-	if res.resp.Comment == nil {
+	if res.resp.PlanDesc == nil {
 		return graph.NewPlanDescription()
 	}
 	return res.resp.PlanDesc
@@ -348,7 +348,7 @@ func (res ResultSet) GetComment() string {
 }
 
 func (res ResultSet) IsEmpty() bool {
-	if res.resp.Data == nil || len(res.resp.Data.ColumnNames) == 0 || len(res.resp.Data.Rows) == 0 {
+	if res.resp.Data == nil || len(res.resp.Data.Rows) == 0 {
 		return true
 	}
 	return false
