@@ -10,6 +10,7 @@ import (
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
 	nebula0 "github.com/vesoft-inc/nebula-go/nebula"
+	meta1 "github.com/vesoft-inc/nebula-go/nebula/meta"
 
 )
 
@@ -20,6 +21,7 @@ var _ = sync.Mutex{}
 var _ = bytes.Equal
 
 var _ = nebula0.GoUnusedProtection__
+var _ = meta1.GoUnusedProtection__
 
 func init() {
 }

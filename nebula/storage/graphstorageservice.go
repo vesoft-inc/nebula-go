@@ -9,8 +9,8 @@ import (
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
-	nebula0 "github.com/vesoft-inc/nebula-go/v2/nebula"
-	meta1 "github.com/vesoft-inc/nebula-go/v2/nebula/meta"
+	nebula0 "github.com/vesoft-inc/nebula-go/nebula"
+	meta1 "github.com/vesoft-inc/nebula-go/nebula/meta"
 
 )
 
@@ -47,6 +47,12 @@ type GraphStorageService interface {
   // Parameters:
   //  - Req
   UpdateEdge(req *UpdateEdgeRequest) (r *UpdateResponse, err error)
+  // Parameters:
+  //  - Req
+  ScanVertex(req *ScanVertexRequest) (r *ScanVertexResponse, err error)
+  // Parameters:
+  //  - Req
+  ScanEdge(req *ScanEdgeRequest) (r *ScanEdgeResponse, err error)
   // Parameters:
   //  - Req
   GetUUID(req *GetUUIDReq) (r *GetUUIDResp, err error)
@@ -137,16 +143,16 @@ func (p *GraphStorageServiceClient) recvGetNeighbors() (value *GetNeighborsRespo
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error69 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error70 error
-    error70, err = error69.Read(iprot)
+    error72 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error73 error
+    error73, err = error72.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error70
+    err = error73
     return
   }
   if mTypeId != thrift.REPLY {
@@ -213,16 +219,16 @@ func (p *GraphStorageServiceClient) recvGetProps() (value *GetPropResponse, err 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error71 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error72 error
-    error72, err = error71.Read(iprot)
+    error74 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error75 error
+    error75, err = error74.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error72
+    err = error75
     return
   }
   if mTypeId != thrift.REPLY {
@@ -289,16 +295,16 @@ func (p *GraphStorageServiceClient) recvAddVertices() (value *ExecResponse, err 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error73 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error74 error
-    error74, err = error73.Read(iprot)
+    error76 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error77 error
+    error77, err = error76.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error74
+    err = error77
     return
   }
   if mTypeId != thrift.REPLY {
@@ -365,16 +371,16 @@ func (p *GraphStorageServiceClient) recvAddEdges() (value *ExecResponse, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error75 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error76 error
-    error76, err = error75.Read(iprot)
+    error78 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error79 error
+    error79, err = error78.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error76
+    err = error79
     return
   }
   if mTypeId != thrift.REPLY {
@@ -441,16 +447,16 @@ func (p *GraphStorageServiceClient) recvDeleteEdges() (value *ExecResponse, err 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error77 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error78 error
-    error78, err = error77.Read(iprot)
+    error80 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error81 error
+    error81, err = error80.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error78
+    err = error81
     return
   }
   if mTypeId != thrift.REPLY {
@@ -517,16 +523,16 @@ func (p *GraphStorageServiceClient) recvDeleteVertices() (value *ExecResponse, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error79 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error80 error
-    error80, err = error79.Read(iprot)
+    error82 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error83 error
+    error83, err = error82.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error80
+    err = error83
     return
   }
   if mTypeId != thrift.REPLY {
@@ -593,16 +599,16 @@ func (p *GraphStorageServiceClient) recvUpdateVertex() (value *UpdateResponse, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error81 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error82 error
-    error82, err = error81.Read(iprot)
+    error84 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error85 error
+    error85, err = error84.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error82
+    err = error85
     return
   }
   if mTypeId != thrift.REPLY {
@@ -669,16 +675,16 @@ func (p *GraphStorageServiceClient) recvUpdateEdge() (value *UpdateResponse, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error83 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error84 error
-    error84, err = error83.Read(iprot)
+    error86 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error87 error
+    error87, err = error86.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error84
+    err = error87
     return
   }
   if mTypeId != thrift.REPLY {
@@ -686,6 +692,158 @@ func (p *GraphStorageServiceClient) recvUpdateEdge() (value *UpdateResponse, err
     return
   }
   result := GraphStorageServiceUpdateEdgeResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceClient) ScanVertex(req *ScanVertexRequest) (r *ScanVertexResponse, err error) {
+  if err = p.sendScanVertex(req); err != nil { return }
+  return p.recvScanVertex()
+}
+
+func (p *GraphStorageServiceClient) sendScanVertex(req *ScanVertexRequest)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("scanVertex", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := GraphStorageServiceScanVertexArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *GraphStorageServiceClient) recvScanVertex() (value *ScanVertexResponse, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "scanVertex" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "scanVertex failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "scanVertex failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error88 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error89 error
+    error89, err = error88.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error89
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "scanVertex failed: invalid message type")
+    return
+  }
+  result := GraphStorageServiceScanVertexResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceClient) ScanEdge(req *ScanEdgeRequest) (r *ScanEdgeResponse, err error) {
+  if err = p.sendScanEdge(req); err != nil { return }
+  return p.recvScanEdge()
+}
+
+func (p *GraphStorageServiceClient) sendScanEdge(req *ScanEdgeRequest)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("scanEdge", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := GraphStorageServiceScanEdgeArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *GraphStorageServiceClient) recvScanEdge() (value *ScanEdgeResponse, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "scanEdge" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "scanEdge failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "scanEdge failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error90 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error91 error
+    error91, err = error90.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error91
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "scanEdge failed: invalid message type")
+    return
+  }
+  result := GraphStorageServiceScanEdgeResult{}
   if err = result.Read(iprot); err != nil {
     return
   }
@@ -745,16 +903,16 @@ func (p *GraphStorageServiceClient) recvGetUUID() (value *GetUUIDResp, err error
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error85 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error86 error
-    error86, err = error85.Read(iprot)
+    error92 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error93 error
+    error93, err = error92.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error86
+    err = error93
     return
   }
   if mTypeId != thrift.REPLY {
@@ -821,16 +979,16 @@ func (p *GraphStorageServiceClient) recvLookupIndex() (value *LookupIndexResp, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error87 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error88 error
-    error88, err = error87.Read(iprot)
+    error94 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error95 error
+    error95, err = error94.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error88
+    err = error95
     return
   }
   if mTypeId != thrift.REPLY {
@@ -897,16 +1055,16 @@ func (p *GraphStorageServiceClient) recvLookupAndTraverse() (value *GetNeighbors
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error89 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error90 error
-    error90, err = error89.Read(iprot)
+    error96 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error97 error
+    error97, err = error96.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error90
+    err = error97
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1005,16 +1163,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvGetNeighbors() (value *GetNeig
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error91 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error92 error
-    error92, err = error91.Read(iprot)
+    error98 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error99 error
+    error99, err = error98.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error92
+    err = error99
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1083,16 +1241,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvGetProps() (value *GetPropResp
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error93 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error94 error
-    error94, err = error93.Read(iprot)
+    error100 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error101 error
+    error101, err = error100.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error94
+    err = error101
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1161,16 +1319,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvAddVertices() (value *ExecResp
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error95 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error96 error
-    error96, err = error95.Read(iprot)
+    error102 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error103 error
+    error103, err = error102.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error96
+    err = error103
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1239,16 +1397,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvAddEdges() (value *ExecRespons
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error97 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error98 error
-    error98, err = error97.Read(iprot)
+    error104 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error105 error
+    error105, err = error104.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error98
+    err = error105
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1317,16 +1475,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvDeleteEdges() (value *ExecResp
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error99 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error100 error
-    error100, err = error99.Read(iprot)
+    error106 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error107 error
+    error107, err = error106.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error100
+    err = error107
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1395,16 +1553,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvDeleteVertices() (value *ExecR
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error101 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error102 error
-    error102, err = error101.Read(iprot)
+    error108 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error109 error
+    error109, err = error108.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error102
+    err = error109
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1473,16 +1631,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvUpdateVertex() (value *UpdateR
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error103 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error104 error
-    error104, err = error103.Read(iprot)
+    error110 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error111 error
+    error111, err = error110.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error104
+    err = error111
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1551,16 +1709,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvUpdateEdge() (value *UpdateRes
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error105 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error106 error
-    error106, err = error105.Read(iprot)
+    error112 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error113 error
+    error113, err = error112.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error106
+    err = error113
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1568,6 +1726,162 @@ func (p *GraphStorageServiceThreadsafeClient) recvUpdateEdge() (value *UpdateRes
     return
   }
   result := GraphStorageServiceUpdateEdgeResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceThreadsafeClient) ScanVertex(req *ScanVertexRequest) (r *ScanVertexResponse, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  if err = p.sendScanVertex(req); err != nil { return }
+  return p.recvScanVertex()
+}
+
+func (p *GraphStorageServiceThreadsafeClient) sendScanVertex(req *ScanVertexRequest)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("scanVertex", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := GraphStorageServiceScanVertexArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *GraphStorageServiceThreadsafeClient) recvScanVertex() (value *ScanVertexResponse, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "scanVertex" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "scanVertex failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "scanVertex failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error114 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error115 error
+    error115, err = error114.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error115
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "scanVertex failed: invalid message type")
+    return
+  }
+  result := GraphStorageServiceScanVertexResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceThreadsafeClient) ScanEdge(req *ScanEdgeRequest) (r *ScanEdgeResponse, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  if err = p.sendScanEdge(req); err != nil { return }
+  return p.recvScanEdge()
+}
+
+func (p *GraphStorageServiceThreadsafeClient) sendScanEdge(req *ScanEdgeRequest)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("scanEdge", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := GraphStorageServiceScanEdgeArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *GraphStorageServiceThreadsafeClient) recvScanEdge() (value *ScanEdgeResponse, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "scanEdge" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "scanEdge failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "scanEdge failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error116 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error117 error
+    error117, err = error116.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error117
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "scanEdge failed: invalid message type")
+    return
+  }
+  result := GraphStorageServiceScanEdgeResult{}
   if err = result.Read(iprot); err != nil {
     return
   }
@@ -1629,16 +1943,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvGetUUID() (value *GetUUIDResp,
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error107 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error108 error
-    error108, err = error107.Read(iprot)
+    error118 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error119 error
+    error119, err = error118.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error108
+    err = error119
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1707,16 +2021,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvLookupIndex() (value *LookupIn
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error109 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error110 error
-    error110, err = error109.Read(iprot)
+    error120 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error121 error
+    error121, err = error120.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error110
+    err = error121
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1785,16 +2099,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvLookupAndTraverse() (value *Ge
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error111 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error112 error
-    error112, err = error111.Read(iprot)
+    error122 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error123 error
+    error123, err = error122.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error112
+    err = error123
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1834,19 +2148,21 @@ func (p *GraphStorageServiceProcessor) ProcessorMap() map[string]thrift.Processo
 }
 
 func NewGraphStorageServiceProcessor(handler GraphStorageService) *GraphStorageServiceProcessor {
-  self113 := &GraphStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
-  self113.processorMap["getNeighbors"] = &graphStorageServiceProcessorGetNeighbors{handler:handler}
-  self113.processorMap["getProps"] = &graphStorageServiceProcessorGetProps{handler:handler}
-  self113.processorMap["addVertices"] = &graphStorageServiceProcessorAddVertices{handler:handler}
-  self113.processorMap["addEdges"] = &graphStorageServiceProcessorAddEdges{handler:handler}
-  self113.processorMap["deleteEdges"] = &graphStorageServiceProcessorDeleteEdges{handler:handler}
-  self113.processorMap["deleteVertices"] = &graphStorageServiceProcessorDeleteVertices{handler:handler}
-  self113.processorMap["updateVertex"] = &graphStorageServiceProcessorUpdateVertex{handler:handler}
-  self113.processorMap["updateEdge"] = &graphStorageServiceProcessorUpdateEdge{handler:handler}
-  self113.processorMap["getUUID"] = &graphStorageServiceProcessorGetUUID{handler:handler}
-  self113.processorMap["lookupIndex"] = &graphStorageServiceProcessorLookupIndex{handler:handler}
-  self113.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
-  return self113
+  self124 := &GraphStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
+  self124.processorMap["getNeighbors"] = &graphStorageServiceProcessorGetNeighbors{handler:handler}
+  self124.processorMap["getProps"] = &graphStorageServiceProcessorGetProps{handler:handler}
+  self124.processorMap["addVertices"] = &graphStorageServiceProcessorAddVertices{handler:handler}
+  self124.processorMap["addEdges"] = &graphStorageServiceProcessorAddEdges{handler:handler}
+  self124.processorMap["deleteEdges"] = &graphStorageServiceProcessorDeleteEdges{handler:handler}
+  self124.processorMap["deleteVertices"] = &graphStorageServiceProcessorDeleteVertices{handler:handler}
+  self124.processorMap["updateVertex"] = &graphStorageServiceProcessorUpdateVertex{handler:handler}
+  self124.processorMap["updateEdge"] = &graphStorageServiceProcessorUpdateEdge{handler:handler}
+  self124.processorMap["scanVertex"] = &graphStorageServiceProcessorScanVertex{handler:handler}
+  self124.processorMap["scanEdge"] = &graphStorageServiceProcessorScanEdge{handler:handler}
+  self124.processorMap["getUUID"] = &graphStorageServiceProcessorGetUUID{handler:handler}
+  self124.processorMap["lookupIndex"] = &graphStorageServiceProcessorLookupIndex{handler:handler}
+  self124.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
+  return self124
 }
 
 type graphStorageServiceProcessorGetNeighbors struct {
@@ -2241,6 +2557,106 @@ func (p *graphStorageServiceProcessorUpdateEdge) Run(argStruct thrift.Struct) (t
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing updateEdge: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type graphStorageServiceProcessorScanVertex struct {
+  handler GraphStorageService
+}
+
+func (p *graphStorageServiceProcessorScanVertex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := GraphStorageServiceScanVertexArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *graphStorageServiceProcessorScanVertex) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("scanVertex", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *graphStorageServiceProcessorScanVertex) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*GraphStorageServiceScanVertexArgs)
+  var result GraphStorageServiceScanVertexResult
+  if retval, err := p.handler.ScanVertex(args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing scanVertex: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type graphStorageServiceProcessorScanEdge struct {
+  handler GraphStorageService
+}
+
+func (p *graphStorageServiceProcessorScanEdge) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := GraphStorageServiceScanEdgeArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *graphStorageServiceProcessorScanEdge) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("scanEdge", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *graphStorageServiceProcessorScanEdge) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*GraphStorageServiceScanEdgeArgs)
+  var result GraphStorageServiceScanEdgeResult
+  if retval, err := p.handler.ScanEdge(args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing scanEdge: " + err.Error())
       return x, x
     }
   } else {
@@ -3856,6 +4272,370 @@ func (p *GraphStorageServiceUpdateEdgeResult) String() string {
     return "<nil>"
   }
   return fmt.Sprintf("GraphStorageServiceUpdateEdgeResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Req
+type GraphStorageServiceScanVertexArgs struct {
+  Req *ScanVertexRequest `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewGraphStorageServiceScanVertexArgs() *GraphStorageServiceScanVertexArgs {
+  return &GraphStorageServiceScanVertexArgs{}
+}
+
+var GraphStorageServiceScanVertexArgs_Req_DEFAULT *ScanVertexRequest
+func (p *GraphStorageServiceScanVertexArgs) GetReq() *ScanVertexRequest {
+  if !p.IsSetReq() {
+    return GraphStorageServiceScanVertexArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *GraphStorageServiceScanVertexArgs) IsSetReq() bool {
+  return p.Req != nil
+}
+
+func (p *GraphStorageServiceScanVertexArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceScanVertexArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewScanVertexRequest()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceScanVertexArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("scanVertex_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServiceScanVertexArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *GraphStorageServiceScanVertexArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("GraphStorageServiceScanVertexArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type GraphStorageServiceScanVertexResult struct {
+  Success *ScanVertexResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewGraphStorageServiceScanVertexResult() *GraphStorageServiceScanVertexResult {
+  return &GraphStorageServiceScanVertexResult{}
+}
+
+var GraphStorageServiceScanVertexResult_Success_DEFAULT *ScanVertexResponse
+func (p *GraphStorageServiceScanVertexResult) GetSuccess() *ScanVertexResponse {
+  if !p.IsSetSuccess() {
+    return GraphStorageServiceScanVertexResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *GraphStorageServiceScanVertexResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *GraphStorageServiceScanVertexResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceScanVertexResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewScanVertexResponse()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceScanVertexResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("scanVertex_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServiceScanVertexResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *GraphStorageServiceScanVertexResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("GraphStorageServiceScanVertexResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Req
+type GraphStorageServiceScanEdgeArgs struct {
+  Req *ScanEdgeRequest `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewGraphStorageServiceScanEdgeArgs() *GraphStorageServiceScanEdgeArgs {
+  return &GraphStorageServiceScanEdgeArgs{}
+}
+
+var GraphStorageServiceScanEdgeArgs_Req_DEFAULT *ScanEdgeRequest
+func (p *GraphStorageServiceScanEdgeArgs) GetReq() *ScanEdgeRequest {
+  if !p.IsSetReq() {
+    return GraphStorageServiceScanEdgeArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *GraphStorageServiceScanEdgeArgs) IsSetReq() bool {
+  return p.Req != nil
+}
+
+func (p *GraphStorageServiceScanEdgeArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceScanEdgeArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewScanEdgeRequest()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceScanEdgeArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("scanEdge_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServiceScanEdgeArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *GraphStorageServiceScanEdgeArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("GraphStorageServiceScanEdgeArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type GraphStorageServiceScanEdgeResult struct {
+  Success *ScanEdgeResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewGraphStorageServiceScanEdgeResult() *GraphStorageServiceScanEdgeResult {
+  return &GraphStorageServiceScanEdgeResult{}
+}
+
+var GraphStorageServiceScanEdgeResult_Success_DEFAULT *ScanEdgeResponse
+func (p *GraphStorageServiceScanEdgeResult) GetSuccess() *ScanEdgeResponse {
+  if !p.IsSetSuccess() {
+    return GraphStorageServiceScanEdgeResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *GraphStorageServiceScanEdgeResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *GraphStorageServiceScanEdgeResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceScanEdgeResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewScanEdgeResponse()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceScanEdgeResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("scanEdge_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServiceScanEdgeResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *GraphStorageServiceScanEdgeResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("GraphStorageServiceScanEdgeResult(%+v)", *p)
 }
 
 // Attributes:

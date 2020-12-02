@@ -14,16 +14,17 @@ import (
         "strconv"
         "strings"
         thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
-        "../../github.com/vesoft-inc/nebula-go/v2/nebula/storage"
+        "../../github.com/vesoft-inc/nebula-go/nebula/graph"
 )
 
 func Usage() {
   fmt.Fprintln(os.Stderr, "Usage of ", os.Args[0], " [-h host:port] [-u url] [-f[ramed]] function [arg1 [arg2...]]:")
   flag.PrintDefaults()
   fmt.Fprintln(os.Stderr, "\nFunctions:")
-  fmt.Fprintln(os.Stderr, "  KVGetResponse get(KVGetRequest req)")
-  fmt.Fprintln(os.Stderr, "  ExecResponse put(KVPutRequest req)")
-  fmt.Fprintln(os.Stderr, "  ExecResponse remove(KVRemoveRequest req)")
+  fmt.Fprintln(os.Stderr, "  AuthResponse authenticate(string username, string password)")
+  fmt.Fprintln(os.Stderr, "  void signout(i64 sessionId)")
+  fmt.Fprintln(os.Stderr, "  ExecutionResponse execute(i64 sessionId, string stmt)")
+  fmt.Fprintln(os.Stderr, "  string executeJson(i64 sessionId, string stmt)")
   fmt.Fprintln(os.Stderr)
   os.Exit(0)
 }
@@ -111,86 +112,69 @@ func main() {
     Usage()
     os.Exit(1)
   }
-  client := storage.NewGeneralStorageServiceClientFactory(trans, protocolFactory)
+  client := graph.NewGraphServiceClientFactory(trans, protocolFactory)
   if err := trans.Open(); err != nil {
     fmt.Fprintln(os.Stderr, "Error opening socket to ", host, ":", port, " ", err)
     os.Exit(1)
   }
   
   switch cmd {
-  case "get":
-    if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Get requires 1 args")
+  case "authenticate":
+    if flag.NArg() - 1 != 2 {
+      fmt.Fprintln(os.Stderr, "Authenticate requires 2 args")
       flag.Usage()
     }
-    arg347 := flag.Arg(1)
-    mbTrans348 := thrift.NewMemoryBufferLen(len(arg347))
-    defer mbTrans348.Close()
-    _, err349 := mbTrans348.WriteString(arg347)
-    if err349 != nil {
-      Usage()
-      return
-    }
-    factory350 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt351 := factory350.GetProtocol(mbTrans348)
-    argvalue0 := storage.NewKVGetRequest()
-    err352 := argvalue0.Read(jsProt351)
-    if err352 != nil {
-      Usage()
-      return
-    }
+    argvalue0 := []byte(flag.Arg(1))
     value0 := argvalue0
-    fmt.Print(client.Get(value0))
+    argvalue1 := []byte(flag.Arg(2))
+    value1 := argvalue1
+    fmt.Print(client.Authenticate(value0, value1))
     fmt.Print("\n")
     break
-  case "put":
+  case "signout":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Put requires 1 args")
+      fmt.Fprintln(os.Stderr, "Signout requires 1 args")
       flag.Usage()
     }
-    arg353 := flag.Arg(1)
-    mbTrans354 := thrift.NewMemoryBufferLen(len(arg353))
-    defer mbTrans354.Close()
-    _, err355 := mbTrans354.WriteString(arg353)
-    if err355 != nil {
-      Usage()
-      return
-    }
-    factory356 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt357 := factory356.GetProtocol(mbTrans354)
-    argvalue0 := storage.NewKVPutRequest()
-    err358 := argvalue0.Read(jsProt357)
-    if err358 != nil {
+    argvalue0, err25 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err25 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.Put(value0))
+    fmt.Print(client.Signout(value0))
     fmt.Print("\n")
     break
-  case "remove":
-    if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Remove requires 1 args")
+  case "execute":
+    if flag.NArg() - 1 != 2 {
+      fmt.Fprintln(os.Stderr, "Execute requires 2 args")
       flag.Usage()
     }
-    arg359 := flag.Arg(1)
-    mbTrans360 := thrift.NewMemoryBufferLen(len(arg359))
-    defer mbTrans360.Close()
-    _, err361 := mbTrans360.WriteString(arg359)
-    if err361 != nil {
-      Usage()
-      return
-    }
-    factory362 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt363 := factory362.GetProtocol(mbTrans360)
-    argvalue0 := storage.NewKVRemoveRequest()
-    err364 := argvalue0.Read(jsProt363)
-    if err364 != nil {
+    argvalue0, err26 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err26 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.Remove(value0))
+    argvalue1 := []byte(flag.Arg(2))
+    value1 := argvalue1
+    fmt.Print(client.Execute(value0, value1))
+    fmt.Print("\n")
+    break
+  case "executeJson":
+    if flag.NArg() - 1 != 2 {
+      fmt.Fprintln(os.Stderr, "ExecuteJson requires 2 args")
+      flag.Usage()
+    }
+    argvalue0, err28 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err28 != nil {
+      Usage()
+      return
+    }
+    value0 := argvalue0
+    argvalue1 := []byte(flag.Arg(2))
+    value1 := argvalue1
+    fmt.Print(client.ExecuteJson(value0, value1))
     fmt.Print("\n")
     break
   case "":

@@ -17,12 +17,7 @@ var _ = fmt.Printf
 var _ = sync.Mutex{}
 var _ = bytes.Equal
 
-var KInvalidValueType *ValueType
 
 func init() {
-KInvalidValueType = &ValueType{
-  Type:   0,
-}
-
 }
 
