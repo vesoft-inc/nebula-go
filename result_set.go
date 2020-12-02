@@ -9,6 +9,7 @@ package nebula
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/vesoft-inc/nebula-go/nebula"
@@ -44,6 +45,7 @@ type segment struct {
 }
 
 type PathWrapper struct {
+	path             *nebula.Path
 	nodeList         []*Node
 	relationshipList []*Relationship
 	segments         []segment
@@ -192,7 +194,18 @@ func genPathWrapper(path *nebula.Path) (*PathWrapper, error) {
 		})
 		src = dst
 	}
+	// var temp []string
+	for i := 0; i < len(segList)-1; i++ {
+		prevStart := string(segList[i].startNode.GetID())
+		prevEnd := string(segList[i].endNode.GetID())
+		nextStart := string(segList[i+1].startNode.GetID())
+		nextEnd := string(segList[i+1].endNode.GetID())
+		if prevStart != nextStart && prevStart != nextEnd && prevEnd != nextStart && prevEnd != nextEnd {
+			return nil, fmt.Errorf("Failed to generate PathWrapper, Path received is invalid")
+		}
+	}
 	return &PathWrapper{
+		path:             path,
 		nodeList:         nodeList,
 		relationshipList: relationshipList,
 		segments:         segList,
@@ -443,6 +456,31 @@ func (node Node) Values(tagName string) ([]*ValueWrapper, error) {
 	return propValList, nil
 }
 
+// Node format: ("VertexID" :tag1{k0: v0,k1: v1}:tag2{k2: v2})
+func (node Node) string() string {
+	var keyList []string
+	var kvStr []string
+	var tagStr []string
+	vertex := node.vertex
+	vid := vertex.GetVid()
+	for _, tag := range vertex.GetTags() {
+		kvs := tag.GetProps()
+		tagName := tag.GetName()
+		for k, _ := range kvs {
+			keyList = append(keyList, k)
+		}
+		sort.Strings(keyList)
+		for _, k := range keyList {
+			kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{kvs[k]}.String())
+			kvStr = append(kvStr, kvTemp)
+		}
+		tagStr = append(tagStr, fmt.Sprintf("%s{%s}", tagName, strings.Join(kvStr, ", ")))
+		keyList = nil
+		kvStr = nil
+	}
+	return fmt.Sprintf("(\"%s\" :%s)", vid, strings.Join(tagStr, " :"))
+}
+
 // Returns true if two nodes have same vid
 func (n1 Node) IsEqualTo(n2 *Node) bool {
 	return n1.GetID() == n2.GetID()
@@ -499,6 +537,24 @@ func (relationship Relationship) Values() []*ValueWrapper {
 	return values
 }
 
+// Relationship format: (src)-[:edge@ranking{props}]->(dst)
+func (relationship Relationship) string() string {
+	edge := relationship.edge
+	var keyList []string
+	var kvStr []string
+	for k, _ := range edge.Props {
+		keyList = append(keyList, k)
+	}
+	sort.Strings(keyList)
+	for _, k := range keyList {
+		kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{edge.Props[k]}.String())
+		kvStr = append(kvStr, kvTemp)
+	}
+
+	return fmt.Sprintf(`("%s")-[:%s@%d{%s}]->("%s")`,
+		string(edge.Src), string(edge.Name), edge.Ranking, fmt.Sprintf("%s", strings.Join(kvStr, ", ")), string(edge.Dst))
+}
+
 func (r1 Relationship) IsEqualTo(r2 *Relationship) bool {
 	if string(r1.edge.GetSrc()) == string(r2.edge.GetSrc()) && string(r1.edge.GetDst()) == string(r2.edge.GetDst()) &&
 		string(r1.edge.Name) == string(r2.edge.Name) && r1.edge.Ranking == r2.edge.Ranking {
@@ -553,6 +609,24 @@ func (path *PathWrapper) GetEndNode() (*Node, error) {
 		return nil, fmt.Errorf("Failed to get start node, no node in the path")
 	}
 	return path.segments[len(path.segments)-1].endNode, nil
+}
+
+// Path format: ("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking]->("VertexID3" :tag1{k0: v0,k1: v1})
+func (pathWrap *PathWrapper) string() string {
+	path := pathWrap.path
+	src := path.Src
+	steps := path.Steps
+	resStr := ValueWrapper{&nebula.Value{VVal: src}}.String()
+	for _, step := range steps {
+		if step.Type > 0 {
+			resStr = resStr + fmt.Sprintf("-[:%s@%d]->%s", string(step.Name),
+				step.Ranking, ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
+		} else {
+			resStr = resStr + fmt.Sprintf("<-[:%s@%d]-%s", string(step.Name),
+				step.Ranking, ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
+		}
+	}
+	return resStr
 }
 
 func (p1 *PathWrapper) IsEqualTo(p2 *PathWrapper) bool {

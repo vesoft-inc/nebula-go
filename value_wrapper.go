@@ -276,60 +276,18 @@ func (valWarp ValueWrapper) String() string {
 			dateTime.Year, dateTime.Month, dateTime.Day,
 			dateTime.Hour, dateTime.Minute, dateTime.Sec, dateTime.Microsec)
 	} else if value.IsSetVVal() { // Vertex format: ("VertexID" :tag1{k0: v0,k1: v1}:tag2{k2: v2})
-		var keyList []string
-		var kvStr []string
-		var tagStr []string
 		vertex := value.GetVVal()
-		vid := vertex.GetVid()
-		for _, tag := range vertex.GetTags() {
-			kvs := tag.GetProps()
-			tagName := tag.GetName()
-			for k, _ := range kvs {
-				keyList = append(keyList, k)
-			}
-			sort.Strings(keyList)
-			for _, k := range keyList {
-				kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{kvs[k]}.String())
-				kvStr = append(kvStr, kvTemp)
-			}
-			tagStr = append(tagStr, fmt.Sprintf("%s{%s}", tagName, strings.Join(kvStr, ", ")))
-			keyList = nil
-			kvStr = nil
-		}
-		return fmt.Sprintf("(\"%s\" :%s)", vid, strings.Join(tagStr, " :"))
+		node, _ := genNode(vertex)
+		return node.string()
 	} else if value.IsSetEVal() { // Edge format: (src)-[:edge@ranking{props}]->(dst)
 		edge := value.GetEVal()
-		var keyList []string
-		var kvStr []string
-		for k, _ := range edge.Props {
-			keyList = append(keyList, k)
-		}
-		sort.Strings(keyList)
-		for _, k := range keyList {
-			kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{edge.Props[k]}.String())
-			kvStr = append(kvStr, kvTemp)
-		}
-		if edge.Type > 0 {
-			return fmt.Sprintf(`("%s")-[:%s@%d{%s}]->("%s")`,
-				string(edge.Src), string(edge.Name), edge.Ranking, fmt.Sprintf("%s", strings.Join(kvStr, ", ")), string(edge.Dst))
-		}
-		return fmt.Sprintf(`("%s")<-[:%s@%d{%s}]-("%s")`,
-			string(edge.Src), string(edge.Name), edge.Ranking, fmt.Sprintf("%s", strings.Join(kvStr, ", ")), string(edge.Dst))
-	} else if value.IsSetPVal() { // Path format: (src)-[:TypeName@ranking]->(dst)-[:TypeName@ranking]->(dst)
+		relationship, _ := genRelationship(edge)
+		return relationship.string()
+	} else if value.IsSetPVal() {
+		// Path format: ("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking]->("VertexID3" :tag1{k0: v0,k1: v1})
 		path := value.GetPVal()
-		src := path.Src
-		steps := path.Steps
-		resStr := ValueWrapper{&nebula.Value{VVal: src}}.String()
-		for _, step := range steps {
-			if step.Type > 0 {
-				resStr = resStr + fmt.Sprintf("-[:%s@%d]->%s", string(step.Name),
-					step.Ranking, ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
-			} else {
-				resStr = resStr + fmt.Sprintf("<-[:%s@%d]-%s", string(step.Name),
-					step.Ranking, ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
-			}
-		}
-		return resStr
+		pathWrap, _ := genPathWrapper(path)
+		return pathWrap.string()
 	} else if value.IsSetLVal() { // List
 		lval := value.GetLVal()
 		var strs []string
