@@ -1,37 +1,29 @@
 name: test
 on:
-  schedule:
-    - cron: '0 23 * * *'
-  pull_request:
-    paths-ignore:
-      - '.gitignore'
-      - 'README.md'
   push:
-    paths-ignore:
-      - '.gitignore'
-      - 'README.md'
-jobs:
-  build:
-    runs-on: ubuntu-18.04
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  go-client:
+    runs-on: ubuntu-latest
     steps:
-    - name: Set up Go
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.13
-      id: go
-    - name: checkout nebula-go
-      uses: actions/checkout@v2
-    - name: Get dependencies
-      run: |
-        go get -v -t -d ./...
-    - name: Setup nebula
-      run: |
-        git clone https://github.com/vesoft-inc/nebula-docker-compose.git
-        cd nebula-docker-compose/
-        docker-compose pull
-        docker-compose up -d
-        sleep 5
-    - name: test nebual-go 
-      run: |
-        go test -v
+      - uses: actions/checkout@v2
+      - name: Setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: '1.13'
+      - name: Test with GO test
+        run: |
+          mkdir tmp
+          pushd tmp
+          git clone -b v2-preview https://github.com/vesoft-inc/nebula-docker-compose.git
+          pushd nebula-docker-compose/
+          sed -i '0,/\- 3699/s/\- 3699/\- "3710:3699"/' docker-compose.yaml
+          sed -i '0,/\- 3699/s/\- 3699/\- "3701:3699"/' docker-compose.yaml
+          docker-compose up -d
+          sleep 10
+          popd
+          popd
+          go test -v -race
         
