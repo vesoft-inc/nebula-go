@@ -63,7 +63,7 @@ const (
 	ErrorCode_E_SESSION_TIMEOUT       ErrorCode = ErrorCode(graph.ErrorCode_E_SESSION_TIMEOUT)
 	ErrorCode_E_SYNTAX_ERROR          ErrorCode = ErrorCode(graph.ErrorCode_E_SYNTAX_ERROR)
 	ErrorCode_E_EXECUTION_ERROR       ErrorCode = ErrorCode(graph.ErrorCode_E_EXECUTION_ERROR)
-	ErrorCode_E_STATEMENT_EMTPY       ErrorCode = ErrorCode(graph.ErrorCode_E_STATEMENT_EMTPY)
+	ErrorCode_E_STATEMENT_EMPTY       ErrorCode = ErrorCode(graph.ErrorCode_E_STATEMENT_EMPTY)
 	ErrorCode_E_USER_NOT_FOUND        ErrorCode = ErrorCode(graph.ErrorCode_E_USER_NOT_FOUND)
 	ErrorCode_E_BAD_PERMISSION        ErrorCode = ErrorCode(graph.ErrorCode_E_BAD_PERMISSION)
 	ErrorCode_E_SEMANTIC_ERROR        ErrorCode = ErrorCode(graph.ErrorCode_E_SEMANTIC_ERROR)
@@ -307,7 +307,7 @@ func (res ResultSet) GetColNames() []string {
 // -6   ErrorCode_E_SESSION_TIMEOUT
 // -7   ErrorCode_E_SYNTAX_ERROR
 // -8   ErrorCode_E_EXECUTION_ERROR
-// -9   ErrorCode_E_STATEMENT_EMTPY
+// -9   ErrorCode_E_STATEMENT_EMPTY
 // -10  ErrorCode_E_USER_NOT_FOUND
 // -11  ErrorCode_E_BAD_PERMISSION
 // -12  ErrorCode_E_SEMANTIC_ERROR
@@ -320,7 +320,7 @@ func (res ResultSet) GetLatency() int32 {
 }
 
 func (res ResultSet) GetSpaceName() string {
-	if res.resp.Comment == nil {
+	if res.resp.SpaceName == nil {
 		return ""
 	}
 	return string(res.resp.SpaceName)
@@ -333,10 +333,11 @@ func (res ResultSet) GetErrorMsg() string {
 	return string(res.resp.ErrorMsg)
 }
 
+func (res ResultSet) HasPlanDesc() bool {
+	return res.resp.PlanDesc != nil
+}
+
 func (res ResultSet) GetPlanDesc() *graph.PlanDescription {
-	if res.resp.PlanDesc == nil {
-		return graph.NewPlanDescription()
-	}
 	return res.resp.PlanDesc
 }
 

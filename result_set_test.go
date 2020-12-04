@@ -343,6 +343,22 @@ func TestPathWrapper(t *testing.T) {
 }
 
 func TestResultSet(t *testing.T) {
+	respWithNil := &graph.ExecutionResponse{
+		graph.ErrorCode_E_STATEMENT_EMPTY,
+		1000,
+		nil,
+		nil,
+		nil,
+		nil,
+		nil}
+	resultSetWithNil := genResultSet(respWithNil)
+	assert.Equal(t, ErrorCode_E_STATEMENT_EMPTY, resultSetWithNil.GetErrorCode())
+	assert.Equal(t, int32(1000), resultSetWithNil.GetLatency())
+	assert.Equal(t, "", resultSetWithNil.GetErrorMsg())
+	assert.Equal(t, "", resultSetWithNil.GetSpaceName())
+	assert.Equal(t, "", resultSetWithNil.GetComment())
+	assert.Equal(t, false, resultSetWithNil.IsSucceed())
+
 	resp := &graph.ExecutionResponse{
 		graph.ErrorCode_SUCCEEDED,
 		1000,
