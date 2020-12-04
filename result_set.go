@@ -269,19 +269,19 @@ func (res ResultSet) GetRowValuesByIndex(index int) (*Record, error) {
 }
 
 // Returns the number of total rows
-func (res ResultSet) GetRowSize() (int, error) {
+func (res ResultSet) GetRowSize() int {
 	if res.resp.Data == nil {
-		return -1, fmt.Errorf("Failed to get row size, DataSet is empty")
+		return 0
 	}
-	return len(res.resp.Data.Rows), nil
+	return len(res.resp.Data.Rows)
 }
 
 // Returns the number of total columns
-func (res ResultSet) GetColSize() (int, error) {
+func (res ResultSet) GetColSize() int {
 	if res.resp.Data == nil {
-		return -1, fmt.Errorf("Failed to get column size, DataSet is empty")
+		return 0
 	}
-	return len(res.resp.Data.ColumnNames), nil
+	return len(res.resp.Data.ColumnNames)
 }
 
 // Returns all rows
