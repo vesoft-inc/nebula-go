@@ -320,7 +320,7 @@ func (res ResultSet) GetLatency() int32 {
 }
 
 func (res ResultSet) GetSpaceName() string {
-	if res.resp.Comment == nil {
+	if res.resp.SpaceName == nil {
 		return ""
 	}
 	return string(res.resp.SpaceName)
@@ -333,10 +333,11 @@ func (res ResultSet) GetErrorMsg() string {
 	return string(res.resp.ErrorMsg)
 }
 
+func (res ResultSet) HasGetPlanDesc() bool {
+	return res.resp.PlanDesc != nil
+}
+
 func (res ResultSet) GetPlanDesc() *graph.PlanDescription {
-	if res.resp.PlanDesc == nil {
-		return graph.NewPlanDescription()
-	}
 	return res.resp.PlanDesc
 }
 
