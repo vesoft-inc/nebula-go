@@ -517,14 +517,23 @@ func JobStatusPtr(v JobStatus) *JobStatus { return &v }
 type ListHostType int64
 const (
   ListHostType_ALLOC ListHostType = 0
+  ListHostType_GRAPH ListHostType = 1
+  ListHostType_META ListHostType = 2
+  ListHostType_STORAGE ListHostType = 3
 )
 
 var ListHostTypeToName = map[ListHostType]string {
   ListHostType_ALLOC: "ALLOC",
+  ListHostType_GRAPH: "GRAPH",
+  ListHostType_META: "META",
+  ListHostType_STORAGE: "STORAGE",
 }
 
 var ListHostTypeToValue = map[string]ListHostType {
   "ALLOC": ListHostType_ALLOC,
+  "GRAPH": ListHostType_GRAPH,
+  "META": ListHostType_META,
+  "STORAGE": ListHostType_STORAGE,
 }
 
 func (p ListHostType) String() string {
@@ -8138,10 +8147,8 @@ func (p *ListEdgesResp) String() string {
 
 // Attributes:
 //  - Type
-//  - Role
 type ListHostsReq struct {
   Type ListHostType `thrift:"type,1" db:"type" json:"type"`
-  Role *HostRole `thrift:"role,2" db:"role" json:"role,omitempty"`
 }
 
 func NewListHostsReq() *ListHostsReq {
@@ -8152,17 +8159,6 @@ func NewListHostsReq() *ListHostsReq {
 func (p *ListHostsReq) GetType() ListHostType {
   return p.Type
 }
-var ListHostsReq_Role_DEFAULT HostRole
-func (p *ListHostsReq) GetRole() HostRole {
-  if !p.IsSetRole() {
-    return ListHostsReq_Role_DEFAULT
-  }
-return *p.Role
-}
-func (p *ListHostsReq) IsSetRole() bool {
-  return p.Role != nil
-}
-
 func (p *ListHostsReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -8178,10 +8174,6 @@ func (p *ListHostsReq) Read(iprot thrift.Protocol) error {
     switch fieldId {
     case 1:
       if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    case 2:
-      if err := p.ReadField2(iprot); err != nil {
         return err
       }
     default:
@@ -8209,21 +8201,10 @@ func (p *ListHostsReq)  ReadField1(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *ListHostsReq)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := HostRole(v)
-  p.Role = &temp
-}
-  return nil
-}
-
 func (p *ListHostsReq) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("ListHostsReq"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
-  if err := p.writeField2(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -8238,18 +8219,6 @@ func (p *ListHostsReq) writeField1(oprot thrift.Protocol) (err error) {
   return thrift.PrependError(fmt.Sprintf("%T.type (1) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 1:type: ", p), err) }
-  return err
-}
-
-func (p *ListHostsReq) writeField2(oprot thrift.Protocol) (err error) {
-  if p.IsSetRole() {
-    if err := oprot.WriteFieldBegin("role", thrift.I32, 2); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:role: ", p), err) }
-    if err := oprot.WriteI32(int32(*p.Role)); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T.role (2) field write error: ", p), err) }
-    if err := oprot.WriteFieldEnd(); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field end error 2:role: ", p), err) }
-  }
   return err
 }
 

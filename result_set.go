@@ -333,7 +333,7 @@ func (res ResultSet) GetErrorMsg() string {
 	return string(res.resp.ErrorMsg)
 }
 
-func (res ResultSet) HasGetPlanDesc() bool {
+func (res ResultSet) HasPlanDesc() bool {
 	return res.resp.PlanDesc != nil
 }
 
