@@ -33,7 +33,7 @@ const (
   ErrorCode_E_SESSION_TIMEOUT ErrorCode = -6
   ErrorCode_E_SYNTAX_ERROR ErrorCode = -7
   ErrorCode_E_EXECUTION_ERROR ErrorCode = -8
-  ErrorCode_E_STATEMENT_EMTPY ErrorCode = -9
+  ErrorCode_E_STATEMENT_EMPTY ErrorCode = -9
   ErrorCode_E_USER_NOT_FOUND ErrorCode = -10
   ErrorCode_E_BAD_PERMISSION ErrorCode = -11
   ErrorCode_E_SEMANTIC_ERROR ErrorCode = -12
@@ -49,7 +49,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_SESSION_TIMEOUT: "E_SESSION_TIMEOUT",
   ErrorCode_E_SYNTAX_ERROR: "E_SYNTAX_ERROR",
   ErrorCode_E_EXECUTION_ERROR: "E_EXECUTION_ERROR",
-  ErrorCode_E_STATEMENT_EMTPY: "E_STATEMENT_EMTPY",
+  ErrorCode_E_STATEMENT_EMPTY: "E_STATEMENT_EMPTY",
   ErrorCode_E_USER_NOT_FOUND: "E_USER_NOT_FOUND",
   ErrorCode_E_BAD_PERMISSION: "E_BAD_PERMISSION",
   ErrorCode_E_SEMANTIC_ERROR: "E_SEMANTIC_ERROR",
@@ -65,7 +65,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_SESSION_TIMEOUT": ErrorCode_E_SESSION_TIMEOUT,
   "E_SYNTAX_ERROR": ErrorCode_E_SYNTAX_ERROR,
   "E_EXECUTION_ERROR": ErrorCode_E_EXECUTION_ERROR,
-  "E_STATEMENT_EMTPY": ErrorCode_E_STATEMENT_EMTPY,
+  "E_STATEMENT_EMPTY": ErrorCode_E_STATEMENT_EMPTY,
   "E_USER_NOT_FOUND": ErrorCode_E_USER_NOT_FOUND,
   "E_BAD_PERMISSION": ErrorCode_E_BAD_PERMISSION,
   "E_SEMANTIC_ERROR": ErrorCode_E_SEMANTIC_ERROR,
