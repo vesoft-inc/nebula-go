@@ -376,14 +376,8 @@ func TestResultSet(t *testing.T) {
 	assert.Equal(t, "test_comment", resultSet.GetComment())
 	assert.Equal(t, true, resultSet.IsSucceed())
 
-	rowSize, err := resultSet.GetRowSize()
-	if err != nil {
-		t.Errorf(err.Error())
-	}
-	colSize, err := resultSet.GetColSize()
-	if err != nil {
-		t.Errorf(err.Error())
-	}
+	rowSize := resultSet.GetRowSize()
+	colSize := resultSet.GetColSize()
 	assert.Equal(t, 1, rowSize)
 	assert.Equal(t, 5, colSize)
 	assert.Equal(t, false, resultSet.IsEmpty())
