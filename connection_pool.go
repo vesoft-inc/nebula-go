@@ -4,7 +4,7 @@
  * attached with Common Clause Condition 1.0, found in the LICENSES directory.
  */
 
-package nebula
+package nebula_go
 
 import (
 	"container/list"
@@ -26,33 +26,34 @@ type ConnectionPool struct {
 }
 
 func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*ConnectionPool, error) {
-	newPool := &ConnectionPool{}
-	err := newPool.initPool(addresses, conf, log)
+	// Process domain to IP
+	convAddress, err := DomainToIP(addresses)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to find IP, error: %s ", err.Error())
+	}
+
+	// Check input
+	if len(convAddress) == 0 {
+		return nil, fmt.Errorf("Failed to initialize connection pool: illegal address input")
+	}
+
+	// Check config
+	conf.validateConf(log)
+
+	newPool := &ConnectionPool{
+		conf:      conf,
+		log:       log,
+		addresses: convAddress,
+		hostIndex: 0,
+	}
+	err = newPool.initPool(addresses)
 	if err != nil {
 		return nil, err
 	}
 	return newPool, nil
 }
 
-func (pool *ConnectionPool) initPool(addresses []HostAddress, conf PoolConfig, log Logger) error {
-	// Process domain to IP
-	convAddress, err := DomainToIP(addresses)
-	if err != nil {
-		return fmt.Errorf("Failed to find IP, error: %s ", err.Error())
-	}
-
-	pool.addresses = convAddress
-	pool.conf = conf
-	pool.hostIndex = 0
-	pool.log = log
-
-	// Check config
-	pool.conf.validateConf(pool.log)
-	// Check input
-	if len(addresses) == 0 {
-		return fmt.Errorf("Failed to initialize connection pool: illegal address input")
-	}
-
+func (pool *ConnectionPool) initPool(addresses []HostAddress) error {
 	for i := 0; i < pool.conf.MinConnPoolSize; i++ {
 		// Simple round-robin
 		newConn := newConnection(pool.addresses[i%len(addresses)])
@@ -122,15 +123,14 @@ func (pool *ConnectionPool) getIdleConn() (*connection, error) {
 		var newEle *list.Element = nil
 		for ele := pool.idleConnectionQueue.Front(); ele != nil; ele = ele.Next() {
 			// Check if connection is valid
-			if res := ele.Value.(*connection).ping(); res == true {
+			if res := ele.Value.(*connection).ping(); res {
 				newConn = ele.Value.(*connection)
 				newEle = ele
 				break
 			}
 		}
 		if newConn == nil {
-			newConn, err := pool.createConnection()
-			return newConn, err
+			return pool.createConnection()
 		}
 		// Remove new connection from idle and add to active if found
 		pool.idleConnectionQueue.Remove(newEle)
@@ -140,8 +140,8 @@ func (pool *ConnectionPool) getIdleConn() (*connection, error) {
 
 	// Create a new connection if there is no idle connection and total connection < pool max size
 	newConn, err := pool.createConnection()
-	return newConn, err
 	// TODO: If no idle avaliable, wait for timeout and reconnect
+	return newConn, err
 }
 
 // Release connection to pool
@@ -157,11 +157,10 @@ func (pool *ConnectionPool) release(conn *connection) {
 func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error {
 	newConn := newConnection(host)
 	// Open connection to host
-	err := newConn.open(newConn.severAddress, timeout)
-	if err != nil {
+	if err := newConn.open(newConn.severAddress, timeout); err != nil {
 		return err
 	}
-	defer newConn.close()
+	newConn.close()
 	return nil
 }
 

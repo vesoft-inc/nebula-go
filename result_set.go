@@ -4,7 +4,7 @@
  * attached with Common Clause Condition 1.0, found in the LICENSES directory.
  */
 
-package nebula
+package nebula_go
 
 import (
 	"encoding/json"

@@ -4,7 +4,7 @@
  * attached with Common Clause Condition 1.0, found in the LICENSES directory.
  */
 
-package nebula
+package nebula_go
 
 import (
 	"fmt"
@@ -44,7 +44,7 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error
 	if err = cn.graph.Transport.Open(); err != nil {
 		return fmt.Errorf("Failed to open transport, error: %s", err.Error())
 	}
-	if cn.graph.Transport.IsOpen() == false {
+	if !cn.graph.Transport.IsOpen() {
 		return fmt.Errorf("Transport is off")
 	}
 	return nil
@@ -75,19 +75,13 @@ func (cn *connection) execute(sessionID int64, stmt string) (*graph.ExecutionRes
 // Check connection to host address
 func (cn *connection) ping() bool {
 	_, err := cn.execute(1, "YIELD 1")
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 // Sign out and release seesin ID
 func (cn *connection) signOut(sessionID int64) error {
 	// Release session ID to graphd
-	if err := cn.graph.Signout(sessionID); err != nil {
-		return err
-	}
-	return nil
+	return cn.graph.Signout(sessionID)
 }
 
 // Close transport
