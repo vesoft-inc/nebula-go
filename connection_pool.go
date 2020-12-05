@@ -46,17 +46,16 @@ func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*C
 		addresses: convAddress,
 		hostIndex: 0,
 	}
-	err = newPool.initPool(addresses)
-	if err != nil {
+	if err = newPool.initPool(); err != nil {
 		return nil, err
 	}
 	return newPool, nil
 }
 
-func (pool *ConnectionPool) initPool(addresses []HostAddress) error {
+func (pool *ConnectionPool) initPool() error {
 	for i := 0; i < pool.conf.MinConnPoolSize; i++ {
 		// Simple round-robin
-		newConn := newConnection(pool.addresses[i%len(addresses)])
+		newConn := newConnection(pool.addresses[i%len(pool.addresses)])
 
 		// Open connection to host
 		err := newConn.open(newConn.severAddress, pool.conf.TimeOut)
