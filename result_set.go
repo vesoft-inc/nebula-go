@@ -384,12 +384,12 @@ func (record Record) GetValueByColName(colName string) (*ValueWrapper, error) {
 	return record._record[index], nil
 }
 
-func (record Record) PrintRow() {
+func (record Record) String() string {
 	var strList []string
 	for _, val := range record._record {
 		strList = append(strList, val.String())
 	}
-	fmt.Printf(strings.Join(strList, ", "))
+	return strings.Join(strList, ", ")
 }
 
 func (record Record) hasColName(colName string) bool {
