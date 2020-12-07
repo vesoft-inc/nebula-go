@@ -66,7 +66,7 @@ func main() {
 			// Excute a query
 			resultSet, err := session.Execute(createSchema)
 			if err != nil {
-				fmt.Printf(err.Error())
+				fmt.Print(err.Error())
 				return
 			}
 			checkResultSet(createSchema, resultSet)
@@ -83,7 +83,7 @@ func main() {
 			// Insert multiple vertexes
 			resultSet, err := session.Execute(insertVertexes)
 			if err != nil {
-				fmt.Printf(err.Error())
+				fmt.Print(err.Error())
 				return
 			}
 			checkResultSet(insertVertexes, resultSet)
@@ -100,7 +100,7 @@ func main() {
 
 			resultSet, err := session.Execute(insertEdges)
 			if err != nil {
-				fmt.Printf(err.Error())
+				fmt.Print(err.Error())
 				return
 			}
 			checkResultSet(insertEdges, resultSet)
@@ -111,15 +111,14 @@ func main() {
 			// Send query
 			resultSet, err := session.Execute(query)
 			if err != nil {
-				fmt.Printf(err.Error())
+				fmt.Print(err.Error())
 				return
 			}
 			checkResultSet(query, resultSet)
 
 			// Get all column names from the resultSet
 			colNames := resultSet.GetColNames()
-			fmt.Printf("column names: " + strings.Join(colNames, ", "))
-			fmt.Print("\n")
+			fmt.Printf("column names: %s\n", strings.Join(colNames, ", "))
 
 			// Get a row from resultSet
 			record, err := resultSet.GetRowValuesByIndex(0)
@@ -127,9 +126,7 @@ func main() {
 				log.Error(err.Error())
 			}
 			// Print whole row
-			fmt.Print("row elements: ")
-			record.PrintRow()
-			fmt.Print("\n")
+			fmt.Printf("row elements: %s\n", record.String())
 			// Get a value in the row by column index
 			valueWrapper, err := record.GetValueByIndex(0)
 			if err != nil {
