@@ -43,7 +43,7 @@ type StorageAdminService interface {
   WaitingForCatchUpData(req *CatchUpDataReq) (r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  CreateCheckpoint(req *CreateCPRequest) (r *AdminExecResp, err error)
+  CreateCheckpoint(req *CreateCPRequest) (r *CreateCPResp, err error)
   // Parameters:
   //  - Req
   DropCheckpoint(req *DropCPRequest) (r *AdminExecResp, err error)
@@ -558,7 +558,7 @@ func (p *StorageAdminServiceClient) recvWaitingForCatchUpData() (value *AdminExe
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) CreateCheckpoint(req *CreateCPRequest) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceClient) CreateCheckpoint(req *CreateCPRequest) (r *CreateCPResp, err error) {
   if err = p.sendCreateCheckpoint(req); err != nil { return }
   return p.recvCreateCheckpoint()
 }
@@ -586,7 +586,7 @@ func (p *StorageAdminServiceClient) sendCreateCheckpoint(req *CreateCPRequest)(e
 }
 
 
-func (p *StorageAdminServiceClient) recvCreateCheckpoint() (value *AdminExecResp, err error) {
+func (p *StorageAdminServiceClient) recvCreateCheckpoint() (value *CreateCPResp, err error) {
   iprot := p.InputProtocol
   if iprot == nil {
     iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -1740,7 +1740,7 @@ func (p *StorageAdminServiceThreadsafeClient) recvWaitingForCatchUpData() (value
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) CreateCheckpoint(req *CreateCPRequest) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) CreateCheckpoint(req *CreateCPRequest) (r *CreateCPResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
   if err = p.sendCreateCheckpoint(req); err != nil { return }
@@ -1770,7 +1770,7 @@ func (p *StorageAdminServiceThreadsafeClient) sendCreateCheckpoint(req *CreateCP
 }
 
 
-func (p *StorageAdminServiceThreadsafeClient) recvCreateCheckpoint() (value *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) recvCreateCheckpoint() (value *CreateCPResp, err error) {
   iprot := p.InputProtocol
   if iprot == nil {
     iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -4419,15 +4419,15 @@ func (p *StorageAdminServiceCreateCheckpointArgs) String() string {
 // Attributes:
 //  - Success
 type StorageAdminServiceCreateCheckpointResult struct {
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *CreateCPResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceCreateCheckpointResult() *StorageAdminServiceCreateCheckpointResult {
   return &StorageAdminServiceCreateCheckpointResult{}
 }
 
-var StorageAdminServiceCreateCheckpointResult_Success_DEFAULT *AdminExecResp
-func (p *StorageAdminServiceCreateCheckpointResult) GetSuccess() *AdminExecResp {
+var StorageAdminServiceCreateCheckpointResult_Success_DEFAULT *CreateCPResp
+func (p *StorageAdminServiceCreateCheckpointResult) GetSuccess() *CreateCPResp {
   if !p.IsSetSuccess() {
     return StorageAdminServiceCreateCheckpointResult_Success_DEFAULT
   }
@@ -4470,7 +4470,7 @@ func (p *StorageAdminServiceCreateCheckpointResult) Read(iprot thrift.Protocol) 
 }
 
 func (p *StorageAdminServiceCreateCheckpointResult)  ReadField0(iprot thrift.Protocol) error {
-  p.Success = NewAdminExecResp()
+  p.Success = NewCreateCPResp()
   if err := p.Success.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
   }

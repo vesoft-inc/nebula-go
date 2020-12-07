@@ -27,7 +27,7 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "  AdminExecResp removePart(RemovePartReq req)")
   fmt.Fprintln(os.Stderr, "  AdminExecResp memberChange(MemberChangeReq req)")
   fmt.Fprintln(os.Stderr, "  AdminExecResp waitingForCatchUpData(CatchUpDataReq req)")
-  fmt.Fprintln(os.Stderr, "  AdminExecResp createCheckpoint(CreateCPRequest req)")
+  fmt.Fprintln(os.Stderr, "  CreateCPResp createCheckpoint(CreateCPRequest req)")
   fmt.Fprintln(os.Stderr, "  AdminExecResp dropCheckpoint(DropCPRequest req)")
   fmt.Fprintln(os.Stderr, "  AdminExecResp blockingWrites(BlockingSignRequest req)")
   fmt.Fprintln(os.Stderr, "  AdminExecResp rebuildTagIndex(RebuildIndexRequest req)")
