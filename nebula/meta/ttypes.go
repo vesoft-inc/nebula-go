@@ -63,6 +63,10 @@ const (
   ErrorCode_E_SAVE_JOB_FAILURE ErrorCode = -57
   ErrorCode_E_BALANCER_FAILURE ErrorCode = -58
   ErrorCode_E_JOB_NOT_FINISHED ErrorCode = -59
+  ErrorCode_E_BACKUP_FAILURE ErrorCode = -60
+  ErrorCode_E_BACKUP_BUILDING_INDEX ErrorCode = -61
+  ErrorCode_E_BACKUP_SPACE_NOT_FOUND ErrorCode = -62
+  ErrorCode_E_RESTORE_FAILURE ErrorCode = -70
   ErrorCode_E_UNKNOWN ErrorCode = -99
 )
 
@@ -106,6 +110,10 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_SAVE_JOB_FAILURE: "E_SAVE_JOB_FAILURE",
   ErrorCode_E_BALANCER_FAILURE: "E_BALANCER_FAILURE",
   ErrorCode_E_JOB_NOT_FINISHED: "E_JOB_NOT_FINISHED",
+  ErrorCode_E_BACKUP_FAILURE: "E_BACKUP_FAILURE",
+  ErrorCode_E_BACKUP_BUILDING_INDEX: "E_BACKUP_BUILDING_INDEX",
+  ErrorCode_E_BACKUP_SPACE_NOT_FOUND: "E_BACKUP_SPACE_NOT_FOUND",
+  ErrorCode_E_RESTORE_FAILURE: "E_RESTORE_FAILURE",
   ErrorCode_E_UNKNOWN: "E_UNKNOWN",
 }
 
@@ -149,6 +157,10 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_SAVE_JOB_FAILURE": ErrorCode_E_SAVE_JOB_FAILURE,
   "E_BALANCER_FAILURE": ErrorCode_E_BALANCER_FAILURE,
   "E_JOB_NOT_FINISHED": ErrorCode_E_JOB_NOT_FINISHED,
+  "E_BACKUP_FAILURE": ErrorCode_E_BACKUP_FAILURE,
+  "E_BACKUP_BUILDING_INDEX": ErrorCode_E_BACKUP_BUILDING_INDEX,
+  "E_BACKUP_SPACE_NOT_FOUND": ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
+  "E_RESTORE_FAILURE": ErrorCode_E_RESTORE_FAILURE,
   "E_UNKNOWN": ErrorCode_E_UNKNOWN,
 }
 
@@ -19699,6 +19711,1046 @@ func (p *GetStatisResp) String() string {
 
 // Attributes:
 //  - Host
+//  - CheckpointDir
+type CheckpointInfo struct {
+  Host *nebula0.HostAddr `thrift:"host,1" db:"host" json:"host"`
+  CheckpointDir []byte `thrift:"checkpoint_dir,2" db:"checkpoint_dir" json:"checkpoint_dir"`
+}
+
+func NewCheckpointInfo() *CheckpointInfo {
+  return &CheckpointInfo{}
+}
+
+var CheckpointInfo_Host_DEFAULT *nebula0.HostAddr
+func (p *CheckpointInfo) GetHost() *nebula0.HostAddr {
+  if !p.IsSetHost() {
+    return CheckpointInfo_Host_DEFAULT
+  }
+return p.Host
+}
+
+func (p *CheckpointInfo) GetCheckpointDir() []byte {
+  return p.CheckpointDir
+}
+func (p *CheckpointInfo) IsSetHost() bool {
+  return p.Host != nil
+}
+
+func (p *CheckpointInfo) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CheckpointInfo)  ReadField1(iprot thrift.Protocol) error {
+  p.Host = nebula0.NewHostAddr()
+  if err := p.Host.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Host), err)
+  }
+  return nil
+}
+
+func (p *CheckpointInfo)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.CheckpointDir = v
+}
+  return nil
+}
+
+func (p *CheckpointInfo) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("CheckpointInfo"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CheckpointInfo) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("host", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:host: ", p), err) }
+  if err := p.Host.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Host), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:host: ", p), err) }
+  return err
+}
+
+func (p *CheckpointInfo) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("checkpoint_dir", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:checkpoint_dir: ", p), err) }
+  if err := oprot.WriteBinary(p.CheckpointDir); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.checkpoint_dir (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:checkpoint_dir: ", p), err) }
+  return err
+}
+
+func (p *CheckpointInfo) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("CheckpointInfo(%+v)", *p)
+}
+
+// Attributes:
+//  - Space
+//  - PartitionInfo
+//  - CpDirs
+type SpaceBackupInfo struct {
+  Space *SpaceDesc `thrift:"space,1" db:"space" json:"space"`
+  PartitionInfo *nebula0.PartitionBackupInfo `thrift:"partition_info,2" db:"partition_info" json:"partition_info"`
+  CpDirs []*CheckpointInfo `thrift:"cp_dirs,3" db:"cp_dirs" json:"cp_dirs"`
+}
+
+func NewSpaceBackupInfo() *SpaceBackupInfo {
+  return &SpaceBackupInfo{}
+}
+
+var SpaceBackupInfo_Space_DEFAULT *SpaceDesc
+func (p *SpaceBackupInfo) GetSpace() *SpaceDesc {
+  if !p.IsSetSpace() {
+    return SpaceBackupInfo_Space_DEFAULT
+  }
+return p.Space
+}
+var SpaceBackupInfo_PartitionInfo_DEFAULT *nebula0.PartitionBackupInfo
+func (p *SpaceBackupInfo) GetPartitionInfo() *nebula0.PartitionBackupInfo {
+  if !p.IsSetPartitionInfo() {
+    return SpaceBackupInfo_PartitionInfo_DEFAULT
+  }
+return p.PartitionInfo
+}
+
+func (p *SpaceBackupInfo) GetCpDirs() []*CheckpointInfo {
+  return p.CpDirs
+}
+func (p *SpaceBackupInfo) IsSetSpace() bool {
+  return p.Space != nil
+}
+
+func (p *SpaceBackupInfo) IsSetPartitionInfo() bool {
+  return p.PartitionInfo != nil
+}
+
+func (p *SpaceBackupInfo) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *SpaceBackupInfo)  ReadField1(iprot thrift.Protocol) error {
+  p.Space = NewSpaceDesc()
+  if err := p.Space.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Space), err)
+  }
+  return nil
+}
+
+func (p *SpaceBackupInfo)  ReadField2(iprot thrift.Protocol) error {
+  p.PartitionInfo = nebula0.NewPartitionBackupInfo()
+  if err := p.PartitionInfo.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.PartitionInfo), err)
+  }
+  return nil
+}
+
+func (p *SpaceBackupInfo)  ReadField3(iprot thrift.Protocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]*CheckpointInfo, 0, size)
+  p.CpDirs =  tSlice
+  for i := 0; i < size; i ++ {
+    _elem61 := NewCheckpointInfo()
+    if err := _elem61.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem61), err)
+    }
+    p.CpDirs = append(p.CpDirs, _elem61)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *SpaceBackupInfo) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("SpaceBackupInfo"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *SpaceBackupInfo) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("space", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space: ", p), err) }
+  if err := p.Space.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Space), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space: ", p), err) }
+  return err
+}
+
+func (p *SpaceBackupInfo) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("partition_info", thrift.STRUCT, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:partition_info: ", p), err) }
+  if err := p.PartitionInfo.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.PartitionInfo), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:partition_info: ", p), err) }
+  return err
+}
+
+func (p *SpaceBackupInfo) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("cp_dirs", thrift.LIST, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:cp_dirs: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.STRUCT, len(p.CpDirs)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.CpDirs {
+    if err := v.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+    }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:cp_dirs: ", p), err) }
+  return err
+}
+
+func (p *SpaceBackupInfo) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("SpaceBackupInfo(%+v)", *p)
+}
+
+// Attributes:
+//  - BackupInfo
+//  - MetaFiles
+//  - BackupName
+type BackupMeta struct {
+  BackupInfo map[nebula0.GraphSpaceID]*SpaceBackupInfo `thrift:"backup_info,1" db:"backup_info" json:"backup_info"`
+  MetaFiles [][]byte `thrift:"meta_files,2" db:"meta_files" json:"meta_files"`
+  BackupName []byte `thrift:"backup_name,3" db:"backup_name" json:"backup_name"`
+}
+
+func NewBackupMeta() *BackupMeta {
+  return &BackupMeta{}
+}
+
+
+func (p *BackupMeta) GetBackupInfo() map[nebula0.GraphSpaceID]*SpaceBackupInfo {
+  return p.BackupInfo
+}
+
+func (p *BackupMeta) GetMetaFiles() [][]byte {
+  return p.MetaFiles
+}
+
+func (p *BackupMeta) GetBackupName() []byte {
+  return p.BackupName
+}
+func (p *BackupMeta) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *BackupMeta)  ReadField1(iprot thrift.Protocol) error {
+  _, _, size, err := iprot.ReadMapBegin()
+  if err != nil {
+    return thrift.PrependError("error reading map begin: ", err)
+  }
+  tMap := make(map[nebula0.GraphSpaceID]*SpaceBackupInfo, size)
+  p.BackupInfo =  tMap
+  for i := 0; i < size; i ++ {
+var _key62 nebula0.GraphSpaceID
+    if v, err := iprot.ReadI32(); err != nil {
+    return thrift.PrependError("error reading field 0: ", err)
+} else {
+    temp := nebula0.GraphSpaceID(v)
+    _key62 = temp
+}
+    _val63 := NewSpaceBackupInfo()
+    if err := _val63.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val63), err)
+    }
+    p.BackupInfo[_key62] = _val63
+  }
+  if err := iprot.ReadMapEnd(); err != nil {
+    return thrift.PrependError("error reading map end: ", err)
+  }
+  return nil
+}
+
+func (p *BackupMeta)  ReadField2(iprot thrift.Protocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([][]byte, 0, size)
+  p.MetaFiles =  tSlice
+  for i := 0; i < size; i ++ {
+var _elem64 []byte
+    if v, err := iprot.ReadBinary(); err != nil {
+    return thrift.PrependError("error reading field 0: ", err)
+} else {
+    _elem64 = v
+}
+    p.MetaFiles = append(p.MetaFiles, _elem64)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *BackupMeta)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  p.BackupName = v
+}
+  return nil
+}
+
+func (p *BackupMeta) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("BackupMeta"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *BackupMeta) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("backup_info", thrift.MAP, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:backup_info: ", p), err) }
+  if err := oprot.WriteMapBegin(thrift.I32, thrift.STRUCT, len(p.BackupInfo)); err != nil {
+    return thrift.PrependError("error writing map begin: ", err)
+  }
+  for k, v := range p.BackupInfo {
+    if err := oprot.WriteI32(int32(k)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+    if err := v.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+    }
+  }
+  if err := oprot.WriteMapEnd(); err != nil {
+    return thrift.PrependError("error writing map end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:backup_info: ", p), err) }
+  return err
+}
+
+func (p *BackupMeta) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("meta_files", thrift.LIST, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:meta_files: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.STRING, len(p.MetaFiles)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.MetaFiles {
+    if err := oprot.WriteBinary(v); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:meta_files: ", p), err) }
+  return err
+}
+
+func (p *BackupMeta) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("backup_name", thrift.STRING, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:backup_name: ", p), err) }
+  if err := oprot.WriteBinary(p.BackupName); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.backup_name (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:backup_name: ", p), err) }
+  return err
+}
+
+func (p *BackupMeta) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("BackupMeta(%+v)", *p)
+}
+
+// Attributes:
+//  - Spaces
+type CreateBackupReq struct {
+  Spaces [][]byte `thrift:"spaces,1" db:"spaces" json:"spaces,omitempty"`
+}
+
+func NewCreateBackupReq() *CreateBackupReq {
+  return &CreateBackupReq{}
+}
+
+var CreateBackupReq_Spaces_DEFAULT [][]byte
+
+func (p *CreateBackupReq) GetSpaces() [][]byte {
+  return p.Spaces
+}
+func (p *CreateBackupReq) IsSetSpaces() bool {
+  return p.Spaces != nil
+}
+
+func (p *CreateBackupReq) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CreateBackupReq)  ReadField1(iprot thrift.Protocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([][]byte, 0, size)
+  p.Spaces =  tSlice
+  for i := 0; i < size; i ++ {
+var _elem65 []byte
+    if v, err := iprot.ReadBinary(); err != nil {
+    return thrift.PrependError("error reading field 0: ", err)
+} else {
+    _elem65 = v
+}
+    p.Spaces = append(p.Spaces, _elem65)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *CreateBackupReq) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("CreateBackupReq"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CreateBackupReq) writeField1(oprot thrift.Protocol) (err error) {
+  if p.IsSetSpaces() {
+    if err := oprot.WriteFieldBegin("spaces", thrift.LIST, 1); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:spaces: ", p), err) }
+    if err := oprot.WriteListBegin(thrift.STRING, len(p.Spaces)); err != nil {
+      return thrift.PrependError("error writing list begin: ", err)
+    }
+    for _, v := range p.Spaces {
+      if err := oprot.WriteBinary(v); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+    }
+    if err := oprot.WriteListEnd(); err != nil {
+      return thrift.PrependError("error writing list end: ", err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 1:spaces: ", p), err) }
+  }
+  return err
+}
+
+func (p *CreateBackupReq) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("CreateBackupReq(%+v)", *p)
+}
+
+// Attributes:
+//  - Code
+//  - Leader
+//  - Meta
+type CreateBackupResp struct {
+  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
+  Meta *BackupMeta `thrift:"meta,3" db:"meta" json:"meta"`
+}
+
+func NewCreateBackupResp() *CreateBackupResp {
+  return &CreateBackupResp{}
+}
+
+
+func (p *CreateBackupResp) GetCode() ErrorCode {
+  return p.Code
+}
+var CreateBackupResp_Leader_DEFAULT *nebula0.HostAddr
+func (p *CreateBackupResp) GetLeader() *nebula0.HostAddr {
+  if !p.IsSetLeader() {
+    return CreateBackupResp_Leader_DEFAULT
+  }
+return p.Leader
+}
+var CreateBackupResp_Meta_DEFAULT *BackupMeta
+func (p *CreateBackupResp) GetMeta() *BackupMeta {
+  if !p.IsSetMeta() {
+    return CreateBackupResp_Meta_DEFAULT
+  }
+return p.Meta
+}
+func (p *CreateBackupResp) IsSetLeader() bool {
+  return p.Leader != nil
+}
+
+func (p *CreateBackupResp) IsSetMeta() bool {
+  return p.Meta != nil
+}
+
+func (p *CreateBackupResp) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CreateBackupResp)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  temp := ErrorCode(v)
+  p.Code = temp
+}
+  return nil
+}
+
+func (p *CreateBackupResp)  ReadField2(iprot thrift.Protocol) error {
+  p.Leader = nebula0.NewHostAddr()
+  if err := p.Leader.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Leader), err)
+  }
+  return nil
+}
+
+func (p *CreateBackupResp)  ReadField3(iprot thrift.Protocol) error {
+  p.Meta = NewBackupMeta()
+  if err := p.Meta.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Meta), err)
+  }
+  return nil
+}
+
+func (p *CreateBackupResp) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("CreateBackupResp"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CreateBackupResp) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("code", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:code: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Code)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.code (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:code: ", p), err) }
+  return err
+}
+
+func (p *CreateBackupResp) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("leader", thrift.STRUCT, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:leader: ", p), err) }
+  if err := p.Leader.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Leader), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:leader: ", p), err) }
+  return err
+}
+
+func (p *CreateBackupResp) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("meta", thrift.STRUCT, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:meta: ", p), err) }
+  if err := p.Meta.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Meta), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:meta: ", p), err) }
+  return err
+}
+
+func (p *CreateBackupResp) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("CreateBackupResp(%+v)", *p)
+}
+
+// Attributes:
+//  - FromHost
+//  - ToHost
+type HostPair struct {
+  FromHost *nebula0.HostAddr `thrift:"from_host,1" db:"from_host" json:"from_host"`
+  ToHost *nebula0.HostAddr `thrift:"to_host,2" db:"to_host" json:"to_host"`
+}
+
+func NewHostPair() *HostPair {
+  return &HostPair{}
+}
+
+var HostPair_FromHost_DEFAULT *nebula0.HostAddr
+func (p *HostPair) GetFromHost() *nebula0.HostAddr {
+  if !p.IsSetFromHost() {
+    return HostPair_FromHost_DEFAULT
+  }
+return p.FromHost
+}
+var HostPair_ToHost_DEFAULT *nebula0.HostAddr
+func (p *HostPair) GetToHost() *nebula0.HostAddr {
+  if !p.IsSetToHost() {
+    return HostPair_ToHost_DEFAULT
+  }
+return p.ToHost
+}
+func (p *HostPair) IsSetFromHost() bool {
+  return p.FromHost != nil
+}
+
+func (p *HostPair) IsSetToHost() bool {
+  return p.ToHost != nil
+}
+
+func (p *HostPair) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *HostPair)  ReadField1(iprot thrift.Protocol) error {
+  p.FromHost = nebula0.NewHostAddr()
+  if err := p.FromHost.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.FromHost), err)
+  }
+  return nil
+}
+
+func (p *HostPair)  ReadField2(iprot thrift.Protocol) error {
+  p.ToHost = nebula0.NewHostAddr()
+  if err := p.ToHost.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.ToHost), err)
+  }
+  return nil
+}
+
+func (p *HostPair) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("HostPair"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *HostPair) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("from_host", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:from_host: ", p), err) }
+  if err := p.FromHost.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.FromHost), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:from_host: ", p), err) }
+  return err
+}
+
+func (p *HostPair) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("to_host", thrift.STRUCT, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:to_host: ", p), err) }
+  if err := p.ToHost.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.ToHost), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:to_host: ", p), err) }
+  return err
+}
+
+func (p *HostPair) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("HostPair(%+v)", *p)
+}
+
+// Attributes:
+//  - Files
+//  - Hosts
+type RestoreMetaReq struct {
+  Files [][]byte `thrift:"files,1" db:"files" json:"files"`
+  Hosts []*HostPair `thrift:"hosts,2" db:"hosts" json:"hosts"`
+}
+
+func NewRestoreMetaReq() *RestoreMetaReq {
+  return &RestoreMetaReq{}
+}
+
+
+func (p *RestoreMetaReq) GetFiles() [][]byte {
+  return p.Files
+}
+
+func (p *RestoreMetaReq) GetHosts() []*HostPair {
+  return p.Hosts
+}
+func (p *RestoreMetaReq) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *RestoreMetaReq)  ReadField1(iprot thrift.Protocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([][]byte, 0, size)
+  p.Files =  tSlice
+  for i := 0; i < size; i ++ {
+var _elem66 []byte
+    if v, err := iprot.ReadBinary(); err != nil {
+    return thrift.PrependError("error reading field 0: ", err)
+} else {
+    _elem66 = v
+}
+    p.Files = append(p.Files, _elem66)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *RestoreMetaReq)  ReadField2(iprot thrift.Protocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]*HostPair, 0, size)
+  p.Hosts =  tSlice
+  for i := 0; i < size; i ++ {
+    _elem67 := NewHostPair()
+    if err := _elem67.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem67), err)
+    }
+    p.Hosts = append(p.Hosts, _elem67)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *RestoreMetaReq) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("RestoreMetaReq"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *RestoreMetaReq) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("files", thrift.LIST, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:files: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.STRING, len(p.Files)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.Files {
+    if err := oprot.WriteBinary(v); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:files: ", p), err) }
+  return err
+}
+
+func (p *RestoreMetaReq) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("hosts", thrift.LIST, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:hosts: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Hosts)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.Hosts {
+    if err := v.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+    }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:hosts: ", p), err) }
+  return err
+}
+
+func (p *RestoreMetaReq) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("RestoreMetaReq(%+v)", *p)
+}
+
+// Attributes:
+//  - Host
 //  - User
 //  - Pwd
 type FTClient struct {
@@ -19940,11 +20992,11 @@ func (p *SignInFTServiceReq)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([]*FTClient, 0, size)
   p.Clients =  tSlice
   for i := 0; i < size; i ++ {
-    _elem61 := NewFTClient()
-    if err := _elem61.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem61), err)
+    _elem68 := NewFTClient()
+    if err := _elem68.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem68), err)
     }
-    p.Clients = append(p.Clients, _elem61)
+    p.Clients = append(p.Clients, _elem68)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -20197,11 +21249,11 @@ func (p *ListFTClientsResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*FTClient, 0, size)
   p.Clients =  tSlice
   for i := 0; i < size; i ++ {
-    _elem62 := NewFTClient()
-    if err := _elem62.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem62), err)
+    _elem69 := NewFTClient()
+    if err := _elem69.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem69), err)
     }
-    p.Clients = append(p.Clients, _elem62)
+    p.Clients = append(p.Clients, _elem69)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)

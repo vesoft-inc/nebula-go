@@ -63,6 +63,7 @@ const (
   ErrorCode_E_LOAD_META_FAILED ErrorCode = -51
   ErrorCode_E_FAILED_TO_CHECKPOINT ErrorCode = -60
   ErrorCode_E_CHECKPOINT_BLOCKED ErrorCode = -61
+  ErrorCode_E_BACKUP_FAILED ErrorCode = -65
   ErrorCode_E_PARTIAL_RESULT ErrorCode = -71
   ErrorCode_E_FILTER_OUT ErrorCode = -81
   ErrorCode_E_INVALID_DATA ErrorCode = -82
@@ -109,6 +110,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_LOAD_META_FAILED: "E_LOAD_META_FAILED",
   ErrorCode_E_FAILED_TO_CHECKPOINT: "E_FAILED_TO_CHECKPOINT",
   ErrorCode_E_CHECKPOINT_BLOCKED: "E_CHECKPOINT_BLOCKED",
+  ErrorCode_E_BACKUP_FAILED: "E_BACKUP_FAILED",
   ErrorCode_E_PARTIAL_RESULT: "E_PARTIAL_RESULT",
   ErrorCode_E_FILTER_OUT: "E_FILTER_OUT",
   ErrorCode_E_INVALID_DATA: "E_INVALID_DATA",
@@ -155,6 +157,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_LOAD_META_FAILED": ErrorCode_E_LOAD_META_FAILED,
   "E_FAILED_TO_CHECKPOINT": ErrorCode_E_FAILED_TO_CHECKPOINT,
   "E_CHECKPOINT_BLOCKED": ErrorCode_E_CHECKPOINT_BLOCKED,
+  "E_BACKUP_FAILED": ErrorCode_E_BACKUP_FAILED,
   "E_PARTIAL_RESULT": ErrorCode_E_PARTIAL_RESULT,
   "E_FILTER_OUT": ErrorCode_E_FILTER_OUT,
   "E_INVALID_DATA": ErrorCode_E_INVALID_DATA,
@@ -10600,6 +10603,407 @@ func (p *RebuildIndexRequest) String() string {
     return "<nil>"
   }
   return fmt.Sprintf("RebuildIndexRequest(%+v)", *p)
+}
+
+// Attributes:
+//  - Result_
+//  - Path
+type CreateCPResp struct {
+  Result_ *ResponseCommon `thrift:"result,1,required" db:"result" json:"result"`
+  Path []byte `thrift:"path,2" db:"path" json:"path"`
+}
+
+func NewCreateCPResp() *CreateCPResp {
+  return &CreateCPResp{}
+}
+
+var CreateCPResp_Result__DEFAULT *ResponseCommon
+func (p *CreateCPResp) GetResult_() *ResponseCommon {
+  if !p.IsSetResult_() {
+    return CreateCPResp_Result__DEFAULT
+  }
+return p.Result_
+}
+
+func (p *CreateCPResp) GetPath() []byte {
+  return p.Path
+}
+func (p *CreateCPResp) IsSetResult_() bool {
+  return p.Result_ != nil
+}
+
+func (p *CreateCPResp) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+  var issetResult_ bool = false;
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+      issetResult_ = true
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  if !issetResult_{
+    return thrift.NewProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field Result_ is not set"));
+  }
+  return nil
+}
+
+func (p *CreateCPResp)  ReadField1(iprot thrift.Protocol) error {
+  p.Result_ = NewResponseCommon()
+  if err := p.Result_.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Result_), err)
+  }
+  return nil
+}
+
+func (p *CreateCPResp)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Path = v
+}
+  return nil
+}
+
+func (p *CreateCPResp) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("CreateCPResp"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CreateCPResp) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("result", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:result: ", p), err) }
+  if err := p.Result_.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Result_), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:result: ", p), err) }
+  return err
+}
+
+func (p *CreateCPResp) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("path", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:path: ", p), err) }
+  if err := oprot.WriteBinary(p.Path); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.path (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:path: ", p), err) }
+  return err
+}
+
+func (p *CreateCPResp) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("CreateCPResp(%+v)", *p)
+}
+
+// Attributes:
+//  - Result_
+//  - BackupName
+//  - PartitionInfo
+type PartitionInfoResp struct {
+  Result_ *ResponseCommon `thrift:"result,1,required" db:"result" json:"result"`
+  BackupName []byte `thrift:"backup_name,2" db:"backup_name" json:"backup_name"`
+  PartitionInfo *nebula0.PartitionBackupInfo `thrift:"partition_info,3" db:"partition_info" json:"partition_info"`
+}
+
+func NewPartitionInfoResp() *PartitionInfoResp {
+  return &PartitionInfoResp{}
+}
+
+var PartitionInfoResp_Result__DEFAULT *ResponseCommon
+func (p *PartitionInfoResp) GetResult_() *ResponseCommon {
+  if !p.IsSetResult_() {
+    return PartitionInfoResp_Result__DEFAULT
+  }
+return p.Result_
+}
+
+func (p *PartitionInfoResp) GetBackupName() []byte {
+  return p.BackupName
+}
+var PartitionInfoResp_PartitionInfo_DEFAULT *nebula0.PartitionBackupInfo
+func (p *PartitionInfoResp) GetPartitionInfo() *nebula0.PartitionBackupInfo {
+  if !p.IsSetPartitionInfo() {
+    return PartitionInfoResp_PartitionInfo_DEFAULT
+  }
+return p.PartitionInfo
+}
+func (p *PartitionInfoResp) IsSetResult_() bool {
+  return p.Result_ != nil
+}
+
+func (p *PartitionInfoResp) IsSetPartitionInfo() bool {
+  return p.PartitionInfo != nil
+}
+
+func (p *PartitionInfoResp) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+  var issetResult_ bool = false;
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+      issetResult_ = true
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  if !issetResult_{
+    return thrift.NewProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field Result_ is not set"));
+  }
+  return nil
+}
+
+func (p *PartitionInfoResp)  ReadField1(iprot thrift.Protocol) error {
+  p.Result_ = NewResponseCommon()
+  if err := p.Result_.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Result_), err)
+  }
+  return nil
+}
+
+func (p *PartitionInfoResp)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.BackupName = v
+}
+  return nil
+}
+
+func (p *PartitionInfoResp)  ReadField3(iprot thrift.Protocol) error {
+  p.PartitionInfo = nebula0.NewPartitionBackupInfo()
+  if err := p.PartitionInfo.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.PartitionInfo), err)
+  }
+  return nil
+}
+
+func (p *PartitionInfoResp) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("PartitionInfoResp"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *PartitionInfoResp) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("result", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:result: ", p), err) }
+  if err := p.Result_.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Result_), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:result: ", p), err) }
+  return err
+}
+
+func (p *PartitionInfoResp) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("backup_name", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:backup_name: ", p), err) }
+  if err := oprot.WriteBinary(p.BackupName); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.backup_name (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:backup_name: ", p), err) }
+  return err
+}
+
+func (p *PartitionInfoResp) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("partition_info", thrift.STRUCT, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:partition_info: ", p), err) }
+  if err := p.PartitionInfo.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.PartitionInfo), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:partition_info: ", p), err) }
+  return err
+}
+
+func (p *PartitionInfoResp) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("PartitionInfoResp(%+v)", *p)
+}
+
+// Attributes:
+//  - SpaceID
+//  - BackupName
+type PartitionInfoRequest struct {
+  SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
+  BackupName []byte `thrift:"backup_name,2" db:"backup_name" json:"backup_name"`
+}
+
+func NewPartitionInfoRequest() *PartitionInfoRequest {
+  return &PartitionInfoRequest{}
+}
+
+
+func (p *PartitionInfoRequest) GetSpaceID() nebula0.GraphSpaceID {
+  return p.SpaceID
+}
+
+func (p *PartitionInfoRequest) GetBackupName() []byte {
+  return p.BackupName
+}
+func (p *PartitionInfoRequest) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *PartitionInfoRequest)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  temp := nebula0.GraphSpaceID(v)
+  p.SpaceID = temp
+}
+  return nil
+}
+
+func (p *PartitionInfoRequest)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.BackupName = v
+}
+  return nil
+}
+
+func (p *PartitionInfoRequest) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("PartitionInfoRequest"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *PartitionInfoRequest) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("space_id", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.SpaceID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.space_id (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space_id: ", p), err) }
+  return err
+}
+
+func (p *PartitionInfoRequest) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("backup_name", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:backup_name: ", p), err) }
+  if err := oprot.WriteBinary(p.BackupName); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.backup_name (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:backup_name: ", p), err) }
+  return err
+}
+
+func (p *PartitionInfoRequest) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("PartitionInfoRequest(%+v)", *p)
 }
 
 // Attributes:
