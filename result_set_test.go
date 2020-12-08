@@ -87,7 +87,7 @@ func TestAsList(t *testing.T) {
 		&nebula.Value{SVal: []byte("elem3")},
 	}
 	value := nebula.Value{
-		LVal: &nebula.List{Values: valList},
+		LVal: &nebula.NList{Values: valList},
 	}
 	valWrap := ValueWrapper{&value}
 	assert.Equal(t, "[\"elem1\", \"elem2\", \"elem3\"]", valWrap.String())
@@ -110,7 +110,7 @@ func TestAsDedupList(t *testing.T) {
 		&nebula.Value{SVal: []byte("elem3")},
 	}
 	value := nebula.Value{
-		UVal: &nebula.Set{Values: valList},
+		UVal: &nebula.NSet{Values: valList},
 	}
 	valWrap := ValueWrapper{&value}
 	assert.Equal(t, "[\"elem1\", \"elem2\", \"elem3\"]", valWrap.String())
@@ -133,7 +133,7 @@ func TestAsMap(t *testing.T) {
 		val := fmt.Sprintf("val%d", i)
 		valueMap[key] = &nebula.Value{SVal: []byte(val)}
 	}
-	mval := nebula.Map{Kvs: valueMap}
+	mval := nebula.NMap{Kvs: valueMap}
 	value := nebula.Value{MVal: &mval}
 	valWrap := ValueWrapper{&value}
 	assert.Equal(t, "{key0: \"val0\", key1: \"val1\", key2: \"val2\"}", valWrap.String())
