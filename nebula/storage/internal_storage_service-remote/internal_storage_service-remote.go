@@ -21,9 +21,8 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "Usage of ", os.Args[0], " [-h host:port] [-u url] [-f[ramed]] function [arg1 [arg2...]]:")
   flag.PrintDefaults()
   fmt.Fprintln(os.Stderr, "\nFunctions:")
-  fmt.Fprintln(os.Stderr, "  KVGetResponse get(KVGetRequest req)")
-  fmt.Fprintln(os.Stderr, "  ExecResponse put(KVPutRequest req)")
-  fmt.Fprintln(os.Stderr, "  ExecResponse remove(KVRemoveRequest req)")
+  fmt.Fprintln(os.Stderr, "  GetValueResponse getValue(GetValueRequest req)")
+  fmt.Fprintln(os.Stderr, "  ExecResponse forwardTransaction(InternalTxnRequest req)")
   fmt.Fprintln(os.Stderr)
   os.Exit(0)
 }
@@ -111,86 +110,61 @@ func main() {
     Usage()
     os.Exit(1)
   }
-  client := storage.NewGeneralStorageServiceClientFactory(trans, protocolFactory)
+  client := storage.NewInternalStorageServiceClientFactory(trans, protocolFactory)
   if err := trans.Open(); err != nil {
     fmt.Fprintln(os.Stderr, "Error opening socket to ", host, ":", port, " ", err)
     os.Exit(1)
   }
   
   switch cmd {
-  case "get":
+  case "getValue":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Get requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetValue requires 1 args")
       flag.Usage()
     }
-    arg380 := flag.Arg(1)
-    mbTrans381 := thrift.NewMemoryBufferLen(len(arg380))
-    defer mbTrans381.Close()
-    _, err382 := mbTrans381.WriteString(arg380)
-    if err382 != nil {
+    arg408 := flag.Arg(1)
+    mbTrans409 := thrift.NewMemoryBufferLen(len(arg408))
+    defer mbTrans409.Close()
+    _, err410 := mbTrans409.WriteString(arg408)
+    if err410 != nil {
       Usage()
       return
     }
-    factory383 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt384 := factory383.GetProtocol(mbTrans381)
-    argvalue0 := storage.NewKVGetRequest()
-    err385 := argvalue0.Read(jsProt384)
-    if err385 != nil {
+    factory411 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt412 := factory411.GetProtocol(mbTrans409)
+    argvalue0 := storage.NewGetValueRequest()
+    err413 := argvalue0.Read(jsProt412)
+    if err413 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.Get(value0))
+    fmt.Print(client.GetValue(value0))
     fmt.Print("\n")
     break
-  case "put":
+  case "forwardTransaction":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Put requires 1 args")
+      fmt.Fprintln(os.Stderr, "ForwardTransaction requires 1 args")
       flag.Usage()
     }
-    arg386 := flag.Arg(1)
-    mbTrans387 := thrift.NewMemoryBufferLen(len(arg386))
-    defer mbTrans387.Close()
-    _, err388 := mbTrans387.WriteString(arg386)
-    if err388 != nil {
+    arg414 := flag.Arg(1)
+    mbTrans415 := thrift.NewMemoryBufferLen(len(arg414))
+    defer mbTrans415.Close()
+    _, err416 := mbTrans415.WriteString(arg414)
+    if err416 != nil {
       Usage()
       return
     }
-    factory389 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt390 := factory389.GetProtocol(mbTrans387)
-    argvalue0 := storage.NewKVPutRequest()
-    err391 := argvalue0.Read(jsProt390)
-    if err391 != nil {
+    factory417 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt418 := factory417.GetProtocol(mbTrans415)
+    argvalue0 := storage.NewInternalTxnRequest()
+    err419 := argvalue0.Read(jsProt418)
+    if err419 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.Put(value0))
-    fmt.Print("\n")
-    break
-  case "remove":
-    if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Remove requires 1 args")
-      flag.Usage()
-    }
-    arg392 := flag.Arg(1)
-    mbTrans393 := thrift.NewMemoryBufferLen(len(arg392))
-    defer mbTrans393.Close()
-    _, err394 := mbTrans393.WriteString(arg392)
-    if err394 != nil {
-      Usage()
-      return
-    }
-    factory395 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt396 := factory395.GetProtocol(mbTrans393)
-    argvalue0 := storage.NewKVRemoveRequest()
-    err397 := argvalue0.Read(jsProt396)
-    if err397 != nil {
-      Usage()
-      return
-    }
-    value0 := argvalue0
-    fmt.Print(client.Remove(value0))
+    fmt.Print(client.ForwardTransaction(value0))
     fmt.Print("\n")
     break
   case "":
