@@ -279,7 +279,7 @@ func (valWarp ValueWrapper) String() string {
 		vertex := value.GetVVal()
 		node, _ := genNode(vertex)
 		return node.string()
-	} else if value.IsSetEVal() { // Edge format: (src)-[:edge@ranking{props}]->(dst)
+	} else if value.IsSetEVal() { // Edge format: [:edge src->dst @ranking {props}]
 		edge := value.GetEVal()
 		relationship, _ := genRelationship(edge)
 		return relationship.string()

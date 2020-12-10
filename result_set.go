@@ -479,6 +479,9 @@ func (node Node) string() string {
 		keyList = nil
 		kvStr = nil
 	}
+	if len(tagStr) == 0 { // No tag
+		return fmt.Sprintf("(\"%s\")", vid)
+	}
 	return fmt.Sprintf("(\"%s\" :%s)", vid, strings.Join(tagStr, " :"))
 }
 
@@ -538,7 +541,7 @@ func (relationship Relationship) Values() []*ValueWrapper {
 	return values
 }
 
-// Relationship format: (src)-[:edge@ranking{props}]->(dst)
+// Relationship format: [:edge src->dst @ranking {props}]
 func (relationship Relationship) string() string {
 	edge := relationship.edge
 	var keyList []string
@@ -551,9 +554,12 @@ func (relationship Relationship) string() string {
 		kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{edge.Props[k]}.String())
 		kvStr = append(kvStr, kvTemp)
 	}
-
-	return fmt.Sprintf(`("%s")-[:%s@%d{%s}]->("%s")`,
-		string(edge.Src), string(edge.Name), edge.Ranking, fmt.Sprintf("%s", strings.Join(kvStr, ", ")), string(edge.Dst))
+	if len(kvStr) == 0 {
+		return fmt.Sprintf(`[:%s "%s"->"%s" @%d]`,
+			string(edge.Name), string(edge.Src), string(edge.Dst), edge.Ranking)
+	}
+	return fmt.Sprintf(`[:%s "%s"->"%s" @%d {%s}]`,
+		string(edge.Name), string(edge.Src), string(edge.Dst), edge.Ranking, fmt.Sprintf("%s", strings.Join(kvStr, ", ")))
 }
 
 func (r1 Relationship) IsEqualTo(r2 *Relationship) bool {
