@@ -173,7 +173,7 @@ func TestAsDateTime(t *testing.T) {
 }
 
 func TestAsNode(t *testing.T) {
-	value := nebula.Value{VVal: getVertex("Adam")}
+	value := nebula.Value{VVal: getVertex("Adam", 3, 5)}
 	valWrap := ValueWrapper{&value}
 	assert.Equal(t, true, valWrap.IsVertex())
 	assert.Equal(t,
@@ -184,15 +184,36 @@ func TestAsNode(t *testing.T) {
 	res, _ := valWrap.AsNode()
 	node, _ := genNode(value.GetVVal())
 	assert.Equal(t, *node, *res)
+
+	// Vertex without tag
+	value = nebula.Value{VVal: getVertex("Adam", 0, 0)}
+	valWrap = ValueWrapper{&value}
+	assert.Equal(t, true, valWrap.IsVertex())
+	assert.Equal(t,
+		"(\"Adam\")",
+		valWrap.String())
+	res, _ = valWrap.AsNode()
+	node, _ = genNode(value.GetVVal())
+	assert.Equal(t, *node, *res)
 }
 
 func TestAsRelationship(t *testing.T) {
-	value := nebula.Value{EVal: getEdge("Alice", "Bob")}
+	// [:classmate "Alice"->"Bob" @100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]
+	value := nebula.Value{EVal: getEdge("Alice", "Bob", 5)}
 	valWrap := ValueWrapper{&value}
 	assert.Equal(t, true, valWrap.IsEdge())
-	assert.Equal(t, "(\"Alice\")-[:classmate@100{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]->(\"Bob\")", valWrap.String())
+	assert.Equal(t, "[:classmate \"Alice\"->\"Bob\" @100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]", valWrap.String())
 	res, _ := valWrap.AsRelationship()
 	relationship, _ := genRelationship(value.GetEVal())
+	assert.Equal(t, *relationship, *res)
+
+	// edge without prop
+	value = nebula.Value{EVal: getEdge("Alice", "Bob", 0)}
+	valWrap = ValueWrapper{&value}
+	assert.Equal(t, true, valWrap.IsEdge())
+	assert.Equal(t, "[:classmate \"Alice\"->\"Bob\" @100]", valWrap.String())
+	res, _ = valWrap.AsRelationship()
+	relationship, _ = genRelationship(value.GetEVal())
 	assert.Equal(t, *relationship, *res)
 }
 
@@ -227,7 +248,7 @@ func TestAsPathWrapper(t *testing.T) {
 }
 
 func TestNode(t *testing.T) {
-	vertex := getVertex("Tom")
+	vertex := getVertex("Tom", 3, 5)
 	node, err := genNode(vertex)
 	if err != nil {
 		t.Errorf(err.Error())
@@ -252,7 +273,7 @@ func TestNode(t *testing.T) {
 }
 
 func TestRelationship(t *testing.T) {
-	edge := getEdge("Tom", "Lily")
+	edge := getEdge("Tom", "Lily", 5)
 	relationship, err := genRelationship(edge)
 	if err != nil {
 		t.Errorf(err.Error())
@@ -283,12 +304,12 @@ func TestPathWrapper(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 	assert.Equal(t, 5, pathWrapper.GetPathLength())
-	node, err := genNode(getVertex("Tom"))
+	node, err := genNode(getVertex("Tom", 3, 5))
 	if err != nil {
 		t.Errorf(err.Error())
 	}
 	assert.Equal(t, true, pathWrapper.ContainsNode(*node))
-	relationship, err := genRelationship(getEdge("Tom", "vertex0"))
+	relationship, err := genRelationship(getEdge("Tom", "vertex0", 5))
 	if err != nil {
 		t.Errorf(err.Error())
 	}
@@ -297,7 +318,7 @@ func TestPathWrapper(t *testing.T) {
 	var nodeList []Node
 	nodeList = append(nodeList, *node)
 	for i := 0; i < 5; i++ {
-		genNode, err := genNode(getVertex(fmt.Sprintf("vertex%d", i)))
+		genNode, err := genNode(getVertex(fmt.Sprintf("vertex%d", i), 3, 5))
 		if err != nil {
 			t.Errorf(err.Error())
 		}
@@ -309,9 +330,9 @@ func TestPathWrapper(t *testing.T) {
 	for i := 0; i < 4; i++ {
 		var edge *nebula.Edge
 		if i%2 == 0 {
-			edge = getEdge(fmt.Sprintf("vertex%d", i+1), fmt.Sprintf("vertex%d", i))
+			edge = getEdge(fmt.Sprintf("vertex%d", i+1), fmt.Sprintf("vertex%d", i), 5)
 		} else {
-			edge = getEdge(fmt.Sprintf("vertex%d", i), fmt.Sprintf("vertex%d", i+1))
+			edge = getEdge(fmt.Sprintf("vertex%d", i), fmt.Sprintf("vertex%d", i+1), 5)
 		}
 		newRelationship, err := genRelationship(edge)
 		if err != nil {
@@ -415,8 +436,8 @@ func TestResultSet(t *testing.T) {
 
 	v1 := int64(1)
 	v2 := "value1"
-	v3, err := genNode(getVertex("Tom"))
-	v4, err := genRelationship(getEdge("Tom", "Lily"))
+	v3, err := genNode(getVertex("Tom", 3, 5))
+	v4, err := genRelationship(getEdge("Tom", "Lily", 5))
 	v5, err := genPathWrapper(getPath("Tom", 3))
 
 	assert.Equal(t, v1, expected_v1)
@@ -469,7 +490,7 @@ func TestAsStringTable(t *testing.T) {
 			assert.Equal(t,
 				"1, \"value1\", "+
 					"(\"Tom\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} :tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
-					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}), (\"Tom\")-[:classmate@100{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]->(\"Lily\"), "+
+					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}), [:classmate \"Tom\"->\"Lily\" @100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}], "+
 					"(\"Tom\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 					":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100]->"+
@@ -488,12 +509,12 @@ func TestAsStringTable(t *testing.T) {
 	}
 }
 
-func getVertex(vid string) *nebula.Vertex {
+func getVertex(vid string, tagNum int, propNum int) *nebula.Vertex {
 	var tags []*nebula.Tag
 
-	for i := 0; i < 3; i++ {
+	for i := 0; i < tagNum; i++ {
 		props := make(map[string]*nebula.Value)
-		for j := 0; j < 5; j++ {
+		for j := 0; j < propNum; j++ {
 			value := setIVal(j)
 			key := fmt.Sprintf("prop%d", j)
 			props[key] = value
@@ -510,11 +531,11 @@ func getVertex(vid string) *nebula.Vertex {
 	}
 }
 
-func getEdge(srcID string, dstID string) *nebula.Edge {
+func getEdge(srcID string, dstID string, propNum int) *nebula.Edge {
 	src := []byte(srcID)
 	dst := []byte(dstID)
 	props := make(map[string]*nebula.Value)
-	for i := 0; i < 5; i++ {
+	for i := 0; i < propNum; i++ {
 		value := setIVal(i)
 		props[fmt.Sprintf("prop%d", i)] = value
 	}
@@ -542,7 +563,7 @@ func getPath(startID string, stepNum int) *nebula.Path {
 		if i%2 != 0 {
 			edgeType = -1
 		}
-		dstID := getVertex(fmt.Sprintf("vertex%d", i))
+		dstID := getVertex(fmt.Sprintf("vertex%d", i), 3, 5)
 		steps = append(steps, &nebula.Step{
 			Dst:     dstID,
 			Type:    edgeType,
@@ -551,7 +572,7 @@ func getPath(startID string, stepNum int) *nebula.Path {
 			Props:   props,
 		})
 	}
-	start := getVertex(startID)
+	start := getVertex(startID, 3, 5)
 	return &nebula.Path{
 		Src:   start,
 		Steps: steps,
@@ -573,9 +594,9 @@ func getDateset() *nebula.DataSet {
 	var v2 = nebula.NewValue()
 	v2.SVal = []byte("value1")
 	var v3 = nebula.NewValue()
-	v3.VVal = getVertex("Tom")
+	v3.VVal = getVertex("Tom", 3, 5)
 	var v4 = nebula.NewValue()
-	v4.EVal = getEdge("Tom", "Lily")
+	v4.EVal = getEdge("Tom", "Lily", 5)
 	var v5 = nebula.NewValue()
 	v5.PVal = getPath("Tom", 3)
 

@@ -32,11 +32,11 @@ var poolAddress = []HostAddress{
 	},
 	HostAddress{
 		Host: "127.0.0.1",
-		Port: 3701,
+		Port: 3700,
 	},
 	HostAddress{
 		Host: "127.0.0.1",
-		Port: 3710,
+		Port: 3701,
 	},
 }
 
@@ -359,7 +359,7 @@ func TestReconnect(t *testing.T) {
 			stopContainer(t, "nebula-docker-compose_graphd_1")
 		}
 		if i == 7 {
-			stopContainer(t, "nebula-docker-compose_graphd2_1")
+			stopContainer(t, "nebula-docker-compose_graphd1_1")
 		}
 		_, err := sessionList[0].Execute("SHOW HOSTS;")
 		fmt.Println("Sending query...")
@@ -380,7 +380,7 @@ func TestReconnect(t *testing.T) {
 	assert.Equal(t, ErrorCode_E_SESSION_INVALID, resp.GetErrorCode(), "Expected error should be E_SESSION_INVALID")
 
 	startContainer(t, "nebula-docker-compose_graphd_1")
-	startContainer(t, "nebula-docker-compose_graphd2_1")
+	startContainer(t, "nebula-docker-compose_graphd1_1")
 
 	for i := 0; i < len(sessionList); i++ {
 		sessionList[i].Release()
