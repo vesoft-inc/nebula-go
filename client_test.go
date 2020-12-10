@@ -356,7 +356,7 @@ func TestReconnect(t *testing.T) {
 	for i := 0; i < timeoutConfig.MaxConnPoolSize; i++ {
 		time.Sleep(200 * time.Millisecond)
 		if i == 3 {
-			stopContainer(t, "nebula-docker-compose_graphd0_1")
+			stopContainer(t, "nebula-docker-compose_graphd_1")
 		}
 		if i == 7 {
 			stopContainer(t, "nebula-docker-compose_graphd1_1")
@@ -379,7 +379,7 @@ func TestReconnect(t *testing.T) {
 	// This assertion will pass only when reconnection happens
 	assert.Equal(t, ErrorCode_E_SESSION_INVALID, resp.GetErrorCode(), "Expected error should be E_SESSION_INVALID")
 
-	startContainer(t, "nebula-docker-compose_graphd0_1")
+	startContainer(t, "nebula-docker-compose_graphd_1")
 	startContainer(t, "nebula-docker-compose_graphd1_1")
 
 	for i := 0; i < len(sessionList); i++ {
