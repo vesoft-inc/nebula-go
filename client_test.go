@@ -100,6 +100,82 @@ func TestConnection(t *testing.T) {
 	}
 }
 
+func TestConfigs(t *testing.T) {
+	hostAdress := HostAddress{Host: address, Port: port}
+	hostList := []HostAddress{}
+	hostList = append(hostList, hostAdress)
+
+	var configList = []PoolConfig{
+		// default
+		PoolConfig{
+			TimeOut:         0 * time.Millisecond,
+			IdleTime:        0 * time.Millisecond,
+			MaxConnPoolSize: 10,
+			MinConnPoolSize: 1,
+		},
+		// timeout < 0
+		PoolConfig{
+			TimeOut:         -1 * time.Millisecond,
+			IdleTime:        0 * time.Millisecond,
+			MaxConnPoolSize: 10,
+			MinConnPoolSize: 1,
+		},
+		// MaxConnPoolSize < 0
+		PoolConfig{
+			TimeOut:         0 * time.Millisecond,
+			IdleTime:        0 * time.Millisecond,
+			MaxConnPoolSize: -1,
+			MinConnPoolSize: 1,
+		},
+		// MinConnPoolSize < 0
+		PoolConfig{
+			TimeOut:         0 * time.Millisecond,
+			IdleTime:        0 * time.Millisecond,
+			MaxConnPoolSize: 1,
+			MinConnPoolSize: -1,
+		},
+	}
+
+	for _, testPoolConfig := range configList {
+		// Initialize connectin pool
+		pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+		if err != nil {
+			t.Fatalf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+		}
+		// close all connections in the pool
+		defer pool.Close()
+
+		// Create session
+		session, err := pool.GetSession(username, password)
+		if err != nil {
+			t.Fatalf("Fail to create a new session from connection pool, username: %s, password: %s, %s",
+				username, password, err.Error())
+		}
+		defer session.Release()
+		// Excute a query
+		resp, err := session.Execute("SHOW HOSTS;")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResSetResp(t, "show hosts", resp)
+		// Create a new space
+		resp, err = session.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1);")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResSetResp(t, "create space", resp)
+
+		resp, err = session.Execute("DROP SPACE client_test;")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResSetResp(t, "drop space", resp)
+	}
+}
+
 func TestInvalidHostTimeout(t *testing.T) {
 	hostList := []HostAddress{
 		HostAddress{Host: "192.168.10.105", Port: 3699}, // Invalid host
