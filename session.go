@@ -58,7 +58,7 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 func (session *Session) reConnect() error {
 	newconnection, err := session.connPool.getIdleConn()
 	if err != nil {
-		err = fmt.Errorf("Failed to reconnect: No idle connection, %s", err.Error())
+		err = fmt.Errorf(err.Error())
 		return err
 	}
 

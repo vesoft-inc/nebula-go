@@ -21,8 +21,8 @@ import (
 const (
 	address  = "127.0.0.1"
 	port     = 3699
-	username = "user"
-	password = "password"
+	username = "root"
+	password = "nebula"
 )
 
 var poolAddress = []HostAddress{
@@ -174,6 +174,27 @@ func TestConfigs(t *testing.T) {
 		}
 		checkResSetResp(t, "drop space", resp)
 	}
+}
+
+func TestAuthentication(t *testing.T) {
+	const (
+		address  = "127.0.0.1"
+		port     = 3699
+		username = "dummy"
+		password = "nebula"
+	)
+
+	hostAdress := HostAddress{Host: address, Port: port}
+
+	conn := newConnection(hostAdress)
+	err := conn.open(hostAdress, testPoolConfig.TimeOut)
+	if err != nil {
+		t.Fatalf("Fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
+	}
+	defer conn.close()
+
+	_, authErr := conn.authenticate(username, password)
+	assert.EqualError(t, authErr, "Fail to authenticate, error: Bad username/password")
 }
 
 func TestInvalidHostTimeout(t *testing.T) {
