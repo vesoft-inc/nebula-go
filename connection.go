@@ -60,6 +60,9 @@ func (cn *connection) authenticate(username, password string) (*graph.AuthRespon
 		}
 		return nil, err
 	}
+	if resp.ErrorCode != graph.ErrorCode_SUCCEEDED {
+		return nil, fmt.Errorf("Fail to authenticate, error: %s", resp.ErrorMsg)
+	}
 	return resp, err
 }
 
@@ -74,7 +77,7 @@ func (cn *connection) execute(sessionID int64, stmt string) (*graph.ExecutionRes
 
 // Check connection to host address
 func (cn *connection) ping() bool {
-	_, err := cn.execute(1, "YIELD 1")
+	_, err := cn.execute(0, "YIELD 1")
 	return err == nil
 }
 

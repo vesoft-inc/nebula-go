@@ -369,12 +369,12 @@ func TestMultiThreads(t *testing.T) {
 
 func TestLoadbalancer(t *testing.T) {
 	hostList := poolAddress
-
+	var loadPerHost = make(map[HostAddress]int)
 	testPoolConfig := PoolConfig{
 		TimeOut:         0 * time.Millisecond,
 		IdleTime:        0 * time.Millisecond,
 		MaxConnPoolSize: 999,
-		MinConnPoolSize: 1,
+		MinConnPoolSize: 0,
 	}
 
 	// Initialize connectin pool
@@ -392,10 +392,14 @@ func TestLoadbalancer(t *testing.T) {
 		if err != nil {
 			t.Errorf("Fail to create a new session from connection pool, %s", err.Error())
 		}
+		loadPerHost[session.connection.severAddress]++
 		sessionList = append(sessionList, session)
 	}
 	assert.Equal(t, len(sessionList), 999, "Total number of sessions should be 666")
-	// TODO: check work load of each host
+
+	for _, v := range loadPerHost {
+		assert.Equal(t, v, 333, "Total number of sessions should be 333")
+	}
 	for i := 0; i < len(sessionList); i++ {
 		sessionList[i].Release()
 	}
