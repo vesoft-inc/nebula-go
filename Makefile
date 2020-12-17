@@ -8,4 +8,4 @@ build: clean fmt
 
 test: 
 	go mod tidy 
-	go test
+	go test -v -race
