@@ -70,6 +70,10 @@ func (session *Session) reConnect() error {
 
 // Logout and release connetion hold by session
 func (session *Session) Release() {
+	if session == nil {
+		session.log.Warn("Session is nil, no need to release")
+		return
+	}
 	if session.connection == nil {
 		session.log.Warn("Session has been released")
 		return
