@@ -15,15 +15,9 @@ jobs:
           go-version: '1.13'
       - name: Test with GO test
         run: |
-          mkdir tmp
-          pushd tmp
-          git clone -b v2-preview https://github.com/vesoft-inc/nebula-docker-compose.git
           pushd nebula-docker-compose/
-          sed -i '0,/\- 3699/s/\- 3699/\- "3700:3699"/' docker-compose.yaml
-          sed -i '0,/\- 3699/s/\- 3699/\- "3701:3699"/' docker-compose.yaml
           docker-compose up -d
           sleep 10
-          popd
           popd
           go test -v -race
         

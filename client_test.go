@@ -21,8 +21,8 @@ import (
 const (
 	address  = "127.0.0.1"
 	port     = 3699
-	username = "user"
-	password = "password"
+	username = "root"
+	password = "nebula"
 )
 
 var poolAddress = []HostAddress{
@@ -98,6 +98,103 @@ func TestConnection(t *testing.T) {
 		t.Error("Connectin ping failed")
 		return
 	}
+}
+
+func TestConfigs(t *testing.T) {
+	hostAdress := HostAddress{Host: address, Port: port}
+	hostList := []HostAddress{}
+	hostList = append(hostList, hostAdress)
+
+	var configList = []PoolConfig{
+		// default
+		PoolConfig{
+			TimeOut:         0 * time.Millisecond,
+			IdleTime:        0 * time.Millisecond,
+			MaxConnPoolSize: 10,
+			MinConnPoolSize: 1,
+		},
+		// timeout < 0
+		PoolConfig{
+			TimeOut:         -1 * time.Millisecond,
+			IdleTime:        0 * time.Millisecond,
+			MaxConnPoolSize: 10,
+			MinConnPoolSize: 1,
+		},
+		// MaxConnPoolSize < 0
+		PoolConfig{
+			TimeOut:         0 * time.Millisecond,
+			IdleTime:        0 * time.Millisecond,
+			MaxConnPoolSize: -1,
+			MinConnPoolSize: 1,
+		},
+		// MinConnPoolSize < 0
+		PoolConfig{
+			TimeOut:         0 * time.Millisecond,
+			IdleTime:        0 * time.Millisecond,
+			MaxConnPoolSize: 1,
+			MinConnPoolSize: -1,
+		},
+	}
+
+	for _, testPoolConfig := range configList {
+		// Initialize connectin pool
+		pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+		if err != nil {
+			t.Fatalf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+		}
+		// close all connections in the pool
+		defer pool.Close()
+
+		// Create session
+		session, err := pool.GetSession(username, password)
+		if err != nil {
+			t.Fatalf("Fail to create a new session from connection pool, username: %s, password: %s, %s",
+				username, password, err.Error())
+		}
+		defer session.Release()
+		// Excute a query
+		resp, err := session.Execute("SHOW HOSTS;")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResSetResp(t, "show hosts", resp)
+		// Create a new space
+		resp, err = session.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1);")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResSetResp(t, "create space", resp)
+
+		resp, err = session.Execute("DROP SPACE client_test;")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResSetResp(t, "drop space", resp)
+	}
+}
+
+func TestAuthentication(t *testing.T) {
+	const (
+		address  = "127.0.0.1"
+		port     = 3699
+		username = "dummy"
+		password = "nebula"
+	)
+
+	hostAdress := HostAddress{Host: address, Port: port}
+
+	conn := newConnection(hostAdress)
+	err := conn.open(hostAdress, testPoolConfig.TimeOut)
+	if err != nil {
+		t.Fatalf("Fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
+	}
+	defer conn.close()
+
+	_, authErr := conn.authenticate(username, password)
+	assert.EqualError(t, authErr, "Fail to authenticate, error: Bad username/password")
 }
 
 func TestInvalidHostTimeout(t *testing.T) {
@@ -293,12 +390,12 @@ func TestMultiThreads(t *testing.T) {
 
 func TestLoadbalancer(t *testing.T) {
 	hostList := poolAddress
-
+	var loadPerHost = make(map[HostAddress]int)
 	testPoolConfig := PoolConfig{
 		TimeOut:         0 * time.Millisecond,
 		IdleTime:        0 * time.Millisecond,
 		MaxConnPoolSize: 999,
-		MinConnPoolSize: 1,
+		MinConnPoolSize: 0,
 	}
 
 	// Initialize connectin pool
@@ -316,10 +413,14 @@ func TestLoadbalancer(t *testing.T) {
 		if err != nil {
 			t.Errorf("Fail to create a new session from connection pool, %s", err.Error())
 		}
+		loadPerHost[session.connection.severAddress]++
 		sessionList = append(sessionList, session)
 	}
 	assert.Equal(t, len(sessionList), 999, "Total number of sessions should be 666")
-	// TODO: check work load of each host
+
+	for _, v := range loadPerHost {
+		assert.Equal(t, v, 333, "Total number of sessions should be 333")
+	}
 	for i := 0; i < len(sessionList); i++ {
 		sessionList[i].Release()
 	}
