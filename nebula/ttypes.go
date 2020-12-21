@@ -89,9 +89,13 @@ type EdgeRanking int64
 
 func EdgeRankingPtr(v EdgeRanking) *EdgeRanking { return &v }
 
-type VertexID []byte
+type LogID int64
 
-func VertexIDPtr(v VertexID) *VertexID { return &v }
+func LogIDPtr(v LogID) *LogID { return &v }
+
+type TermID int64
+
+func TermIDPtr(v TermID) *TermID { return &v }
 
 type LogID int64
 
@@ -2116,7 +2120,7 @@ func (p *Tag) String() string {
 //  - Vid
 //  - Tags
 type Vertex struct {
-  Vid VertexID `thrift:"vid,1" db:"vid" json:"vid"`
+  Vid *Value `thrift:"vid,1" db:"vid" json:"vid"`
   Tags []*Tag `thrift:"tags,2" db:"tags" json:"tags"`
 }
 
@@ -2124,14 +2128,21 @@ func NewVertex() *Vertex {
   return &Vertex{}
 }
 
-
-func (p *Vertex) GetVid() VertexID {
-  return p.Vid
+var Vertex_Vid_DEFAULT *Value
+func (p *Vertex) GetVid() *Value {
+  if !p.IsSetVid() {
+    return Vertex_Vid_DEFAULT
+  }
+return p.Vid
 }
 
 func (p *Vertex) GetTags() []*Tag {
   return p.Tags
 }
+func (p *Vertex) IsSetVid() bool {
+  return p.Vid != nil
+}
+
 func (p *Vertex) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -2169,12 +2180,10 @@ func (p *Vertex) Read(iprot thrift.Protocol) error {
 }
 
 func (p *Vertex)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := VertexID(v)
-  p.Vid = temp
-}
+  p.Vid = NewValue()
+  if err := p.Vid.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Vid), err)
+  }
   return nil
 }
 
@@ -2211,10 +2220,11 @@ func (p *Vertex) Write(oprot thrift.Protocol) error {
 }
 
 func (p *Vertex) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("vid", thrift.STRING, 1); err != nil {
+  if err := oprot.WriteFieldBegin("vid", thrift.STRUCT, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:vid: ", p), err) }
-  if err := oprot.WriteBinary(p.Vid); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.vid (1) field write error: ", p), err) }
+  if err := p.Vid.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Vid), err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 1:vid: ", p), err) }
   return err
@@ -2254,8 +2264,8 @@ func (p *Vertex) String() string {
 //  - Ranking
 //  - Props
 type Edge struct {
-  Src VertexID `thrift:"src,1" db:"src" json:"src"`
-  Dst VertexID `thrift:"dst,2" db:"dst" json:"dst"`
+  Src *Value `thrift:"src,1" db:"src" json:"src"`
+  Dst *Value `thrift:"dst,2" db:"dst" json:"dst"`
   Type EdgeType `thrift:"type,3" db:"type" json:"type"`
   Name []byte `thrift:"name,4" db:"name" json:"name"`
   Ranking EdgeRanking `thrift:"ranking,5" db:"ranking" json:"ranking"`
@@ -2266,13 +2276,19 @@ func NewEdge() *Edge {
   return &Edge{}
 }
 
-
-func (p *Edge) GetSrc() VertexID {
-  return p.Src
+var Edge_Src_DEFAULT *Value
+func (p *Edge) GetSrc() *Value {
+  if !p.IsSetSrc() {
+    return Edge_Src_DEFAULT
+  }
+return p.Src
 }
-
-func (p *Edge) GetDst() VertexID {
-  return p.Dst
+var Edge_Dst_DEFAULT *Value
+func (p *Edge) GetDst() *Value {
+  if !p.IsSetDst() {
+    return Edge_Dst_DEFAULT
+  }
+return p.Dst
 }
 
 func (p *Edge) GetType() EdgeType {
@@ -2290,6 +2306,14 @@ func (p *Edge) GetRanking() EdgeRanking {
 func (p *Edge) GetProps() map[string]*Value {
   return p.Props
 }
+func (p *Edge) IsSetSrc() bool {
+  return p.Src != nil
+}
+
+func (p *Edge) IsSetDst() bool {
+  return p.Dst != nil
+}
+
 func (p *Edge) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -2343,22 +2367,18 @@ func (p *Edge) Read(iprot thrift.Protocol) error {
 }
 
 func (p *Edge)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := VertexID(v)
-  p.Src = temp
-}
+  p.Src = NewValue()
+  if err := p.Src.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Src), err)
+  }
   return nil
 }
 
 func (p *Edge)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := VertexID(v)
-  p.Dst = temp
-}
+  p.Dst = NewValue()
+  if err := p.Dst.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Dst), err)
+  }
   return nil
 }
 
@@ -2434,20 +2454,22 @@ func (p *Edge) Write(oprot thrift.Protocol) error {
 }
 
 func (p *Edge) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("src", thrift.STRING, 1); err != nil {
+  if err := oprot.WriteFieldBegin("src", thrift.STRUCT, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:src: ", p), err) }
-  if err := oprot.WriteBinary(p.Src); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.src (1) field write error: ", p), err) }
+  if err := p.Src.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Src), err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 1:src: ", p), err) }
   return err
 }
 
 func (p *Edge) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("dst", thrift.STRING, 2); err != nil {
+  if err := oprot.WriteFieldBegin("dst", thrift.STRUCT, 2); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:dst: ", p), err) }
-  if err := oprot.WriteBinary(p.Dst); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.dst (2) field write error: ", p), err) }
+  if err := p.Dst.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Dst), err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 2:dst: ", p), err) }
   return err

@@ -5543,7 +5543,7 @@ func (p *GetUUIDReq) String() string {
 //  - Id
 type GetUUIDResp struct {
   Result_ *ResponseCommon `thrift:"result,1,required" db:"result" json:"result"`
-  Id nebula0.VertexID `thrift:"id,2" db:"id" json:"id"`
+  Id *nebula0.Value `thrift:"id,2" db:"id" json:"id"`
 }
 
 func NewGetUUIDResp() *GetUUIDResp {
@@ -5557,12 +5557,19 @@ func (p *GetUUIDResp) GetResult_() *ResponseCommon {
   }
 return p.Result_
 }
-
-func (p *GetUUIDResp) GetId() nebula0.VertexID {
-  return p.Id
+var GetUUIDResp_Id_DEFAULT *nebula0.Value
+func (p *GetUUIDResp) GetId() *nebula0.Value {
+  if !p.IsSetId() {
+    return GetUUIDResp_Id_DEFAULT
+  }
+return p.Id
 }
 func (p *GetUUIDResp) IsSetResult_() bool {
   return p.Result_ != nil
+}
+
+func (p *GetUUIDResp) IsSetId() bool {
+  return p.Id != nil
 }
 
 func (p *GetUUIDResp) Read(iprot thrift.Protocol) error {
@@ -5615,12 +5622,10 @@ func (p *GetUUIDResp)  ReadField1(iprot thrift.Protocol) error {
 }
 
 func (p *GetUUIDResp)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.VertexID(v)
-  p.Id = temp
-}
+  p.Id = nebula0.NewValue()
+  if err := p.Id.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Id), err)
+  }
   return nil
 }
 
@@ -5648,10 +5653,11 @@ func (p *GetUUIDResp) writeField1(oprot thrift.Protocol) (err error) {
 }
 
 func (p *GetUUIDResp) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("id", thrift.STRING, 2); err != nil {
+  if err := oprot.WriteFieldBegin("id", thrift.STRUCT, 2); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:id: ", p), err) }
-  if err := oprot.WriteBinary(p.Id); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.id (2) field write error: ", p), err) }
+  if err := p.Id.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Id), err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 2:id: ", p), err) }
   return err
