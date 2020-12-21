@@ -509,10 +509,62 @@ func TestAsStringTable(t *testing.T) {
 	}
 }
 
+func TestIntVid(t *testing.T) {
+	vertex := getVertexInt(101, 3, 5)
+	node, err := genNode(vertex)
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	assert.Equal(t, "101", node.GetID().String())
+	assert.Equal(t, true, node.HasTag("tag1"))
+	assert.Equal(t, []string{"tag0", "tag1", "tag2"}, node.GetTags())
+	keys, _ := node.Keys("tag1")
+	keysCopy := make([]string, len(keys))
+	copy(keysCopy, keys)
+	sort.Strings(keysCopy)
+	assert.Equal(t, []string{"prop0", "prop1", "prop2", "prop3", "prop4"}, keysCopy)
+	props, _ := node.Properties("tag1")
+	for i := 0; i < len(keysCopy); i++ {
+		actualVal, err := props[keysCopy[i]].AsInt()
+		if err != nil {
+			t.Errorf(err.Error())
+		}
+		assert.Equal(t, int64(i), actualVal)
+	}
+	assert.Equal(t, true, node.GetID().IsInt())
+}
+
 func getVertex(vid string, tagNum int, propNum int) *nebula.Vertex {
 	var tags []*nebula.Tag
 	var vidVal = nebula.NewValue()
 	vidVal.SVal = []byte(vid)
+
+	for i := 0; i < tagNum; i++ {
+		props := make(map[string]*nebula.Value)
+		for j := 0; j < propNum; j++ {
+			value := setIVal(j)
+			key := fmt.Sprintf("prop%d", j)
+			props[key] = value
+		}
+		tag := nebula.Tag{
+			Name:  []byte(fmt.Sprintf("tag%d", i)),
+			Props: props,
+		}
+		tags = append(tags, &tag)
+	}
+	return &nebula.Vertex{
+		Vid:  vidVal,
+		Tags: tags,
+	}
+}
+
+func getVertexInt(vid int, tagNum int, propNum int) *nebula.Vertex {
+	var tags []*nebula.Tag
+	var vidVal = nebula.NewValue()
+	newNum := new(int64)
+	*newNum = int64(vid)
+	vidVal.IVal = newNum
 
 	for i := 0; i < tagNum; i++ {
 		props := make(map[string]*nebula.Value)
