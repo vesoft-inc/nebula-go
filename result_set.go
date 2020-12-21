@@ -174,8 +174,8 @@ func genPathWrapper(path *nebula.Path) (*PathWrapper, error) {
 			segType = -stepType
 		}
 		edge = &nebula.Edge{
-			Src:     []byte(segStartNode.GetID()),
-			Dst:     []byte(segEndNode.GetID()),
+			Src:     segStartNode.getRawID(),
+			Dst:     segEndNode.getRawID(),
 			Type:    segType,
 			Name:    step.Name,
 			Ranking: step.Ranking,
@@ -189,11 +189,11 @@ func genPathWrapper(path *nebula.Path) (*PathWrapper, error) {
 
 		// Check segments
 		if len(segList) > 0 {
-			prevStart := string(segList[len(segList)-1].startNode.GetID())
-			prevEnd := string(segList[len(segList)-1].endNode.GetID())
-			nextStart := string(segStartNode.GetID())
-			nextEnd := string(segEndNode.GetID())
-			if prevStart != nextStart && prevStart != nextEnd && prevEnd != nextStart && prevEnd != nextEnd {
+			prevStart := segList[len(segList)-1].startNode.GetID()
+			prevEnd := segList[len(segList)-1].endNode.GetID()
+			nextStart := segStartNode.GetID()
+			nextEnd := segEndNode.GetID()
+			if prevStart.String() != nextStart.String() && prevStart.String() != nextEnd.String() && prevEnd.String() != nextStart.String() && prevEnd.String() != nextEnd.String() {
 				return nil, fmt.Errorf("Failed to generate PathWrapper, Path received is invalid")
 			}
 		}
@@ -403,9 +403,14 @@ func (record Record) hasColName(colName string) bool {
 	return false
 }
 
-// Returns a list of tags of node
-func (node Node) GetID() string {
-	return string(node.vertex.GetVid())
+// Returns a list of row vid
+func (node Node) getRawID() *nebula.Value {
+	return node.vertex.GetVid()
+}
+
+// Returns a list of vid of node
+func (node Node) GetID() ValueWrapper {
+	return ValueWrapper{node.vertex.GetVid()}
 }
 
 // Returns a list of tag names of node
@@ -484,22 +489,31 @@ func (node Node) string() string {
 		kvStr = nil
 	}
 	if len(tagStr) == 0 { // No tag
-		return fmt.Sprintf("(\"%s\")", vid)
+		return fmt.Sprintf("(%s)", ValueWrapper{vid}.String())
 	}
-	return fmt.Sprintf("(\"%s\" :%s)", vid, strings.Join(tagStr, " :"))
+	return fmt.Sprintf("(%s :%s)", ValueWrapper{vid}.String(), strings.Join(tagStr, " :"))
 }
 
 // Returns true if two nodes have same vid
 func (n1 Node) IsEqualTo(n2 *Node) bool {
-	return n1.GetID() == n2.GetID()
+	if n1.GetID().IsString() && n2.GetID().IsString() {
+		s1, _ := n1.GetID().AsString()
+		s2, _ := n2.GetID().AsString()
+		return s1 == s2
+	} else if n1.GetID().IsInt() && n2.GetID().IsInt() {
+		s1, _ := n1.GetID().AsInt()
+		s2, _ := n2.GetID().AsInt()
+		return s1 == s2
+	}
+	return false
 }
 
-func (relationship Relationship) GetSrcVertexID() string {
-	return string(relationship.edge.GetSrc())
+func (relationship Relationship) GetSrcVertexID() ValueWrapper {
+	return ValueWrapper{relationship.edge.GetSrc()}
 }
 
-func (relationship Relationship) GetDstVertexID() string {
-	return string(relationship.edge.GetDst())
+func (relationship Relationship) GetDstVertexID() ValueWrapper {
+	return ValueWrapper{relationship.edge.GetDst()}
 }
 
 func (relationship Relationship) GetEdgeName() string {
@@ -559,17 +573,24 @@ func (relationship Relationship) string() string {
 		kvStr = append(kvStr, kvTemp)
 	}
 	if len(kvStr) == 0 {
-		return fmt.Sprintf(`[:%s "%s"->"%s" @%d]`,
-			string(edge.Name), string(edge.Src), string(edge.Dst), edge.Ranking)
+		return fmt.Sprintf(`[:%s %s->%s @%d]`,
+			string(edge.Name), ValueWrapper{edge.Src}.String(), ValueWrapper{edge.Dst}.String(), edge.Ranking)
 	}
-	return fmt.Sprintf(`[:%s "%s"->"%s" @%d {%s}]`,
-		string(edge.Name), string(edge.Src), string(edge.Dst), edge.Ranking, fmt.Sprintf("%s", strings.Join(kvStr, ", ")))
+	return fmt.Sprintf(`[:%s %s->%s @%d {%s}]`,
+		string(edge.Name), ValueWrapper{edge.Src}.String(), ValueWrapper{edge.Dst}.String(), edge.Ranking, fmt.Sprintf("%s", strings.Join(kvStr, ", ")))
 }
 
 func (r1 Relationship) IsEqualTo(r2 *Relationship) bool {
-	if string(r1.edge.GetSrc()) == string(r2.edge.GetSrc()) && string(r1.edge.GetDst()) == string(r2.edge.GetDst()) &&
-		string(r1.edge.Name) == string(r2.edge.Name) && r1.edge.Ranking == r2.edge.Ranking {
-		return true
+	if r1.edge.GetSrc().IsSetSVal() && r2.edge.GetSrc().IsSetSVal() &&
+		r1.edge.GetDst().IsSetSVal() && r2.edge.GetDst().IsSetSVal() {
+		s1, _ := ValueWrapper{r1.edge.GetSrc()}.AsString()
+		s2, _ := ValueWrapper{r2.edge.GetSrc()}.AsString()
+		return s1 == s2 && string(r1.edge.Name) == string(r2.edge.Name) && r1.edge.Ranking == r2.edge.Ranking
+	} else if r1.edge.GetSrc().IsSetIVal() && r2.edge.GetSrc().IsSetIVal() &&
+		r1.edge.GetDst().IsSetIVal() && r2.edge.GetDst().IsSetIVal() {
+		s1, _ := ValueWrapper{r1.edge.GetSrc()}.AsInt()
+		s2, _ := ValueWrapper{r2.edge.GetSrc()}.AsInt()
+		return s1 == s2 && string(r1.edge.Name) == string(r2.edge.Name) && r1.edge.Ranking == r2.edge.Ranking
 	}
 	return false
 }
@@ -592,7 +613,7 @@ func (path *PathWrapper) GetSegments() []segment {
 
 func (path *PathWrapper) ContainsNode(node Node) bool {
 	for _, n := range path.nodeList {
-		if n.GetID() == node.GetID() {
+		if n.IsEqualTo(&node) {
 			return true
 		}
 	}
