@@ -193,7 +193,8 @@ func genPathWrapper(path *nebula.Path) (*PathWrapper, error) {
 			prevEnd := segList[len(segList)-1].endNode.GetID()
 			nextStart := segStartNode.GetID()
 			nextEnd := segEndNode.GetID()
-			if prevStart.String() != nextStart.String() && prevStart.String() != nextEnd.String() && prevEnd.String() != nextStart.String() && prevEnd.String() != nextEnd.String() {
+			if prevStart.String() != nextStart.String() && prevStart.String() != nextEnd.String() &&
+				prevEnd.String() != nextStart.String() && prevEnd.String() != nextEnd.String() {
 				return nil, fmt.Errorf("Failed to generate PathWrapper, Path received is invalid")
 			}
 		}
@@ -509,11 +510,17 @@ func (n1 Node) IsEqualTo(n2 *Node) bool {
 }
 
 func (relationship Relationship) GetSrcVertexID() ValueWrapper {
-	return ValueWrapper{relationship.edge.GetSrc()}
+	if relationship.edge.Type > 0 {
+		return ValueWrapper{relationship.edge.GetSrc()}
+	}
+	return ValueWrapper{relationship.edge.GetDst()}
 }
 
 func (relationship Relationship) GetDstVertexID() ValueWrapper {
-	return ValueWrapper{relationship.edge.GetDst()}
+	if relationship.edge.Type > 0 {
+		return ValueWrapper{relationship.edge.GetDst()}
+	}
+	return ValueWrapper{relationship.edge.GetSrc()}
 }
 
 func (relationship Relationship) GetEdgeName() string {
@@ -564,6 +571,8 @@ func (relationship Relationship) string() string {
 	edge := relationship.edge
 	var keyList []string
 	var kvStr []string
+	var src string
+	var dst string
 	for k, _ := range edge.Props {
 		keyList = append(keyList, k)
 	}
@@ -572,12 +581,19 @@ func (relationship Relationship) string() string {
 		kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{edge.Props[k]}.String())
 		kvStr = append(kvStr, kvTemp)
 	}
+	if relationship.edge.Type > 0 {
+		src = ValueWrapper{edge.Src}.String()
+		dst = ValueWrapper{edge.Dst}.String()
+	} else {
+		src = ValueWrapper{edge.Dst}.String()
+		dst = ValueWrapper{edge.Src}.String()
+	}
 	if len(kvStr) == 0 {
 		return fmt.Sprintf(`[:%s %s->%s @%d]`,
-			string(edge.Name), ValueWrapper{edge.Src}.String(), ValueWrapper{edge.Dst}.String(), edge.Ranking)
+			string(edge.Name), src, dst, edge.Ranking)
 	}
 	return fmt.Sprintf(`[:%s %s->%s @%d {%s}]`,
-		string(edge.Name), ValueWrapper{edge.Src}.String(), ValueWrapper{edge.Dst}.String(), edge.Ranking, fmt.Sprintf("%s", strings.Join(kvStr, ", ")))
+		string(edge.Name), src, dst, edge.Ranking, fmt.Sprintf("%s", strings.Join(kvStr, ", ")))
 }
 
 func (r1 Relationship) IsEqualTo(r2 *Relationship) bool {
