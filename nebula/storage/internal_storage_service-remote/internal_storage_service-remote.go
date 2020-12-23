@@ -122,19 +122,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetValue requires 1 args")
       flag.Usage()
     }
-    arg408 := flag.Arg(1)
-    mbTrans409 := thrift.NewMemoryBufferLen(len(arg408))
-    defer mbTrans409.Close()
-    _, err410 := mbTrans409.WriteString(arg408)
-    if err410 != nil {
+    arg407 := flag.Arg(1)
+    mbTrans408 := thrift.NewMemoryBufferLen(len(arg407))
+    defer mbTrans408.Close()
+    _, err409 := mbTrans408.WriteString(arg407)
+    if err409 != nil {
       Usage()
       return
     }
-    factory411 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt412 := factory411.GetProtocol(mbTrans409)
+    factory410 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt411 := factory410.GetProtocol(mbTrans408)
     argvalue0 := storage.NewGetValueRequest()
-    err413 := argvalue0.Read(jsProt412)
-    if err413 != nil {
+    err412 := argvalue0.Read(jsProt411)
+    if err412 != nil {
       Usage()
       return
     }
@@ -147,19 +147,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "ForwardTransaction requires 1 args")
       flag.Usage()
     }
-    arg414 := flag.Arg(1)
-    mbTrans415 := thrift.NewMemoryBufferLen(len(arg414))
-    defer mbTrans415.Close()
-    _, err416 := mbTrans415.WriteString(arg414)
-    if err416 != nil {
+    arg413 := flag.Arg(1)
+    mbTrans414 := thrift.NewMemoryBufferLen(len(arg413))
+    defer mbTrans414.Close()
+    _, err415 := mbTrans414.WriteString(arg413)
+    if err415 != nil {
       Usage()
       return
     }
-    factory417 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt418 := factory417.GetProtocol(mbTrans415)
+    factory416 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt417 := factory416.GetProtocol(mbTrans414)
     argvalue0 := storage.NewInternalTxnRequest()
-    err419 := argvalue0.Read(jsProt418)
-    if err419 != nil {
+    err418 := argvalue0.Read(jsProt417)
+    if err418 != nil {
       Usage()
       return
     }

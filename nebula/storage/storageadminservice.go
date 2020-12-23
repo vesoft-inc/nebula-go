@@ -43,7 +43,7 @@ type StorageAdminService interface {
   WaitingForCatchUpData(req *CatchUpDataReq) (r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  CreateCheckpoint(req *CreateCPRequest) (r *AdminExecResp, err error)
+  CreateCheckpoint(req *CreateCPRequest) (r *CreateCPResp, err error)
   // Parameters:
   //  - Req
   DropCheckpoint(req *DropCPRequest) (r *AdminExecResp, err error)
@@ -149,16 +149,16 @@ func (p *StorageAdminServiceClient) recvTransLeader() (value *AdminExecResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error214 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error215 error
-    error215, err = error214.Read(iprot)
+    error213 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error214 error
+    error214, err = error213.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error215
+    err = error214
     return
   }
   if mTypeId != thrift.REPLY {
@@ -225,16 +225,16 @@ func (p *StorageAdminServiceClient) recvAddPart() (value *AdminExecResp, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error216 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error217 error
-    error217, err = error216.Read(iprot)
+    error215 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error216 error
+    error216, err = error215.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error217
+    err = error216
     return
   }
   if mTypeId != thrift.REPLY {
@@ -301,16 +301,16 @@ func (p *StorageAdminServiceClient) recvAddLearner() (value *AdminExecResp, err 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error218 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error219 error
-    error219, err = error218.Read(iprot)
+    error217 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error218 error
+    error218, err = error217.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error219
+    err = error218
     return
   }
   if mTypeId != thrift.REPLY {
@@ -377,16 +377,16 @@ func (p *StorageAdminServiceClient) recvRemovePart() (value *AdminExecResp, err 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error220 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error221 error
-    error221, err = error220.Read(iprot)
+    error219 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error220 error
+    error220, err = error219.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error221
+    err = error220
     return
   }
   if mTypeId != thrift.REPLY {
@@ -453,16 +453,16 @@ func (p *StorageAdminServiceClient) recvMemberChange() (value *AdminExecResp, er
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error222 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error223 error
-    error223, err = error222.Read(iprot)
+    error221 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error222 error
+    error222, err = error221.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error223
+    err = error222
     return
   }
   if mTypeId != thrift.REPLY {
@@ -529,16 +529,16 @@ func (p *StorageAdminServiceClient) recvWaitingForCatchUpData() (value *AdminExe
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error224 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error225 error
-    error225, err = error224.Read(iprot)
+    error223 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error224 error
+    error224, err = error223.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error225
+    err = error224
     return
   }
   if mTypeId != thrift.REPLY {
@@ -558,7 +558,7 @@ func (p *StorageAdminServiceClient) recvWaitingForCatchUpData() (value *AdminExe
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) CreateCheckpoint(req *CreateCPRequest) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceClient) CreateCheckpoint(req *CreateCPRequest) (r *CreateCPResp, err error) {
   if err = p.sendCreateCheckpoint(req); err != nil { return }
   return p.recvCreateCheckpoint()
 }
@@ -586,7 +586,7 @@ func (p *StorageAdminServiceClient) sendCreateCheckpoint(req *CreateCPRequest)(e
 }
 
 
-func (p *StorageAdminServiceClient) recvCreateCheckpoint() (value *AdminExecResp, err error) {
+func (p *StorageAdminServiceClient) recvCreateCheckpoint() (value *CreateCPResp, err error) {
   iprot := p.InputProtocol
   if iprot == nil {
     iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -605,16 +605,16 @@ func (p *StorageAdminServiceClient) recvCreateCheckpoint() (value *AdminExecResp
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error226 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error227 error
-    error227, err = error226.Read(iprot)
+    error225 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error226 error
+    error226, err = error225.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error227
+    err = error226
     return
   }
   if mTypeId != thrift.REPLY {
@@ -681,16 +681,16 @@ func (p *StorageAdminServiceClient) recvDropCheckpoint() (value *AdminExecResp, 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error228 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error229 error
-    error229, err = error228.Read(iprot)
+    error227 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error228 error
+    error228, err = error227.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error229
+    err = error228
     return
   }
   if mTypeId != thrift.REPLY {
@@ -757,16 +757,16 @@ func (p *StorageAdminServiceClient) recvBlockingWrites() (value *AdminExecResp, 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error230 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error231 error
-    error231, err = error230.Read(iprot)
+    error229 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error230 error
+    error230, err = error229.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error231
+    err = error230
     return
   }
   if mTypeId != thrift.REPLY {
@@ -833,16 +833,16 @@ func (p *StorageAdminServiceClient) recvRebuildTagIndex() (value *AdminExecResp,
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error232 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error233 error
-    error233, err = error232.Read(iprot)
+    error231 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error232 error
+    error232, err = error231.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error233
+    err = error232
     return
   }
   if mTypeId != thrift.REPLY {
@@ -909,16 +909,16 @@ func (p *StorageAdminServiceClient) recvRebuildEdgeIndex() (value *AdminExecResp
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error234 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error235 error
-    error235, err = error234.Read(iprot)
+    error233 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error234 error
+    error234, err = error233.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error235
+    err = error234
     return
   }
   if mTypeId != thrift.REPLY {
@@ -985,16 +985,16 @@ func (p *StorageAdminServiceClient) recvGetLeaderParts() (value *GetLeaderPartsR
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error236 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error237 error
-    error237, err = error236.Read(iprot)
+    error235 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error236 error
+    error236, err = error235.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error237
+    err = error236
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1061,16 +1061,16 @@ func (p *StorageAdminServiceClient) recvCheckPeers() (value *AdminExecResp, err 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error238 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error239 error
-    error239, err = error238.Read(iprot)
+    error237 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error238 error
+    error238, err = error237.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error239
+    err = error238
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1137,16 +1137,16 @@ func (p *StorageAdminServiceClient) recvAddAdminTask() (value *AdminExecResp, er
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error240 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error241 error
-    error241, err = error240.Read(iprot)
+    error239 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error240 error
+    error240, err = error239.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error241
+    err = error240
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1213,16 +1213,16 @@ func (p *StorageAdminServiceClient) recvStopAdminTask() (value *AdminExecResp, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error242 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error243 error
-    error243, err = error242.Read(iprot)
+    error241 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error242 error
+    error242, err = error241.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error243
+    err = error242
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1321,16 +1321,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvTransLeader() (value *AdminExe
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error244 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error245 error
-    error245, err = error244.Read(iprot)
+    error243 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error244 error
+    error244, err = error243.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error245
+    err = error244
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1399,16 +1399,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvAddPart() (value *AdminExecRes
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error246 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error247 error
-    error247, err = error246.Read(iprot)
+    error245 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error246 error
+    error246, err = error245.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error247
+    err = error246
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1477,16 +1477,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvAddLearner() (value *AdminExec
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error248 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error249 error
-    error249, err = error248.Read(iprot)
+    error247 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error248 error
+    error248, err = error247.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error249
+    err = error248
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1555,16 +1555,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvRemovePart() (value *AdminExec
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error250 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error251 error
-    error251, err = error250.Read(iprot)
+    error249 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error250 error
+    error250, err = error249.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error251
+    err = error250
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1633,16 +1633,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvMemberChange() (value *AdminEx
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error252 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error253 error
-    error253, err = error252.Read(iprot)
+    error251 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error252 error
+    error252, err = error251.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error253
+    err = error252
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1711,16 +1711,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvWaitingForCatchUpData() (value
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error254 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error255 error
-    error255, err = error254.Read(iprot)
+    error253 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error254 error
+    error254, err = error253.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error255
+    err = error254
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1740,7 +1740,7 @@ func (p *StorageAdminServiceThreadsafeClient) recvWaitingForCatchUpData() (value
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) CreateCheckpoint(req *CreateCPRequest) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) CreateCheckpoint(req *CreateCPRequest) (r *CreateCPResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
   if err = p.sendCreateCheckpoint(req); err != nil { return }
@@ -1770,7 +1770,7 @@ func (p *StorageAdminServiceThreadsafeClient) sendCreateCheckpoint(req *CreateCP
 }
 
 
-func (p *StorageAdminServiceThreadsafeClient) recvCreateCheckpoint() (value *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) recvCreateCheckpoint() (value *CreateCPResp, err error) {
   iprot := p.InputProtocol
   if iprot == nil {
     iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -1789,16 +1789,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvCreateCheckpoint() (value *Adm
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error256 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error257 error
-    error257, err = error256.Read(iprot)
+    error255 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error256 error
+    error256, err = error255.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error257
+    err = error256
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1867,16 +1867,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvDropCheckpoint() (value *Admin
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error258 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error259 error
-    error259, err = error258.Read(iprot)
+    error257 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error258 error
+    error258, err = error257.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error259
+    err = error258
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1945,16 +1945,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvBlockingWrites() (value *Admin
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error260 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error261 error
-    error261, err = error260.Read(iprot)
+    error259 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error260 error
+    error260, err = error259.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error261
+    err = error260
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2023,16 +2023,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvRebuildTagIndex() (value *Admi
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error262 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error263 error
-    error263, err = error262.Read(iprot)
+    error261 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error262 error
+    error262, err = error261.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error263
+    err = error262
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2101,16 +2101,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvRebuildEdgeIndex() (value *Adm
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error264 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error265 error
-    error265, err = error264.Read(iprot)
+    error263 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error264 error
+    error264, err = error263.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error265
+    err = error264
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2179,16 +2179,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvGetLeaderParts() (value *GetLe
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error266 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error267 error
-    error267, err = error266.Read(iprot)
+    error265 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error266 error
+    error266, err = error265.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error267
+    err = error266
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2257,16 +2257,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvCheckPeers() (value *AdminExec
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error268 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error269 error
-    error269, err = error268.Read(iprot)
+    error267 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error268 error
+    error268, err = error267.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error269
+    err = error268
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2335,16 +2335,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvAddAdminTask() (value *AdminEx
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error270 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error271 error
-    error271, err = error270.Read(iprot)
+    error269 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error270 error
+    error270, err = error269.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error271
+    err = error270
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2413,16 +2413,16 @@ func (p *StorageAdminServiceThreadsafeClient) recvStopAdminTask() (value *AdminE
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error272 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error273 error
-    error273, err = error272.Read(iprot)
+    error271 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error272 error
+    error272, err = error271.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error273
+    err = error272
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2462,23 +2462,23 @@ func (p *StorageAdminServiceProcessor) ProcessorMap() map[string]thrift.Processo
 }
 
 func NewStorageAdminServiceProcessor(handler StorageAdminService) *StorageAdminServiceProcessor {
-  self274 := &StorageAdminServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
-  self274.processorMap["transLeader"] = &storageAdminServiceProcessorTransLeader{handler:handler}
-  self274.processorMap["addPart"] = &storageAdminServiceProcessorAddPart{handler:handler}
-  self274.processorMap["addLearner"] = &storageAdminServiceProcessorAddLearner{handler:handler}
-  self274.processorMap["removePart"] = &storageAdminServiceProcessorRemovePart{handler:handler}
-  self274.processorMap["memberChange"] = &storageAdminServiceProcessorMemberChange{handler:handler}
-  self274.processorMap["waitingForCatchUpData"] = &storageAdminServiceProcessorWaitingForCatchUpData{handler:handler}
-  self274.processorMap["createCheckpoint"] = &storageAdminServiceProcessorCreateCheckpoint{handler:handler}
-  self274.processorMap["dropCheckpoint"] = &storageAdminServiceProcessorDropCheckpoint{handler:handler}
-  self274.processorMap["blockingWrites"] = &storageAdminServiceProcessorBlockingWrites{handler:handler}
-  self274.processorMap["rebuildTagIndex"] = &storageAdminServiceProcessorRebuildTagIndex{handler:handler}
-  self274.processorMap["rebuildEdgeIndex"] = &storageAdminServiceProcessorRebuildEdgeIndex{handler:handler}
-  self274.processorMap["getLeaderParts"] = &storageAdminServiceProcessorGetLeaderParts{handler:handler}
-  self274.processorMap["checkPeers"] = &storageAdminServiceProcessorCheckPeers{handler:handler}
-  self274.processorMap["addAdminTask"] = &storageAdminServiceProcessorAddAdminTask{handler:handler}
-  self274.processorMap["stopAdminTask"] = &storageAdminServiceProcessorStopAdminTask{handler:handler}
-  return self274
+  self273 := &StorageAdminServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
+  self273.processorMap["transLeader"] = &storageAdminServiceProcessorTransLeader{handler:handler}
+  self273.processorMap["addPart"] = &storageAdminServiceProcessorAddPart{handler:handler}
+  self273.processorMap["addLearner"] = &storageAdminServiceProcessorAddLearner{handler:handler}
+  self273.processorMap["removePart"] = &storageAdminServiceProcessorRemovePart{handler:handler}
+  self273.processorMap["memberChange"] = &storageAdminServiceProcessorMemberChange{handler:handler}
+  self273.processorMap["waitingForCatchUpData"] = &storageAdminServiceProcessorWaitingForCatchUpData{handler:handler}
+  self273.processorMap["createCheckpoint"] = &storageAdminServiceProcessorCreateCheckpoint{handler:handler}
+  self273.processorMap["dropCheckpoint"] = &storageAdminServiceProcessorDropCheckpoint{handler:handler}
+  self273.processorMap["blockingWrites"] = &storageAdminServiceProcessorBlockingWrites{handler:handler}
+  self273.processorMap["rebuildTagIndex"] = &storageAdminServiceProcessorRebuildTagIndex{handler:handler}
+  self273.processorMap["rebuildEdgeIndex"] = &storageAdminServiceProcessorRebuildEdgeIndex{handler:handler}
+  self273.processorMap["getLeaderParts"] = &storageAdminServiceProcessorGetLeaderParts{handler:handler}
+  self273.processorMap["checkPeers"] = &storageAdminServiceProcessorCheckPeers{handler:handler}
+  self273.processorMap["addAdminTask"] = &storageAdminServiceProcessorAddAdminTask{handler:handler}
+  self273.processorMap["stopAdminTask"] = &storageAdminServiceProcessorStopAdminTask{handler:handler}
+  return self273
 }
 
 type storageAdminServiceProcessorTransLeader struct {
@@ -4419,15 +4419,15 @@ func (p *StorageAdminServiceCreateCheckpointArgs) String() string {
 // Attributes:
 //  - Success
 type StorageAdminServiceCreateCheckpointResult struct {
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *CreateCPResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceCreateCheckpointResult() *StorageAdminServiceCreateCheckpointResult {
   return &StorageAdminServiceCreateCheckpointResult{}
 }
 
-var StorageAdminServiceCreateCheckpointResult_Success_DEFAULT *AdminExecResp
-func (p *StorageAdminServiceCreateCheckpointResult) GetSuccess() *AdminExecResp {
+var StorageAdminServiceCreateCheckpointResult_Success_DEFAULT *CreateCPResp
+func (p *StorageAdminServiceCreateCheckpointResult) GetSuccess() *CreateCPResp {
   if !p.IsSetSuccess() {
     return StorageAdminServiceCreateCheckpointResult_Success_DEFAULT
   }
@@ -4470,7 +4470,7 @@ func (p *StorageAdminServiceCreateCheckpointResult) Read(iprot thrift.Protocol) 
 }
 
 func (p *StorageAdminServiceCreateCheckpointResult)  ReadField0(iprot thrift.Protocol) error {
-  p.Success = NewAdminExecResp()
+  p.Success = NewCreateCPResp()
   if err := p.Success.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
   }
