@@ -113,16 +113,16 @@ func (p *GeneralStorageServiceClient) recvGet() (value *KVGetResponse, err error
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error366 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error367 error
-    error367, err = error366.Read(iprot)
+    error365 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error366 error
+    error366, err = error365.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error367
+    err = error366
     return
   }
   if mTypeId != thrift.REPLY {
@@ -189,16 +189,16 @@ func (p *GeneralStorageServiceClient) recvPut() (value *ExecResponse, err error)
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error368 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error369 error
-    error369, err = error368.Read(iprot)
+    error367 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error368 error
+    error368, err = error367.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error369
+    err = error368
     return
   }
   if mTypeId != thrift.REPLY {
@@ -265,16 +265,16 @@ func (p *GeneralStorageServiceClient) recvRemove() (value *ExecResponse, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error370 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error371 error
-    error371, err = error370.Read(iprot)
+    error369 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error370 error
+    error370, err = error369.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error371
+    err = error370
     return
   }
   if mTypeId != thrift.REPLY {
@@ -373,16 +373,16 @@ func (p *GeneralStorageServiceThreadsafeClient) recvGet() (value *KVGetResponse,
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error372 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error373 error
-    error373, err = error372.Read(iprot)
+    error371 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error372 error
+    error372, err = error371.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error373
+    err = error372
     return
   }
   if mTypeId != thrift.REPLY {
@@ -451,16 +451,16 @@ func (p *GeneralStorageServiceThreadsafeClient) recvPut() (value *ExecResponse, 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error374 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error375 error
-    error375, err = error374.Read(iprot)
+    error373 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error374 error
+    error374, err = error373.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error375
+    err = error374
     return
   }
   if mTypeId != thrift.REPLY {
@@ -529,16 +529,16 @@ func (p *GeneralStorageServiceThreadsafeClient) recvRemove() (value *ExecRespons
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error376 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error377 error
-    error377, err = error376.Read(iprot)
+    error375 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error376 error
+    error376, err = error375.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error377
+    err = error376
     return
   }
   if mTypeId != thrift.REPLY {
@@ -578,11 +578,11 @@ func (p *GeneralStorageServiceProcessor) ProcessorMap() map[string]thrift.Proces
 }
 
 func NewGeneralStorageServiceProcessor(handler GeneralStorageService) *GeneralStorageServiceProcessor {
-  self378 := &GeneralStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
-  self378.processorMap["get"] = &generalStorageServiceProcessorGet{handler:handler}
-  self378.processorMap["put"] = &generalStorageServiceProcessorPut{handler:handler}
-  self378.processorMap["remove"] = &generalStorageServiceProcessorRemove{handler:handler}
-  return self378
+  self377 := &GeneralStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
+  self377.processorMap["get"] = &generalStorageServiceProcessorGet{handler:handler}
+  self377.processorMap["put"] = &generalStorageServiceProcessorPut{handler:handler}
+  self377.processorMap["remove"] = &generalStorageServiceProcessorRemove{handler:handler}
+  return self377
 }
 
 type generalStorageServiceProcessorGet struct {

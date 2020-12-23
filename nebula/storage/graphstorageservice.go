@@ -146,16 +146,16 @@ func (p *GraphStorageServiceClient) recvGetNeighbors() (value *GetNeighborsRespo
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error72 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error73 error
-    error73, err = error72.Read(iprot)
+    error71 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error72 error
+    error72, err = error71.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error73
+    err = error72
     return
   }
   if mTypeId != thrift.REPLY {
@@ -222,16 +222,16 @@ func (p *GraphStorageServiceClient) recvGetProps() (value *GetPropResponse, err 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error74 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error75 error
-    error75, err = error74.Read(iprot)
+    error73 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error74 error
+    error74, err = error73.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error75
+    err = error74
     return
   }
   if mTypeId != thrift.REPLY {
@@ -298,16 +298,16 @@ func (p *GraphStorageServiceClient) recvAddVertices() (value *ExecResponse, err 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error76 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error77 error
-    error77, err = error76.Read(iprot)
+    error75 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error76 error
+    error76, err = error75.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error77
+    err = error76
     return
   }
   if mTypeId != thrift.REPLY {
@@ -374,16 +374,16 @@ func (p *GraphStorageServiceClient) recvAddEdges() (value *ExecResponse, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error78 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error79 error
-    error79, err = error78.Read(iprot)
+    error77 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error78 error
+    error78, err = error77.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error79
+    err = error78
     return
   }
   if mTypeId != thrift.REPLY {
@@ -450,16 +450,16 @@ func (p *GraphStorageServiceClient) recvDeleteEdges() (value *ExecResponse, err 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error80 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error81 error
-    error81, err = error80.Read(iprot)
+    error79 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error80 error
+    error80, err = error79.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error81
+    err = error80
     return
   }
   if mTypeId != thrift.REPLY {
@@ -526,16 +526,16 @@ func (p *GraphStorageServiceClient) recvDeleteVertices() (value *ExecResponse, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error82 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error83 error
-    error83, err = error82.Read(iprot)
+    error81 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error82 error
+    error82, err = error81.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error83
+    err = error82
     return
   }
   if mTypeId != thrift.REPLY {
@@ -602,16 +602,16 @@ func (p *GraphStorageServiceClient) recvUpdateVertex() (value *UpdateResponse, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error84 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error85 error
-    error85, err = error84.Read(iprot)
+    error83 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error84 error
+    error84, err = error83.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error85
+    err = error84
     return
   }
   if mTypeId != thrift.REPLY {
@@ -678,16 +678,16 @@ func (p *GraphStorageServiceClient) recvUpdateEdge() (value *UpdateResponse, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error86 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error87 error
-    error87, err = error86.Read(iprot)
+    error85 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error86 error
+    error86, err = error85.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error87
+    err = error86
     return
   }
   if mTypeId != thrift.REPLY {
@@ -754,16 +754,16 @@ func (p *GraphStorageServiceClient) recvScanVertex() (value *ScanVertexResponse,
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error88 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error89 error
-    error89, err = error88.Read(iprot)
+    error87 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error88 error
+    error88, err = error87.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error89
+    err = error88
     return
   }
   if mTypeId != thrift.REPLY {
@@ -830,16 +830,16 @@ func (p *GraphStorageServiceClient) recvScanEdge() (value *ScanEdgeResponse, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error90 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error91 error
-    error91, err = error90.Read(iprot)
+    error89 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error90 error
+    error90, err = error89.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error91
+    err = error90
     return
   }
   if mTypeId != thrift.REPLY {
@@ -906,16 +906,16 @@ func (p *GraphStorageServiceClient) recvGetUUID() (value *GetUUIDResp, err error
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error92 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error93 error
-    error93, err = error92.Read(iprot)
+    error91 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error92 error
+    error92, err = error91.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error93
+    err = error92
     return
   }
   if mTypeId != thrift.REPLY {
@@ -982,16 +982,16 @@ func (p *GraphStorageServiceClient) recvLookupIndex() (value *LookupIndexResp, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error94 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error95 error
-    error95, err = error94.Read(iprot)
+    error93 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error94 error
+    error94, err = error93.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error95
+    err = error94
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1058,16 +1058,16 @@ func (p *GraphStorageServiceClient) recvLookupAndTraverse() (value *GetNeighbors
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error96 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error97 error
-    error97, err = error96.Read(iprot)
+    error95 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error96 error
+    error96, err = error95.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error97
+    err = error96
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1134,16 +1134,16 @@ func (p *GraphStorageServiceClient) recvAddEdgesAtomic() (value *ExecResponse, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error98 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error99 error
-    error99, err = error98.Read(iprot)
+    error97 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error98 error
+    error98, err = error97.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error99
+    err = error98
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1242,16 +1242,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvGetNeighbors() (value *GetNeig
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error100 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error101 error
-    error101, err = error100.Read(iprot)
+    error99 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error100 error
+    error100, err = error99.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error101
+    err = error100
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1320,16 +1320,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvGetProps() (value *GetPropResp
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error102 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error103 error
-    error103, err = error102.Read(iprot)
+    error101 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error102 error
+    error102, err = error101.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error103
+    err = error102
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1398,16 +1398,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvAddVertices() (value *ExecResp
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error104 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error105 error
-    error105, err = error104.Read(iprot)
+    error103 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error104 error
+    error104, err = error103.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error105
+    err = error104
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1476,16 +1476,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvAddEdges() (value *ExecRespons
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error106 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error107 error
-    error107, err = error106.Read(iprot)
+    error105 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error106 error
+    error106, err = error105.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error107
+    err = error106
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1554,16 +1554,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvDeleteEdges() (value *ExecResp
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error108 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error109 error
-    error109, err = error108.Read(iprot)
+    error107 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error108 error
+    error108, err = error107.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error109
+    err = error108
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1632,16 +1632,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvDeleteVertices() (value *ExecR
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error110 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error111 error
-    error111, err = error110.Read(iprot)
+    error109 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error110 error
+    error110, err = error109.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error111
+    err = error110
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1710,16 +1710,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvUpdateVertex() (value *UpdateR
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error112 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error113 error
-    error113, err = error112.Read(iprot)
+    error111 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error112 error
+    error112, err = error111.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error113
+    err = error112
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1788,16 +1788,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvUpdateEdge() (value *UpdateRes
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error114 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error115 error
-    error115, err = error114.Read(iprot)
+    error113 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error114 error
+    error114, err = error113.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error115
+    err = error114
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1866,16 +1866,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvScanVertex() (value *ScanVerte
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error116 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error117 error
-    error117, err = error116.Read(iprot)
+    error115 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error116 error
+    error116, err = error115.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error117
+    err = error116
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1944,16 +1944,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvScanEdge() (value *ScanEdgeRes
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error118 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error119 error
-    error119, err = error118.Read(iprot)
+    error117 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error118 error
+    error118, err = error117.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error119
+    err = error118
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2022,16 +2022,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvGetUUID() (value *GetUUIDResp,
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error120 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error121 error
-    error121, err = error120.Read(iprot)
+    error119 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error120 error
+    error120, err = error119.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error121
+    err = error120
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2100,16 +2100,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvLookupIndex() (value *LookupIn
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error122 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error123 error
-    error123, err = error122.Read(iprot)
+    error121 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error122 error
+    error122, err = error121.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error123
+    err = error122
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2178,16 +2178,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvLookupAndTraverse() (value *Ge
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error124 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error125 error
-    error125, err = error124.Read(iprot)
+    error123 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error124 error
+    error124, err = error123.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error125
+    err = error124
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2256,16 +2256,16 @@ func (p *GraphStorageServiceThreadsafeClient) recvAddEdgesAtomic() (value *ExecR
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error126 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error127 error
-    error127, err = error126.Read(iprot)
+    error125 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error126 error
+    error126, err = error125.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error127
+    err = error126
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2305,22 +2305,22 @@ func (p *GraphStorageServiceProcessor) ProcessorMap() map[string]thrift.Processo
 }
 
 func NewGraphStorageServiceProcessor(handler GraphStorageService) *GraphStorageServiceProcessor {
-  self128 := &GraphStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
-  self128.processorMap["getNeighbors"] = &graphStorageServiceProcessorGetNeighbors{handler:handler}
-  self128.processorMap["getProps"] = &graphStorageServiceProcessorGetProps{handler:handler}
-  self128.processorMap["addVertices"] = &graphStorageServiceProcessorAddVertices{handler:handler}
-  self128.processorMap["addEdges"] = &graphStorageServiceProcessorAddEdges{handler:handler}
-  self128.processorMap["deleteEdges"] = &graphStorageServiceProcessorDeleteEdges{handler:handler}
-  self128.processorMap["deleteVertices"] = &graphStorageServiceProcessorDeleteVertices{handler:handler}
-  self128.processorMap["updateVertex"] = &graphStorageServiceProcessorUpdateVertex{handler:handler}
-  self128.processorMap["updateEdge"] = &graphStorageServiceProcessorUpdateEdge{handler:handler}
-  self128.processorMap["scanVertex"] = &graphStorageServiceProcessorScanVertex{handler:handler}
-  self128.processorMap["scanEdge"] = &graphStorageServiceProcessorScanEdge{handler:handler}
-  self128.processorMap["getUUID"] = &graphStorageServiceProcessorGetUUID{handler:handler}
-  self128.processorMap["lookupIndex"] = &graphStorageServiceProcessorLookupIndex{handler:handler}
-  self128.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
-  self128.processorMap["addEdgesAtomic"] = &graphStorageServiceProcessorAddEdgesAtomic{handler:handler}
-  return self128
+  self127 := &GraphStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
+  self127.processorMap["getNeighbors"] = &graphStorageServiceProcessorGetNeighbors{handler:handler}
+  self127.processorMap["getProps"] = &graphStorageServiceProcessorGetProps{handler:handler}
+  self127.processorMap["addVertices"] = &graphStorageServiceProcessorAddVertices{handler:handler}
+  self127.processorMap["addEdges"] = &graphStorageServiceProcessorAddEdges{handler:handler}
+  self127.processorMap["deleteEdges"] = &graphStorageServiceProcessorDeleteEdges{handler:handler}
+  self127.processorMap["deleteVertices"] = &graphStorageServiceProcessorDeleteVertices{handler:handler}
+  self127.processorMap["updateVertex"] = &graphStorageServiceProcessorUpdateVertex{handler:handler}
+  self127.processorMap["updateEdge"] = &graphStorageServiceProcessorUpdateEdge{handler:handler}
+  self127.processorMap["scanVertex"] = &graphStorageServiceProcessorScanVertex{handler:handler}
+  self127.processorMap["scanEdge"] = &graphStorageServiceProcessorScanEdge{handler:handler}
+  self127.processorMap["getUUID"] = &graphStorageServiceProcessorGetUUID{handler:handler}
+  self127.processorMap["lookupIndex"] = &graphStorageServiceProcessorLookupIndex{handler:handler}
+  self127.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
+  self127.processorMap["addEdgesAtomic"] = &graphStorageServiceProcessorAddEdgesAtomic{handler:handler}
+  return self127
 }
 
 type graphStorageServiceProcessorGetNeighbors struct {

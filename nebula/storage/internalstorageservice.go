@@ -110,16 +110,16 @@ func (p *InternalStorageServiceClient) recvGetValue() (value *GetValueResponse, 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error398 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error399 error
-    error399, err = error398.Read(iprot)
+    error397 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error398 error
+    error398, err = error397.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error399
+    err = error398
     return
   }
   if mTypeId != thrift.REPLY {
@@ -186,16 +186,16 @@ func (p *InternalStorageServiceClient) recvForwardTransaction() (value *ExecResp
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error400 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error401 error
-    error401, err = error400.Read(iprot)
+    error399 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error400 error
+    error400, err = error399.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error401
+    err = error400
     return
   }
   if mTypeId != thrift.REPLY {
@@ -294,16 +294,16 @@ func (p *InternalStorageServiceThreadsafeClient) recvGetValue() (value *GetValue
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error402 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error403 error
-    error403, err = error402.Read(iprot)
+    error401 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error402 error
+    error402, err = error401.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error403
+    err = error402
     return
   }
   if mTypeId != thrift.REPLY {
@@ -372,16 +372,16 @@ func (p *InternalStorageServiceThreadsafeClient) recvForwardTransaction() (value
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error404 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error405 error
-    error405, err = error404.Read(iprot)
+    error403 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error404 error
+    error404, err = error403.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error405
+    err = error404
     return
   }
   if mTypeId != thrift.REPLY {
@@ -421,10 +421,10 @@ func (p *InternalStorageServiceProcessor) ProcessorMap() map[string]thrift.Proce
 }
 
 func NewInternalStorageServiceProcessor(handler InternalStorageService) *InternalStorageServiceProcessor {
-  self406 := &InternalStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
-  self406.processorMap["getValue"] = &internalStorageServiceProcessorGetValue{handler:handler}
-  self406.processorMap["forwardTransaction"] = &internalStorageServiceProcessorForwardTransaction{handler:handler}
-  return self406
+  self405 := &InternalStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
+  self405.processorMap["getValue"] = &internalStorageServiceProcessorGetValue{handler:handler}
+  self405.processorMap["forwardTransaction"] = &internalStorageServiceProcessorForwardTransaction{handler:handler}
+  return self405
 }
 
 type internalStorageServiceProcessorGetValue struct {
