@@ -348,8 +348,12 @@ func (res ResultSet) GetComment() string {
 	return string(res.resp.Comment)
 }
 
+func (res ResultSet) IsSetData() bool {
+	return res.resp.Data != nil
+}
+
 func (res ResultSet) IsEmpty() bool {
-	if res.resp.Data == nil || len(res.resp.Data.Rows) == 0 {
+	if !res.IsSetData() || len(res.resp.Data.Rows) == 0 {
 		return true
 	}
 	return false
