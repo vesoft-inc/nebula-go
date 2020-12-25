@@ -254,7 +254,7 @@ func TestNode(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 
-	assert.Equal(t, "Tom", node.GetID())
+	assert.Equal(t, "\"Tom\"", node.GetID().String())
 	assert.Equal(t, true, node.HasTag("tag1"))
 	assert.Equal(t, []string{"tag0", "tag1", "tag2"}, node.GetTags())
 	keys, _ := node.Keys("tag1")
@@ -278,8 +278,8 @@ func TestRelationship(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-	assert.Equal(t, "Tom", relationship.GetSrcVertexID())
-	assert.Equal(t, "Lily", relationship.GetDstVertexID())
+	assert.Equal(t, "\"Tom\"", relationship.GetSrcVertexID().String())
+	assert.Equal(t, "\"Lily\"", relationship.GetDstVertexID().String())
 	assert.Equal(t, "classmate", relationship.GetEdgeName())
 	assert.Equal(t, int64(100), relationship.GetRanking())
 	keys := relationship.Keys()
@@ -351,16 +351,16 @@ func TestPathWrapper(t *testing.T) {
 	}
 	// Check segments
 	segList := pathWrapper.GetSegments()
-	srcList := []string{"Tom", "vertex1", "vertex1", "vertex3", "vertex3"}
-	dstList := []string{"vertex0", "vertex0", "vertex2", "vertex2", "vertex4"}
+	srcList := []string{"\"Tom\"", "\"vertex1\"", "\"vertex1\"", "\"vertex3\"", "\"vertex3\""}
+	dstList := []string{"\"vertex0\"", "\"vertex0\"", "\"vertex2\"", "\"vertex2\"", "\"vertex4\""}
 	for i := 0; i < len(segList); i++ {
-		assert.Equal(t, srcList[i], segList[i].startNode.GetID())
-		assert.Equal(t, dstList[i], segList[i].endNode.GetID())
+		assert.Equal(t, srcList[i], segList[i].startNode.GetID().String())
+		assert.Equal(t, dstList[i], segList[i].endNode.GetID().String())
 	}
 	startNode, _ := pathWrapper.GetStartNode()
 	endNode, _ := pathWrapper.GetEndNode()
-	assert.Equal(t, "Tom", startNode.GetID())
-	assert.Equal(t, "vertex4", endNode.GetID())
+	assert.Equal(t, "\"Tom\"", startNode.GetID().String())
+	assert.Equal(t, "\"vertex4\"", endNode.GetID().String())
 }
 
 func TestResultSet(t *testing.T) {
@@ -420,7 +420,7 @@ func TestResultSet(t *testing.T) {
 	assert.EqualError(t, err, "Failed to get values, given column name 'col2' does not exist")
 	val, _ := record.GetValueByColName("col2_vertex")
 	node, _ := val.AsNode()
-	assert.Equal(t, "Tom", node.GetID())
+	assert.Equal(t, "\"Tom\"", node.GetID().String())
 
 	// Check get row values
 	_, err = resultSet.GetRowValuesByIndex(10)
@@ -509,8 +509,36 @@ func TestAsStringTable(t *testing.T) {
 	}
 }
 
+func TestIntVid(t *testing.T) {
+	vertex := getVertexInt(101, 3, 5)
+	node, err := genNode(vertex)
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	assert.Equal(t, "101", node.GetID().String())
+	assert.Equal(t, true, node.HasTag("tag1"))
+	assert.Equal(t, []string{"tag0", "tag1", "tag2"}, node.GetTags())
+	keys, _ := node.Keys("tag1")
+	keysCopy := make([]string, len(keys))
+	copy(keysCopy, keys)
+	sort.Strings(keysCopy)
+	assert.Equal(t, []string{"prop0", "prop1", "prop2", "prop3", "prop4"}, keysCopy)
+	props, _ := node.Properties("tag1")
+	for i := 0; i < len(keysCopy); i++ {
+		actualVal, err := props[keysCopy[i]].AsInt()
+		if err != nil {
+			t.Errorf(err.Error())
+		}
+		assert.Equal(t, int64(i), actualVal)
+	}
+	assert.Equal(t, true, node.GetID().IsInt())
+}
+
 func getVertex(vid string, tagNum int, propNum int) *nebula.Vertex {
 	var tags []*nebula.Tag
+	var vidVal = nebula.NewValue()
+	vidVal.SVal = []byte(vid)
 
 	for i := 0; i < tagNum; i++ {
 		props := make(map[string]*nebula.Value)
@@ -526,14 +554,43 @@ func getVertex(vid string, tagNum int, propNum int) *nebula.Vertex {
 		tags = append(tags, &tag)
 	}
 	return &nebula.Vertex{
-		Vid:  []byte(vid),
+		Vid:  vidVal,
+		Tags: tags,
+	}
+}
+
+func getVertexInt(vid int, tagNum int, propNum int) *nebula.Vertex {
+	var tags []*nebula.Tag
+	var vidVal = nebula.NewValue()
+	newNum := new(int64)
+	*newNum = int64(vid)
+	vidVal.IVal = newNum
+
+	for i := 0; i < tagNum; i++ {
+		props := make(map[string]*nebula.Value)
+		for j := 0; j < propNum; j++ {
+			value := setIVal(j)
+			key := fmt.Sprintf("prop%d", j)
+			props[key] = value
+		}
+		tag := nebula.Tag{
+			Name:  []byte(fmt.Sprintf("tag%d", i)),
+			Props: props,
+		}
+		tags = append(tags, &tag)
+	}
+	return &nebula.Vertex{
+		Vid:  vidVal,
 		Tags: tags,
 	}
 }
 
 func getEdge(srcID string, dstID string, propNum int) *nebula.Edge {
-	src := []byte(srcID)
-	dst := []byte(dstID)
+	var srcVidVal = nebula.NewValue()
+	var dstVidVal = nebula.NewValue()
+	srcVidVal.SVal = []byte(srcID)
+	dstVidVal.SVal = []byte(dstID)
+
 	props := make(map[string]*nebula.Value)
 	for i := 0; i < propNum; i++ {
 		value := setIVal(i)
@@ -541,8 +598,8 @@ func getEdge(srcID string, dstID string, propNum int) *nebula.Edge {
 	}
 
 	return &nebula.Edge{
-		Src:     src,
-		Dst:     dst,
+		Src:     srcVidVal,
+		Dst:     dstVidVal,
 		Type:    1,
 		Name:    []byte("classmate"),
 		Ranking: 100,
