@@ -635,17 +635,29 @@ func (pathWrap *PathWrapper) string() string {
 			kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{step.Props[k]}.String())
 			kvStr = append(kvStr, kvTemp)
 		}
+		var dirChar1 string
+		var dirChar2 string
 		if step.Type > 0 {
-			resStr = resStr + fmt.Sprintf("-[:%s@%d {%s}]->%s",
+			dirChar1 = "-"
+			dirChar2 = "->"
+		} else {
+			dirChar1 = "<-"
+			dirChar2 = "-"
+		}
+		if len(kvStr) > 0 {
+			resStr = resStr + fmt.Sprintf("%s[:%s@%d {%s}]%s%s",
+				dirChar1,
 				string(step.Name),
 				step.Ranking,
 				fmt.Sprintf("%s", strings.Join(kvStr, ", ")),
+				dirChar2,
 				ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
 		} else {
-			resStr = resStr + fmt.Sprintf("<-[:%s@%d {%s}]-%s",
+			resStr = resStr + fmt.Sprintf("%s[:%s@%d]%s%s",
+				dirChar1,
 				string(step.Name),
 				step.Ranking,
-				fmt.Sprintf("%s", strings.Join(kvStr, ", ")),
+				dirChar2,
 				ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
 		}
 	}
