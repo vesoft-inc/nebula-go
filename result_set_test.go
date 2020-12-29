@@ -225,19 +225,19 @@ func TestAsPathWrapper(t *testing.T) {
 	assert.Equal(t,
 		"(\"Alice\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 			":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
-			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100]->"+
+			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]->"+
 			"(\"vertex0\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 			":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
-			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})<-[:classmate@100]-"+
+			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})<-[:classmate@100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]-"+
 			"(\"vertex1\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 			":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
-			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100]->"+
+			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]->"+
 			"(\"vertex2\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 			":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
-			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})<-[:classmate@100]-"+
+			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})<-[:classmate@100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]-"+
 			"(\"vertex3\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 			":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
-			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100]->"+
+			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]->"+
 			"(\"vertex4\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 			":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})",
@@ -493,13 +493,13 @@ func TestAsStringTable(t *testing.T) {
 					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}), [:classmate \"Tom\"->\"Lily\" @100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}], "+
 					"(\"Tom\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 					":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
-					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100]->"+
+					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]->"+
 					"(\"vertex0\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 					":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
-					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})<-[:classmate@100]-"+
+					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})<-[:classmate@100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]-"+
 					"(\"vertex1\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 					":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
-					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100]->"+
+					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]->"+
 					"(\"vertex2\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 					":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}), ",

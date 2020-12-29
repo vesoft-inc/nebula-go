@@ -279,12 +279,12 @@ func (valWarp ValueWrapper) String() string {
 		vertex := value.GetVVal()
 		node, _ := genNode(vertex)
 		return node.string()
-	} else if value.IsSetEVal() { // Edge format: [:edge src->dst @ranking {props}]
+	} else if value.IsSetEVal() { // Edge format: [:edge src->dst @ranking {propKey1: propVal1}]
 		edge := value.GetEVal()
 		relationship, _ := genRelationship(edge)
 		return relationship.string()
 	} else if value.IsSetPVal() {
-		// Path format: ("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking]->("VertexID3" :tag1{k0: v0,k1: v1})
+		// Path format: ("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking {propKey1: propVal1}]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking {propKey2: propVal2}]->("VertexID3" :tag1{k0: v0,k1: v1})
 		path := value.GetPVal()
 		pathWrap, _ := genPathWrapper(path)
 		return pathWrap.string()
