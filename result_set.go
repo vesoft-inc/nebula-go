@@ -659,19 +659,47 @@ func (path *PathWrapper) GetEndNode() (*Node, error) {
 	return path.segments[len(path.segments)-1].endNode, nil
 }
 
-// Path format: ("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking]->("VertexID3" :tag1{k0: v0,k1: v1})
+// Path format: ("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking {edgeProps}]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking {edgeProps}]->("VertexID3" :tag1{k0: v0,k1: v1})
 func (pathWrap *PathWrapper) string() string {
 	path := pathWrap.path
 	src := path.Src
 	steps := path.Steps
 	resStr := ValueWrapper{&nebula.Value{VVal: src}}.String()
 	for _, step := range steps {
+		var keyList []string
+		var kvStr []string
+		for k, _ := range step.Props {
+			keyList = append(keyList, k)
+		}
+		sort.Strings(keyList)
+		for _, k := range keyList {
+			kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{step.Props[k]}.String())
+			kvStr = append(kvStr, kvTemp)
+		}
+		var dirChar1 string
+		var dirChar2 string
 		if step.Type > 0 {
-			resStr = resStr + fmt.Sprintf("-[:%s@%d]->%s", string(step.Name),
-				step.Ranking, ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
+			dirChar1 = "-"
+			dirChar2 = "->"
 		} else {
-			resStr = resStr + fmt.Sprintf("<-[:%s@%d]-%s", string(step.Name),
-				step.Ranking, ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
+			dirChar1 = "<-"
+			dirChar2 = "-"
+		}
+		if len(kvStr) > 0 {
+			resStr = resStr + fmt.Sprintf("%s[:%s@%d {%s}]%s%s",
+				dirChar1,
+				string(step.Name),
+				step.Ranking,
+				fmt.Sprintf("%s", strings.Join(kvStr, ", ")),
+				dirChar2,
+				ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
+		} else {
+			resStr = resStr + fmt.Sprintf("%s[:%s@%d]%s%s",
+				dirChar1,
+				string(step.Name),
+				step.Ranking,
+				dirChar2,
+				ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
 		}
 	}
 	return resStr
