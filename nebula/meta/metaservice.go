@@ -249,6 +249,21 @@ type MetaService interface {
   // Parameters:
   //  - Req
   ListFTClients(req *ListFTClientsReq) (r *ListFTClientsResp, err error)
+  // Parameters:
+  //  - Req
+  CreateSession(req *CreateSessionReq) (r *CreateSessionResp, err error)
+  // Parameters:
+  //  - Req
+  UpdateSessions(req *UpdateSessionsReq) (r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListSessions(req *ListSessionsReq) (r *ListSessionsResp, err error)
+  // Parameters:
+  //  - Req
+  GetSession(req *GetSessionReq) (r *GetSessionResp, err error)
+  // Parameters:
+  //  - Req
+  RemoveSession(req *RemoveSessionReq) (r *ExecResp, err error)
 }
 
 type MetaServiceClient struct {
@@ -330,16 +345,16 @@ func (p *MetaServiceClient) recvCreateSpace() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error70 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error71 error
-    error71, err = error70.Read(iprot)
+    error77 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error78 error
+    error78, err = error77.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error71
+    err = error78
     return
   }
   if mTypeId != thrift.REPLY {
@@ -406,16 +421,16 @@ func (p *MetaServiceClient) recvDropSpace() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error72 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error73 error
-    error73, err = error72.Read(iprot)
+    error79 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error80 error
+    error80, err = error79.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error73
+    err = error80
     return
   }
   if mTypeId != thrift.REPLY {
@@ -482,16 +497,16 @@ func (p *MetaServiceClient) recvGetSpace() (value *GetSpaceResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error74 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error75 error
-    error75, err = error74.Read(iprot)
+    error81 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error82 error
+    error82, err = error81.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error75
+    err = error82
     return
   }
   if mTypeId != thrift.REPLY {
@@ -558,16 +573,16 @@ func (p *MetaServiceClient) recvListSpaces() (value *ListSpacesResp, err error) 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error76 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error77 error
-    error77, err = error76.Read(iprot)
+    error83 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error84 error
+    error84, err = error83.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error77
+    err = error84
     return
   }
   if mTypeId != thrift.REPLY {
@@ -634,16 +649,16 @@ func (p *MetaServiceClient) recvCreateTag() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error78 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error79 error
-    error79, err = error78.Read(iprot)
+    error85 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error86 error
+    error86, err = error85.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error79
+    err = error86
     return
   }
   if mTypeId != thrift.REPLY {
@@ -710,16 +725,16 @@ func (p *MetaServiceClient) recvAlterTag() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error80 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error81 error
-    error81, err = error80.Read(iprot)
+    error87 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error88 error
+    error88, err = error87.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error81
+    err = error88
     return
   }
   if mTypeId != thrift.REPLY {
@@ -786,16 +801,16 @@ func (p *MetaServiceClient) recvDropTag() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error82 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error83 error
-    error83, err = error82.Read(iprot)
+    error89 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error90 error
+    error90, err = error89.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error83
+    err = error90
     return
   }
   if mTypeId != thrift.REPLY {
@@ -862,16 +877,16 @@ func (p *MetaServiceClient) recvGetTag() (value *GetTagResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error84 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error85 error
-    error85, err = error84.Read(iprot)
+    error91 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error92 error
+    error92, err = error91.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error85
+    err = error92
     return
   }
   if mTypeId != thrift.REPLY {
@@ -938,16 +953,16 @@ func (p *MetaServiceClient) recvListTags() (value *ListTagsResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error86 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error87 error
-    error87, err = error86.Read(iprot)
+    error93 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error94 error
+    error94, err = error93.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error87
+    err = error94
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1014,16 +1029,16 @@ func (p *MetaServiceClient) recvCreateEdge() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error88 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error89 error
-    error89, err = error88.Read(iprot)
+    error95 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error96 error
+    error96, err = error95.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error89
+    err = error96
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1090,16 +1105,16 @@ func (p *MetaServiceClient) recvAlterEdge() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error90 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error91 error
-    error91, err = error90.Read(iprot)
+    error97 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error98 error
+    error98, err = error97.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error91
+    err = error98
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1166,16 +1181,16 @@ func (p *MetaServiceClient) recvDropEdge() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error92 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error93 error
-    error93, err = error92.Read(iprot)
+    error99 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error100 error
+    error100, err = error99.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error93
+    err = error100
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1242,16 +1257,16 @@ func (p *MetaServiceClient) recvGetEdge() (value *GetEdgeResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error94 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error95 error
-    error95, err = error94.Read(iprot)
+    error101 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error102 error
+    error102, err = error101.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error95
+    err = error102
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1318,16 +1333,16 @@ func (p *MetaServiceClient) recvListEdges() (value *ListEdgesResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error96 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error97 error
-    error97, err = error96.Read(iprot)
+    error103 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error104 error
+    error104, err = error103.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error97
+    err = error104
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1394,16 +1409,16 @@ func (p *MetaServiceClient) recvListHosts() (value *ListHostsResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error98 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error99 error
-    error99, err = error98.Read(iprot)
+    error105 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error106 error
+    error106, err = error105.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error99
+    err = error106
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1470,16 +1485,16 @@ func (p *MetaServiceClient) recvGetPartsAlloc() (value *GetPartsAllocResp, err e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error100 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error101 error
-    error101, err = error100.Read(iprot)
+    error107 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error108 error
+    error108, err = error107.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error101
+    err = error108
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1546,16 +1561,16 @@ func (p *MetaServiceClient) recvListParts() (value *ListPartsResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error102 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error103 error
-    error103, err = error102.Read(iprot)
+    error109 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error110 error
+    error110, err = error109.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error103
+    err = error110
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1622,16 +1637,16 @@ func (p *MetaServiceClient) recvMultiPut() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error104 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error105 error
-    error105, err = error104.Read(iprot)
+    error111 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error112 error
+    error112, err = error111.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error105
+    err = error112
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1698,16 +1713,16 @@ func (p *MetaServiceClient) recvGet() (value *GetResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error106 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error107 error
-    error107, err = error106.Read(iprot)
+    error113 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error114 error
+    error114, err = error113.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error107
+    err = error114
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1774,16 +1789,16 @@ func (p *MetaServiceClient) recvMultiGet() (value *MultiGetResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error108 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error109 error
-    error109, err = error108.Read(iprot)
+    error115 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error116 error
+    error116, err = error115.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error109
+    err = error116
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1850,16 +1865,16 @@ func (p *MetaServiceClient) recvRemove() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error110 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error111 error
-    error111, err = error110.Read(iprot)
+    error117 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error118 error
+    error118, err = error117.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error111
+    err = error118
     return
   }
   if mTypeId != thrift.REPLY {
@@ -1926,16 +1941,16 @@ func (p *MetaServiceClient) recvRemoveRange() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error112 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error113 error
-    error113, err = error112.Read(iprot)
+    error119 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error120 error
+    error120, err = error119.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error113
+    err = error120
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2002,16 +2017,16 @@ func (p *MetaServiceClient) recvScan() (value *ScanResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error114 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error115 error
-    error115, err = error114.Read(iprot)
+    error121 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error122 error
+    error122, err = error121.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error115
+    err = error122
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2078,16 +2093,16 @@ func (p *MetaServiceClient) recvCreateTagIndex() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error116 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error117 error
-    error117, err = error116.Read(iprot)
+    error123 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error124 error
+    error124, err = error123.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error117
+    err = error124
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2154,16 +2169,16 @@ func (p *MetaServiceClient) recvDropTagIndex() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error118 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error119 error
-    error119, err = error118.Read(iprot)
+    error125 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error126 error
+    error126, err = error125.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error119
+    err = error126
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2230,16 +2245,16 @@ func (p *MetaServiceClient) recvGetTagIndex() (value *GetTagIndexResp, err error
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error120 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error121 error
-    error121, err = error120.Read(iprot)
+    error127 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error128 error
+    error128, err = error127.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error121
+    err = error128
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2306,16 +2321,16 @@ func (p *MetaServiceClient) recvListTagIndexes() (value *ListTagIndexesResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error122 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error123 error
-    error123, err = error122.Read(iprot)
+    error129 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error130 error
+    error130, err = error129.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error123
+    err = error130
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2382,16 +2397,16 @@ func (p *MetaServiceClient) recvRebuildTagIndex() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error124 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error125 error
-    error125, err = error124.Read(iprot)
+    error131 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error132 error
+    error132, err = error131.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error125
+    err = error132
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2458,16 +2473,16 @@ func (p *MetaServiceClient) recvListTagIndexStatus() (value *ListIndexStatusResp
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error126 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error127 error
-    error127, err = error126.Read(iprot)
+    error133 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error134 error
+    error134, err = error133.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error127
+    err = error134
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2534,16 +2549,16 @@ func (p *MetaServiceClient) recvCreateEdgeIndex() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error128 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error129 error
-    error129, err = error128.Read(iprot)
+    error135 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error136 error
+    error136, err = error135.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error129
+    err = error136
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2610,16 +2625,16 @@ func (p *MetaServiceClient) recvDropEdgeIndex() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error130 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error131 error
-    error131, err = error130.Read(iprot)
+    error137 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error138 error
+    error138, err = error137.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error131
+    err = error138
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2686,16 +2701,16 @@ func (p *MetaServiceClient) recvGetEdgeIndex() (value *GetEdgeIndexResp, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error132 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error133 error
-    error133, err = error132.Read(iprot)
+    error139 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error140 error
+    error140, err = error139.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error133
+    err = error140
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2762,16 +2777,16 @@ func (p *MetaServiceClient) recvListEdgeIndexes() (value *ListEdgeIndexesResp, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error134 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error135 error
-    error135, err = error134.Read(iprot)
+    error141 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error142 error
+    error142, err = error141.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error135
+    err = error142
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2838,16 +2853,16 @@ func (p *MetaServiceClient) recvRebuildEdgeIndex() (value *ExecResp, err error) 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error136 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error137 error
-    error137, err = error136.Read(iprot)
+    error143 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error144 error
+    error144, err = error143.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error137
+    err = error144
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2914,16 +2929,16 @@ func (p *MetaServiceClient) recvListEdgeIndexStatus() (value *ListIndexStatusRes
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error138 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error139 error
-    error139, err = error138.Read(iprot)
+    error145 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error146 error
+    error146, err = error145.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error139
+    err = error146
     return
   }
   if mTypeId != thrift.REPLY {
@@ -2990,16 +3005,16 @@ func (p *MetaServiceClient) recvCreateUser() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error140 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error141 error
-    error141, err = error140.Read(iprot)
+    error147 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error148 error
+    error148, err = error147.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error141
+    err = error148
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3066,16 +3081,16 @@ func (p *MetaServiceClient) recvDropUser() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error142 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error143 error
-    error143, err = error142.Read(iprot)
+    error149 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error150 error
+    error150, err = error149.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error143
+    err = error150
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3142,16 +3157,16 @@ func (p *MetaServiceClient) recvAlterUser() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error144 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error145 error
-    error145, err = error144.Read(iprot)
+    error151 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error152 error
+    error152, err = error151.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error145
+    err = error152
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3218,16 +3233,16 @@ func (p *MetaServiceClient) recvGrantRole() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error146 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error147 error
-    error147, err = error146.Read(iprot)
+    error153 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error154 error
+    error154, err = error153.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error147
+    err = error154
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3294,16 +3309,16 @@ func (p *MetaServiceClient) recvRevokeRole() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error148 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error149 error
-    error149, err = error148.Read(iprot)
+    error155 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error156 error
+    error156, err = error155.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error149
+    err = error156
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3370,16 +3385,16 @@ func (p *MetaServiceClient) recvListUsers() (value *ListUsersResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error150 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error151 error
-    error151, err = error150.Read(iprot)
+    error157 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error158 error
+    error158, err = error157.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error151
+    err = error158
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3446,16 +3461,16 @@ func (p *MetaServiceClient) recvListRoles() (value *ListRolesResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error152 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error153 error
-    error153, err = error152.Read(iprot)
+    error159 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error160 error
+    error160, err = error159.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error153
+    err = error160
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3522,16 +3537,16 @@ func (p *MetaServiceClient) recvGetUserRoles() (value *ListRolesResp, err error)
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error154 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error155 error
-    error155, err = error154.Read(iprot)
+    error161 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error162 error
+    error162, err = error161.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error155
+    err = error162
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3598,16 +3613,16 @@ func (p *MetaServiceClient) recvChangePassword() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error156 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error157 error
-    error157, err = error156.Read(iprot)
+    error163 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error164 error
+    error164, err = error163.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error157
+    err = error164
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3674,16 +3689,16 @@ func (p *MetaServiceClient) recvHeartBeat() (value *HBResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error158 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error159 error
-    error159, err = error158.Read(iprot)
+    error165 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error166 error
+    error166, err = error165.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error159
+    err = error166
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3750,16 +3765,16 @@ func (p *MetaServiceClient) recvBalance() (value *BalanceResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error160 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error161 error
-    error161, err = error160.Read(iprot)
+    error167 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error168 error
+    error168, err = error167.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error161
+    err = error168
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3826,16 +3841,16 @@ func (p *MetaServiceClient) recvLeaderBalance() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error162 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error163 error
-    error163, err = error162.Read(iprot)
+    error169 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error170 error
+    error170, err = error169.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error163
+    err = error170
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3902,16 +3917,16 @@ func (p *MetaServiceClient) recvRegConfig() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error164 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error165 error
-    error165, err = error164.Read(iprot)
+    error171 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error172 error
+    error172, err = error171.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error165
+    err = error172
     return
   }
   if mTypeId != thrift.REPLY {
@@ -3978,16 +3993,16 @@ func (p *MetaServiceClient) recvGetConfig() (value *GetConfigResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error166 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error167 error
-    error167, err = error166.Read(iprot)
+    error173 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error174 error
+    error174, err = error173.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error167
+    err = error174
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4054,16 +4069,16 @@ func (p *MetaServiceClient) recvSetConfig() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error168 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error169 error
-    error169, err = error168.Read(iprot)
+    error175 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error176 error
+    error176, err = error175.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error169
+    err = error176
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4130,16 +4145,16 @@ func (p *MetaServiceClient) recvListConfigs() (value *ListConfigsResp, err error
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error170 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error171 error
-    error171, err = error170.Read(iprot)
+    error177 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error178 error
+    error178, err = error177.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error171
+    err = error178
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4206,16 +4221,16 @@ func (p *MetaServiceClient) recvCreateSnapshot() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error172 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error173 error
-    error173, err = error172.Read(iprot)
+    error179 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error180 error
+    error180, err = error179.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error173
+    err = error180
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4282,16 +4297,16 @@ func (p *MetaServiceClient) recvDropSnapshot() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error174 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error175 error
-    error175, err = error174.Read(iprot)
+    error181 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error182 error
+    error182, err = error181.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error175
+    err = error182
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4358,16 +4373,16 @@ func (p *MetaServiceClient) recvListSnapshots() (value *ListSnapshotsResp, err e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error176 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error177 error
-    error177, err = error176.Read(iprot)
+    error183 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error184 error
+    error184, err = error183.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error177
+    err = error184
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4434,16 +4449,16 @@ func (p *MetaServiceClient) recvRunAdminJob() (value *AdminJobResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error178 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error179 error
-    error179, err = error178.Read(iprot)
+    error185 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error186 error
+    error186, err = error185.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error179
+    err = error186
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4510,16 +4525,16 @@ func (p *MetaServiceClient) recvAddZone() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error180 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error181 error
-    error181, err = error180.Read(iprot)
+    error187 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error188 error
+    error188, err = error187.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error181
+    err = error188
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4586,16 +4601,16 @@ func (p *MetaServiceClient) recvDropZone() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error182 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error183 error
-    error183, err = error182.Read(iprot)
+    error189 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error190 error
+    error190, err = error189.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error183
+    err = error190
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4662,16 +4677,16 @@ func (p *MetaServiceClient) recvAddHostIntoZone() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error184 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error185 error
-    error185, err = error184.Read(iprot)
+    error191 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error192 error
+    error192, err = error191.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error185
+    err = error192
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4738,16 +4753,16 @@ func (p *MetaServiceClient) recvDropHostFromZone() (value *ExecResp, err error) 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error186 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error187 error
-    error187, err = error186.Read(iprot)
+    error193 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error194 error
+    error194, err = error193.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error187
+    err = error194
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4814,16 +4829,16 @@ func (p *MetaServiceClient) recvGetZone() (value *GetZoneResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error188 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error189 error
-    error189, err = error188.Read(iprot)
+    error195 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error196 error
+    error196, err = error195.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error189
+    err = error196
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4890,16 +4905,16 @@ func (p *MetaServiceClient) recvListZones() (value *ListZonesResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error190 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error191 error
-    error191, err = error190.Read(iprot)
+    error197 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error198 error
+    error198, err = error197.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error191
+    err = error198
     return
   }
   if mTypeId != thrift.REPLY {
@@ -4966,16 +4981,16 @@ func (p *MetaServiceClient) recvAddGroup() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error192 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error193 error
-    error193, err = error192.Read(iprot)
+    error199 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error200 error
+    error200, err = error199.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error193
+    err = error200
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5042,16 +5057,16 @@ func (p *MetaServiceClient) recvDropGroup() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error194 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error195 error
-    error195, err = error194.Read(iprot)
+    error201 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error202 error
+    error202, err = error201.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error195
+    err = error202
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5118,16 +5133,16 @@ func (p *MetaServiceClient) recvAddZoneIntoGroup() (value *ExecResp, err error) 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error196 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error197 error
-    error197, err = error196.Read(iprot)
+    error203 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error204 error
+    error204, err = error203.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error197
+    err = error204
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5194,16 +5209,16 @@ func (p *MetaServiceClient) recvDropZoneFromGroup() (value *ExecResp, err error)
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error198 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error199 error
-    error199, err = error198.Read(iprot)
+    error205 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error206 error
+    error206, err = error205.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error199
+    err = error206
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5270,16 +5285,16 @@ func (p *MetaServiceClient) recvGetGroup() (value *GetGroupResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error200 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error201 error
-    error201, err = error200.Read(iprot)
+    error207 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error208 error
+    error208, err = error207.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error201
+    err = error208
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5346,16 +5361,16 @@ func (p *MetaServiceClient) recvListGroups() (value *ListGroupsResp, err error) 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error202 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error203 error
-    error203, err = error202.Read(iprot)
+    error209 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error210 error
+    error210, err = error209.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error203
+    err = error210
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5422,16 +5437,16 @@ func (p *MetaServiceClient) recvCreateBackup() (value *CreateBackupResp, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error204 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error205 error
-    error205, err = error204.Read(iprot)
+    error211 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error212 error
+    error212, err = error211.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error205
+    err = error212
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5498,16 +5513,16 @@ func (p *MetaServiceClient) recvRestoreMeta() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error206 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error207 error
-    error207, err = error206.Read(iprot)
+    error213 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error214 error
+    error214, err = error213.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error207
+    err = error214
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5574,16 +5589,16 @@ func (p *MetaServiceClient) recvAddListener() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error208 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error209 error
-    error209, err = error208.Read(iprot)
+    error215 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error216 error
+    error216, err = error215.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error209
+    err = error216
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5650,16 +5665,16 @@ func (p *MetaServiceClient) recvRemoveListener() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error210 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error211 error
-    error211, err = error210.Read(iprot)
+    error217 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error218 error
+    error218, err = error217.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error211
+    err = error218
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5726,16 +5741,16 @@ func (p *MetaServiceClient) recvListListener() (value *ListListenerResp, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error212 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error213 error
-    error213, err = error212.Read(iprot)
+    error219 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error220 error
+    error220, err = error219.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error213
+    err = error220
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5802,16 +5817,16 @@ func (p *MetaServiceClient) recvGetStatis() (value *GetStatisResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error214 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error215 error
-    error215, err = error214.Read(iprot)
+    error221 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error222 error
+    error222, err = error221.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error215
+    err = error222
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5878,16 +5893,16 @@ func (p *MetaServiceClient) recvSignInFTService() (value *ExecResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error216 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error217 error
-    error217, err = error216.Read(iprot)
+    error223 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error224 error
+    error224, err = error223.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error217
+    err = error224
     return
   }
   if mTypeId != thrift.REPLY {
@@ -5954,16 +5969,16 @@ func (p *MetaServiceClient) recvSignOutFTService() (value *ExecResp, err error) 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error218 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error219 error
-    error219, err = error218.Read(iprot)
+    error225 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error226 error
+    error226, err = error225.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error219
+    err = error226
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6030,16 +6045,16 @@ func (p *MetaServiceClient) recvListFTClients() (value *ListFTClientsResp, err e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error220 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error221 error
-    error221, err = error220.Read(iprot)
+    error227 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error228 error
+    error228, err = error227.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error221
+    err = error228
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6047,6 +6062,386 @@ func (p *MetaServiceClient) recvListFTClients() (value *ListFTClientsResp, err e
     return
   }
   result := MetaServiceListFTClientsResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) CreateSession(req *CreateSessionReq) (r *CreateSessionResp, err error) {
+  if err = p.sendCreateSession(req); err != nil { return }
+  return p.recvCreateSession()
+}
+
+func (p *MetaServiceClient) sendCreateSession(req *CreateSessionReq)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("createSession", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := MetaServiceCreateSessionArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *MetaServiceClient) recvCreateSession() (value *CreateSessionResp, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "createSession" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createSession failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createSession failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error229 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error230 error
+    error230, err = error229.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error230
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createSession failed: invalid message type")
+    return
+  }
+  result := MetaServiceCreateSessionResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) UpdateSessions(req *UpdateSessionsReq) (r *ExecResp, err error) {
+  if err = p.sendUpdateSessions(req); err != nil { return }
+  return p.recvUpdateSessions()
+}
+
+func (p *MetaServiceClient) sendUpdateSessions(req *UpdateSessionsReq)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("updateSessions", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := MetaServiceUpdateSessionsArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *MetaServiceClient) recvUpdateSessions() (value *ExecResp, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "updateSessions" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "updateSessions failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "updateSessions failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error231 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error232 error
+    error232, err = error231.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error232
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "updateSessions failed: invalid message type")
+    return
+  }
+  result := MetaServiceUpdateSessionsResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) ListSessions(req *ListSessionsReq) (r *ListSessionsResp, err error) {
+  if err = p.sendListSessions(req); err != nil { return }
+  return p.recvListSessions()
+}
+
+func (p *MetaServiceClient) sendListSessions(req *ListSessionsReq)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("listSessions", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := MetaServiceListSessionsArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *MetaServiceClient) recvListSessions() (value *ListSessionsResp, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "listSessions" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listSessions failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listSessions failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error233 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error234 error
+    error234, err = error233.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error234
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listSessions failed: invalid message type")
+    return
+  }
+  result := MetaServiceListSessionsResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) GetSession(req *GetSessionReq) (r *GetSessionResp, err error) {
+  if err = p.sendGetSession(req); err != nil { return }
+  return p.recvGetSession()
+}
+
+func (p *MetaServiceClient) sendGetSession(req *GetSessionReq)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("getSession", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := MetaServiceGetSessionArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *MetaServiceClient) recvGetSession() (value *GetSessionResp, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "getSession" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getSession failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getSession failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error235 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error236 error
+    error236, err = error235.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error236
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getSession failed: invalid message type")
+    return
+  }
+  result := MetaServiceGetSessionResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) RemoveSession(req *RemoveSessionReq) (r *ExecResp, err error) {
+  if err = p.sendRemoveSession(req); err != nil { return }
+  return p.recvRemoveSession()
+}
+
+func (p *MetaServiceClient) sendRemoveSession(req *RemoveSessionReq)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("removeSession", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := MetaServiceRemoveSessionArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *MetaServiceClient) recvRemoveSession() (value *ExecResp, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "removeSession" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "removeSession failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "removeSession failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error237 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error238 error
+    error238, err = error237.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error238
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "removeSession failed: invalid message type")
+    return
+  }
+  result := MetaServiceRemoveSessionResult{}
   if err = result.Read(iprot); err != nil {
     return
   }
@@ -6138,16 +6533,16 @@ func (p *MetaServiceThreadsafeClient) recvCreateSpace() (value *ExecResp, err er
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error222 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error223 error
-    error223, err = error222.Read(iprot)
+    error239 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error240 error
+    error240, err = error239.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error223
+    err = error240
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6216,16 +6611,16 @@ func (p *MetaServiceThreadsafeClient) recvDropSpace() (value *ExecResp, err erro
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error224 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error225 error
-    error225, err = error224.Read(iprot)
+    error241 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error242 error
+    error242, err = error241.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error225
+    err = error242
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6294,16 +6689,16 @@ func (p *MetaServiceThreadsafeClient) recvGetSpace() (value *GetSpaceResp, err e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error226 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error227 error
-    error227, err = error226.Read(iprot)
+    error243 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error244 error
+    error244, err = error243.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error227
+    err = error244
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6372,16 +6767,16 @@ func (p *MetaServiceThreadsafeClient) recvListSpaces() (value *ListSpacesResp, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error228 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error229 error
-    error229, err = error228.Read(iprot)
+    error245 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error246 error
+    error246, err = error245.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error229
+    err = error246
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6450,16 +6845,16 @@ func (p *MetaServiceThreadsafeClient) recvCreateTag() (value *ExecResp, err erro
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error230 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error231 error
-    error231, err = error230.Read(iprot)
+    error247 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error248 error
+    error248, err = error247.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error231
+    err = error248
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6528,16 +6923,16 @@ func (p *MetaServiceThreadsafeClient) recvAlterTag() (value *ExecResp, err error
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error232 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error233 error
-    error233, err = error232.Read(iprot)
+    error249 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error250 error
+    error250, err = error249.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error233
+    err = error250
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6606,16 +7001,16 @@ func (p *MetaServiceThreadsafeClient) recvDropTag() (value *ExecResp, err error)
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error234 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error235 error
-    error235, err = error234.Read(iprot)
+    error251 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error252 error
+    error252, err = error251.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error235
+    err = error252
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6684,16 +7079,16 @@ func (p *MetaServiceThreadsafeClient) recvGetTag() (value *GetTagResp, err error
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error236 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error237 error
-    error237, err = error236.Read(iprot)
+    error253 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error254 error
+    error254, err = error253.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error237
+    err = error254
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6762,16 +7157,16 @@ func (p *MetaServiceThreadsafeClient) recvListTags() (value *ListTagsResp, err e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error238 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error239 error
-    error239, err = error238.Read(iprot)
+    error255 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error256 error
+    error256, err = error255.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error239
+    err = error256
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6840,16 +7235,16 @@ func (p *MetaServiceThreadsafeClient) recvCreateEdge() (value *ExecResp, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error240 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error241 error
-    error241, err = error240.Read(iprot)
+    error257 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error258 error
+    error258, err = error257.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error241
+    err = error258
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6918,16 +7313,16 @@ func (p *MetaServiceThreadsafeClient) recvAlterEdge() (value *ExecResp, err erro
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error242 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error243 error
-    error243, err = error242.Read(iprot)
+    error259 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error260 error
+    error260, err = error259.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error243
+    err = error260
     return
   }
   if mTypeId != thrift.REPLY {
@@ -6996,16 +7391,16 @@ func (p *MetaServiceThreadsafeClient) recvDropEdge() (value *ExecResp, err error
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error244 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error245 error
-    error245, err = error244.Read(iprot)
+    error261 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error262 error
+    error262, err = error261.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error245
+    err = error262
     return
   }
   if mTypeId != thrift.REPLY {
@@ -7074,16 +7469,16 @@ func (p *MetaServiceThreadsafeClient) recvGetEdge() (value *GetEdgeResp, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error246 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error247 error
-    error247, err = error246.Read(iprot)
+    error263 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error264 error
+    error264, err = error263.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error247
+    err = error264
     return
   }
   if mTypeId != thrift.REPLY {
@@ -7152,16 +7547,16 @@ func (p *MetaServiceThreadsafeClient) recvListEdges() (value *ListEdgesResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error248 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error249 error
-    error249, err = error248.Read(iprot)
+    error265 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error266 error
+    error266, err = error265.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error249
+    err = error266
     return
   }
   if mTypeId != thrift.REPLY {
@@ -7230,16 +7625,16 @@ func (p *MetaServiceThreadsafeClient) recvListHosts() (value *ListHostsResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error250 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error251 error
-    error251, err = error250.Read(iprot)
+    error267 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error268 error
+    error268, err = error267.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error251
+    err = error268
     return
   }
   if mTypeId != thrift.REPLY {
@@ -7308,16 +7703,16 @@ func (p *MetaServiceThreadsafeClient) recvGetPartsAlloc() (value *GetPartsAllocR
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error252 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error253 error
-    error253, err = error252.Read(iprot)
+    error269 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error270 error
+    error270, err = error269.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error253
+    err = error270
     return
   }
   if mTypeId != thrift.REPLY {
@@ -7386,16 +7781,16 @@ func (p *MetaServiceThreadsafeClient) recvListParts() (value *ListPartsResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error254 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error255 error
-    error255, err = error254.Read(iprot)
+    error271 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error272 error
+    error272, err = error271.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error255
+    err = error272
     return
   }
   if mTypeId != thrift.REPLY {
@@ -7464,16 +7859,16 @@ func (p *MetaServiceThreadsafeClient) recvMultiPut() (value *ExecResp, err error
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error256 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error257 error
-    error257, err = error256.Read(iprot)
+    error273 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error274 error
+    error274, err = error273.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error257
+    err = error274
     return
   }
   if mTypeId != thrift.REPLY {
@@ -7542,16 +7937,16 @@ func (p *MetaServiceThreadsafeClient) recvGet() (value *GetResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error258 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error259 error
-    error259, err = error258.Read(iprot)
+    error275 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error276 error
+    error276, err = error275.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error259
+    err = error276
     return
   }
   if mTypeId != thrift.REPLY {
@@ -7620,16 +8015,16 @@ func (p *MetaServiceThreadsafeClient) recvMultiGet() (value *MultiGetResp, err e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error260 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error261 error
-    error261, err = error260.Read(iprot)
+    error277 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error278 error
+    error278, err = error277.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error261
+    err = error278
     return
   }
   if mTypeId != thrift.REPLY {
@@ -7698,16 +8093,16 @@ func (p *MetaServiceThreadsafeClient) recvRemove() (value *ExecResp, err error) 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error262 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error263 error
-    error263, err = error262.Read(iprot)
+    error279 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error280 error
+    error280, err = error279.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error263
+    err = error280
     return
   }
   if mTypeId != thrift.REPLY {
@@ -7776,16 +8171,16 @@ func (p *MetaServiceThreadsafeClient) recvRemoveRange() (value *ExecResp, err er
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error264 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error265 error
-    error265, err = error264.Read(iprot)
+    error281 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error282 error
+    error282, err = error281.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error265
+    err = error282
     return
   }
   if mTypeId != thrift.REPLY {
@@ -7854,16 +8249,16 @@ func (p *MetaServiceThreadsafeClient) recvScan() (value *ScanResp, err error) {
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error266 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error267 error
-    error267, err = error266.Read(iprot)
+    error283 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error284 error
+    error284, err = error283.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error267
+    err = error284
     return
   }
   if mTypeId != thrift.REPLY {
@@ -7932,16 +8327,16 @@ func (p *MetaServiceThreadsafeClient) recvCreateTagIndex() (value *ExecResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error268 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error269 error
-    error269, err = error268.Read(iprot)
+    error285 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error286 error
+    error286, err = error285.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error269
+    err = error286
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8010,16 +8405,16 @@ func (p *MetaServiceThreadsafeClient) recvDropTagIndex() (value *ExecResp, err e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error270 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error271 error
-    error271, err = error270.Read(iprot)
+    error287 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error288 error
+    error288, err = error287.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error271
+    err = error288
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8088,16 +8483,16 @@ func (p *MetaServiceThreadsafeClient) recvGetTagIndex() (value *GetTagIndexResp,
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error272 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error273 error
-    error273, err = error272.Read(iprot)
+    error289 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error290 error
+    error290, err = error289.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error273
+    err = error290
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8166,16 +8561,16 @@ func (p *MetaServiceThreadsafeClient) recvListTagIndexes() (value *ListTagIndexe
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error274 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error275 error
-    error275, err = error274.Read(iprot)
+    error291 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error292 error
+    error292, err = error291.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error275
+    err = error292
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8244,16 +8639,16 @@ func (p *MetaServiceThreadsafeClient) recvRebuildTagIndex() (value *ExecResp, er
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error276 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error277 error
-    error277, err = error276.Read(iprot)
+    error293 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error294 error
+    error294, err = error293.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error277
+    err = error294
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8322,16 +8717,16 @@ func (p *MetaServiceThreadsafeClient) recvListTagIndexStatus() (value *ListIndex
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error278 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error279 error
-    error279, err = error278.Read(iprot)
+    error295 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error296 error
+    error296, err = error295.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error279
+    err = error296
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8400,16 +8795,16 @@ func (p *MetaServiceThreadsafeClient) recvCreateEdgeIndex() (value *ExecResp, er
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error280 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error281 error
-    error281, err = error280.Read(iprot)
+    error297 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error298 error
+    error298, err = error297.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error281
+    err = error298
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8478,16 +8873,16 @@ func (p *MetaServiceThreadsafeClient) recvDropEdgeIndex() (value *ExecResp, err 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error282 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error283 error
-    error283, err = error282.Read(iprot)
+    error299 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error300 error
+    error300, err = error299.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error283
+    err = error300
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8556,16 +8951,16 @@ func (p *MetaServiceThreadsafeClient) recvGetEdgeIndex() (value *GetEdgeIndexRes
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error284 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error285 error
-    error285, err = error284.Read(iprot)
+    error301 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error302 error
+    error302, err = error301.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error285
+    err = error302
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8634,16 +9029,16 @@ func (p *MetaServiceThreadsafeClient) recvListEdgeIndexes() (value *ListEdgeInde
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error286 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error287 error
-    error287, err = error286.Read(iprot)
+    error303 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error304 error
+    error304, err = error303.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error287
+    err = error304
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8712,16 +9107,16 @@ func (p *MetaServiceThreadsafeClient) recvRebuildEdgeIndex() (value *ExecResp, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error288 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error289 error
-    error289, err = error288.Read(iprot)
+    error305 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error306 error
+    error306, err = error305.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error289
+    err = error306
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8790,16 +9185,16 @@ func (p *MetaServiceThreadsafeClient) recvListEdgeIndexStatus() (value *ListInde
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error290 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error291 error
-    error291, err = error290.Read(iprot)
+    error307 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error308 error
+    error308, err = error307.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error291
+    err = error308
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8868,16 +9263,16 @@ func (p *MetaServiceThreadsafeClient) recvCreateUser() (value *ExecResp, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error292 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error293 error
-    error293, err = error292.Read(iprot)
+    error309 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error310 error
+    error310, err = error309.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error293
+    err = error310
     return
   }
   if mTypeId != thrift.REPLY {
@@ -8946,16 +9341,16 @@ func (p *MetaServiceThreadsafeClient) recvDropUser() (value *ExecResp, err error
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error294 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error295 error
-    error295, err = error294.Read(iprot)
+    error311 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error312 error
+    error312, err = error311.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error295
+    err = error312
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9024,16 +9419,16 @@ func (p *MetaServiceThreadsafeClient) recvAlterUser() (value *ExecResp, err erro
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error296 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error297 error
-    error297, err = error296.Read(iprot)
+    error313 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error314 error
+    error314, err = error313.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error297
+    err = error314
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9102,16 +9497,16 @@ func (p *MetaServiceThreadsafeClient) recvGrantRole() (value *ExecResp, err erro
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error298 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error299 error
-    error299, err = error298.Read(iprot)
+    error315 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error316 error
+    error316, err = error315.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error299
+    err = error316
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9180,16 +9575,16 @@ func (p *MetaServiceThreadsafeClient) recvRevokeRole() (value *ExecResp, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error300 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error301 error
-    error301, err = error300.Read(iprot)
+    error317 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error318 error
+    error318, err = error317.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error301
+    err = error318
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9258,16 +9653,16 @@ func (p *MetaServiceThreadsafeClient) recvListUsers() (value *ListUsersResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error302 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error303 error
-    error303, err = error302.Read(iprot)
+    error319 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error320 error
+    error320, err = error319.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error303
+    err = error320
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9336,16 +9731,16 @@ func (p *MetaServiceThreadsafeClient) recvListRoles() (value *ListRolesResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error304 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error305 error
-    error305, err = error304.Read(iprot)
+    error321 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error322 error
+    error322, err = error321.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error305
+    err = error322
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9414,16 +9809,16 @@ func (p *MetaServiceThreadsafeClient) recvGetUserRoles() (value *ListRolesResp, 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error306 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error307 error
-    error307, err = error306.Read(iprot)
+    error323 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error324 error
+    error324, err = error323.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error307
+    err = error324
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9492,16 +9887,16 @@ func (p *MetaServiceThreadsafeClient) recvChangePassword() (value *ExecResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error308 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error309 error
-    error309, err = error308.Read(iprot)
+    error325 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error326 error
+    error326, err = error325.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error309
+    err = error326
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9570,16 +9965,16 @@ func (p *MetaServiceThreadsafeClient) recvHeartBeat() (value *HBResp, err error)
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error310 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error311 error
-    error311, err = error310.Read(iprot)
+    error327 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error328 error
+    error328, err = error327.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error311
+    err = error328
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9648,16 +10043,16 @@ func (p *MetaServiceThreadsafeClient) recvBalance() (value *BalanceResp, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error312 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error313 error
-    error313, err = error312.Read(iprot)
+    error329 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error330 error
+    error330, err = error329.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error313
+    err = error330
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9726,16 +10121,16 @@ func (p *MetaServiceThreadsafeClient) recvLeaderBalance() (value *ExecResp, err 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error314 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error315 error
-    error315, err = error314.Read(iprot)
+    error331 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error332 error
+    error332, err = error331.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error315
+    err = error332
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9804,16 +10199,16 @@ func (p *MetaServiceThreadsafeClient) recvRegConfig() (value *ExecResp, err erro
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error316 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error317 error
-    error317, err = error316.Read(iprot)
+    error333 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error334 error
+    error334, err = error333.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error317
+    err = error334
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9882,16 +10277,16 @@ func (p *MetaServiceThreadsafeClient) recvGetConfig() (value *GetConfigResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error318 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error319 error
-    error319, err = error318.Read(iprot)
+    error335 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error336 error
+    error336, err = error335.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error319
+    err = error336
     return
   }
   if mTypeId != thrift.REPLY {
@@ -9960,16 +10355,16 @@ func (p *MetaServiceThreadsafeClient) recvSetConfig() (value *ExecResp, err erro
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error320 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error321 error
-    error321, err = error320.Read(iprot)
+    error337 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error338 error
+    error338, err = error337.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error321
+    err = error338
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10038,16 +10433,16 @@ func (p *MetaServiceThreadsafeClient) recvListConfigs() (value *ListConfigsResp,
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error322 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error323 error
-    error323, err = error322.Read(iprot)
+    error339 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error340 error
+    error340, err = error339.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error323
+    err = error340
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10116,16 +10511,16 @@ func (p *MetaServiceThreadsafeClient) recvCreateSnapshot() (value *ExecResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error324 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error325 error
-    error325, err = error324.Read(iprot)
+    error341 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error342 error
+    error342, err = error341.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error325
+    err = error342
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10194,16 +10589,16 @@ func (p *MetaServiceThreadsafeClient) recvDropSnapshot() (value *ExecResp, err e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error326 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error327 error
-    error327, err = error326.Read(iprot)
+    error343 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error344 error
+    error344, err = error343.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error327
+    err = error344
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10272,16 +10667,16 @@ func (p *MetaServiceThreadsafeClient) recvListSnapshots() (value *ListSnapshotsR
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error328 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error329 error
-    error329, err = error328.Read(iprot)
+    error345 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error346 error
+    error346, err = error345.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error329
+    err = error346
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10350,16 +10745,16 @@ func (p *MetaServiceThreadsafeClient) recvRunAdminJob() (value *AdminJobResp, er
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error330 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error331 error
-    error331, err = error330.Read(iprot)
+    error347 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error348 error
+    error348, err = error347.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error331
+    err = error348
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10428,16 +10823,16 @@ func (p *MetaServiceThreadsafeClient) recvAddZone() (value *ExecResp, err error)
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error332 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error333 error
-    error333, err = error332.Read(iprot)
+    error349 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error350 error
+    error350, err = error349.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error333
+    err = error350
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10506,16 +10901,16 @@ func (p *MetaServiceThreadsafeClient) recvDropZone() (value *ExecResp, err error
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error334 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error335 error
-    error335, err = error334.Read(iprot)
+    error351 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error352 error
+    error352, err = error351.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error335
+    err = error352
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10584,16 +10979,16 @@ func (p *MetaServiceThreadsafeClient) recvAddHostIntoZone() (value *ExecResp, er
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error336 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error337 error
-    error337, err = error336.Read(iprot)
+    error353 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error354 error
+    error354, err = error353.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error337
+    err = error354
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10662,16 +11057,16 @@ func (p *MetaServiceThreadsafeClient) recvDropHostFromZone() (value *ExecResp, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error338 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error339 error
-    error339, err = error338.Read(iprot)
+    error355 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error356 error
+    error356, err = error355.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error339
+    err = error356
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10740,16 +11135,16 @@ func (p *MetaServiceThreadsafeClient) recvGetZone() (value *GetZoneResp, err err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error340 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error341 error
-    error341, err = error340.Read(iprot)
+    error357 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error358 error
+    error358, err = error357.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error341
+    err = error358
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10818,16 +11213,16 @@ func (p *MetaServiceThreadsafeClient) recvListZones() (value *ListZonesResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error342 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error343 error
-    error343, err = error342.Read(iprot)
+    error359 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error360 error
+    error360, err = error359.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error343
+    err = error360
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10896,16 +11291,16 @@ func (p *MetaServiceThreadsafeClient) recvAddGroup() (value *ExecResp, err error
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error344 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error345 error
-    error345, err = error344.Read(iprot)
+    error361 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error362 error
+    error362, err = error361.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error345
+    err = error362
     return
   }
   if mTypeId != thrift.REPLY {
@@ -10974,16 +11369,16 @@ func (p *MetaServiceThreadsafeClient) recvDropGroup() (value *ExecResp, err erro
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error346 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error347 error
-    error347, err = error346.Read(iprot)
+    error363 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error364 error
+    error364, err = error363.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error347
+    err = error364
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11052,16 +11447,16 @@ func (p *MetaServiceThreadsafeClient) recvAddZoneIntoGroup() (value *ExecResp, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error348 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error349 error
-    error349, err = error348.Read(iprot)
+    error365 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error366 error
+    error366, err = error365.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error349
+    err = error366
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11130,16 +11525,16 @@ func (p *MetaServiceThreadsafeClient) recvDropZoneFromGroup() (value *ExecResp, 
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error350 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error351 error
-    error351, err = error350.Read(iprot)
+    error367 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error368 error
+    error368, err = error367.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error351
+    err = error368
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11208,16 +11603,16 @@ func (p *MetaServiceThreadsafeClient) recvGetGroup() (value *GetGroupResp, err e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error352 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error353 error
-    error353, err = error352.Read(iprot)
+    error369 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error370 error
+    error370, err = error369.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error353
+    err = error370
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11286,16 +11681,16 @@ func (p *MetaServiceThreadsafeClient) recvListGroups() (value *ListGroupsResp, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error354 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error355 error
-    error355, err = error354.Read(iprot)
+    error371 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error372 error
+    error372, err = error371.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error355
+    err = error372
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11364,16 +11759,16 @@ func (p *MetaServiceThreadsafeClient) recvCreateBackup() (value *CreateBackupRes
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error356 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error357 error
-    error357, err = error356.Read(iprot)
+    error373 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error374 error
+    error374, err = error373.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error357
+    err = error374
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11442,16 +11837,16 @@ func (p *MetaServiceThreadsafeClient) recvRestoreMeta() (value *ExecResp, err er
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error358 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error359 error
-    error359, err = error358.Read(iprot)
+    error375 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error376 error
+    error376, err = error375.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error359
+    err = error376
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11520,16 +11915,16 @@ func (p *MetaServiceThreadsafeClient) recvAddListener() (value *ExecResp, err er
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error360 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error361 error
-    error361, err = error360.Read(iprot)
+    error377 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error378 error
+    error378, err = error377.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error361
+    err = error378
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11598,16 +11993,16 @@ func (p *MetaServiceThreadsafeClient) recvRemoveListener() (value *ExecResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error362 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error363 error
-    error363, err = error362.Read(iprot)
+    error379 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error380 error
+    error380, err = error379.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error363
+    err = error380
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11676,16 +12071,16 @@ func (p *MetaServiceThreadsafeClient) recvListListener() (value *ListListenerRes
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error364 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error365 error
-    error365, err = error364.Read(iprot)
+    error381 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error382 error
+    error382, err = error381.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error365
+    err = error382
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11754,16 +12149,16 @@ func (p *MetaServiceThreadsafeClient) recvGetStatis() (value *GetStatisResp, err
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error366 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error367 error
-    error367, err = error366.Read(iprot)
+    error383 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error384 error
+    error384, err = error383.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error367
+    err = error384
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11832,16 +12227,16 @@ func (p *MetaServiceThreadsafeClient) recvSignInFTService() (value *ExecResp, er
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error368 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error369 error
-    error369, err = error368.Read(iprot)
+    error385 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error386 error
+    error386, err = error385.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error369
+    err = error386
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11910,16 +12305,16 @@ func (p *MetaServiceThreadsafeClient) recvSignOutFTService() (value *ExecResp, e
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error370 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error371 error
-    error371, err = error370.Read(iprot)
+    error387 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error388 error
+    error388, err = error387.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error371
+    err = error388
     return
   }
   if mTypeId != thrift.REPLY {
@@ -11988,16 +12383,16 @@ func (p *MetaServiceThreadsafeClient) recvListFTClients() (value *ListFTClientsR
     return
   }
   if mTypeId == thrift.EXCEPTION {
-    error372 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error373 error
-    error373, err = error372.Read(iprot)
+    error389 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error390 error
+    error390, err = error389.Read(iprot)
     if err != nil {
       return
     }
     if err = iprot.ReadMessageEnd(); err != nil {
       return
     }
-    err = error373
+    err = error390
     return
   }
   if mTypeId != thrift.REPLY {
@@ -12005,6 +12400,396 @@ func (p *MetaServiceThreadsafeClient) recvListFTClients() (value *ListFTClientsR
     return
   }
   result := MetaServiceListFTClientsResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) CreateSession(req *CreateSessionReq) (r *CreateSessionResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  if err = p.sendCreateSession(req); err != nil { return }
+  return p.recvCreateSession()
+}
+
+func (p *MetaServiceThreadsafeClient) sendCreateSession(req *CreateSessionReq)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("createSession", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := MetaServiceCreateSessionArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvCreateSession() (value *CreateSessionResp, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "createSession" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createSession failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createSession failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error391 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error392 error
+    error392, err = error391.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error392
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createSession failed: invalid message type")
+    return
+  }
+  result := MetaServiceCreateSessionResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) UpdateSessions(req *UpdateSessionsReq) (r *ExecResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  if err = p.sendUpdateSessions(req); err != nil { return }
+  return p.recvUpdateSessions()
+}
+
+func (p *MetaServiceThreadsafeClient) sendUpdateSessions(req *UpdateSessionsReq)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("updateSessions", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := MetaServiceUpdateSessionsArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvUpdateSessions() (value *ExecResp, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "updateSessions" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "updateSessions failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "updateSessions failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error393 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error394 error
+    error394, err = error393.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error394
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "updateSessions failed: invalid message type")
+    return
+  }
+  result := MetaServiceUpdateSessionsResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) ListSessions(req *ListSessionsReq) (r *ListSessionsResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  if err = p.sendListSessions(req); err != nil { return }
+  return p.recvListSessions()
+}
+
+func (p *MetaServiceThreadsafeClient) sendListSessions(req *ListSessionsReq)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("listSessions", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := MetaServiceListSessionsArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvListSessions() (value *ListSessionsResp, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "listSessions" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listSessions failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listSessions failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error395 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error396 error
+    error396, err = error395.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error396
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listSessions failed: invalid message type")
+    return
+  }
+  result := MetaServiceListSessionsResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) GetSession(req *GetSessionReq) (r *GetSessionResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  if err = p.sendGetSession(req); err != nil { return }
+  return p.recvGetSession()
+}
+
+func (p *MetaServiceThreadsafeClient) sendGetSession(req *GetSessionReq)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("getSession", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := MetaServiceGetSessionArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvGetSession() (value *GetSessionResp, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "getSession" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getSession failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getSession failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error397 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error398 error
+    error398, err = error397.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error398
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getSession failed: invalid message type")
+    return
+  }
+  result := MetaServiceGetSessionResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) RemoveSession(req *RemoveSessionReq) (r *ExecResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  if err = p.sendRemoveSession(req); err != nil { return }
+  return p.recvRemoveSession()
+}
+
+func (p *MetaServiceThreadsafeClient) sendRemoveSession(req *RemoveSessionReq)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("removeSession", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := MetaServiceRemoveSessionArgs{
+  Req : req,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvRemoveSession() (value *ExecResp, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "removeSession" {
+    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "removeSession failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "removeSession failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error399 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error400 error
+    error400, err = error399.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error400
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "removeSession failed: invalid message type")
+    return
+  }
+  result := MetaServiceRemoveSessionResult{}
   if err = result.Read(iprot); err != nil {
     return
   }
@@ -12037,84 +12822,89 @@ func (p *MetaServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunctio
 }
 
 func NewMetaServiceProcessor(handler MetaService) *MetaServiceProcessor {
-  self374 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
-  self374.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
-  self374.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
-  self374.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
-  self374.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
-  self374.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
-  self374.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
-  self374.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
-  self374.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
-  self374.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
-  self374.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
-  self374.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
-  self374.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
-  self374.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
-  self374.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
-  self374.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
-  self374.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
-  self374.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
-  self374.processorMap["multiPut"] = &metaServiceProcessorMultiPut{handler:handler}
-  self374.processorMap["get"] = &metaServiceProcessorGet{handler:handler}
-  self374.processorMap["multiGet"] = &metaServiceProcessorMultiGet{handler:handler}
-  self374.processorMap["remove"] = &metaServiceProcessorRemove{handler:handler}
-  self374.processorMap["removeRange"] = &metaServiceProcessorRemoveRange{handler:handler}
-  self374.processorMap["scan"] = &metaServiceProcessorScan{handler:handler}
-  self374.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
-  self374.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
-  self374.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
-  self374.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
-  self374.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
-  self374.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
-  self374.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
-  self374.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
-  self374.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
-  self374.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
-  self374.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
-  self374.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
-  self374.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
-  self374.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
-  self374.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
-  self374.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
-  self374.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
-  self374.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
-  self374.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
-  self374.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
-  self374.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
-  self374.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
-  self374.processorMap["balance"] = &metaServiceProcessorBalance{handler:handler}
-  self374.processorMap["leaderBalance"] = &metaServiceProcessorLeaderBalance{handler:handler}
-  self374.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
-  self374.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
-  self374.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
-  self374.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
-  self374.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
-  self374.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
-  self374.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
-  self374.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
-  self374.processorMap["addZone"] = &metaServiceProcessorAddZone{handler:handler}
-  self374.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
-  self374.processorMap["addHostIntoZone"] = &metaServiceProcessorAddHostIntoZone{handler:handler}
-  self374.processorMap["dropHostFromZone"] = &metaServiceProcessorDropHostFromZone{handler:handler}
-  self374.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
-  self374.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
-  self374.processorMap["addGroup"] = &metaServiceProcessorAddGroup{handler:handler}
-  self374.processorMap["dropGroup"] = &metaServiceProcessorDropGroup{handler:handler}
-  self374.processorMap["addZoneIntoGroup"] = &metaServiceProcessorAddZoneIntoGroup{handler:handler}
-  self374.processorMap["dropZoneFromGroup"] = &metaServiceProcessorDropZoneFromGroup{handler:handler}
-  self374.processorMap["getGroup"] = &metaServiceProcessorGetGroup{handler:handler}
-  self374.processorMap["listGroups"] = &metaServiceProcessorListGroups{handler:handler}
-  self374.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
-  self374.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
-  self374.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
-  self374.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
-  self374.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
-  self374.processorMap["getStatis"] = &metaServiceProcessorGetStatis{handler:handler}
-  self374.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
-  self374.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
-  self374.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
-  return self374
+  self401 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
+  self401.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
+  self401.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
+  self401.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
+  self401.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
+  self401.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
+  self401.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
+  self401.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
+  self401.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
+  self401.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
+  self401.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
+  self401.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
+  self401.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
+  self401.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
+  self401.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
+  self401.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
+  self401.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
+  self401.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
+  self401.processorMap["multiPut"] = &metaServiceProcessorMultiPut{handler:handler}
+  self401.processorMap["get"] = &metaServiceProcessorGet{handler:handler}
+  self401.processorMap["multiGet"] = &metaServiceProcessorMultiGet{handler:handler}
+  self401.processorMap["remove"] = &metaServiceProcessorRemove{handler:handler}
+  self401.processorMap["removeRange"] = &metaServiceProcessorRemoveRange{handler:handler}
+  self401.processorMap["scan"] = &metaServiceProcessorScan{handler:handler}
+  self401.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
+  self401.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
+  self401.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
+  self401.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
+  self401.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
+  self401.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
+  self401.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
+  self401.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
+  self401.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
+  self401.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
+  self401.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
+  self401.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
+  self401.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
+  self401.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
+  self401.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
+  self401.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
+  self401.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
+  self401.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
+  self401.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
+  self401.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
+  self401.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
+  self401.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
+  self401.processorMap["balance"] = &metaServiceProcessorBalance{handler:handler}
+  self401.processorMap["leaderBalance"] = &metaServiceProcessorLeaderBalance{handler:handler}
+  self401.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
+  self401.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
+  self401.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
+  self401.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
+  self401.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
+  self401.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
+  self401.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
+  self401.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
+  self401.processorMap["addZone"] = &metaServiceProcessorAddZone{handler:handler}
+  self401.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
+  self401.processorMap["addHostIntoZone"] = &metaServiceProcessorAddHostIntoZone{handler:handler}
+  self401.processorMap["dropHostFromZone"] = &metaServiceProcessorDropHostFromZone{handler:handler}
+  self401.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
+  self401.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
+  self401.processorMap["addGroup"] = &metaServiceProcessorAddGroup{handler:handler}
+  self401.processorMap["dropGroup"] = &metaServiceProcessorDropGroup{handler:handler}
+  self401.processorMap["addZoneIntoGroup"] = &metaServiceProcessorAddZoneIntoGroup{handler:handler}
+  self401.processorMap["dropZoneFromGroup"] = &metaServiceProcessorDropZoneFromGroup{handler:handler}
+  self401.processorMap["getGroup"] = &metaServiceProcessorGetGroup{handler:handler}
+  self401.processorMap["listGroups"] = &metaServiceProcessorListGroups{handler:handler}
+  self401.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
+  self401.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
+  self401.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
+  self401.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
+  self401.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
+  self401.processorMap["getStatis"] = &metaServiceProcessorGetStatis{handler:handler}
+  self401.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
+  self401.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
+  self401.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
+  self401.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
+  self401.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
+  self401.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
+  self401.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
+  self401.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
+  return self401
 }
 
 type metaServiceProcessorCreateSpace struct {
@@ -15909,6 +16699,256 @@ func (p *metaServiceProcessorListFTClients) Run(argStruct thrift.Struct) (thrift
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listFTClients: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorCreateSession struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorCreateSession) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceCreateSessionArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorCreateSession) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("createSession", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorCreateSession) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceCreateSessionArgs)
+  var result MetaServiceCreateSessionResult
+  if retval, err := p.handler.CreateSession(args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createSession: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorUpdateSessions struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorUpdateSessions) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceUpdateSessionsArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorUpdateSessions) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("updateSessions", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorUpdateSessions) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceUpdateSessionsArgs)
+  var result MetaServiceUpdateSessionsResult
+  if retval, err := p.handler.UpdateSessions(args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing updateSessions: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorListSessions struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorListSessions) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceListSessionsArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorListSessions) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("listSessions", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorListSessions) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceListSessionsArgs)
+  var result MetaServiceListSessionsResult
+  if retval, err := p.handler.ListSessions(args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listSessions: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorGetSession struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorGetSession) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceGetSessionArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorGetSession) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("getSession", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorGetSession) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceGetSessionArgs)
+  var result MetaServiceGetSessionResult
+  if retval, err := p.handler.GetSession(args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getSession: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorRemoveSession struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorRemoveSession) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceRemoveSessionArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorRemoveSession) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("removeSession", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorRemoveSession) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceRemoveSessionArgs)
+  var result MetaServiceRemoveSessionResult
+  if retval, err := p.handler.RemoveSession(args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing removeSession: " + err.Error())
       return x, x
     }
   } else {
@@ -29750,6 +30790,916 @@ func (p *MetaServiceListFTClientsResult) String() string {
     return "<nil>"
   }
   return fmt.Sprintf("MetaServiceListFTClientsResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceCreateSessionArgs struct {
+  Req *CreateSessionReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceCreateSessionArgs() *MetaServiceCreateSessionArgs {
+  return &MetaServiceCreateSessionArgs{}
+}
+
+var MetaServiceCreateSessionArgs_Req_DEFAULT *CreateSessionReq
+func (p *MetaServiceCreateSessionArgs) GetReq() *CreateSessionReq {
+  if !p.IsSetReq() {
+    return MetaServiceCreateSessionArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceCreateSessionArgs) IsSetReq() bool {
+  return p.Req != nil
+}
+
+func (p *MetaServiceCreateSessionArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateSessionArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewCreateSessionReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateSessionArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("createSession_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceCreateSessionArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceCreateSessionArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("MetaServiceCreateSessionArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceCreateSessionResult struct {
+  Success *CreateSessionResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceCreateSessionResult() *MetaServiceCreateSessionResult {
+  return &MetaServiceCreateSessionResult{}
+}
+
+var MetaServiceCreateSessionResult_Success_DEFAULT *CreateSessionResp
+func (p *MetaServiceCreateSessionResult) GetSuccess() *CreateSessionResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceCreateSessionResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceCreateSessionResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *MetaServiceCreateSessionResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateSessionResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewCreateSessionResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateSessionResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("createSession_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceCreateSessionResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceCreateSessionResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("MetaServiceCreateSessionResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceUpdateSessionsArgs struct {
+  Req *UpdateSessionsReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceUpdateSessionsArgs() *MetaServiceUpdateSessionsArgs {
+  return &MetaServiceUpdateSessionsArgs{}
+}
+
+var MetaServiceUpdateSessionsArgs_Req_DEFAULT *UpdateSessionsReq
+func (p *MetaServiceUpdateSessionsArgs) GetReq() *UpdateSessionsReq {
+  if !p.IsSetReq() {
+    return MetaServiceUpdateSessionsArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceUpdateSessionsArgs) IsSetReq() bool {
+  return p.Req != nil
+}
+
+func (p *MetaServiceUpdateSessionsArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceUpdateSessionsArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewUpdateSessionsReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceUpdateSessionsArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("updateSessions_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceUpdateSessionsArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceUpdateSessionsArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("MetaServiceUpdateSessionsArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceUpdateSessionsResult struct {
+  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceUpdateSessionsResult() *MetaServiceUpdateSessionsResult {
+  return &MetaServiceUpdateSessionsResult{}
+}
+
+var MetaServiceUpdateSessionsResult_Success_DEFAULT *ExecResp
+func (p *MetaServiceUpdateSessionsResult) GetSuccess() *ExecResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceUpdateSessionsResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceUpdateSessionsResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *MetaServiceUpdateSessionsResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceUpdateSessionsResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceUpdateSessionsResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("updateSessions_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceUpdateSessionsResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceUpdateSessionsResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("MetaServiceUpdateSessionsResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceListSessionsArgs struct {
+  Req *ListSessionsReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceListSessionsArgs() *MetaServiceListSessionsArgs {
+  return &MetaServiceListSessionsArgs{}
+}
+
+var MetaServiceListSessionsArgs_Req_DEFAULT *ListSessionsReq
+func (p *MetaServiceListSessionsArgs) GetReq() *ListSessionsReq {
+  if !p.IsSetReq() {
+    return MetaServiceListSessionsArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceListSessionsArgs) IsSetReq() bool {
+  return p.Req != nil
+}
+
+func (p *MetaServiceListSessionsArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceListSessionsArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewListSessionsReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceListSessionsArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("listSessions_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceListSessionsArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceListSessionsArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("MetaServiceListSessionsArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceListSessionsResult struct {
+  Success *ListSessionsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceListSessionsResult() *MetaServiceListSessionsResult {
+  return &MetaServiceListSessionsResult{}
+}
+
+var MetaServiceListSessionsResult_Success_DEFAULT *ListSessionsResp
+func (p *MetaServiceListSessionsResult) GetSuccess() *ListSessionsResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceListSessionsResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceListSessionsResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *MetaServiceListSessionsResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceListSessionsResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewListSessionsResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceListSessionsResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("listSessions_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceListSessionsResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceListSessionsResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("MetaServiceListSessionsResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceGetSessionArgs struct {
+  Req *GetSessionReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceGetSessionArgs() *MetaServiceGetSessionArgs {
+  return &MetaServiceGetSessionArgs{}
+}
+
+var MetaServiceGetSessionArgs_Req_DEFAULT *GetSessionReq
+func (p *MetaServiceGetSessionArgs) GetReq() *GetSessionReq {
+  if !p.IsSetReq() {
+    return MetaServiceGetSessionArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceGetSessionArgs) IsSetReq() bool {
+  return p.Req != nil
+}
+
+func (p *MetaServiceGetSessionArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceGetSessionArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewGetSessionReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceGetSessionArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("getSession_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceGetSessionArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceGetSessionArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("MetaServiceGetSessionArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceGetSessionResult struct {
+  Success *GetSessionResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceGetSessionResult() *MetaServiceGetSessionResult {
+  return &MetaServiceGetSessionResult{}
+}
+
+var MetaServiceGetSessionResult_Success_DEFAULT *GetSessionResp
+func (p *MetaServiceGetSessionResult) GetSuccess() *GetSessionResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceGetSessionResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceGetSessionResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *MetaServiceGetSessionResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceGetSessionResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewGetSessionResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceGetSessionResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("getSession_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceGetSessionResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceGetSessionResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("MetaServiceGetSessionResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceRemoveSessionArgs struct {
+  Req *RemoveSessionReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceRemoveSessionArgs() *MetaServiceRemoveSessionArgs {
+  return &MetaServiceRemoveSessionArgs{}
+}
+
+var MetaServiceRemoveSessionArgs_Req_DEFAULT *RemoveSessionReq
+func (p *MetaServiceRemoveSessionArgs) GetReq() *RemoveSessionReq {
+  if !p.IsSetReq() {
+    return MetaServiceRemoveSessionArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceRemoveSessionArgs) IsSetReq() bool {
+  return p.Req != nil
+}
+
+func (p *MetaServiceRemoveSessionArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceRemoveSessionArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewRemoveSessionReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceRemoveSessionArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("removeSession_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceRemoveSessionArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceRemoveSessionArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("MetaServiceRemoveSessionArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceRemoveSessionResult struct {
+  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceRemoveSessionResult() *MetaServiceRemoveSessionResult {
+  return &MetaServiceRemoveSessionResult{}
+}
+
+var MetaServiceRemoveSessionResult_Success_DEFAULT *ExecResp
+func (p *MetaServiceRemoveSessionResult) GetSuccess() *ExecResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceRemoveSessionResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceRemoveSessionResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *MetaServiceRemoveSessionResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceRemoveSessionResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceRemoveSessionResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("removeSession_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceRemoveSessionResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceRemoveSessionResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("MetaServiceRemoveSessionResult(%+v)", *p)
 }
 
 
