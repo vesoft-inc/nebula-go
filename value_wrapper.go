@@ -318,6 +318,6 @@ func (valWarp ValueWrapper) String() string {
 		}
 		return fmt.Sprintf("[%s]", strings.Join(strs, ", "))
 	} else { // is empty
-		return "__EMPTY__"
+		return ""
 	}
 }

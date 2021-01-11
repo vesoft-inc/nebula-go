@@ -19,7 +19,7 @@ import (
 func TestIsEmpty(t *testing.T) {
 	value := nebula.Value{}
 	valWrap := ValueWrapper{&value}
-	assert.Equal(t, "__EMPTY__", valWrap.String())
+	assert.Equal(t, "", valWrap.String())
 	assert.Equal(t, true, valWrap.IsEmpty())
 }
 
