@@ -223,7 +223,7 @@ func TestAsPathWrapper(t *testing.T) {
 	valWrap := ValueWrapper{&value}
 	assert.Equal(t, true, valWrap.IsPath())
 	assert.Equal(t,
-		"(\"Alice\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
+		"<(\"Alice\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 			":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]->"+
 			"(\"vertex0\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
@@ -240,7 +240,7 @@ func TestAsPathWrapper(t *testing.T) {
 			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]->"+
 			"(\"vertex4\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 			":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
-			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})",
+			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})>",
 		valWrap.String())
 	res, _ := valWrap.AsPath()
 	path, _ := genPathWrapper(value.GetPVal())
@@ -491,7 +491,7 @@ func TestAsStringTable(t *testing.T) {
 				"1, \"value1\", "+
 					"(\"Tom\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} :tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}), [:classmate \"Tom\"->\"Lily\" @100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}], "+
-					"(\"Tom\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
+					"<(\"Tom\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 					":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]->"+
 					"(\"vertex0\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
@@ -502,7 +502,7 @@ func TestAsStringTable(t *testing.T) {
 					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})-[:classmate@100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]->"+
 					"(\"vertex2\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
 					":tag1{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
-					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}), ",
+					":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})>, ",
 				r)
 		}
 		r = ""

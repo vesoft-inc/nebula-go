@@ -659,7 +659,7 @@ func (path *PathWrapper) GetEndNode() (*Node, error) {
 	return path.segments[len(path.segments)-1].endNode, nil
 }
 
-// Path format: ("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking {edgeProps}]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking {edgeProps}]->("VertexID3" :tag1{k0: v0,k1: v1})
+// Path format: <("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking {edgeProps}]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking {edgeProps}]->("VertexID3" :tag1{k0: v0,k1: v1})>
 func (pathWrap *PathWrapper) string() string {
 	path := pathWrap.path
 	src := path.Src
@@ -702,7 +702,7 @@ func (pathWrap *PathWrapper) string() string {
 				ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
 		}
 	}
-	return resStr
+	return "<" + resStr + ">"
 }
 
 func (p1 *PathWrapper) IsEqualTo(p2 *PathWrapper) bool {
