@@ -1,8 +1,8 @@
 /* Copyright (c) 2020 vesoft inc. All rights reserved.
- *
- * This source code is licensed under Apache 2.0 License,
- * attached with Common Clause Condition 1.0, found in the LICENSES directory.
- */
+*
+* This source code is licensed under Apache 2.0 License,
+* attached with Common Clause Condition 1.0, found in the LICENSES directory.
+*/
 
 package nebula_go
 
@@ -588,10 +588,6 @@ func (relationship Relationship) string() string {
 		src = ValueWrapper{edge.Dst}.String()
 		dst = ValueWrapper{edge.Src}.String()
 	}
-	if len(kvStr) == 0 {
-		return fmt.Sprintf(`[:%s %s->%s @%d]`,
-			string(edge.Name), src, dst, edge.Ranking)
-	}
 	return fmt.Sprintf(`[:%s %s->%s @%d {%s}]`,
 		string(edge.Name), src, dst, edge.Ranking, fmt.Sprintf("%s", strings.Join(kvStr, ", ")))
 }
@@ -685,22 +681,13 @@ func (pathWrap *PathWrapper) string() string {
 			dirChar1 = "<-"
 			dirChar2 = "-"
 		}
-		if len(kvStr) > 0 {
-			resStr = resStr + fmt.Sprintf("%s[:%s@%d {%s}]%s%s",
-				dirChar1,
-				string(step.Name),
-				step.Ranking,
-				fmt.Sprintf("%s", strings.Join(kvStr, ", ")),
-				dirChar2,
-				ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
-		} else {
-			resStr = resStr + fmt.Sprintf("%s[:%s@%d]%s%s",
-				dirChar1,
-				string(step.Name),
-				step.Ranking,
-				dirChar2,
-				ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
-		}
+		resStr = resStr + fmt.Sprintf("%s[:%s@%d {%s}]%s%s",
+			dirChar1,
+			string(step.Name),
+			step.Ranking,
+			fmt.Sprintf("%s", strings.Join(kvStr, ", ")),
+			dirChar2,
+			ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
 	}
 	return "<" + resStr + ">"
 }

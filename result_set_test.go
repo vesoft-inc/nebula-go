@@ -211,7 +211,7 @@ func TestAsRelationship(t *testing.T) {
 	value = nebula.Value{EVal: getEdge("Alice", "Bob", 0)}
 	valWrap = ValueWrapper{&value}
 	assert.Equal(t, true, valWrap.IsEdge())
-	assert.Equal(t, "[:classmate \"Alice\"->\"Bob\" @100]", valWrap.String())
+	assert.Equal(t, "[:classmate \"Alice\"->\"Bob\" @100 {}]", valWrap.String())
 	res, _ = valWrap.AsRelationship()
 	relationship, _ = genRelationship(value.GetEVal())
 	assert.Equal(t, *relationship, *res)
