@@ -468,7 +468,7 @@ func (node Node) Values(tagName string) ([]*ValueWrapper, error) {
 }
 
 // Node format: ("VertexID" :tag1{k0: v0,k1: v1}:tag2{k2: v2})
-func (node Node) string() string {
+func (node Node) String() string {
 	var keyList []string
 	var kvStr []string
 	var tagStr []string
@@ -567,7 +567,7 @@ func (relationship Relationship) Values() []*ValueWrapper {
 }
 
 // Relationship format: [:edge src->dst @ranking {props}]
-func (relationship Relationship) string() string {
+func (relationship Relationship) String() string {
 	edge := relationship.edge
 	var keyList []string
 	var kvStr []string
@@ -656,7 +656,7 @@ func (path *PathWrapper) GetEndNode() (*Node, error) {
 }
 
 // Path format: <("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking {edgeProps}]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking {edgeProps}]->("VertexID3" :tag1{k0: v0,k1: v1})>
-func (pathWrap *PathWrapper) string() string {
+func (pathWrap *PathWrapper) String() string {
 	path := pathWrap.path
 	src := path.Src
 	steps := path.Steps
