@@ -49,10 +49,10 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 			return nil, err
 		}
 		return genResultSet(resp), nil
+	} else { // No need to reconnect
+		session.log.Error(fmt.Sprintf("Error info: %s", err.Error()))
+		return nil, err
 	}
-	// Reconnect fail
-	session.log.Error(fmt.Sprintf("Error info: %s", err.Error()))
-	return genResultSet(resp), err
 }
 
 func (session *Session) reConnect() error {
