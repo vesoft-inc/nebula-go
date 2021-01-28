@@ -31,7 +31,7 @@ func main() {
 	// Create configs for connection pool using default values
 	testPoolConfig := nebula.GetDefaultConf()
 
-	// Initialize connectin pool
+	// Initialize connection pool
 	pool, err := nebula.NewConnectionPool(hostList, testPoolConfig, log)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
