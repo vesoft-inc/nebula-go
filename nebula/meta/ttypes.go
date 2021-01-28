@@ -64,10 +64,11 @@ const (
   ErrorCode_E_SAVE_JOB_FAILURE ErrorCode = -57
   ErrorCode_E_BALANCER_FAILURE ErrorCode = -58
   ErrorCode_E_JOB_NOT_FINISHED ErrorCode = -59
-  ErrorCode_E_BACKUP_FAILURE ErrorCode = -60
-  ErrorCode_E_BACKUP_BUILDING_INDEX ErrorCode = -61
-  ErrorCode_E_BACKUP_SPACE_NOT_FOUND ErrorCode = -62
-  ErrorCode_E_RESTORE_FAILURE ErrorCode = -70
+  ErrorCode_E_TASK_REPORT_OUT_DATE ErrorCode = -60
+  ErrorCode_E_BACKUP_FAILURE ErrorCode = -70
+  ErrorCode_E_BACKUP_BUILDING_INDEX ErrorCode = -71
+  ErrorCode_E_BACKUP_SPACE_NOT_FOUND ErrorCode = -72
+  ErrorCode_E_RESTORE_FAILURE ErrorCode = -80
   ErrorCode_E_UNKNOWN ErrorCode = -99
 )
 
@@ -112,6 +113,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_SAVE_JOB_FAILURE: "E_SAVE_JOB_FAILURE",
   ErrorCode_E_BALANCER_FAILURE: "E_BALANCER_FAILURE",
   ErrorCode_E_JOB_NOT_FINISHED: "E_JOB_NOT_FINISHED",
+  ErrorCode_E_TASK_REPORT_OUT_DATE: "E_TASK_REPORT_OUT_DATE",
   ErrorCode_E_BACKUP_FAILURE: "E_BACKUP_FAILURE",
   ErrorCode_E_BACKUP_BUILDING_INDEX: "E_BACKUP_BUILDING_INDEX",
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND: "E_BACKUP_SPACE_NOT_FOUND",
@@ -160,6 +162,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_SAVE_JOB_FAILURE": ErrorCode_E_SAVE_JOB_FAILURE,
   "E_BALANCER_FAILURE": ErrorCode_E_BALANCER_FAILURE,
   "E_JOB_NOT_FINISHED": ErrorCode_E_JOB_NOT_FINISHED,
+  "E_TASK_REPORT_OUT_DATE": ErrorCode_E_TASK_REPORT_OUT_DATE,
   "E_BACKUP_FAILURE": ErrorCode_E_BACKUP_FAILURE,
   "E_BACKUP_BUILDING_INDEX": ErrorCode_E_BACKUP_BUILDING_INDEX,
   "E_BACKUP_SPACE_NOT_FOUND": ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
@@ -22947,5 +22950,188 @@ func (p *RemoveSessionReq) String() string {
     return "<nil>"
   }
   return fmt.Sprintf("RemoveSessionReq(%+v)", *p)
+}
+
+// Attributes:
+//  - Code
+//  - JobID
+//  - TaskID
+//  - Statis
+type ReportTaskReq struct {
+  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  JobID int32 `thrift:"job_id,2" db:"job_id" json:"job_id"`
+  TaskID int32 `thrift:"task_id,3" db:"task_id" json:"task_id"`
+  Statis *StatisItem `thrift:"statis,4" db:"statis" json:"statis,omitempty"`
+}
+
+func NewReportTaskReq() *ReportTaskReq {
+  return &ReportTaskReq{}
+}
+
+
+func (p *ReportTaskReq) GetCode() ErrorCode {
+  return p.Code
+}
+
+func (p *ReportTaskReq) GetJobID() int32 {
+  return p.JobID
+}
+
+func (p *ReportTaskReq) GetTaskID() int32 {
+  return p.TaskID
+}
+var ReportTaskReq_Statis_DEFAULT *StatisItem
+func (p *ReportTaskReq) GetStatis() *StatisItem {
+  if !p.IsSetStatis() {
+    return ReportTaskReq_Statis_DEFAULT
+  }
+return p.Statis
+}
+func (p *ReportTaskReq) IsSetStatis() bool {
+  return p.Statis != nil
+}
+
+func (p *ReportTaskReq) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    case 4:
+      if err := p.ReadField4(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *ReportTaskReq)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  temp := ErrorCode(v)
+  p.Code = temp
+}
+  return nil
+}
+
+func (p *ReportTaskReq)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.JobID = v
+}
+  return nil
+}
+
+func (p *ReportTaskReq)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  p.TaskID = v
+}
+  return nil
+}
+
+func (p *ReportTaskReq)  ReadField4(iprot thrift.Protocol) error {
+  p.Statis = NewStatisItem()
+  if err := p.Statis.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Statis), err)
+  }
+  return nil
+}
+
+func (p *ReportTaskReq) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("ReportTaskReq"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := p.writeField4(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *ReportTaskReq) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("code", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:code: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Code)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.code (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:code: ", p), err) }
+  return err
+}
+
+func (p *ReportTaskReq) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("job_id", thrift.I32, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:job_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.JobID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.job_id (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:job_id: ", p), err) }
+  return err
+}
+
+func (p *ReportTaskReq) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("task_id", thrift.I32, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:task_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.TaskID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.task_id (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:task_id: ", p), err) }
+  return err
+}
+
+func (p *ReportTaskReq) writeField4(oprot thrift.Protocol) (err error) {
+  if p.IsSetStatis() {
+    if err := oprot.WriteFieldBegin("statis", thrift.STRUCT, 4); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:statis: ", p), err) }
+    if err := p.Statis.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Statis), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 4:statis: ", p), err) }
+  }
+  return err
+}
+
+func (p *ReportTaskReq) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("ReportTaskReq(%+v)", *p)
 }
 

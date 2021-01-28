@@ -6811,7 +6811,7 @@ type ScanVertexRequest struct {
   PartID nebula0.PartitionID `thrift:"part_id,2" db:"part_id" json:"part_id"`
   Cursor []byte `thrift:"cursor,3" db:"cursor" json:"cursor,omitempty"`
   ReturnColumns *VertexProp `thrift:"return_columns,4" db:"return_columns" json:"return_columns"`
-  Limit int32 `thrift:"limit,5" db:"limit" json:"limit"`
+  Limit int64 `thrift:"limit,5" db:"limit" json:"limit"`
   StartTime *int64 `thrift:"start_time,6" db:"start_time" json:"start_time,omitempty"`
   EndTime *int64 `thrift:"end_time,7" db:"end_time" json:"end_time,omitempty"`
   Filter []byte `thrift:"filter,8" db:"filter" json:"filter,omitempty"`
@@ -6846,7 +6846,7 @@ func (p *ScanVertexRequest) GetReturnColumns() *VertexProp {
 return p.ReturnColumns
 }
 
-func (p *ScanVertexRequest) GetLimit() int32 {
+func (p *ScanVertexRequest) GetLimit() int64 {
   return p.Limit
 }
 var ScanVertexRequest_StartTime_DEFAULT int64
@@ -7002,7 +7002,7 @@ func (p *ScanVertexRequest)  ReadField4(iprot thrift.Protocol) error {
 }
 
 func (p *ScanVertexRequest)  ReadField5(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
+  if v, err := iprot.ReadI64(); err != nil {
   return thrift.PrependError("error reading field 5: ", err)
 } else {
   p.Limit = v
@@ -7119,9 +7119,9 @@ func (p *ScanVertexRequest) writeField4(oprot thrift.Protocol) (err error) {
 }
 
 func (p *ScanVertexRequest) writeField5(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("limit", thrift.I32, 5); err != nil {
+  if err := oprot.WriteFieldBegin("limit", thrift.I64, 5); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:limit: ", p), err) }
-  if err := oprot.WriteI32(int32(p.Limit)); err != nil {
+  if err := oprot.WriteI64(int64(p.Limit)); err != nil {
   return thrift.PrependError(fmt.Sprintf("%T.limit (5) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 5:limit: ", p), err) }
@@ -7406,7 +7406,7 @@ type ScanEdgeRequest struct {
   PartID nebula0.PartitionID `thrift:"part_id,2" db:"part_id" json:"part_id"`
   Cursor []byte `thrift:"cursor,3" db:"cursor" json:"cursor,omitempty"`
   ReturnColumns *EdgeProp `thrift:"return_columns,4" db:"return_columns" json:"return_columns"`
-  Limit int32 `thrift:"limit,5" db:"limit" json:"limit"`
+  Limit int64 `thrift:"limit,5" db:"limit" json:"limit"`
   StartTime *int64 `thrift:"start_time,6" db:"start_time" json:"start_time,omitempty"`
   EndTime *int64 `thrift:"end_time,7" db:"end_time" json:"end_time,omitempty"`
   Filter []byte `thrift:"filter,8" db:"filter" json:"filter,omitempty"`
@@ -7441,7 +7441,7 @@ func (p *ScanEdgeRequest) GetReturnColumns() *EdgeProp {
 return p.ReturnColumns
 }
 
-func (p *ScanEdgeRequest) GetLimit() int32 {
+func (p *ScanEdgeRequest) GetLimit() int64 {
   return p.Limit
 }
 var ScanEdgeRequest_StartTime_DEFAULT int64
@@ -7597,7 +7597,7 @@ func (p *ScanEdgeRequest)  ReadField4(iprot thrift.Protocol) error {
 }
 
 func (p *ScanEdgeRequest)  ReadField5(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
+  if v, err := iprot.ReadI64(); err != nil {
   return thrift.PrependError("error reading field 5: ", err)
 } else {
   p.Limit = v
@@ -7714,9 +7714,9 @@ func (p *ScanEdgeRequest) writeField4(oprot thrift.Protocol) (err error) {
 }
 
 func (p *ScanEdgeRequest) writeField5(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("limit", thrift.I32, 5); err != nil {
+  if err := oprot.WriteFieldBegin("limit", thrift.I64, 5); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:limit: ", p), err) }
-  if err := oprot.WriteI32(int32(p.Limit)); err != nil {
+  if err := oprot.WriteI64(int64(p.Limit)); err != nil {
   return thrift.PrependError(fmt.Sprintf("%T.limit (5) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 5:limit: ", p), err) }
