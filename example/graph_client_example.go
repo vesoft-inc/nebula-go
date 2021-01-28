@@ -17,7 +17,7 @@ import (
 
 const (
 	address  = "127.0.0.1"
-	port     = 3699
+	port     = 9669
 	username = "user"
 	password = "password"
 )
