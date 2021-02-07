@@ -342,6 +342,10 @@ func (res ResultSet) GetPlanDesc() *graph.PlanDescription {
 	return res.resp.PlanDesc
 }
 
+func (res ResultSet) HasComment() bool {
+	return res.resp.Comment != nil
+}
+
 func (res ResultSet) GetComment() string {
 	if res.resp.Comment == nil {
 		return ""
