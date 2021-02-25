@@ -380,13 +380,36 @@ func TestResultSet(t *testing.T) {
 	assert.Equal(t, "", resultSetWithNil.GetComment())
 	assert.Equal(t, false, resultSetWithNil.IsSucceed())
 
+	planDesc := graph.PlanDescription{
+		[]*graph.PlanNodeDescription{
+			&graph.PlanNodeDescription{
+				[]byte("Project"),
+				0,
+				[]byte("__Project_0"),
+				[]*graph.Pair{},
+				[]*graph.ProfilingStats{},
+				nil,
+				[]int64{2}},
+			&graph.PlanNodeDescription{
+				[]byte("Start"),
+				2,
+				[]byte("__Start_2"),
+				[]*graph.Pair{},
+				[]*graph.ProfilingStats{},
+				nil,
+				[]int64{}},
+		},
+		map[int64]int64{0: 0, 2: 1},
+		[]byte("dot"),
+	}
+
 	resp := &graph.ExecutionResponse{
 		graph.ErrorCode_SUCCEEDED,
 		1000,
 		getDateset(),
 		[]byte("test_space"),
 		[]byte("test_err_msg"),
-		graph.NewPlanDescription(),
+		&planDesc,
 		[]byte("test_comment")}
 	resultSet := genResultSet(resp)
 
@@ -445,6 +468,14 @@ func TestResultSet(t *testing.T) {
 	assert.Equal(t, v3.GetID(), expected_v3.GetID())
 	assert.Equal(t, true, v4.IsEqualTo(expected_v4))
 	assert.Equal(t, true, v5.IsEqualTo(expected_v5))
+
+	// Check plan description
+	assert.Equal(t,
+		"digraph exec_plan "+
+			"{\n\trankdir=BT;\n\t\"Project_0\"[label=\"{Project_0|outputVar: "+
+			"__Project_0|inputVar: }\", shape=Mrecord];\n\t\"Start_2\"->\"Project_0\";"+
+			"\n\t\"Start_2\"[label=\"{Start_2|outputVar: __Start_2|inputVar: }\", shape=Mrecord];\n}",
+		resultSet.MakeDotGraph())
 }
 
 func TestMarshalJson(t *testing.T) {

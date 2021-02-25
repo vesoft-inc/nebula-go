@@ -2,11 +2,12 @@
 *
 * This source code is licensed under Apache 2.0 License,
 * attached with Common Clause Condition 1.0, found in the LICENSES directory.
-*/
+ */
 
 package nebula_go
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"sort"
@@ -334,7 +335,7 @@ func (res ResultSet) GetErrorMsg() string {
 	return string(res.resp.ErrorMsg)
 }
 
-func (res ResultSet) HasPlanDesc() bool {
+func (res ResultSet) IsSetPlanDesc() bool {
 	return res.resp.PlanDesc != nil
 }
 
@@ -342,7 +343,7 @@ func (res ResultSet) GetPlanDesc() *graph.PlanDescription {
 	return res.resp.PlanDesc
 }
 
-func (res ResultSet) HasComment() bool {
+func (res ResultSet) IsSetComment() bool {
 	return res.resp.Comment != nil
 }
 
@@ -738,4 +739,249 @@ func checkIndex(index int, list interface{}) error {
 		return nil
 	}
 	return fmt.Errorf("Given list type is invalid")
+}
+
+func graphvizString(s string) string {
+	s = strings.Replace(s, "{", "\\{", -1)
+	s = strings.Replace(s, "}", "\\}", -1)
+	s = strings.Replace(s, "\"", "\\\"", -1)
+	s = strings.Replace(s, "[", "\\[", -1)
+	s = strings.Replace(s, "]", "\\]", -1)
+	return s
+}
+
+func prettyFormatJsonString(value []byte) string {
+	var prettyJson bytes.Buffer
+	if err := json.Indent(&prettyJson, value, "", "  "); err != nil {
+		return string(value)
+	}
+	return prettyJson.String()
+}
+
+func name(planNodeDesc *graph.PlanNodeDescription) string {
+	return fmt.Sprintf("%s_%d", planNodeDesc.GetName(), planNodeDesc.GetId())
+}
+
+func condEdgeLabel(condNode *graph.PlanNodeDescription, doBranch bool) string {
+	name := strings.ToLower(string(condNode.GetName()))
+	if strings.HasPrefix(name, "select") {
+		if doBranch {
+			return "Y"
+		}
+		return "N"
+	}
+	if strings.HasPrefix(name, "loop") {
+		if doBranch {
+			return "Do"
+		}
+	}
+	return ""
+}
+
+func nodeString(planNodeDesc *graph.PlanNodeDescription, planNodeName string) string {
+	var outputVar = graphvizString(string(planNodeDesc.GetOutputVar()))
+	var inputVar string
+	if planNodeDesc.IsSetDescription() {
+		desc := planNodeDesc.GetDescription()
+		for _, pair := range desc {
+			key := string(pair.GetKey())
+			if key == "inputVar" {
+				inputVar = graphvizString(string(pair.GetValue()))
+			}
+		}
+	}
+	return fmt.Sprintf("\t\"%s\"[label=\"{%s|outputVar: %s|inputVar: %s}\", shape=Mrecord];\n",
+		planNodeName, planNodeName, outputVar, inputVar)
+}
+
+func edgeString(start, end string) string {
+	return fmt.Sprintf("\t\"%s\"->\"%s\";\n", start, end)
+}
+
+func conditionalEdgeString(start, end, label string) string {
+	return fmt.Sprintf("\t\"%s\"->\"%s\"[label=\"%s\", style=dashed];\n", start, end, label)
+}
+
+func conditionalNodeString(name string) string {
+	return fmt.Sprintf("\t\"%s\"[shape=diamond];\n", name)
+}
+
+func nodeById(p *graph.PlanDescription, nodeId int64) *graph.PlanNodeDescription {
+	line := p.GetNodeIndexMap()[nodeId]
+	return p.GetPlanNodeDescs()[line]
+}
+
+func findBranchEndNode(p *graph.PlanDescription, condNodeId int64, isDoBranch bool) int64 {
+	for _, node := range p.GetPlanNodeDescs() {
+		if node.IsSetBranchInfo() {
+			bInfo := node.GetBranchInfo()
+			if bInfo.GetConditionNodeID() == condNodeId && bInfo.GetIsDoBranch() == isDoBranch {
+				return node.GetId()
+			}
+		}
+	}
+	return -1
+}
+
+func findFirstStartNodeFrom(p *graph.PlanDescription, nodeId int64) int64 {
+	node := nodeById(p, nodeId)
+	for {
+		deps := node.GetDependencies()
+		if len(deps) == 0 {
+			if strings.ToLower(string(node.GetName())) != "start" {
+				return -1
+			}
+			return node.GetId()
+		}
+		node = nodeById(p, deps[0])
+	}
+}
+
+// explain/profile format="dot"
+func (res ResultSet) MakeDotGraph() string {
+	p := res.GetPlanDesc()
+	planNodeDescs := p.GetPlanNodeDescs()
+	var builder strings.Builder
+	builder.WriteString("digraph exec_plan {\n")
+	builder.WriteString("\trankdir=BT;\n")
+	for _, planNodeDesc := range planNodeDescs {
+		planNodeName := name(planNodeDesc)
+		switch strings.ToLower(string(planNodeDesc.GetName())) {
+		case "select":
+			builder.WriteString(conditionalNodeString(planNodeName))
+			dep := nodeById(p, planNodeDesc.GetDependencies()[0])
+			// then branch
+			thenNodeId := findBranchEndNode(p, planNodeDesc.GetId(), true)
+			builder.WriteString(edgeString(name(nodeById(p, thenNodeId)), name(dep)))
+			thenStartId := findFirstStartNodeFrom(p, thenNodeId)
+			builder.WriteString(conditionalEdgeString(name(planNodeDesc), name(nodeById(p, thenStartId)), "Y"))
+			// else branch
+			elseNodeId := findBranchEndNode(p, planNodeDesc.GetId(), false)
+			builder.WriteString(edgeString(name(nodeById(p, elseNodeId)), name(dep)))
+			elseStartId := findFirstStartNodeFrom(p, elseNodeId)
+			builder.WriteString(conditionalEdgeString(name(planNodeDesc), name(nodeById(p, elseStartId)), "N"))
+			// dep
+			builder.WriteString(edgeString(name(dep), planNodeName))
+		case "loop":
+			builder.WriteString(conditionalNodeString(planNodeName))
+			dep := nodeById(p, planNodeDesc.GetDependencies()[0])
+			// do branch
+			doNodeId := findBranchEndNode(p, planNodeDesc.GetId(), true)
+			builder.WriteString(edgeString(name(nodeById(p, doNodeId)), name(planNodeDesc)))
+			doStartId := findFirstStartNodeFrom(p, doNodeId)
+			builder.WriteString(conditionalEdgeString(name(planNodeDesc), name(nodeById(p, doStartId)), "Do"))
+			// dep
+			builder.WriteString(edgeString(name(dep), planNodeName))
+		default:
+			builder.WriteString(nodeString(planNodeDesc, planNodeName))
+			if planNodeDesc.IsSetDependencies() {
+				for _, depId := range planNodeDesc.GetDependencies() {
+					builder.WriteString(edgeString(name(nodeById(p, depId)), planNodeName))
+				}
+			}
+		}
+	}
+	builder.WriteString("}")
+	return builder.String()
+}
+
+// explain/profile format="dot:struct"
+func (res ResultSet) MakeDotGraphByStruct() string {
+	p := res.GetPlanDesc()
+	planNodeDescs := p.GetPlanNodeDescs()
+	var builder strings.Builder
+	builder.WriteString("digraph exec_plan {\n")
+	builder.WriteString("\trankdir=BT;\n")
+	for _, planNodeDesc := range planNodeDescs {
+		planNodeName := name(planNodeDesc)
+		switch strings.ToLower(string(planNodeDesc.GetName())) {
+		case "select":
+			builder.WriteString(conditionalNodeString(planNodeName))
+		case "loop":
+			builder.WriteString(conditionalNodeString(planNodeName))
+		default:
+			builder.WriteString(nodeString(planNodeDesc, planNodeName))
+		}
+
+		if planNodeDesc.IsSetDependencies() {
+			for _, depId := range planNodeDesc.GetDependencies() {
+				dep := nodeById(p, depId)
+				builder.WriteString(edgeString(name(dep), planNodeName))
+			}
+		}
+
+		if planNodeDesc.IsSetBranchInfo() {
+			branchInfo := planNodeDesc.GetBranchInfo()
+			condNode := nodeById(p, branchInfo.GetConditionNodeID())
+			label := condEdgeLabel(condNode, branchInfo.GetIsDoBranch())
+			builder.WriteString(conditionalEdgeString(planNodeName, name(condNode), label))
+		}
+	}
+	builder.WriteString("}")
+	return builder.String()
+}
+
+// explain/profile format="row"
+func (res ResultSet) MakePlanByRow() [][]interface{} {
+	p := res.GetPlanDesc()
+	planNodeDescs := p.GetPlanNodeDescs()
+	var rows [][]interface{}
+	for _, planNodeDesc := range planNodeDescs {
+		var row []interface{}
+		row = append(row, planNodeDesc.GetId(), string(planNodeDesc.GetName()))
+
+		if planNodeDesc.IsSetDependencies() {
+			var deps []string
+			for _, dep := range planNodeDesc.GetDependencies() {
+				deps = append(deps, fmt.Sprintf("%d", dep))
+			}
+			row = append(row, strings.Join(deps, ","))
+		} else {
+			row = append(row, "")
+		}
+
+		if planNodeDesc.IsSetProfiles() {
+			var strArr []string
+			for i, profile := range planNodeDesc.GetProfiles() {
+				otherStats := profile.GetOtherStats()
+				if otherStats != nil {
+					strArr = append(strArr, "{")
+				}
+				s := fmt.Sprintf("ver: %d, rows: %d, execTime: %dus, totalTime: %dus",
+					i, profile.GetRows(), profile.GetExecDurationInUs(), profile.GetTotalDurationInUs())
+				strArr = append(strArr, s)
+
+				for k, v := range otherStats {
+					strArr = append(strArr, fmt.Sprintf("%s: %s", k, v))
+				}
+				if otherStats != nil {
+					strArr = append(strArr, "}")
+				}
+			}
+			row = append(row, strings.Join(strArr, "\n"))
+		} else {
+			row = append(row, "")
+		}
+
+		var columnInfo []string
+		if planNodeDesc.IsSetBranchInfo() {
+			branchInfo := planNodeDesc.GetBranchInfo()
+			columnInfo = append(columnInfo, fmt.Sprintf("branch: %t, nodeId: %d\n",
+				branchInfo.GetIsDoBranch(), branchInfo.GetConditionNodeID()))
+		}
+
+		outputVar := fmt.Sprintf("outputVar: %s", prettyFormatJsonString(planNodeDesc.GetOutputVar()))
+		columnInfo = append(columnInfo, outputVar)
+
+		if planNodeDesc.IsSetDescription() {
+			desc := planNodeDesc.GetDescription()
+			for _, pair := range desc {
+				value := prettyFormatJsonString(pair.GetValue())
+				columnInfo = append(columnInfo, fmt.Sprintf("%s: %s", string(pair.GetKey()), value))
+			}
+		}
+		row = append(row, strings.Join(columnInfo, "\n"))
+		rows = append(rows, row)
+	}
+	return rows
 }
