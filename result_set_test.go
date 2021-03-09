@@ -401,6 +401,7 @@ func TestResultSet(t *testing.T) {
 		},
 		map[int64]int64{0: 0, 2: 1},
 		[]byte("dot"),
+		0,
 	}
 
 	resp := &graph.ExecutionResponse{

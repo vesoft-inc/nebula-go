@@ -44,6 +44,7 @@ const (
   ErrorCode_E_FIELD_UNSET ErrorCode = -22
   ErrorCode_E_OUT_OF_RANGE ErrorCode = -23
   ErrorCode_E_ATOMIC_OP_FAILED ErrorCode = -24
+  ErrorCode_E_DATA_CONFLICT_ERROR ErrorCode = -25
   ErrorCode_E_EDGE_PROP_NOT_FOUND ErrorCode = -31
   ErrorCode_E_TAG_PROP_NOT_FOUND ErrorCode = -32
   ErrorCode_E_IMPROPER_DATA_TYPE ErrorCode = -33
@@ -93,6 +94,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_FIELD_UNSET: "E_FIELD_UNSET",
   ErrorCode_E_OUT_OF_RANGE: "E_OUT_OF_RANGE",
   ErrorCode_E_ATOMIC_OP_FAILED: "E_ATOMIC_OP_FAILED",
+  ErrorCode_E_DATA_CONFLICT_ERROR: "E_DATA_CONFLICT_ERROR",
   ErrorCode_E_EDGE_PROP_NOT_FOUND: "E_EDGE_PROP_NOT_FOUND",
   ErrorCode_E_TAG_PROP_NOT_FOUND: "E_TAG_PROP_NOT_FOUND",
   ErrorCode_E_IMPROPER_DATA_TYPE: "E_IMPROPER_DATA_TYPE",
@@ -142,6 +144,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_FIELD_UNSET": ErrorCode_E_FIELD_UNSET,
   "E_OUT_OF_RANGE": ErrorCode_E_OUT_OF_RANGE,
   "E_ATOMIC_OP_FAILED": ErrorCode_E_ATOMIC_OP_FAILED,
+  "E_DATA_CONFLICT_ERROR": ErrorCode_E_DATA_CONFLICT_ERROR,
   "E_EDGE_PROP_NOT_FOUND": ErrorCode_E_EDGE_PROP_NOT_FOUND,
   "E_TAG_PROP_NOT_FOUND": ErrorCode_E_TAG_PROP_NOT_FOUND,
   "E_IMPROPER_DATA_TYPE": ErrorCode_E_IMPROPER_DATA_TYPE,

@@ -35,7 +35,11 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 		return genResultSet(resp), nil
 	}
 	// Reconnect only if the tranport is closed
-	if err, ok := err.(thrift.TransportException); ok && err.TypeID() == thrift.END_OF_FILE {
+	err2, ok := err.(thrift.TransportException)
+	if !ok {
+		return nil, err
+	}
+	if err2.TypeID() == thrift.END_OF_FILE {
 		_err := session.reConnect()
 		if _err != nil {
 			session.log.Error(fmt.Sprintf("Failed to reconnect, %s", _err.Error()))
@@ -50,8 +54,8 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 		}
 		return genResultSet(resp), nil
 	} else { // No need to reconnect
-		session.log.Error(fmt.Sprintf("Error info: %s", err.Error()))
-		return nil, err
+		session.log.Error(fmt.Sprintf("Error info: %s", err2.Error()))
+		return nil, err2
 	}
 }
 
