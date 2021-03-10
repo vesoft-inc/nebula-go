@@ -933,10 +933,12 @@ func (p *PlanNodeDescription) String() string {
 //  - PlanNodeDescs
 //  - NodeIndexMap
 //  - Format
+//  - OptimizeTimeInUs
 type PlanDescription struct {
   PlanNodeDescs []*PlanNodeDescription `thrift:"plan_node_descs,1,required" db:"plan_node_descs" json:"plan_node_descs"`
   NodeIndexMap map[int64]int64 `thrift:"node_index_map,2,required" db:"node_index_map" json:"node_index_map"`
   Format []byte `thrift:"format,3,required" db:"format" json:"format"`
+  OptimizeTimeInUs int32 `thrift:"optimize_time_in_us,4,required" db:"optimize_time_in_us" json:"optimize_time_in_us"`
 }
 
 func NewPlanDescription() *PlanDescription {
@@ -955,6 +957,10 @@ func (p *PlanDescription) GetNodeIndexMap() map[int64]int64 {
 func (p *PlanDescription) GetFormat() []byte {
   return p.Format
 }
+
+func (p *PlanDescription) GetOptimizeTimeInUs() int32 {
+  return p.OptimizeTimeInUs
+}
 func (p *PlanDescription) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -963,6 +969,7 @@ func (p *PlanDescription) Read(iprot thrift.Protocol) error {
   var issetPlanNodeDescs bool = false;
   var issetNodeIndexMap bool = false;
   var issetFormat bool = false;
+  var issetOptimizeTimeInUs bool = false;
 
   for {
     _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
@@ -986,6 +993,11 @@ func (p *PlanDescription) Read(iprot thrift.Protocol) error {
         return err
       }
       issetFormat = true
+    case 4:
+      if err := p.ReadField4(iprot); err != nil {
+        return err
+      }
+      issetOptimizeTimeInUs = true
     default:
       if err := iprot.Skip(fieldTypeId); err != nil {
         return err
@@ -1006,6 +1018,9 @@ func (p *PlanDescription) Read(iprot thrift.Protocol) error {
   }
   if !issetFormat{
     return thrift.NewProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field Format is not set"));
+  }
+  if !issetOptimizeTimeInUs{
+    return thrift.NewProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field OptimizeTimeInUs is not set"));
   }
   return nil
 }
@@ -1067,12 +1082,22 @@ func (p *PlanDescription)  ReadField3(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *PlanDescription)  ReadField4(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 4: ", err)
+} else {
+  p.OptimizeTimeInUs = v
+}
+  return nil
+}
+
 func (p *PlanDescription) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("PlanDescription"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := p.writeField2(oprot); err != nil { return err }
   if err := p.writeField3(oprot); err != nil { return err }
+  if err := p.writeField4(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -1126,6 +1151,16 @@ func (p *PlanDescription) writeField3(oprot thrift.Protocol) (err error) {
   return thrift.PrependError(fmt.Sprintf("%T.format (3) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 3:format: ", p), err) }
+  return err
+}
+
+func (p *PlanDescription) writeField4(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("optimize_time_in_us", thrift.I32, 4); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:optimize_time_in_us: ", p), err) }
+  if err := oprot.WriteI32(int32(p.OptimizeTimeInUs)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.optimize_time_in_us (4) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:optimize_time_in_us: ", p), err) }
   return err
 }
 
