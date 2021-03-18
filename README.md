@@ -22,7 +22,8 @@ If you get a message like `cannot use path@version syntax in GOPATH mode`, see t
 
 ## Usage example
 
-[Code Example](https://github.com/vesoft-inc/nebula-go/tree/master/example/graph_client_example.go)
+[Simple Code Example](https://github.com/vesoft-inc/nebula-go/tree/master/basic_example/graph_client_basic_example.go)
+[Code Example with Gorountines](https://github.com/vesoft-inc/nebula-go/tree/master/gorountines_example/graph_client_goroutines_example.go)
 
 ## Enabling go modules
 
