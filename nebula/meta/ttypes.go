@@ -484,6 +484,8 @@ const (
   AdminCmd_REBUILD_EDGE_INDEX AdminCmd = 3
   AdminCmd_STATS AdminCmd = 4
   AdminCmd_DATA_BALANCE AdminCmd = 5
+  AdminCmd_DOWELOAD AdminCmd = 6
+  AdminCmd_INGEST AdminCmd = 7
   AdminCmd_UNKNOWN AdminCmd = 99
 )
 
@@ -494,6 +496,8 @@ var AdminCmdToName = map[AdminCmd]string {
   AdminCmd_REBUILD_EDGE_INDEX: "REBUILD_EDGE_INDEX",
   AdminCmd_STATS: "STATS",
   AdminCmd_DATA_BALANCE: "DATA_BALANCE",
+  AdminCmd_DOWELOAD: "DOWELOAD",
+  AdminCmd_INGEST: "INGEST",
   AdminCmd_UNKNOWN: "UNKNOWN",
 }
 
@@ -504,6 +508,8 @@ var AdminCmdToValue = map[string]AdminCmd {
   "REBUILD_EDGE_INDEX": AdminCmd_REBUILD_EDGE_INDEX,
   "STATS": AdminCmd_STATS,
   "DATA_BALANCE": AdminCmd_DATA_BALANCE,
+  "DOWELOAD": AdminCmd_DOWELOAD,
+  "INGEST": AdminCmd_INGEST,
   "UNKNOWN": AdminCmd_UNKNOWN,
 }
 
