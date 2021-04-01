@@ -6,6 +6,7 @@ package storage
 
 import (
 	"bytes"
+	"context"
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -19,6 +20,7 @@ var _ = thrift.ZERO
 var _ = fmt.Printf
 var _ = sync.Mutex{}
 var _ = bytes.Equal
+var _ = context.Background
 
 var _ = nebula0.GoUnusedProtection__
 var _ = meta1.GoUnusedProtection__
@@ -175,6 +177,106 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_UNKNOWN": ErrorCode_E_UNKNOWN,
 }
 
+var ErrorCodeNames = []string {
+  "SUCCEEDED",
+  "E_DISCONNECTED",
+  "E_FAILED_TO_CONNECT",
+  "E_RPC_FAILURE",
+  "E_LEADER_CHANGED",
+  "E_KEY_HAS_EXISTS",
+  "E_SPACE_NOT_FOUND",
+  "E_PART_NOT_FOUND",
+  "E_KEY_NOT_FOUND",
+  "E_CONSENSUS_ERROR",
+  "E_DATA_TYPE_MISMATCH",
+  "E_INVALID_FIELD_VALUE",
+  "E_REBUILD_INDEX_FAILED",
+  "E_INVALID_OPERATION",
+  "E_NOT_NULLABLE",
+  "E_FIELD_UNSET",
+  "E_OUT_OF_RANGE",
+  "E_ATOMIC_OP_FAILED",
+  "E_DATA_CONFLICT_ERROR",
+  "E_EDGE_PROP_NOT_FOUND",
+  "E_TAG_PROP_NOT_FOUND",
+  "E_IMPROPER_DATA_TYPE",
+  "E_EDGE_NOT_FOUND",
+  "E_TAG_NOT_FOUND",
+  "E_INVALID_SPACEVIDLEN",
+  "E_INDEX_NOT_FOUND",
+  "E_INVALID_FILTER",
+  "E_INVALID_UPDATER",
+  "E_INVALID_STORE",
+  "E_INVALID_PEER",
+  "E_RETRY_EXHAUSTED",
+  "E_TRANSFER_LEADER_FAILED",
+  "E_INVALID_STAT_TYPE",
+  "E_INVALID_VID",
+  "E_NO_TRANSFORMED",
+  "E_LOAD_META_FAILED",
+  "E_FAILED_TO_CHECKPOINT",
+  "E_CHECKPOINT_BLOCKED",
+  "E_BACKUP_FAILED",
+  "E_PARTIAL_RESULT",
+  "E_FILTER_OUT",
+  "E_INVALID_DATA",
+  "E_MUTATE_EDGE_CONFLICT",
+  "E_OUTDATED_LOCK",
+  "E_INVALID_TASK_PARA",
+  "E_USER_CANCEL",
+  "E_UNKNOWN",
+}
+
+var ErrorCodeValues = []ErrorCode {
+  ErrorCode_SUCCEEDED,
+  ErrorCode_E_DISCONNECTED,
+  ErrorCode_E_FAILED_TO_CONNECT,
+  ErrorCode_E_RPC_FAILURE,
+  ErrorCode_E_LEADER_CHANGED,
+  ErrorCode_E_KEY_HAS_EXISTS,
+  ErrorCode_E_SPACE_NOT_FOUND,
+  ErrorCode_E_PART_NOT_FOUND,
+  ErrorCode_E_KEY_NOT_FOUND,
+  ErrorCode_E_CONSENSUS_ERROR,
+  ErrorCode_E_DATA_TYPE_MISMATCH,
+  ErrorCode_E_INVALID_FIELD_VALUE,
+  ErrorCode_E_REBUILD_INDEX_FAILED,
+  ErrorCode_E_INVALID_OPERATION,
+  ErrorCode_E_NOT_NULLABLE,
+  ErrorCode_E_FIELD_UNSET,
+  ErrorCode_E_OUT_OF_RANGE,
+  ErrorCode_E_ATOMIC_OP_FAILED,
+  ErrorCode_E_DATA_CONFLICT_ERROR,
+  ErrorCode_E_EDGE_PROP_NOT_FOUND,
+  ErrorCode_E_TAG_PROP_NOT_FOUND,
+  ErrorCode_E_IMPROPER_DATA_TYPE,
+  ErrorCode_E_EDGE_NOT_FOUND,
+  ErrorCode_E_TAG_NOT_FOUND,
+  ErrorCode_E_INVALID_SPACEVIDLEN,
+  ErrorCode_E_INDEX_NOT_FOUND,
+  ErrorCode_E_INVALID_FILTER,
+  ErrorCode_E_INVALID_UPDATER,
+  ErrorCode_E_INVALID_STORE,
+  ErrorCode_E_INVALID_PEER,
+  ErrorCode_E_RETRY_EXHAUSTED,
+  ErrorCode_E_TRANSFER_LEADER_FAILED,
+  ErrorCode_E_INVALID_STAT_TYPE,
+  ErrorCode_E_INVALID_VID,
+  ErrorCode_E_NO_TRANSFORMED,
+  ErrorCode_E_LOAD_META_FAILED,
+  ErrorCode_E_FAILED_TO_CHECKPOINT,
+  ErrorCode_E_CHECKPOINT_BLOCKED,
+  ErrorCode_E_BACKUP_FAILED,
+  ErrorCode_E_PARTIAL_RESULT,
+  ErrorCode_E_FILTER_OUT,
+  ErrorCode_E_INVALID_DATA,
+  ErrorCode_E_MUTATE_EDGE_CONFLICT,
+  ErrorCode_E_OUTDATED_LOCK,
+  ErrorCode_E_INVALID_TASK_PARA,
+  ErrorCode_E_USER_CANCEL,
+  ErrorCode_E_UNKNOWN,
+}
+
 func (p ErrorCode) String() string {
   if v, ok := ErrorCodeToName[p]; ok {
     return v
@@ -216,6 +318,22 @@ var StatTypeToValue = map[string]StatType {
   "MIN": StatType_MIN,
 }
 
+var StatTypeNames = []string {
+  "SUM",
+  "COUNT",
+  "AVG",
+  "MAX",
+  "MIN",
+}
+
+var StatTypeValues = []StatType {
+  StatType_SUM,
+  StatType_COUNT,
+  StatType_AVG,
+  StatType_MAX,
+  StatType_MIN,
+}
+
 func (p StatType) String() string {
   if v, ok := StatTypeToName[p]; ok {
     return v
@@ -246,6 +364,16 @@ var OrderDirectionToName = map[OrderDirection]string {
 var OrderDirectionToValue = map[string]OrderDirection {
   "ASCENDING": OrderDirection_ASCENDING,
   "DESCENDING": OrderDirection_DESCENDING,
+}
+
+var OrderDirectionNames = []string {
+  "ASCENDING",
+  "DESCENDING",
+}
+
+var OrderDirectionValues = []OrderDirection {
+  OrderDirection_ASCENDING,
+  OrderDirection_DESCENDING,
 }
 
 func (p OrderDirection) String() string {
@@ -283,6 +411,18 @@ var EdgeDirectionToValue = map[string]EdgeDirection {
   "OUT_EDGE": EdgeDirection_OUT_EDGE,
 }
 
+var EdgeDirectionNames = []string {
+  "BOTH",
+  "IN_EDGE",
+  "OUT_EDGE",
+}
+
+var EdgeDirectionValues = []EdgeDirection {
+  EdgeDirection_BOTH,
+  EdgeDirection_IN_EDGE,
+  EdgeDirection_OUT_EDGE,
+}
+
 func (p EdgeDirection) String() string {
   if v, ok := EdgeDirectionToName[p]; ok {
     return v
@@ -315,6 +455,16 @@ var ScanTypeToValue = map[string]ScanType {
   "RANGE": ScanType_RANGE,
 }
 
+var ScanTypeNames = []string {
+  "PREFIX",
+  "RANGE",
+}
+
+var ScanTypeValues = []ScanType {
+  ScanType_PREFIX,
+  ScanType_RANGE,
+}
+
 func (p ScanType) String() string {
   if v, ok := ScanTypeToName[p]; ok {
     return v
@@ -345,6 +495,16 @@ var EngineSignTypeToName = map[EngineSignType]string {
 var EngineSignTypeToValue = map[string]EngineSignType {
   "BLOCK_ON": EngineSignType_BLOCK_ON,
   "BLOCK_OFF": EngineSignType_BLOCK_OFF,
+}
+
+var EngineSignTypeNames = []string {
+  "BLOCK_ON",
+  "BLOCK_OFF",
+}
+
+var EngineSignTypeValues = []EngineSignType {
+  EngineSignType_BLOCK_ON,
+  EngineSignType_BLOCK_OFF,
 }
 
 func (p EngineSignType) String() string {
@@ -393,7 +553,7 @@ func (p *PartitionResult_) GetLeader() *nebula0.HostAddr {
 return p.Leader
 }
 func (p *PartitionResult_) IsSetLeader() bool {
-  return p.Leader != nil
+  return p != nil && p.Leader != nil
 }
 
 func (p *PartitionResult_) Read(iprot thrift.Protocol) error {
@@ -524,7 +684,16 @@ func (p *PartitionResult_) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("PartitionResult_(%+v)", *p)
+
+  codeVal := fmt.Sprintf("%v", p.Code)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  var leaderVal string
+  if p.Leader == nil {
+    leaderVal = "<nil>"
+  } else {
+    leaderVal = fmt.Sprintf("%v", p.Leader)
+  }
+  return fmt.Sprintf("PartitionResult_({Code:%s PartID:%s Leader:%s})", codeVal, partIDVal, leaderVal)
 }
 
 // Attributes:
@@ -667,7 +836,10 @@ func (p *ResponseCommon) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("ResponseCommon(%+v)", *p)
+
+  failedPartsVal := fmt.Sprintf("%v", p.FailedParts)
+  latencyInUsVal := fmt.Sprintf("%v", p.LatencyInUs)
+  return fmt.Sprintf("ResponseCommon({FailedParts:%s LatencyInUs:%s})", failedPartsVal, latencyInUsVal)
 }
 
 // Attributes:
@@ -811,7 +983,11 @@ func (p *StatProp) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StatProp(%+v)", *p)
+
+  aliasVal := fmt.Sprintf("%v", p.Alias)
+  propVal := fmt.Sprintf("%v", p.Prop)
+  statVal := fmt.Sprintf("%v", p.Stat)
+  return fmt.Sprintf("StatProp({Alias:%s Prop:%s Stat:%s})", aliasVal, propVal, statVal)
 }
 
 // Attributes:
@@ -924,7 +1100,10 @@ func (p *Expr) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("Expr(%+v)", *p)
+
+  aliasVal := fmt.Sprintf("%v", p.Alias)
+  exprVal := fmt.Sprintf("%v", p.Expr)
+  return fmt.Sprintf("Expr({Alias:%s Expr:%s})", aliasVal, exprVal)
 }
 
 // Attributes:
@@ -1059,7 +1238,10 @@ func (p *EdgeProp) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("EdgeProp(%+v)", *p)
+
+  typeVal := fmt.Sprintf("%v", p.Type)
+  propsVal := fmt.Sprintf("%v", p.Props)
+  return fmt.Sprintf("EdgeProp({Type:%s Props:%s})", typeVal, propsVal)
 }
 
 // Attributes:
@@ -1194,7 +1376,10 @@ func (p *VertexProp) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("VertexProp(%+v)", *p)
+
+  tagVal := fmt.Sprintf("%v", p.Tag)
+  propsVal := fmt.Sprintf("%v", p.Props)
+  return fmt.Sprintf("VertexProp({Tag:%s Props:%s})", tagVal, propsVal)
 }
 
 // Attributes:
@@ -1308,7 +1493,10 @@ func (p *OrderBy) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("OrderBy(%+v)", *p)
+
+  propVal := fmt.Sprintf("%v", p.Prop)
+  directionVal := fmt.Sprintf("%v", p.Direction)
+  return fmt.Sprintf("OrderBy({Prop:%s Direction:%s})", propVal, directionVal)
 }
 
 // Attributes:
@@ -1339,8 +1527,8 @@ type TraverseSpec struct {
 
 func NewTraverseSpec() *TraverseSpec {
   return &TraverseSpec{
-EdgeDirection: 1,
-}
+    EdgeDirection:     1,
+  }
 }
 
 
@@ -1400,35 +1588,35 @@ func (p *TraverseSpec) GetFilter() []byte {
   return p.Filter
 }
 func (p *TraverseSpec) IsSetStatProps() bool {
-  return p.StatProps != nil
+  return p != nil && p.StatProps != nil
 }
 
 func (p *TraverseSpec) IsSetVertexProps() bool {
-  return p.VertexProps != nil
+  return p != nil && p.VertexProps != nil
 }
 
 func (p *TraverseSpec) IsSetEdgeProps() bool {
-  return p.EdgeProps != nil
+  return p != nil && p.EdgeProps != nil
 }
 
 func (p *TraverseSpec) IsSetExpressions() bool {
-  return p.Expressions != nil
+  return p != nil && p.Expressions != nil
 }
 
 func (p *TraverseSpec) IsSetOrderBy() bool {
-  return p.OrderBy != nil
+  return p != nil && p.OrderBy != nil
 }
 
 func (p *TraverseSpec) IsSetRandom() bool {
-  return p.Random != nil
+  return p != nil && p.Random != nil
 }
 
 func (p *TraverseSpec) IsSetLimit() bool {
-  return p.Limit != nil
+  return p != nil && p.Limit != nil
 }
 
 func (p *TraverseSpec) IsSetFilter() bool {
-  return p.Filter != nil
+  return p != nil && p.Filter != nil
 }
 
 func (p *TraverseSpec) Read(iprot thrift.Protocol) error {
@@ -1876,7 +2064,29 @@ func (p *TraverseSpec) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("TraverseSpec(%+v)", *p)
+
+  edgeTypesVal := fmt.Sprintf("%v", p.EdgeTypes)
+  edgeDirectionVal := fmt.Sprintf("%v", p.EdgeDirection)
+  dedupVal := fmt.Sprintf("%v", p.Dedup)
+  statPropsVal := fmt.Sprintf("%v", p.StatProps)
+  vertexPropsVal := fmt.Sprintf("%v", p.VertexProps)
+  edgePropsVal := fmt.Sprintf("%v", p.EdgeProps)
+  expressionsVal := fmt.Sprintf("%v", p.Expressions)
+  orderByVal := fmt.Sprintf("%v", p.OrderBy)
+  var randomVal string
+  if p.Random == nil {
+    randomVal = "<nil>"
+  } else {
+    randomVal = fmt.Sprintf("%v", *p.Random)
+  }
+  var limitVal string
+  if p.Limit == nil {
+    limitVal = "<nil>"
+  } else {
+    limitVal = fmt.Sprintf("%v", *p.Limit)
+  }
+  filterVal := fmt.Sprintf("%v", p.Filter)
+  return fmt.Sprintf("TraverseSpec({EdgeTypes:%s EdgeDirection:%s Dedup:%s StatProps:%s VertexProps:%s EdgeProps:%s Expressions:%s OrderBy:%s Random:%s Limit:%s Filter:%s})", edgeTypesVal, edgeDirectionVal, dedupVal, statPropsVal, vertexPropsVal, edgePropsVal, expressionsVal, orderByVal, randomVal, limitVal, filterVal)
 }
 
 // Attributes:
@@ -1892,7 +2102,9 @@ type GetNeighborsRequest struct {
 }
 
 func NewGetNeighborsRequest() *GetNeighborsRequest {
-  return &GetNeighborsRequest{}
+  return &GetNeighborsRequest{
+    TraverseSpec: NewTraverseSpec(),
+  }
 }
 
 
@@ -1915,7 +2127,7 @@ func (p *GetNeighborsRequest) GetTraverseSpec() *TraverseSpec {
 return p.TraverseSpec
 }
 func (p *GetNeighborsRequest) IsSetTraverseSpec() bool {
-  return p.TraverseSpec != nil
+  return p != nil && p.TraverseSpec != nil
 }
 
 func (p *GetNeighborsRequest) Read(iprot thrift.Protocol) error {
@@ -2127,7 +2339,17 @@ func (p *GetNeighborsRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GetNeighborsRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  columnNamesVal := fmt.Sprintf("%v", p.ColumnNames)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  var traverseSpecVal string
+  if p.TraverseSpec == nil {
+    traverseSpecVal = "<nil>"
+  } else {
+    traverseSpecVal = fmt.Sprintf("%v", p.TraverseSpec)
+  }
+  return fmt.Sprintf("GetNeighborsRequest({SpaceID:%s ColumnNames:%s Parts:%s TraverseSpec:%s})", spaceIDVal, columnNamesVal, partsVal, traverseSpecVal)
 }
 
 // Attributes:
@@ -2139,7 +2361,9 @@ type GetNeighborsResponse struct {
 }
 
 func NewGetNeighborsResponse() *GetNeighborsResponse {
-  return &GetNeighborsResponse{}
+  return &GetNeighborsResponse{
+    Result_: NewResponseCommon(),
+  }
 }
 
 var GetNeighborsResponse_Result__DEFAULT *ResponseCommon
@@ -2157,11 +2381,11 @@ func (p *GetNeighborsResponse) GetVertices() *nebula0.DataSet {
 return p.Vertices
 }
 func (p *GetNeighborsResponse) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *GetNeighborsResponse) IsSetVertices() bool {
-  return p.Vertices != nil
+  return p != nil && p.Vertices != nil
 }
 
 func (p *GetNeighborsResponse) Read(iprot thrift.Protocol) error {
@@ -2261,7 +2485,20 @@ func (p *GetNeighborsResponse) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GetNeighborsResponse(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  var verticesVal string
+  if p.Vertices == nil {
+    verticesVal = "<nil>"
+  } else {
+    verticesVal = fmt.Sprintf("%v", p.Vertices)
+  }
+  return fmt.Sprintf("GetNeighborsResponse({Result_:%s Vertices:%s})", resultVal, verticesVal)
 }
 
 // Attributes:
@@ -2271,7 +2508,9 @@ type ExecResponse struct {
 }
 
 func NewExecResponse() *ExecResponse {
-  return &ExecResponse{}
+  return &ExecResponse{
+    Result_: NewResponseCommon(),
+  }
 }
 
 var ExecResponse_Result__DEFAULT *ResponseCommon
@@ -2282,7 +2521,7 @@ func (p *ExecResponse) GetResult_() *ResponseCommon {
 return p.Result_
 }
 func (p *ExecResponse) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *ExecResponse) Read(iprot thrift.Protocol) error {
@@ -2356,7 +2595,14 @@ func (p *ExecResponse) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("ExecResponse(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  return fmt.Sprintf("ExecResponse({Result_:%s})", resultVal)
 }
 
 // Attributes:
@@ -2430,27 +2676,27 @@ func (p *GetPropRequest) GetFilter() []byte {
   return p.Filter
 }
 func (p *GetPropRequest) IsSetVertexProps() bool {
-  return p.VertexProps != nil
+  return p != nil && p.VertexProps != nil
 }
 
 func (p *GetPropRequest) IsSetEdgeProps() bool {
-  return p.EdgeProps != nil
+  return p != nil && p.EdgeProps != nil
 }
 
 func (p *GetPropRequest) IsSetExpressions() bool {
-  return p.Expressions != nil
+  return p != nil && p.Expressions != nil
 }
 
 func (p *GetPropRequest) IsSetOrderBy() bool {
-  return p.OrderBy != nil
+  return p != nil && p.OrderBy != nil
 }
 
 func (p *GetPropRequest) IsSetLimit() bool {
-  return p.Limit != nil
+  return p != nil && p.Limit != nil
 }
 
 func (p *GetPropRequest) IsSetFilter() bool {
-  return p.Filter != nil
+  return p != nil && p.Filter != nil
 }
 
 func (p *GetPropRequest) Read(iprot thrift.Protocol) error {
@@ -2853,7 +3099,22 @@ func (p *GetPropRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GetPropRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  vertexPropsVal := fmt.Sprintf("%v", p.VertexProps)
+  edgePropsVal := fmt.Sprintf("%v", p.EdgeProps)
+  expressionsVal := fmt.Sprintf("%v", p.Expressions)
+  dedupVal := fmt.Sprintf("%v", p.Dedup)
+  orderByVal := fmt.Sprintf("%v", p.OrderBy)
+  var limitVal string
+  if p.Limit == nil {
+    limitVal = "<nil>"
+  } else {
+    limitVal = fmt.Sprintf("%v", *p.Limit)
+  }
+  filterVal := fmt.Sprintf("%v", p.Filter)
+  return fmt.Sprintf("GetPropRequest({SpaceID:%s Parts:%s VertexProps:%s EdgeProps:%s Expressions:%s Dedup:%s OrderBy:%s Limit:%s Filter:%s})", spaceIDVal, partsVal, vertexPropsVal, edgePropsVal, expressionsVal, dedupVal, orderByVal, limitVal, filterVal)
 }
 
 // Attributes:
@@ -2865,7 +3126,9 @@ type GetPropResponse struct {
 }
 
 func NewGetPropResponse() *GetPropResponse {
-  return &GetPropResponse{}
+  return &GetPropResponse{
+    Result_: NewResponseCommon(),
+  }
 }
 
 var GetPropResponse_Result__DEFAULT *ResponseCommon
@@ -2883,11 +3146,11 @@ func (p *GetPropResponse) GetProps() *nebula0.DataSet {
 return p.Props
 }
 func (p *GetPropResponse) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *GetPropResponse) IsSetProps() bool {
-  return p.Props != nil
+  return p != nil && p.Props != nil
 }
 
 func (p *GetPropResponse) Read(iprot thrift.Protocol) error {
@@ -2982,7 +3245,20 @@ func (p *GetPropResponse) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GetPropResponse(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  var propsVal string
+  if p.Props == nil {
+    propsVal = "<nil>"
+  } else {
+    propsVal = fmt.Sprintf("%v", p.Props)
+  }
+  return fmt.Sprintf("GetPropResponse({Result_:%s Props:%s})", resultVal, propsVal)
 }
 
 // Attributes:
@@ -3116,7 +3392,10 @@ func (p *NewTag_) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("NewTag_(%+v)", *p)
+
+  tagIDVal := fmt.Sprintf("%v", p.TagID)
+  propsVal := fmt.Sprintf("%v", p.Props)
+  return fmt.Sprintf("NewTag_({TagID:%s Props:%s})", tagIDVal, propsVal)
 }
 
 // Attributes:
@@ -3143,7 +3422,7 @@ func (p *NewVertex_) GetTags() []*NewTag_ {
   return p.Tags
 }
 func (p *NewVertex_) IsSetId() bool {
-  return p.Id != nil
+  return p != nil && p.Id != nil
 }
 
 func (p *NewVertex_) Read(iprot thrift.Protocol) error {
@@ -3256,7 +3535,15 @@ func (p *NewVertex_) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("NewVertex_(%+v)", *p)
+
+  var idVal string
+  if p.Id == nil {
+    idVal = "<nil>"
+  } else {
+    idVal = fmt.Sprintf("%v", p.Id)
+  }
+  tagsVal := fmt.Sprintf("%v", p.Tags)
+  return fmt.Sprintf("NewVertex_({Id:%s Tags:%s})", idVal, tagsVal)
 }
 
 // Attributes:
@@ -3298,11 +3585,11 @@ func (p *EdgeKey) GetDst() *nebula0.Value {
 return p.Dst
 }
 func (p *EdgeKey) IsSetSrc() bool {
-  return p.Src != nil
+  return p != nil && p.Src != nil
 }
 
 func (p *EdgeKey) IsSetDst() bool {
-  return p.Dst != nil
+  return p != nil && p.Dst != nil
 }
 
 func (p *EdgeKey) Read(iprot thrift.Protocol) error {
@@ -3445,7 +3732,22 @@ func (p *EdgeKey) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("EdgeKey(%+v)", *p)
+
+  var srcVal string
+  if p.Src == nil {
+    srcVal = "<nil>"
+  } else {
+    srcVal = fmt.Sprintf("%v", p.Src)
+  }
+  edgeTypeVal := fmt.Sprintf("%v", p.EdgeType)
+  rankingVal := fmt.Sprintf("%v", p.Ranking)
+  var dstVal string
+  if p.Dst == nil {
+    dstVal = "<nil>"
+  } else {
+    dstVal = fmt.Sprintf("%v", p.Dst)
+  }
+  return fmt.Sprintf("EdgeKey({Src:%s EdgeType:%s Ranking:%s Dst:%s})", srcVal, edgeTypeVal, rankingVal, dstVal)
 }
 
 // Attributes:
@@ -3457,7 +3759,9 @@ type NewEdge_ struct {
 }
 
 func NewNewEdge_() *NewEdge_ {
-  return &NewEdge_{}
+  return &NewEdge_{
+    Key: NewEdgeKey(),
+  }
 }
 
 var NewEdge__Key_DEFAULT *EdgeKey
@@ -3472,7 +3776,7 @@ func (p *NewEdge_) GetProps() []*nebula0.Value {
   return p.Props
 }
 func (p *NewEdge_) IsSetKey() bool {
-  return p.Key != nil
+  return p != nil && p.Key != nil
 }
 
 func (p *NewEdge_) Read(iprot thrift.Protocol) error {
@@ -3585,7 +3889,15 @@ func (p *NewEdge_) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("NewEdge_(%+v)", *p)
+
+  var keyVal string
+  if p.Key == nil {
+    keyVal = "<nil>"
+  } else {
+    keyVal = fmt.Sprintf("%v", p.Key)
+  }
+  propsVal := fmt.Sprintf("%v", p.Props)
+  return fmt.Sprintf("NewEdge_({Key:%s Props:%s})", keyVal, propsVal)
 }
 
 // Attributes:
@@ -3602,8 +3914,8 @@ type AddVerticesRequest struct {
 
 func NewAddVerticesRequest() *AddVerticesRequest {
   return &AddVerticesRequest{
-Overwritable: true,
-}
+    Overwritable: true,
+  }
 }
 
 
@@ -3860,7 +4172,12 @@ func (p *AddVerticesRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("AddVerticesRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  propNamesVal := fmt.Sprintf("%v", p.PropNames)
+  overwritableVal := fmt.Sprintf("%v", p.Overwritable)
+  return fmt.Sprintf("AddVerticesRequest({SpaceID:%s Parts:%s PropNames:%s Overwritable:%s})", spaceIDVal, partsVal, propNamesVal, overwritableVal)
 }
 
 // Attributes:
@@ -3877,8 +4194,8 @@ type AddEdgesRequest struct {
 
 func NewAddEdgesRequest() *AddEdgesRequest {
   return &AddEdgesRequest{
-Overwritable: true,
-}
+    Overwritable: true,
+  }
 }
 
 
@@ -4106,7 +4423,12 @@ func (p *AddEdgesRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("AddEdgesRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  propNamesVal := fmt.Sprintf("%v", p.PropNames)
+  overwritableVal := fmt.Sprintf("%v", p.Overwritable)
+  return fmt.Sprintf("AddEdgesRequest({SpaceID:%s Parts:%s PropNames:%s Overwritable:%s})", spaceIDVal, partsVal, propNamesVal, overwritableVal)
 }
 
 // Attributes:
@@ -4269,7 +4591,10 @@ func (p *DeleteVerticesRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("DeleteVerticesRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  return fmt.Sprintf("DeleteVerticesRequest({SpaceID:%s Parts:%s})", spaceIDVal, partsVal)
 }
 
 // Attributes:
@@ -4432,7 +4757,10 @@ func (p *DeleteEdgesRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("DeleteEdgesRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  return fmt.Sprintf("DeleteEdgesRequest({SpaceID:%s Parts:%s})", spaceIDVal, partsVal)
 }
 
 // Attributes:
@@ -4444,7 +4772,9 @@ type UpdateResponse struct {
 }
 
 func NewUpdateResponse() *UpdateResponse {
-  return &UpdateResponse{}
+  return &UpdateResponse{
+    Result_: NewResponseCommon(),
+  }
 }
 
 var UpdateResponse_Result__DEFAULT *ResponseCommon
@@ -4462,11 +4792,11 @@ func (p *UpdateResponse) GetProps() *nebula0.DataSet {
 return p.Props
 }
 func (p *UpdateResponse) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *UpdateResponse) IsSetProps() bool {
-  return p.Props != nil
+  return p != nil && p.Props != nil
 }
 
 func (p *UpdateResponse) Read(iprot thrift.Protocol) error {
@@ -4566,7 +4896,20 @@ func (p *UpdateResponse) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("UpdateResponse(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  var propsVal string
+  if p.Props == nil {
+    propsVal = "<nil>"
+  } else {
+    propsVal = fmt.Sprintf("%v", p.Props)
+  }
+  return fmt.Sprintf("UpdateResponse({Result_:%s Props:%s})", resultVal, propsVal)
 }
 
 // Attributes:
@@ -4689,7 +5032,10 @@ func (p *UpdatedProp) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("UpdatedProp(%+v)", *p)
+
+  nameVal := fmt.Sprintf("%v", p.Name)
+  valueVal := fmt.Sprintf("%v", p.Value)
+  return fmt.Sprintf("UpdatedProp({Name:%s Value:%s})", nameVal, valueVal)
 }
 
 // Attributes:
@@ -4755,19 +5101,19 @@ func (p *UpdateVertexRequest) GetCondition() []byte {
   return p.Condition
 }
 func (p *UpdateVertexRequest) IsSetVertexID() bool {
-  return p.VertexID != nil
+  return p != nil && p.VertexID != nil
 }
 
 func (p *UpdateVertexRequest) IsSetInsertable() bool {
-  return p.Insertable != UpdateVertexRequest_Insertable_DEFAULT
+  return p != nil && p.Insertable != UpdateVertexRequest_Insertable_DEFAULT
 }
 
 func (p *UpdateVertexRequest) IsSetReturnProps() bool {
-  return p.ReturnProps != nil
+  return p != nil && p.ReturnProps != nil
 }
 
 func (p *UpdateVertexRequest) IsSetCondition() bool {
-  return p.Condition != nil
+  return p != nil && p.Condition != nil
 }
 
 func (p *UpdateVertexRequest) Read(iprot thrift.Protocol) error {
@@ -5059,7 +5405,21 @@ func (p *UpdateVertexRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("UpdateVertexRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  var vertexIDVal string
+  if p.VertexID == nil {
+    vertexIDVal = "<nil>"
+  } else {
+    vertexIDVal = fmt.Sprintf("%v", p.VertexID)
+  }
+  tagIDVal := fmt.Sprintf("%v", p.TagID)
+  updatedPropsVal := fmt.Sprintf("%v", p.UpdatedProps)
+  insertableVal := fmt.Sprintf("%v", p.Insertable)
+  returnPropsVal := fmt.Sprintf("%v", p.ReturnProps)
+  conditionVal := fmt.Sprintf("%v", p.Condition)
+  return fmt.Sprintf("UpdateVertexRequest({SpaceID:%s PartID:%s VertexID:%s TagID:%s UpdatedProps:%s Insertable:%s ReturnProps:%s Condition:%s})", spaceIDVal, partIDVal, vertexIDVal, tagIDVal, updatedPropsVal, insertableVal, returnPropsVal, conditionVal)
 }
 
 // Attributes:
@@ -5081,7 +5441,9 @@ type UpdateEdgeRequest struct {
 }
 
 func NewUpdateEdgeRequest() *UpdateEdgeRequest {
-  return &UpdateEdgeRequest{}
+  return &UpdateEdgeRequest{
+    EdgeKey: NewEdgeKey(),
+  }
 }
 
 
@@ -5119,19 +5481,19 @@ func (p *UpdateEdgeRequest) GetCondition() []byte {
   return p.Condition
 }
 func (p *UpdateEdgeRequest) IsSetEdgeKey() bool {
-  return p.EdgeKey != nil
+  return p != nil && p.EdgeKey != nil
 }
 
 func (p *UpdateEdgeRequest) IsSetInsertable() bool {
-  return p.Insertable != UpdateEdgeRequest_Insertable_DEFAULT
+  return p != nil && p.Insertable != UpdateEdgeRequest_Insertable_DEFAULT
 }
 
 func (p *UpdateEdgeRequest) IsSetReturnProps() bool {
-  return p.ReturnProps != nil
+  return p != nil && p.ReturnProps != nil
 }
 
 func (p *UpdateEdgeRequest) IsSetCondition() bool {
-  return p.Condition != nil
+  return p != nil && p.Condition != nil
 }
 
 func (p *UpdateEdgeRequest) Read(iprot thrift.Protocol) error {
@@ -5393,7 +5755,20 @@ func (p *UpdateEdgeRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("UpdateEdgeRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  var edgeKeyVal string
+  if p.EdgeKey == nil {
+    edgeKeyVal = "<nil>"
+  } else {
+    edgeKeyVal = fmt.Sprintf("%v", p.EdgeKey)
+  }
+  updatedPropsVal := fmt.Sprintf("%v", p.UpdatedProps)
+  insertableVal := fmt.Sprintf("%v", p.Insertable)
+  returnPropsVal := fmt.Sprintf("%v", p.ReturnProps)
+  conditionVal := fmt.Sprintf("%v", p.Condition)
+  return fmt.Sprintf("UpdateEdgeRequest({SpaceID:%s PartID:%s EdgeKey:%s UpdatedProps:%s Insertable:%s ReturnProps:%s Condition:%s})", spaceIDVal, partIDVal, edgeKeyVal, updatedPropsVal, insertableVal, returnPropsVal, conditionVal)
 }
 
 // Attributes:
@@ -5538,7 +5913,11 @@ func (p *GetUUIDReq) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GetUUIDReq(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  nameVal := fmt.Sprintf("%v", p.Name)
+  return fmt.Sprintf("GetUUIDReq({SpaceID:%s PartID:%s Name:%s})", spaceIDVal, partIDVal, nameVal)
 }
 
 // Attributes:
@@ -5550,7 +5929,9 @@ type GetUUIDResp struct {
 }
 
 func NewGetUUIDResp() *GetUUIDResp {
-  return &GetUUIDResp{}
+  return &GetUUIDResp{
+    Result_: NewResponseCommon(),
+  }
 }
 
 var GetUUIDResp_Result__DEFAULT *ResponseCommon
@@ -5568,11 +5949,11 @@ func (p *GetUUIDResp) GetId() *nebula0.Value {
 return p.Id
 }
 func (p *GetUUIDResp) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *GetUUIDResp) IsSetId() bool {
-  return p.Id != nil
+  return p != nil && p.Id != nil
 }
 
 func (p *GetUUIDResp) Read(iprot thrift.Protocol) error {
@@ -5670,7 +6051,20 @@ func (p *GetUUIDResp) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GetUUIDResp(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  var idVal string
+  if p.Id == nil {
+    idVal = "<nil>"
+  } else {
+    idVal = fmt.Sprintf("%v", p.Id)
+  }
+  return fmt.Sprintf("GetUUIDResp({Result_:%s Id:%s})", resultVal, idVal)
 }
 
 // Attributes:
@@ -5682,7 +6076,9 @@ type LookupIndexResp struct {
 }
 
 func NewLookupIndexResp() *LookupIndexResp {
-  return &LookupIndexResp{}
+  return &LookupIndexResp{
+    Result_: NewResponseCommon(),
+  }
 }
 
 var LookupIndexResp_Result__DEFAULT *ResponseCommon
@@ -5700,11 +6096,11 @@ func (p *LookupIndexResp) GetData() *nebula0.DataSet {
 return p.Data
 }
 func (p *LookupIndexResp) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *LookupIndexResp) IsSetData() bool {
-  return p.Data != nil
+  return p != nil && p.Data != nil
 }
 
 func (p *LookupIndexResp) Read(iprot thrift.Protocol) error {
@@ -5804,7 +6200,20 @@ func (p *LookupIndexResp) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("LookupIndexResp(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  var dataVal string
+  if p.Data == nil {
+    dataVal = "<nil>"
+  } else {
+    dataVal = fmt.Sprintf("%v", p.Data)
+  }
+  return fmt.Sprintf("LookupIndexResp({Result_:%s Data:%s})", resultVal, dataVal)
 }
 
 // Attributes:
@@ -5846,11 +6255,11 @@ func (p *IndexColumnHint) GetEndValue() *nebula0.Value {
 return p.EndValue
 }
 func (p *IndexColumnHint) IsSetBeginValue() bool {
-  return p.BeginValue != nil
+  return p != nil && p.BeginValue != nil
 }
 
 func (p *IndexColumnHint) IsSetEndValue() bool {
-  return p.EndValue != nil
+  return p != nil && p.EndValue != nil
 }
 
 func (p *IndexColumnHint) Read(iprot thrift.Protocol) error {
@@ -5992,7 +6401,22 @@ func (p *IndexColumnHint) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("IndexColumnHint(%+v)", *p)
+
+  columnNameVal := fmt.Sprintf("%v", p.ColumnName)
+  scanTypeVal := fmt.Sprintf("%v", p.ScanType)
+  var beginValueVal string
+  if p.BeginValue == nil {
+    beginValueVal = "<nil>"
+  } else {
+    beginValueVal = fmt.Sprintf("%v", p.BeginValue)
+  }
+  var endValueVal string
+  if p.EndValue == nil {
+    endValueVal = "<nil>"
+  } else {
+    endValueVal = fmt.Sprintf("%v", p.EndValue)
+  }
+  return fmt.Sprintf("IndexColumnHint({ColumnName:%s ScanType:%s BeginValue:%s EndValue:%s})", columnNameVal, scanTypeVal, beginValueVal, endValueVal)
 }
 
 // Attributes:
@@ -6156,7 +6580,11 @@ func (p *IndexQueryContext) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("IndexQueryContext(%+v)", *p)
+
+  indexIDVal := fmt.Sprintf("%v", p.IndexID)
+  filterVal := fmt.Sprintf("%v", p.Filter)
+  columnHintsVal := fmt.Sprintf("%v", p.ColumnHints)
+  return fmt.Sprintf("IndexQueryContext({IndexID:%s Filter:%s ColumnHints:%s})", indexIDVal, filterVal, columnHintsVal)
 }
 
 // Attributes:
@@ -6334,7 +6762,11 @@ func (p *IndexSpec) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("IndexSpec(%+v)", *p)
+
+  contextsVal := fmt.Sprintf("%v", p.Contexts)
+  isEdgeVal := fmt.Sprintf("%v", p.IsEdge)
+  tagOrEdgeIDVal := fmt.Sprintf("%v", p.TagOrEdgeID)
+  return fmt.Sprintf("IndexSpec({Contexts:%s IsEdge:%s TagOrEdgeID:%s})", contextsVal, isEdgeVal, tagOrEdgeIDVal)
 }
 
 // Attributes:
@@ -6350,7 +6782,9 @@ type LookupIndexRequest struct {
 }
 
 func NewLookupIndexRequest() *LookupIndexRequest {
-  return &LookupIndexRequest{}
+  return &LookupIndexRequest{
+    Indices: NewIndexSpec(),
+  }
 }
 
 
@@ -6374,11 +6808,11 @@ func (p *LookupIndexRequest) GetReturnColumns() [][]byte {
   return p.ReturnColumns
 }
 func (p *LookupIndexRequest) IsSetIndices() bool {
-  return p.Indices != nil
+  return p != nil && p.Indices != nil
 }
 
 func (p *LookupIndexRequest) IsSetReturnColumns() bool {
-  return p.ReturnColumns != nil
+  return p != nil && p.ReturnColumns != nil
 }
 
 func (p *LookupIndexRequest) Read(iprot thrift.Protocol) error {
@@ -6575,7 +7009,17 @@ func (p *LookupIndexRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("LookupIndexRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  var indicesVal string
+  if p.Indices == nil {
+    indicesVal = "<nil>"
+  } else {
+    indicesVal = fmt.Sprintf("%v", p.Indices)
+  }
+  returnColumnsVal := fmt.Sprintf("%v", p.ReturnColumns)
+  return fmt.Sprintf("LookupIndexRequest({SpaceID:%s Parts:%s Indices:%s ReturnColumns:%s})", spaceIDVal, partsVal, indicesVal, returnColumnsVal)
 }
 
 // Attributes:
@@ -6591,7 +7035,10 @@ type LookupAndTraverseRequest struct {
 }
 
 func NewLookupAndTraverseRequest() *LookupAndTraverseRequest {
-  return &LookupAndTraverseRequest{}
+  return &LookupAndTraverseRequest{
+    Indices: NewIndexSpec(),
+    TraverseSpec: NewTraverseSpec(),
+  }
 }
 
 
@@ -6617,11 +7064,11 @@ func (p *LookupAndTraverseRequest) GetTraverseSpec() *TraverseSpec {
 return p.TraverseSpec
 }
 func (p *LookupAndTraverseRequest) IsSetIndices() bool {
-  return p.Indices != nil
+  return p != nil && p.Indices != nil
 }
 
 func (p *LookupAndTraverseRequest) IsSetTraverseSpec() bool {
-  return p.TraverseSpec != nil
+  return p != nil && p.TraverseSpec != nil
 }
 
 func (p *LookupAndTraverseRequest) Read(iprot thrift.Protocol) error {
@@ -6795,7 +7242,22 @@ func (p *LookupAndTraverseRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("LookupAndTraverseRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  var indicesVal string
+  if p.Indices == nil {
+    indicesVal = "<nil>"
+  } else {
+    indicesVal = fmt.Sprintf("%v", p.Indices)
+  }
+  var traverseSpecVal string
+  if p.TraverseSpec == nil {
+    traverseSpecVal = "<nil>"
+  } else {
+    traverseSpecVal = fmt.Sprintf("%v", p.TraverseSpec)
+  }
+  return fmt.Sprintf("LookupAndTraverseRequest({SpaceID:%s Parts:%s Indices:%s TraverseSpec:%s})", spaceIDVal, partsVal, indicesVal, traverseSpecVal)
 }
 
 // Attributes:
@@ -6824,8 +7286,9 @@ type ScanVertexRequest struct {
 
 func NewScanVertexRequest() *ScanVertexRequest {
   return &ScanVertexRequest{
-EnableReadFromFollower: true,
-}
+    ReturnColumns: NewVertexProp(),
+    EnableReadFromFollower: true,
+  }
 }
 
 
@@ -6880,23 +7343,23 @@ func (p *ScanVertexRequest) GetEnableReadFromFollower() bool {
   return p.EnableReadFromFollower
 }
 func (p *ScanVertexRequest) IsSetCursor() bool {
-  return p.Cursor != nil
+  return p != nil && p.Cursor != nil
 }
 
 func (p *ScanVertexRequest) IsSetReturnColumns() bool {
-  return p.ReturnColumns != nil
+  return p != nil && p.ReturnColumns != nil
 }
 
 func (p *ScanVertexRequest) IsSetStartTime() bool {
-  return p.StartTime != nil
+  return p != nil && p.StartTime != nil
 }
 
 func (p *ScanVertexRequest) IsSetEndTime() bool {
-  return p.EndTime != nil
+  return p != nil && p.EndTime != nil
 }
 
 func (p *ScanVertexRequest) IsSetFilter() bool {
-  return p.Filter != nil
+  return p != nil && p.Filter != nil
 }
 
 func (p *ScanVertexRequest) Read(iprot thrift.Protocol) error {
@@ -7191,7 +7654,33 @@ func (p *ScanVertexRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("ScanVertexRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  cursorVal := fmt.Sprintf("%v", p.Cursor)
+  var returnColumnsVal string
+  if p.ReturnColumns == nil {
+    returnColumnsVal = "<nil>"
+  } else {
+    returnColumnsVal = fmt.Sprintf("%v", p.ReturnColumns)
+  }
+  limitVal := fmt.Sprintf("%v", p.Limit)
+  var startTimeVal string
+  if p.StartTime == nil {
+    startTimeVal = "<nil>"
+  } else {
+    startTimeVal = fmt.Sprintf("%v", *p.StartTime)
+  }
+  var endTimeVal string
+  if p.EndTime == nil {
+    endTimeVal = "<nil>"
+  } else {
+    endTimeVal = fmt.Sprintf("%v", *p.EndTime)
+  }
+  filterVal := fmt.Sprintf("%v", p.Filter)
+  onlyLatestVersionVal := fmt.Sprintf("%v", p.OnlyLatestVersion)
+  enableReadFromFollowerVal := fmt.Sprintf("%v", p.EnableReadFromFollower)
+  return fmt.Sprintf("ScanVertexRequest({SpaceID:%s PartID:%s Cursor:%s ReturnColumns:%s Limit:%s StartTime:%s EndTime:%s Filter:%s OnlyLatestVersion:%s EnableReadFromFollower:%s})", spaceIDVal, partIDVal, cursorVal, returnColumnsVal, limitVal, startTimeVal, endTimeVal, filterVal, onlyLatestVersionVal, enableReadFromFollowerVal)
 }
 
 // Attributes:
@@ -7207,7 +7696,10 @@ type ScanVertexResponse struct {
 }
 
 func NewScanVertexResponse() *ScanVertexResponse {
-  return &ScanVertexResponse{}
+  return &ScanVertexResponse{
+    Result_: NewResponseCommon(),
+    VertexData: nebula0.NewDataSet(),
+  }
 }
 
 var ScanVertexResponse_Result__DEFAULT *ResponseCommon
@@ -7234,15 +7726,15 @@ func (p *ScanVertexResponse) GetNextCursor() []byte {
   return p.NextCursor
 }
 func (p *ScanVertexResponse) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *ScanVertexResponse) IsSetVertexData() bool {
-  return p.VertexData != nil
+  return p != nil && p.VertexData != nil
 }
 
 func (p *ScanVertexResponse) IsSetNextCursor() bool {
-  return p.NextCursor != nil
+  return p != nil && p.NextCursor != nil
 }
 
 func (p *ScanVertexResponse) Read(iprot thrift.Protocol) error {
@@ -7390,7 +7882,22 @@ func (p *ScanVertexResponse) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("ScanVertexResponse(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  var vertexDataVal string
+  if p.VertexData == nil {
+    vertexDataVal = "<nil>"
+  } else {
+    vertexDataVal = fmt.Sprintf("%v", p.VertexData)
+  }
+  hasNextVal := fmt.Sprintf("%v", p.HasNext)
+  nextCursorVal := fmt.Sprintf("%v", p.NextCursor)
+  return fmt.Sprintf("ScanVertexResponse({Result_:%s VertexData:%s HasNext:%s NextCursor:%s})", resultVal, vertexDataVal, hasNextVal, nextCursorVal)
 }
 
 // Attributes:
@@ -7419,8 +7926,9 @@ type ScanEdgeRequest struct {
 
 func NewScanEdgeRequest() *ScanEdgeRequest {
   return &ScanEdgeRequest{
-EnableReadFromFollower: true,
-}
+    ReturnColumns: NewEdgeProp(),
+    EnableReadFromFollower: true,
+  }
 }
 
 
@@ -7475,23 +7983,23 @@ func (p *ScanEdgeRequest) GetEnableReadFromFollower() bool {
   return p.EnableReadFromFollower
 }
 func (p *ScanEdgeRequest) IsSetCursor() bool {
-  return p.Cursor != nil
+  return p != nil && p.Cursor != nil
 }
 
 func (p *ScanEdgeRequest) IsSetReturnColumns() bool {
-  return p.ReturnColumns != nil
+  return p != nil && p.ReturnColumns != nil
 }
 
 func (p *ScanEdgeRequest) IsSetStartTime() bool {
-  return p.StartTime != nil
+  return p != nil && p.StartTime != nil
 }
 
 func (p *ScanEdgeRequest) IsSetEndTime() bool {
-  return p.EndTime != nil
+  return p != nil && p.EndTime != nil
 }
 
 func (p *ScanEdgeRequest) IsSetFilter() bool {
-  return p.Filter != nil
+  return p != nil && p.Filter != nil
 }
 
 func (p *ScanEdgeRequest) Read(iprot thrift.Protocol) error {
@@ -7786,7 +8294,33 @@ func (p *ScanEdgeRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("ScanEdgeRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  cursorVal := fmt.Sprintf("%v", p.Cursor)
+  var returnColumnsVal string
+  if p.ReturnColumns == nil {
+    returnColumnsVal = "<nil>"
+  } else {
+    returnColumnsVal = fmt.Sprintf("%v", p.ReturnColumns)
+  }
+  limitVal := fmt.Sprintf("%v", p.Limit)
+  var startTimeVal string
+  if p.StartTime == nil {
+    startTimeVal = "<nil>"
+  } else {
+    startTimeVal = fmt.Sprintf("%v", *p.StartTime)
+  }
+  var endTimeVal string
+  if p.EndTime == nil {
+    endTimeVal = "<nil>"
+  } else {
+    endTimeVal = fmt.Sprintf("%v", *p.EndTime)
+  }
+  filterVal := fmt.Sprintf("%v", p.Filter)
+  onlyLatestVersionVal := fmt.Sprintf("%v", p.OnlyLatestVersion)
+  enableReadFromFollowerVal := fmt.Sprintf("%v", p.EnableReadFromFollower)
+  return fmt.Sprintf("ScanEdgeRequest({SpaceID:%s PartID:%s Cursor:%s ReturnColumns:%s Limit:%s StartTime:%s EndTime:%s Filter:%s OnlyLatestVersion:%s EnableReadFromFollower:%s})", spaceIDVal, partIDVal, cursorVal, returnColumnsVal, limitVal, startTimeVal, endTimeVal, filterVal, onlyLatestVersionVal, enableReadFromFollowerVal)
 }
 
 // Attributes:
@@ -7802,7 +8336,10 @@ type ScanEdgeResponse struct {
 }
 
 func NewScanEdgeResponse() *ScanEdgeResponse {
-  return &ScanEdgeResponse{}
+  return &ScanEdgeResponse{
+    Result_: NewResponseCommon(),
+    EdgeData: nebula0.NewDataSet(),
+  }
 }
 
 var ScanEdgeResponse_Result__DEFAULT *ResponseCommon
@@ -7829,15 +8366,15 @@ func (p *ScanEdgeResponse) GetNextCursor() []byte {
   return p.NextCursor
 }
 func (p *ScanEdgeResponse) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *ScanEdgeResponse) IsSetEdgeData() bool {
-  return p.EdgeData != nil
+  return p != nil && p.EdgeData != nil
 }
 
 func (p *ScanEdgeResponse) IsSetNextCursor() bool {
-  return p.NextCursor != nil
+  return p != nil && p.NextCursor != nil
 }
 
 func (p *ScanEdgeResponse) Read(iprot thrift.Protocol) error {
@@ -7985,7 +8522,22 @@ func (p *ScanEdgeResponse) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("ScanEdgeResponse(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  var edgeDataVal string
+  if p.EdgeData == nil {
+    edgeDataVal = "<nil>"
+  } else {
+    edgeDataVal = fmt.Sprintf("%v", p.EdgeData)
+  }
+  hasNextVal := fmt.Sprintf("%v", p.HasNext)
+  nextCursorVal := fmt.Sprintf("%v", p.NextCursor)
+  return fmt.Sprintf("ScanEdgeResponse({Result_:%s EdgeData:%s HasNext:%s NextCursor:%s})", resultVal, edgeDataVal, hasNextVal, nextCursorVal)
 }
 
 // Attributes:
@@ -8017,11 +8569,11 @@ func (p *TaskPara) GetTaskSpecficParas() [][]byte {
   return p.TaskSpecficParas
 }
 func (p *TaskPara) IsSetParts() bool {
-  return p.Parts != nil
+  return p != nil && p.Parts != nil
 }
 
 func (p *TaskPara) IsSetTaskSpecficParas() bool {
-  return p.TaskSpecficParas != nil
+  return p != nil && p.TaskSpecficParas != nil
 }
 
 func (p *TaskPara) Read(iprot thrift.Protocol) error {
@@ -8186,7 +8738,11 @@ func (p *TaskPara) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("TaskPara(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  taskSpecficParasVal := fmt.Sprintf("%v", p.TaskSpecficParas)
+  return fmt.Sprintf("TaskPara({SpaceID:%s Parts:%s TaskSpecficParas:%s})", spaceIDVal, partsVal, taskSpecficParasVal)
 }
 
 // Attributes:
@@ -8204,7 +8760,9 @@ type AddAdminTaskRequest struct {
 }
 
 func NewAddAdminTaskRequest() *AddAdminTaskRequest {
-  return &AddAdminTaskRequest{}
+  return &AddAdminTaskRequest{
+    Para: NewTaskPara(),
+  }
 }
 
 
@@ -8234,11 +8792,11 @@ func (p *AddAdminTaskRequest) GetConcurrency() int32 {
 return *p.Concurrency
 }
 func (p *AddAdminTaskRequest) IsSetPara() bool {
-  return p.Para != nil
+  return p != nil && p.Para != nil
 }
 
 func (p *AddAdminTaskRequest) IsSetConcurrency() bool {
-  return p.Concurrency != nil
+  return p != nil && p.Concurrency != nil
 }
 
 func (p *AddAdminTaskRequest) Read(iprot thrift.Protocol) error {
@@ -8406,7 +8964,23 @@ func (p *AddAdminTaskRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("AddAdminTaskRequest(%+v)", *p)
+
+  cmdVal := fmt.Sprintf("%v", p.Cmd)
+  jobIDVal := fmt.Sprintf("%v", p.JobID)
+  taskIDVal := fmt.Sprintf("%v", p.TaskID)
+  var paraVal string
+  if p.Para == nil {
+    paraVal = "<nil>"
+  } else {
+    paraVal = fmt.Sprintf("%v", p.Para)
+  }
+  var concurrencyVal string
+  if p.Concurrency == nil {
+    concurrencyVal = "<nil>"
+  } else {
+    concurrencyVal = fmt.Sprintf("%v", *p.Concurrency)
+  }
+  return fmt.Sprintf("AddAdminTaskRequest({Cmd:%s JobID:%s TaskID:%s Para:%s Concurrency:%s})", cmdVal, jobIDVal, taskIDVal, paraVal, concurrencyVal)
 }
 
 // Attributes:
@@ -8519,7 +9093,10 @@ func (p *StopAdminTaskRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StopAdminTaskRequest(%+v)", *p)
+
+  jobIDVal := fmt.Sprintf("%v", p.JobID)
+  taskIDVal := fmt.Sprintf("%v", p.TaskID)
+  return fmt.Sprintf("StopAdminTaskRequest({JobID:%s TaskID:%s})", jobIDVal, taskIDVal)
 }
 
 // Attributes:
@@ -8531,7 +9108,9 @@ type AdminExecResp struct {
 }
 
 func NewAdminExecResp() *AdminExecResp {
-  return &AdminExecResp{}
+  return &AdminExecResp{
+    Result_: NewResponseCommon(),
+  }
 }
 
 var AdminExecResp_Result__DEFAULT *ResponseCommon
@@ -8549,11 +9128,11 @@ func (p *AdminExecResp) GetStatis() *meta1.StatisItem {
 return p.Statis
 }
 func (p *AdminExecResp) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *AdminExecResp) IsSetStatis() bool {
-  return p.Statis != nil
+  return p != nil && p.Statis != nil
 }
 
 func (p *AdminExecResp) Read(iprot thrift.Protocol) error {
@@ -8653,7 +9232,20 @@ func (p *AdminExecResp) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("AdminExecResp(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  var statisVal string
+  if p.Statis == nil {
+    statisVal = "<nil>"
+  } else {
+    statisVal = fmt.Sprintf("%v", p.Statis)
+  }
+  return fmt.Sprintf("AdminExecResp({Result_:%s Statis:%s})", resultVal, statisVal)
 }
 
 // Attributes:
@@ -8667,7 +9259,9 @@ type TransLeaderReq struct {
 }
 
 func NewTransLeaderReq() *TransLeaderReq {
-  return &TransLeaderReq{}
+  return &TransLeaderReq{
+    NewLeader_: nebula0.NewHostAddr(),
+  }
 }
 
 
@@ -8686,7 +9280,7 @@ func (p *TransLeaderReq) GetNewLeader_() *nebula0.HostAddr {
 return p.NewLeader_
 }
 func (p *TransLeaderReq) IsSetNewLeader_() bool {
-  return p.NewLeader_ != nil
+  return p != nil && p.NewLeader_ != nil
 }
 
 func (p *TransLeaderReq) Read(iprot thrift.Protocol) error {
@@ -8805,7 +9399,16 @@ func (p *TransLeaderReq) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("TransLeaderReq(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  var newLeaderVal string
+  if p.NewLeader_ == nil {
+    newLeaderVal = "<nil>"
+  } else {
+    newLeaderVal = fmt.Sprintf("%v", p.NewLeader_)
+  }
+  return fmt.Sprintf("TransLeaderReq({SpaceID:%s PartID:%s NewLeader_:%s})", spaceIDVal, partIDVal, newLeaderVal)
 }
 
 // Attributes:
@@ -9000,7 +9603,12 @@ func (p *AddPartReq) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("AddPartReq(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  asLearnerVal := fmt.Sprintf("%v", p.AsLearner)
+  peersVal := fmt.Sprintf("%v", p.Peers)
+  return fmt.Sprintf("AddPartReq({SpaceID:%s PartID:%s AsLearner:%s Peers:%s})", spaceIDVal, partIDVal, asLearnerVal, peersVal)
 }
 
 // Attributes:
@@ -9014,7 +9622,9 @@ type AddLearnerReq struct {
 }
 
 func NewAddLearnerReq() *AddLearnerReq {
-  return &AddLearnerReq{}
+  return &AddLearnerReq{
+    Learner: nebula0.NewHostAddr(),
+  }
 }
 
 
@@ -9033,7 +9643,7 @@ func (p *AddLearnerReq) GetLearner() *nebula0.HostAddr {
 return p.Learner
 }
 func (p *AddLearnerReq) IsSetLearner() bool {
-  return p.Learner != nil
+  return p != nil && p.Learner != nil
 }
 
 func (p *AddLearnerReq) Read(iprot thrift.Protocol) error {
@@ -9152,7 +9762,16 @@ func (p *AddLearnerReq) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("AddLearnerReq(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  var learnerVal string
+  if p.Learner == nil {
+    learnerVal = "<nil>"
+  } else {
+    learnerVal = fmt.Sprintf("%v", p.Learner)
+  }
+  return fmt.Sprintf("AddLearnerReq({SpaceID:%s PartID:%s Learner:%s})", spaceIDVal, partIDVal, learnerVal)
 }
 
 // Attributes:
@@ -9267,7 +9886,10 @@ func (p *RemovePartReq) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("RemovePartReq(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  return fmt.Sprintf("RemovePartReq({SpaceID:%s PartID:%s})", spaceIDVal, partIDVal)
 }
 
 // Attributes:
@@ -9283,7 +9905,9 @@ type MemberChangeReq struct {
 }
 
 func NewMemberChangeReq() *MemberChangeReq {
-  return &MemberChangeReq{}
+  return &MemberChangeReq{
+    Peer: nebula0.NewHostAddr(),
+  }
 }
 
 
@@ -9306,7 +9930,7 @@ func (p *MemberChangeReq) GetAdd() bool {
   return p.Add
 }
 func (p *MemberChangeReq) IsSetPeer() bool {
-  return p.Peer != nil
+  return p != nil && p.Peer != nil
 }
 
 func (p *MemberChangeReq) Read(iprot thrift.Protocol) error {
@@ -9449,7 +10073,17 @@ func (p *MemberChangeReq) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MemberChangeReq(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  var peerVal string
+  if p.Peer == nil {
+    peerVal = "<nil>"
+  } else {
+    peerVal = fmt.Sprintf("%v", p.Peer)
+  }
+  addVal := fmt.Sprintf("%v", p.Add)
+  return fmt.Sprintf("MemberChangeReq({SpaceID:%s PartID:%s Peer:%s Add:%s})", spaceIDVal, partIDVal, peerVal, addVal)
 }
 
 // Attributes:
@@ -9463,7 +10097,9 @@ type CatchUpDataReq struct {
 }
 
 func NewCatchUpDataReq() *CatchUpDataReq {
-  return &CatchUpDataReq{}
+  return &CatchUpDataReq{
+    Target: nebula0.NewHostAddr(),
+  }
 }
 
 
@@ -9482,7 +10118,7 @@ func (p *CatchUpDataReq) GetTarget() *nebula0.HostAddr {
 return p.Target
 }
 func (p *CatchUpDataReq) IsSetTarget() bool {
-  return p.Target != nil
+  return p != nil && p.Target != nil
 }
 
 func (p *CatchUpDataReq) Read(iprot thrift.Protocol) error {
@@ -9601,7 +10237,16 @@ func (p *CatchUpDataReq) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("CatchUpDataReq(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  var targetVal string
+  if p.Target == nil {
+    targetVal = "<nil>"
+  } else {
+    targetVal = fmt.Sprintf("%v", p.Target)
+  }
+  return fmt.Sprintf("CatchUpDataReq({SpaceID:%s PartID:%s Target:%s})", spaceIDVal, partIDVal, targetVal)
 }
 
 type GetLeaderReq struct {
@@ -9650,7 +10295,8 @@ func (p *GetLeaderReq) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GetLeaderReq(%+v)", *p)
+
+  return fmt.Sprintf("GetLeaderReq({})")
 }
 
 // Attributes:
@@ -9764,7 +10410,10 @@ func (p *CreateCPRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("CreateCPRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  nameVal := fmt.Sprintf("%v", p.Name)
+  return fmt.Sprintf("CreateCPRequest({SpaceID:%s Name:%s})", spaceIDVal, nameVal)
 }
 
 // Attributes:
@@ -9878,7 +10527,10 @@ func (p *DropCPRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("DropCPRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  nameVal := fmt.Sprintf("%v", p.Name)
+  return fmt.Sprintf("DropCPRequest({SpaceID:%s Name:%s})", spaceIDVal, nameVal)
 }
 
 // Attributes:
@@ -9998,7 +10650,10 @@ func (p *BlockingSignRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("BlockingSignRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  signVal := fmt.Sprintf("%v", p.Sign)
+  return fmt.Sprintf("BlockingSignRequest({SpaceID:%s Sign:%s})", spaceIDVal, signVal)
 }
 
 // Attributes:
@@ -10010,7 +10665,9 @@ type GetLeaderPartsResp struct {
 }
 
 func NewGetLeaderPartsResp() *GetLeaderPartsResp {
-  return &GetLeaderPartsResp{}
+  return &GetLeaderPartsResp{
+    Result_: NewResponseCommon(),
+  }
 }
 
 var GetLeaderPartsResp_Result__DEFAULT *ResponseCommon
@@ -10025,7 +10682,7 @@ func (p *GetLeaderPartsResp) GetLeaderParts() map[nebula0.GraphSpaceID][]nebula0
   return p.LeaderParts
 }
 func (p *GetLeaderPartsResp) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *GetLeaderPartsResp) Read(iprot thrift.Protocol) error {
@@ -10174,7 +10831,15 @@ func (p *GetLeaderPartsResp) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GetLeaderPartsResp(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  leaderPartsVal := fmt.Sprintf("%v", p.LeaderParts)
+  return fmt.Sprintf("GetLeaderPartsResp({Result_:%s LeaderParts:%s})", resultVal, leaderPartsVal)
 }
 
 // Attributes:
@@ -10339,7 +11004,11 @@ func (p *CheckPeersReq) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("CheckPeersReq(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  peersVal := fmt.Sprintf("%v", p.Peers)
+  return fmt.Sprintf("CheckPeersReq({SpaceID:%s PartID:%s Peers:%s})", spaceIDVal, partIDVal, peersVal)
 }
 
 // Attributes:
@@ -10506,7 +11175,11 @@ func (p *RebuildIndexRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("RebuildIndexRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  indexIDVal := fmt.Sprintf("%v", p.IndexID)
+  return fmt.Sprintf("RebuildIndexRequest({SpaceID:%s Parts:%s IndexID:%s})", spaceIDVal, partsVal, indexIDVal)
 }
 
 // Attributes:
@@ -10518,7 +11191,9 @@ type CreateCPResp struct {
 }
 
 func NewCreateCPResp() *CreateCPResp {
-  return &CreateCPResp{}
+  return &CreateCPResp{
+    Result_: NewResponseCommon(),
+  }
 }
 
 var CreateCPResp_Result__DEFAULT *ResponseCommon
@@ -10533,7 +11208,7 @@ func (p *CreateCPResp) GetPath() []byte {
   return p.Path
 }
 func (p *CreateCPResp) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *CreateCPResp) Read(iprot thrift.Protocol) error {
@@ -10631,7 +11306,15 @@ func (p *CreateCPResp) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("CreateCPResp(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  pathVal := fmt.Sprintf("%v", p.Path)
+  return fmt.Sprintf("CreateCPResp({Result_:%s Path:%s})", resultVal, pathVal)
 }
 
 // Attributes:
@@ -10645,7 +11328,10 @@ type PartitionInfoResp struct {
 }
 
 func NewPartitionInfoResp() *PartitionInfoResp {
-  return &PartitionInfoResp{}
+  return &PartitionInfoResp{
+    Result_: NewResponseCommon(),
+    PartitionInfo: nebula0.NewPartitionBackupInfo(),
+  }
 }
 
 var PartitionInfoResp_Result__DEFAULT *ResponseCommon
@@ -10667,11 +11353,11 @@ func (p *PartitionInfoResp) GetPartitionInfo() *nebula0.PartitionBackupInfo {
 return p.PartitionInfo
 }
 func (p *PartitionInfoResp) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *PartitionInfoResp) IsSetPartitionInfo() bool {
-  return p.PartitionInfo != nil
+  return p != nil && p.PartitionInfo != nil
 }
 
 func (p *PartitionInfoResp) Read(iprot thrift.Protocol) error {
@@ -10793,7 +11479,21 @@ func (p *PartitionInfoResp) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("PartitionInfoResp(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  backupNameVal := fmt.Sprintf("%v", p.BackupName)
+  var partitionInfoVal string
+  if p.PartitionInfo == nil {
+    partitionInfoVal = "<nil>"
+  } else {
+    partitionInfoVal = fmt.Sprintf("%v", p.PartitionInfo)
+  }
+  return fmt.Sprintf("PartitionInfoResp({Result_:%s BackupName:%s PartitionInfo:%s})", resultVal, backupNameVal, partitionInfoVal)
 }
 
 // Attributes:
@@ -10907,7 +11607,10 @@ func (p *PartitionInfoRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("PartitionInfoRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  backupNameVal := fmt.Sprintf("%v", p.BackupName)
+  return fmt.Sprintf("PartitionInfoRequest({SpaceID:%s BackupName:%s})", spaceIDVal, backupNameVal)
 }
 
 // Attributes:
@@ -11101,7 +11804,11 @@ func (p *KVGetRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("KVGetRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  returnPartlyVal := fmt.Sprintf("%v", p.ReturnPartly)
+  return fmt.Sprintf("KVGetRequest({SpaceID:%s Parts:%s ReturnPartly:%s})", spaceIDVal, partsVal, returnPartlyVal)
 }
 
 // Attributes:
@@ -11113,7 +11820,9 @@ type KVGetResponse struct {
 }
 
 func NewKVGetResponse() *KVGetResponse {
-  return &KVGetResponse{}
+  return &KVGetResponse{
+    Result_: NewResponseCommon(),
+  }
 }
 
 var KVGetResponse_Result__DEFAULT *ResponseCommon
@@ -11128,7 +11837,7 @@ func (p *KVGetResponse) GetKeyValues() map[string][]byte {
   return p.KeyValues
 }
 func (p *KVGetResponse) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *KVGetResponse) Read(iprot thrift.Protocol) error {
@@ -11255,7 +11964,15 @@ func (p *KVGetResponse) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("KVGetResponse(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  keyValuesVal := fmt.Sprintf("%v", p.KeyValues)
+  return fmt.Sprintf("KVGetResponse({Result_:%s KeyValues:%s})", resultVal, keyValuesVal)
 }
 
 // Attributes:
@@ -11418,7 +12135,10 @@ func (p *KVPutRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("KVPutRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  return fmt.Sprintf("KVPutRequest({SpaceID:%s Parts:%s})", spaceIDVal, partsVal)
 }
 
 // Attributes:
@@ -11582,7 +12302,10 @@ func (p *KVRemoveRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("KVRemoveRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partsVal := fmt.Sprintf("%v", p.Parts)
+  return fmt.Sprintf("KVRemoveRequest({SpaceID:%s Parts:%s})", spaceIDVal, partsVal)
 }
 
 // Attributes:
@@ -11826,7 +12549,13 @@ func (p *InternalTxnRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("InternalTxnRequest(%+v)", *p)
+
+  txnIDVal := fmt.Sprintf("%v", p.TxnID)
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  positionVal := fmt.Sprintf("%v", p.Position)
+  dataVal := fmt.Sprintf("%v", p.Data)
+  return fmt.Sprintf("InternalTxnRequest({TxnID:%s SpaceID:%s PartID:%s Position:%s Data:%s})", txnIDVal, spaceIDVal, partIDVal, positionVal, dataVal)
 }
 
 // Attributes:
@@ -11971,7 +12700,11 @@ func (p *GetValueRequest) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GetValueRequest(%+v)", *p)
+
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  keyVal := fmt.Sprintf("%v", p.Key)
+  return fmt.Sprintf("GetValueRequest({SpaceID:%s PartID:%s Key:%s})", spaceIDVal, partIDVal, keyVal)
 }
 
 // Attributes:
@@ -11983,7 +12716,9 @@ type GetValueResponse struct {
 }
 
 func NewGetValueResponse() *GetValueResponse {
-  return &GetValueResponse{}
+  return &GetValueResponse{
+    Result_: NewResponseCommon(),
+  }
 }
 
 var GetValueResponse_Result__DEFAULT *ResponseCommon
@@ -11998,7 +12733,7 @@ func (p *GetValueResponse) GetValue() []byte {
   return p.Value
 }
 func (p *GetValueResponse) IsSetResult_() bool {
-  return p.Result_ != nil
+  return p != nil && p.Result_ != nil
 }
 
 func (p *GetValueResponse) Read(iprot thrift.Protocol) error {
@@ -12096,6 +12831,14 @@ func (p *GetValueResponse) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GetValueResponse(%+v)", *p)
+
+  var resultVal string
+  if p.Result_ == nil {
+    resultVal = "<nil>"
+  } else {
+    resultVal = fmt.Sprintf("%v", p.Result_)
+  }
+  valueVal := fmt.Sprintf("%v", p.Value)
+  return fmt.Sprintf("GetValueResponse({Result_:%s Value:%s})", resultVal, valueVal)
 }
 

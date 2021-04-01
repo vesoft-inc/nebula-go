@@ -6,6 +6,7 @@ package nebula
 
 import (
 	"bytes"
+	"context"
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -16,6 +17,7 @@ var _ = thrift.ZERO
 var _ = fmt.Printf
 var _ = sync.Mutex{}
 var _ = bytes.Equal
+var _ = context.Background
 
 var GoUnusedProtection__ int;
 
@@ -53,6 +55,28 @@ var NullTypeToValue = map[string]NullType {
   "OUT_OF_RANGE": NullType_OUT_OF_RANGE,
 }
 
+var NullTypeNames = []string {
+  "__NULL__",
+  "NaN",
+  "BAD_DATA",
+  "BAD_TYPE",
+  "ERR_OVERFLOW",
+  "UNKNOWN_PROP",
+  "DIV_BY_ZERO",
+  "OUT_OF_RANGE",
+}
+
+var NullTypeValues = []NullType {
+  NullType___NULL__,
+  NullType_NaN,
+  NullType_BAD_DATA,
+  NullType_BAD_TYPE,
+  NullType_ERR_OVERFLOW,
+  NullType_UNKNOWN_PROP,
+  NullType_DIV_BY_ZERO,
+  NullType_OUT_OF_RANGE,
+}
+
 func (p NullType) String() string {
   if v, ok := NullTypeToName[p]; ok {
     return v
@@ -69,47 +93,47 @@ func NullTypeFromString(s string) (NullType, error) {
 
 func NullTypePtr(v NullType) *NullType { return &v }
 
-type GraphSpaceID int32
+type GraphSpaceID = int32
 
 func GraphSpaceIDPtr(v GraphSpaceID) *GraphSpaceID { return &v }
 
-type PartitionID int32
+type PartitionID = int32
 
 func PartitionIDPtr(v PartitionID) *PartitionID { return &v }
 
-type TagID int32
+type TagID = int32
 
 func TagIDPtr(v TagID) *TagID { return &v }
 
-type EdgeType int32
+type EdgeType = int32
 
 func EdgeTypePtr(v EdgeType) *EdgeType { return &v }
 
-type EdgeRanking int64
+type EdgeRanking = int64
 
 func EdgeRankingPtr(v EdgeRanking) *EdgeRanking { return &v }
 
-type LogID int64
+type LogID = int64
 
 func LogIDPtr(v LogID) *LogID { return &v }
 
-type TermID int64
+type TermID = int64
 
 func TermIDPtr(v TermID) *TermID { return &v }
 
-type Timestamp int64
+type Timestamp = int64
 
 func TimestampPtr(v Timestamp) *Timestamp { return &v }
 
-type IndexID int32
+type IndexID = int32
 
 func IndexIDPtr(v IndexID) *IndexID { return &v }
 
-type Port int32
+type Port = int32
 
 func PortPtr(v Port) *Port { return &v }
 
-type SessionID int64
+type SessionID = int64
 
 func SessionIDPtr(v SessionID) *SessionID { return &v }
 
@@ -255,7 +279,11 @@ func (p *Date) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("Date(%+v)", *p)
+
+  yearVal := fmt.Sprintf("%v", p.Year)
+  monthVal := fmt.Sprintf("%v", p.Month)
+  dayVal := fmt.Sprintf("%v", p.Day)
+  return fmt.Sprintf("Date({Year:%s Month:%s Day:%s})", yearVal, monthVal, dayVal)
 }
 
 // Attributes:
@@ -431,7 +459,12 @@ func (p *Time) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("Time(%+v)", *p)
+
+  hourVal := fmt.Sprintf("%v", p.Hour)
+  minuteVal := fmt.Sprintf("%v", p.Minute)
+  secVal := fmt.Sprintf("%v", p.Sec)
+  microsecVal := fmt.Sprintf("%v", p.Microsec)
+  return fmt.Sprintf("Time({Hour:%s Minute:%s Sec:%s Microsec:%s})", hourVal, minuteVal, secVal, microsecVal)
 }
 
 // Attributes:
@@ -699,7 +732,15 @@ func (p *DateTime) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("DateTime(%+v)", *p)
+
+  yearVal := fmt.Sprintf("%v", p.Year)
+  monthVal := fmt.Sprintf("%v", p.Month)
+  dayVal := fmt.Sprintf("%v", p.Day)
+  hourVal := fmt.Sprintf("%v", p.Hour)
+  minuteVal := fmt.Sprintf("%v", p.Minute)
+  secVal := fmt.Sprintf("%v", p.Sec)
+  microsecVal := fmt.Sprintf("%v", p.Microsec)
+  return fmt.Sprintf("DateTime({Year:%s Month:%s Day:%s Hour:%s Minute:%s Sec:%s Microsec:%s})", yearVal, monthVal, dayVal, hourVal, minuteVal, secVal, microsecVal)
 }
 
 // Attributes:
@@ -857,6 +898,9 @@ func (p *Value) CountSetFieldsValue() int {
   if (p.IsSetFVal()) {
     count++
   }
+  if (p.IsSetSVal()) {
+    count++
+  }
   if (p.IsSetDVal()) {
     count++
   }
@@ -892,63 +936,63 @@ func (p *Value) CountSetFieldsValue() int {
 }
 
 func (p *Value) IsSetNVal() bool {
-  return p.NVal != nil
+  return p != nil && p.NVal != nil
 }
 
 func (p *Value) IsSetBVal() bool {
-  return p.BVal != nil
+  return p != nil && p.BVal != nil
 }
 
 func (p *Value) IsSetIVal() bool {
-  return p.IVal != nil
+  return p != nil && p.IVal != nil
 }
 
 func (p *Value) IsSetFVal() bool {
-  return p.FVal != nil
+  return p != nil && p.FVal != nil
 }
 
 func (p *Value) IsSetSVal() bool {
-  return p.SVal != nil
+  return p != nil && p.SVal != nil
 }
 
 func (p *Value) IsSetDVal() bool {
-  return p.DVal != nil
+  return p != nil && p.DVal != nil
 }
 
 func (p *Value) IsSetTVal() bool {
-  return p.TVal != nil
+  return p != nil && p.TVal != nil
 }
 
 func (p *Value) IsSetDtVal() bool {
-  return p.DtVal != nil
+  return p != nil && p.DtVal != nil
 }
 
 func (p *Value) IsSetVVal() bool {
-  return p.VVal != nil
+  return p != nil && p.VVal != nil
 }
 
 func (p *Value) IsSetEVal() bool {
-  return p.EVal != nil
+  return p != nil && p.EVal != nil
 }
 
 func (p *Value) IsSetPVal() bool {
-  return p.PVal != nil
+  return p != nil && p.PVal != nil
 }
 
 func (p *Value) IsSetLVal() bool {
-  return p.LVal != nil
+  return p != nil && p.LVal != nil
 }
 
 func (p *Value) IsSetMVal() bool {
-  return p.MVal != nil
+  return p != nil && p.MVal != nil
 }
 
 func (p *Value) IsSetUVal() bool {
-  return p.UVal != nil
+  return p != nil && p.UVal != nil
 }
 
 func (p *Value) IsSetGVal() bool {
-  return p.GVal != nil
+  return p != nil && p.GVal != nil
 }
 
 func (p *Value) Read(iprot thrift.Protocol) error {
@@ -1166,8 +1210,8 @@ func (p *Value)  ReadField15(iprot thrift.Protocol) error {
 }
 
 func (p *Value) Write(oprot thrift.Protocol) error {
-  if c := p.CountSetFieldsValue(); c != 1 {
-    return fmt.Errorf("%T write union: exactly one field must be set (%d set).", p, c)
+  if c := p.CountSetFieldsValue(); c > 1 {
+    return fmt.Errorf("%T write union: no more than one field must be set (%d set).", p, c)
   }
   if err := oprot.WriteStructBegin("Value"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
@@ -1387,7 +1431,93 @@ func (p *Value) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("Value(%+v)", *p)
+
+  var nValVal string
+  if p.NVal == nil {
+    nValVal = "<nil>"
+  } else {
+    nValVal = fmt.Sprintf("%v", *p.NVal)
+  }
+  var bValVal string
+  if p.BVal == nil {
+    bValVal = "<nil>"
+  } else {
+    bValVal = fmt.Sprintf("%v", *p.BVal)
+  }
+  var iValVal string
+  if p.IVal == nil {
+    iValVal = "<nil>"
+  } else {
+    iValVal = fmt.Sprintf("%v", *p.IVal)
+  }
+  var fValVal string
+  if p.FVal == nil {
+    fValVal = "<nil>"
+  } else {
+    fValVal = fmt.Sprintf("%v", *p.FVal)
+  }
+  sValVal := fmt.Sprintf("%v", p.SVal)
+  var dValVal string
+  if p.DVal == nil {
+    dValVal = "<nil>"
+  } else {
+    dValVal = fmt.Sprintf("%v", p.DVal)
+  }
+  var tValVal string
+  if p.TVal == nil {
+    tValVal = "<nil>"
+  } else {
+    tValVal = fmt.Sprintf("%v", p.TVal)
+  }
+  var dtValVal string
+  if p.DtVal == nil {
+    dtValVal = "<nil>"
+  } else {
+    dtValVal = fmt.Sprintf("%v", p.DtVal)
+  }
+  var vValVal string
+  if p.VVal == nil {
+    vValVal = "<nil>"
+  } else {
+    vValVal = fmt.Sprintf("%v", p.VVal)
+  }
+  var eValVal string
+  if p.EVal == nil {
+    eValVal = "<nil>"
+  } else {
+    eValVal = fmt.Sprintf("%v", p.EVal)
+  }
+  var pValVal string
+  if p.PVal == nil {
+    pValVal = "<nil>"
+  } else {
+    pValVal = fmt.Sprintf("%v", p.PVal)
+  }
+  var lValVal string
+  if p.LVal == nil {
+    lValVal = "<nil>"
+  } else {
+    lValVal = fmt.Sprintf("%v", p.LVal)
+  }
+  var mValVal string
+  if p.MVal == nil {
+    mValVal = "<nil>"
+  } else {
+    mValVal = fmt.Sprintf("%v", p.MVal)
+  }
+  var uValVal string
+  if p.UVal == nil {
+    uValVal = "<nil>"
+  } else {
+    uValVal = fmt.Sprintf("%v", p.UVal)
+  }
+  var gValVal string
+  if p.GVal == nil {
+    gValVal = "<nil>"
+  } else {
+    gValVal = fmt.Sprintf("%v", p.GVal)
+  }
+  return fmt.Sprintf("Value({NVal:%s BVal:%s IVal:%s FVal:%s SVal:%s DVal:%s TVal:%s DtVal:%s VVal:%s EVal:%s PVal:%s LVal:%s MVal:%s UVal:%s GVal:%s})", nValVal, bValVal, iValVal, fValVal, sValVal, dValVal, tValVal, dtValVal, vValVal, eValVal, pValVal, lValVal, mValVal, uValVal, gValVal)
 }
 
 // Attributes:
@@ -1490,7 +1620,9 @@ func (p *NList) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("NList(%+v)", *p)
+
+  valuesVal := fmt.Sprintf("%v", p.Values)
+  return fmt.Sprintf("NList({Values:%s})", valuesVal)
 }
 
 // Attributes:
@@ -1601,7 +1733,9 @@ func (p *NMap) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("NMap(%+v)", *p)
+
+  kvsVal := fmt.Sprintf("%v", p.Kvs)
+  return fmt.Sprintf("NMap({Kvs:%s})", kvsVal)
 }
 
 // Attributes:
@@ -1711,7 +1845,9 @@ func (p *NSet) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("NSet(%+v)", *p)
+
+  valuesVal := fmt.Sprintf("%v", p.Values)
+  return fmt.Sprintf("NSet({Values:%s})", valuesVal)
 }
 
 // Attributes:
@@ -1814,7 +1950,9 @@ func (p *Row) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("Row(%+v)", *p)
+
+  valuesVal := fmt.Sprintf("%v", p.Values)
+  return fmt.Sprintf("Row({Values:%s})", valuesVal)
 }
 
 // Attributes:
@@ -1968,7 +2106,10 @@ func (p *DataSet) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("DataSet(%+v)", *p)
+
+  columnNamesVal := fmt.Sprintf("%v", p.ColumnNames)
+  rowsVal := fmt.Sprintf("%v", p.Rows)
+  return fmt.Sprintf("DataSet({ColumnNames:%s Rows:%s})", columnNamesVal, rowsVal)
 }
 
 // Attributes:
@@ -2109,7 +2250,10 @@ func (p *Tag) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("Tag(%+v)", *p)
+
+  nameVal := fmt.Sprintf("%v", p.Name)
+  propsVal := fmt.Sprintf("%v", p.Props)
+  return fmt.Sprintf("Tag({Name:%s Props:%s})", nameVal, propsVal)
 }
 
 // Attributes:
@@ -2136,7 +2280,7 @@ func (p *Vertex) GetTags() []*Tag {
   return p.Tags
 }
 func (p *Vertex) IsSetVid() bool {
-  return p.Vid != nil
+  return p != nil && p.Vid != nil
 }
 
 func (p *Vertex) Read(iprot thrift.Protocol) error {
@@ -2249,7 +2393,15 @@ func (p *Vertex) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("Vertex(%+v)", *p)
+
+  var vidVal string
+  if p.Vid == nil {
+    vidVal = "<nil>"
+  } else {
+    vidVal = fmt.Sprintf("%v", p.Vid)
+  }
+  tagsVal := fmt.Sprintf("%v", p.Tags)
+  return fmt.Sprintf("Vertex({Vid:%s Tags:%s})", vidVal, tagsVal)
 }
 
 // Attributes:
@@ -2303,11 +2455,11 @@ func (p *Edge) GetProps() map[string]*Value {
   return p.Props
 }
 func (p *Edge) IsSetSrc() bool {
-  return p.Src != nil
+  return p != nil && p.Src != nil
 }
 
 func (p *Edge) IsSetDst() bool {
-  return p.Dst != nil
+  return p != nil && p.Dst != nil
 }
 
 func (p *Edge) Read(iprot thrift.Protocol) error {
@@ -2526,7 +2678,24 @@ func (p *Edge) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("Edge(%+v)", *p)
+
+  var srcVal string
+  if p.Src == nil {
+    srcVal = "<nil>"
+  } else {
+    srcVal = fmt.Sprintf("%v", p.Src)
+  }
+  var dstVal string
+  if p.Dst == nil {
+    dstVal = "<nil>"
+  } else {
+    dstVal = fmt.Sprintf("%v", p.Dst)
+  }
+  typeVal := fmt.Sprintf("%v", p.Type)
+  nameVal := fmt.Sprintf("%v", p.Name)
+  rankingVal := fmt.Sprintf("%v", p.Ranking)
+  propsVal := fmt.Sprintf("%v", p.Props)
+  return fmt.Sprintf("Edge({Src:%s Dst:%s Type:%s Name:%s Ranking:%s Props:%s})", srcVal, dstVal, typeVal, nameVal, rankingVal, propsVal)
 }
 
 // Attributes:
@@ -2544,7 +2713,9 @@ type Step struct {
 }
 
 func NewStep() *Step {
-  return &Step{}
+  return &Step{
+    Dst: NewVertex(),
+  }
 }
 
 var Step_Dst_DEFAULT *Vertex
@@ -2571,7 +2742,7 @@ func (p *Step) GetProps() map[string]*Value {
   return p.Props
 }
 func (p *Step) IsSetDst() bool {
-  return p.Dst != nil
+  return p != nil && p.Dst != nil
 }
 
 func (p *Step) Read(iprot thrift.Protocol) error {
@@ -2766,7 +2937,18 @@ func (p *Step) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("Step(%+v)", *p)
+
+  var dstVal string
+  if p.Dst == nil {
+    dstVal = "<nil>"
+  } else {
+    dstVal = fmt.Sprintf("%v", p.Dst)
+  }
+  typeVal := fmt.Sprintf("%v", p.Type)
+  nameVal := fmt.Sprintf("%v", p.Name)
+  rankingVal := fmt.Sprintf("%v", p.Ranking)
+  propsVal := fmt.Sprintf("%v", p.Props)
+  return fmt.Sprintf("Step({Dst:%s Type:%s Name:%s Ranking:%s Props:%s})", dstVal, typeVal, nameVal, rankingVal, propsVal)
 }
 
 // Attributes:
@@ -2778,7 +2960,9 @@ type Path struct {
 }
 
 func NewPath() *Path {
-  return &Path{}
+  return &Path{
+    Src: NewVertex(),
+  }
 }
 
 var Path_Src_DEFAULT *Vertex
@@ -2793,7 +2977,7 @@ func (p *Path) GetSteps() []*Step {
   return p.Steps
 }
 func (p *Path) IsSetSrc() bool {
-  return p.Src != nil
+  return p != nil && p.Src != nil
 }
 
 func (p *Path) Read(iprot thrift.Protocol) error {
@@ -2906,7 +3090,15 @@ func (p *Path) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("Path(%+v)", *p)
+
+  var srcVal string
+  if p.Src == nil {
+    srcVal = "<nil>"
+  } else {
+    srcVal = fmt.Sprintf("%v", p.Src)
+  }
+  stepsVal := fmt.Sprintf("%v", p.Steps)
+  return fmt.Sprintf("Path({Src:%s Steps:%s})", srcVal, stepsVal)
 }
 
 // Attributes:
@@ -3020,7 +3212,10 @@ func (p *HostAddr) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("HostAddr(%+v)", *p)
+
+  hostVal := fmt.Sprintf("%v", p.Host)
+  portVal := fmt.Sprintf("%v", p.Port)
+  return fmt.Sprintf("HostAddr({Host:%s Port:%s})", hostVal, portVal)
 }
 
 // Attributes:
@@ -3133,7 +3328,10 @@ func (p *KeyValue) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("KeyValue(%+v)", *p)
+
+  keyVal := fmt.Sprintf("%v", p.Key)
+  valueVal := fmt.Sprintf("%v", p.Value)
+  return fmt.Sprintf("KeyValue({Key:%s Value:%s})", keyVal, valueVal)
 }
 
 // Attributes:
@@ -3248,7 +3446,10 @@ func (p *LogInfo) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("LogInfo(%+v)", *p)
+
+  logIDVal := fmt.Sprintf("%v", p.LogID)
+  termIDVal := fmt.Sprintf("%v", p.TermID)
+  return fmt.Sprintf("LogInfo({LogID:%s TermID:%s})", logIDVal, termIDVal)
 }
 
 // Attributes:
@@ -3360,6 +3561,8 @@ func (p *PartitionBackupInfo) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("PartitionBackupInfo(%+v)", *p)
+
+  infoVal := fmt.Sprintf("%v", p.Info)
+  return fmt.Sprintf("PartitionBackupInfo({Info:%s})", infoVal)
 }
 
