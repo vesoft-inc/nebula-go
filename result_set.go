@@ -68,6 +68,7 @@ const (
 	ErrorCode_E_USER_NOT_FOUND        ErrorCode = ErrorCode(graph.ErrorCode_E_USER_NOT_FOUND)
 	ErrorCode_E_BAD_PERMISSION        ErrorCode = ErrorCode(graph.ErrorCode_E_BAD_PERMISSION)
 	ErrorCode_E_SEMANTIC_ERROR        ErrorCode = ErrorCode(graph.ErrorCode_E_SEMANTIC_ERROR)
+	ErrorCode_E_PARTIAL_SUCCEEDED     ErrorCode = ErrorCode(graph.ErrorCode_E_PARTIAL_SUCCEEDED)
 )
 
 func genResultSet(resp *graph.ExecutionResponse) *ResultSet {
@@ -367,6 +368,10 @@ func (res ResultSet) IsEmpty() bool {
 
 func (res ResultSet) IsSucceed() bool {
 	return res.GetErrorCode() == ErrorCode_SUCCEEDED
+}
+
+func (res ResultSet) IsPartialSucceed() bool {
+	return res.GetErrorCode() == ErrorCode_E_PARTIAL_SUCCEEDED
 }
 
 func (res ResultSet) hasColName(colName string) bool {

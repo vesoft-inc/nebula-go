@@ -38,6 +38,7 @@ const (
   ErrorCode_E_BAD_PERMISSION ErrorCode = -11
   ErrorCode_E_SEMANTIC_ERROR ErrorCode = -12
   ErrorCode_E_TOO_MANY_CONNECTIONS ErrorCode = -13
+  ErrorCode_E_PARTIAL_SUCCEEDED ErrorCode = -14
 )
 
 var ErrorCodeToName = map[ErrorCode]string {
@@ -55,6 +56,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_BAD_PERMISSION: "E_BAD_PERMISSION",
   ErrorCode_E_SEMANTIC_ERROR: "E_SEMANTIC_ERROR",
   ErrorCode_E_TOO_MANY_CONNECTIONS: "E_TOO_MANY_CONNECTIONS",
+  ErrorCode_E_PARTIAL_SUCCEEDED: "E_PARTIAL_SUCCEEDED",
 }
 
 var ErrorCodeToValue = map[string]ErrorCode {
@@ -72,6 +74,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_BAD_PERMISSION": ErrorCode_E_BAD_PERMISSION,
   "E_SEMANTIC_ERROR": ErrorCode_E_SEMANTIC_ERROR,
   "E_TOO_MANY_CONNECTIONS": ErrorCode_E_TOO_MANY_CONNECTIONS,
+  "E_PARTIAL_SUCCEEDED": ErrorCode_E_PARTIAL_SUCCEEDED,
 }
 
 func (p ErrorCode) String() string {
