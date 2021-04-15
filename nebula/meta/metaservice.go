@@ -6,6 +6,7 @@ package meta
 
 import (
 	"bytes"
+	"context"
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -18,13367 +19,5335 @@ var _ = thrift.ZERO
 var _ = fmt.Printf
 var _ = sync.Mutex{}
 var _ = bytes.Equal
+var _ = context.Background
 
 var _ = nebula0.GoUnusedProtection__
 type MetaService interface {
   // Parameters:
   //  - Req
-  CreateSpace(req *CreateSpaceReq) (r *ExecResp, err error)
+  CreateSpace(ctx context.Context, req *CreateSpaceReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropSpace(req *DropSpaceReq) (r *ExecResp, err error)
+  DropSpace(ctx context.Context, req *DropSpaceReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  GetSpace(req *GetSpaceReq) (r *GetSpaceResp, err error)
+  GetSpace(ctx context.Context, req *GetSpaceReq) (_r *GetSpaceResp, err error)
   // Parameters:
   //  - Req
-  ListSpaces(req *ListSpacesReq) (r *ListSpacesResp, err error)
+  ListSpaces(ctx context.Context, req *ListSpacesReq) (_r *ListSpacesResp, err error)
   // Parameters:
   //  - Req
-  CreateTag(req *CreateTagReq) (r *ExecResp, err error)
+  CreateTag(ctx context.Context, req *CreateTagReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  AlterTag(req *AlterTagReq) (r *ExecResp, err error)
+  AlterTag(ctx context.Context, req *AlterTagReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropTag(req *DropTagReq) (r *ExecResp, err error)
+  DropTag(ctx context.Context, req *DropTagReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  GetTag(req *GetTagReq) (r *GetTagResp, err error)
+  GetTag(ctx context.Context, req *GetTagReq) (_r *GetTagResp, err error)
   // Parameters:
   //  - Req
-  ListTags(req *ListTagsReq) (r *ListTagsResp, err error)
+  ListTags(ctx context.Context, req *ListTagsReq) (_r *ListTagsResp, err error)
   // Parameters:
   //  - Req
-  CreateEdge(req *CreateEdgeReq) (r *ExecResp, err error)
+  CreateEdge(ctx context.Context, req *CreateEdgeReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  AlterEdge(req *AlterEdgeReq) (r *ExecResp, err error)
+  AlterEdge(ctx context.Context, req *AlterEdgeReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropEdge(req *DropEdgeReq) (r *ExecResp, err error)
+  DropEdge(ctx context.Context, req *DropEdgeReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  GetEdge(req *GetEdgeReq) (r *GetEdgeResp, err error)
+  GetEdge(ctx context.Context, req *GetEdgeReq) (_r *GetEdgeResp, err error)
   // Parameters:
   //  - Req
-  ListEdges(req *ListEdgesReq) (r *ListEdgesResp, err error)
+  ListEdges(ctx context.Context, req *ListEdgesReq) (_r *ListEdgesResp, err error)
   // Parameters:
   //  - Req
-  ListHosts(req *ListHostsReq) (r *ListHostsResp, err error)
+  ListHosts(ctx context.Context, req *ListHostsReq) (_r *ListHostsResp, err error)
   // Parameters:
   //  - Req
-  GetPartsAlloc(req *GetPartsAllocReq) (r *GetPartsAllocResp, err error)
+  GetPartsAlloc(ctx context.Context, req *GetPartsAllocReq) (_r *GetPartsAllocResp, err error)
   // Parameters:
   //  - Req
-  ListParts(req *ListPartsReq) (r *ListPartsResp, err error)
+  ListParts(ctx context.Context, req *ListPartsReq) (_r *ListPartsResp, err error)
   // Parameters:
   //  - Req
-  MultiPut(req *MultiPutReq) (r *ExecResp, err error)
+  MultiPut(ctx context.Context, req *MultiPutReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  Get(req *GetReq) (r *GetResp, err error)
+  Get(ctx context.Context, req *GetReq) (_r *GetResp, err error)
   // Parameters:
   //  - Req
-  MultiGet(req *MultiGetReq) (r *MultiGetResp, err error)
+  MultiGet(ctx context.Context, req *MultiGetReq) (_r *MultiGetResp, err error)
   // Parameters:
   //  - Req
-  Remove(req *RemoveReq) (r *ExecResp, err error)
+  Remove(ctx context.Context, req *RemoveReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  RemoveRange(req *RemoveRangeReq) (r *ExecResp, err error)
+  RemoveRange(ctx context.Context, req *RemoveRangeReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  Scan(req *ScanReq) (r *ScanResp, err error)
+  Scan(ctx context.Context, req *ScanReq) (_r *ScanResp, err error)
   // Parameters:
   //  - Req
-  CreateTagIndex(req *CreateTagIndexReq) (r *ExecResp, err error)
+  CreateTagIndex(ctx context.Context, req *CreateTagIndexReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropTagIndex(req *DropTagIndexReq) (r *ExecResp, err error)
+  DropTagIndex(ctx context.Context, req *DropTagIndexReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  GetTagIndex(req *GetTagIndexReq) (r *GetTagIndexResp, err error)
+  GetTagIndex(ctx context.Context, req *GetTagIndexReq) (_r *GetTagIndexResp, err error)
   // Parameters:
   //  - Req
-  ListTagIndexes(req *ListTagIndexesReq) (r *ListTagIndexesResp, err error)
+  ListTagIndexes(ctx context.Context, req *ListTagIndexesReq) (_r *ListTagIndexesResp, err error)
   // Parameters:
   //  - Req
-  RebuildTagIndex(req *RebuildIndexReq) (r *ExecResp, err error)
+  RebuildTagIndex(ctx context.Context, req *RebuildIndexReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  ListTagIndexStatus(req *ListIndexStatusReq) (r *ListIndexStatusResp, err error)
+  ListTagIndexStatus(ctx context.Context, req *ListIndexStatusReq) (_r *ListIndexStatusResp, err error)
   // Parameters:
   //  - Req
-  CreateEdgeIndex(req *CreateEdgeIndexReq) (r *ExecResp, err error)
+  CreateEdgeIndex(ctx context.Context, req *CreateEdgeIndexReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropEdgeIndex(req *DropEdgeIndexReq) (r *ExecResp, err error)
+  DropEdgeIndex(ctx context.Context, req *DropEdgeIndexReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  GetEdgeIndex(req *GetEdgeIndexReq) (r *GetEdgeIndexResp, err error)
+  GetEdgeIndex(ctx context.Context, req *GetEdgeIndexReq) (_r *GetEdgeIndexResp, err error)
   // Parameters:
   //  - Req
-  ListEdgeIndexes(req *ListEdgeIndexesReq) (r *ListEdgeIndexesResp, err error)
+  ListEdgeIndexes(ctx context.Context, req *ListEdgeIndexesReq) (_r *ListEdgeIndexesResp, err error)
   // Parameters:
   //  - Req
-  RebuildEdgeIndex(req *RebuildIndexReq) (r *ExecResp, err error)
+  RebuildEdgeIndex(ctx context.Context, req *RebuildIndexReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  ListEdgeIndexStatus(req *ListIndexStatusReq) (r *ListIndexStatusResp, err error)
+  ListEdgeIndexStatus(ctx context.Context, req *ListIndexStatusReq) (_r *ListIndexStatusResp, err error)
   // Parameters:
   //  - Req
-  CreateUser(req *CreateUserReq) (r *ExecResp, err error)
+  CreateUser(ctx context.Context, req *CreateUserReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropUser(req *DropUserReq) (r *ExecResp, err error)
+  DropUser(ctx context.Context, req *DropUserReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  AlterUser(req *AlterUserReq) (r *ExecResp, err error)
+  AlterUser(ctx context.Context, req *AlterUserReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  GrantRole(req *GrantRoleReq) (r *ExecResp, err error)
+  GrantRole(ctx context.Context, req *GrantRoleReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  RevokeRole(req *RevokeRoleReq) (r *ExecResp, err error)
+  RevokeRole(ctx context.Context, req *RevokeRoleReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  ListUsers(req *ListUsersReq) (r *ListUsersResp, err error)
+  ListUsers(ctx context.Context, req *ListUsersReq) (_r *ListUsersResp, err error)
   // Parameters:
   //  - Req
-  ListRoles(req *ListRolesReq) (r *ListRolesResp, err error)
+  ListRoles(ctx context.Context, req *ListRolesReq) (_r *ListRolesResp, err error)
   // Parameters:
   //  - Req
-  GetUserRoles(req *GetUserRolesReq) (r *ListRolesResp, err error)
+  GetUserRoles(ctx context.Context, req *GetUserRolesReq) (_r *ListRolesResp, err error)
   // Parameters:
   //  - Req
-  ChangePassword(req *ChangePasswordReq) (r *ExecResp, err error)
+  ChangePassword(ctx context.Context, req *ChangePasswordReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  HeartBeat(req *HBReq) (r *HBResp, err error)
+  HeartBeat(ctx context.Context, req *HBReq) (_r *HBResp, err error)
   // Parameters:
   //  - Req
-  Balance(req *BalanceReq) (r *BalanceResp, err error)
+  Balance(ctx context.Context, req *BalanceReq) (_r *BalanceResp, err error)
   // Parameters:
   //  - Req
-  LeaderBalance(req *LeaderBalanceReq) (r *ExecResp, err error)
+  LeaderBalance(ctx context.Context, req *LeaderBalanceReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  RegConfig(req *RegConfigReq) (r *ExecResp, err error)
+  RegConfig(ctx context.Context, req *RegConfigReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  GetConfig(req *GetConfigReq) (r *GetConfigResp, err error)
+  GetConfig(ctx context.Context, req *GetConfigReq) (_r *GetConfigResp, err error)
   // Parameters:
   //  - Req
-  SetConfig(req *SetConfigReq) (r *ExecResp, err error)
+  SetConfig(ctx context.Context, req *SetConfigReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  ListConfigs(req *ListConfigsReq) (r *ListConfigsResp, err error)
+  ListConfigs(ctx context.Context, req *ListConfigsReq) (_r *ListConfigsResp, err error)
   // Parameters:
   //  - Req
-  CreateSnapshot(req *CreateSnapshotReq) (r *ExecResp, err error)
+  CreateSnapshot(ctx context.Context, req *CreateSnapshotReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropSnapshot(req *DropSnapshotReq) (r *ExecResp, err error)
+  DropSnapshot(ctx context.Context, req *DropSnapshotReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  ListSnapshots(req *ListSnapshotsReq) (r *ListSnapshotsResp, err error)
+  ListSnapshots(ctx context.Context, req *ListSnapshotsReq) (_r *ListSnapshotsResp, err error)
   // Parameters:
   //  - Req
-  RunAdminJob(req *AdminJobReq) (r *AdminJobResp, err error)
+  RunAdminJob(ctx context.Context, req *AdminJobReq) (_r *AdminJobResp, err error)
   // Parameters:
   //  - Req
-  AddZone(req *AddZoneReq) (r *ExecResp, err error)
+  AddZone(ctx context.Context, req *AddZoneReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropZone(req *DropZoneReq) (r *ExecResp, err error)
+  DropZone(ctx context.Context, req *DropZoneReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  AddHostIntoZone(req *AddHostIntoZoneReq) (r *ExecResp, err error)
+  AddHostIntoZone(ctx context.Context, req *AddHostIntoZoneReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropHostFromZone(req *DropHostFromZoneReq) (r *ExecResp, err error)
+  DropHostFromZone(ctx context.Context, req *DropHostFromZoneReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  GetZone(req *GetZoneReq) (r *GetZoneResp, err error)
+  GetZone(ctx context.Context, req *GetZoneReq) (_r *GetZoneResp, err error)
   // Parameters:
   //  - Req
-  ListZones(req *ListZonesReq) (r *ListZonesResp, err error)
+  ListZones(ctx context.Context, req *ListZonesReq) (_r *ListZonesResp, err error)
   // Parameters:
   //  - Req
-  AddGroup(req *AddGroupReq) (r *ExecResp, err error)
+  AddGroup(ctx context.Context, req *AddGroupReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropGroup(req *DropGroupReq) (r *ExecResp, err error)
+  DropGroup(ctx context.Context, req *DropGroupReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  AddZoneIntoGroup(req *AddZoneIntoGroupReq) (r *ExecResp, err error)
+  AddZoneIntoGroup(ctx context.Context, req *AddZoneIntoGroupReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropZoneFromGroup(req *DropZoneFromGroupReq) (r *ExecResp, err error)
+  DropZoneFromGroup(ctx context.Context, req *DropZoneFromGroupReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  GetGroup(req *GetGroupReq) (r *GetGroupResp, err error)
+  GetGroup(ctx context.Context, req *GetGroupReq) (_r *GetGroupResp, err error)
   // Parameters:
   //  - Req
-  ListGroups(req *ListGroupsReq) (r *ListGroupsResp, err error)
+  ListGroups(ctx context.Context, req *ListGroupsReq) (_r *ListGroupsResp, err error)
   // Parameters:
   //  - Req
-  CreateBackup(req *CreateBackupReq) (r *CreateBackupResp, err error)
+  CreateBackup(ctx context.Context, req *CreateBackupReq) (_r *CreateBackupResp, err error)
   // Parameters:
   //  - Req
-  RestoreMeta(req *RestoreMetaReq) (r *ExecResp, err error)
+  RestoreMeta(ctx context.Context, req *RestoreMetaReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  AddListener(req *AddListenerReq) (r *ExecResp, err error)
+  AddListener(ctx context.Context, req *AddListenerReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  RemoveListener(req *RemoveListenerReq) (r *ExecResp, err error)
+  RemoveListener(ctx context.Context, req *RemoveListenerReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  ListListener(req *ListListenerReq) (r *ListListenerResp, err error)
+  ListListener(ctx context.Context, req *ListListenerReq) (_r *ListListenerResp, err error)
   // Parameters:
   //  - Req
-  GetStatis(req *GetStatisReq) (r *GetStatisResp, err error)
+  GetStatis(ctx context.Context, req *GetStatisReq) (_r *GetStatisResp, err error)
   // Parameters:
   //  - Req
-  SignInFTService(req *SignInFTServiceReq) (r *ExecResp, err error)
+  SignInFTService(ctx context.Context, req *SignInFTServiceReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  SignOutFTService(req *SignOutFTServiceReq) (r *ExecResp, err error)
+  SignOutFTService(ctx context.Context, req *SignOutFTServiceReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  ListFTClients(req *ListFTClientsReq) (r *ListFTClientsResp, err error)
+  ListFTClients(ctx context.Context, req *ListFTClientsReq) (_r *ListFTClientsResp, err error)
   // Parameters:
   //  - Req
-  CreateSession(req *CreateSessionReq) (r *CreateSessionResp, err error)
+  CreateSession(ctx context.Context, req *CreateSessionReq) (_r *CreateSessionResp, err error)
   // Parameters:
   //  - Req
-  UpdateSessions(req *UpdateSessionsReq) (r *ExecResp, err error)
+  UpdateSessions(ctx context.Context, req *UpdateSessionsReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  ListSessions(req *ListSessionsReq) (r *ListSessionsResp, err error)
+  ListSessions(ctx context.Context, req *ListSessionsReq) (_r *ListSessionsResp, err error)
   // Parameters:
   //  - Req
-  GetSession(req *GetSessionReq) (r *GetSessionResp, err error)
+  GetSession(ctx context.Context, req *GetSessionReq) (_r *GetSessionResp, err error)
   // Parameters:
   //  - Req
-  RemoveSession(req *RemoveSessionReq) (r *ExecResp, err error)
+  RemoveSession(ctx context.Context, req *RemoveSessionReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  ReportTaskFinish(req *ReportTaskReq) (r *ExecResp, err error)
+  ReportTaskFinish(ctx context.Context, req *ReportTaskReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  ListCluster(req *ListClusterInfoReq) (r *ListClusterInfoResp, err error)
+  ListCluster(ctx context.Context, req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error)
   // Parameters:
   //  - Req
-  GetMetaDirInfo(req *GetMetaDirInfoReq) (r *GetMetaDirInfoResp, err error)
+  GetMetaDirInfo(ctx context.Context, req *GetMetaDirInfoReq) (_r *GetMetaDirInfoResp, err error)
+}
+
+type MetaServiceClientInterface interface {
+  thrift.ClientInterface
+  // Parameters:
+  //  - Req
+  CreateSpace(req *CreateSpaceReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropSpace(req *DropSpaceReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  GetSpace(req *GetSpaceReq) (_r *GetSpaceResp, err error)
+  // Parameters:
+  //  - Req
+  ListSpaces(req *ListSpacesReq) (_r *ListSpacesResp, err error)
+  // Parameters:
+  //  - Req
+  CreateTag(req *CreateTagReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  AlterTag(req *AlterTagReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropTag(req *DropTagReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  GetTag(req *GetTagReq) (_r *GetTagResp, err error)
+  // Parameters:
+  //  - Req
+  ListTags(req *ListTagsReq) (_r *ListTagsResp, err error)
+  // Parameters:
+  //  - Req
+  CreateEdge(req *CreateEdgeReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  AlterEdge(req *AlterEdgeReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropEdge(req *DropEdgeReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  GetEdge(req *GetEdgeReq) (_r *GetEdgeResp, err error)
+  // Parameters:
+  //  - Req
+  ListEdges(req *ListEdgesReq) (_r *ListEdgesResp, err error)
+  // Parameters:
+  //  - Req
+  ListHosts(req *ListHostsReq) (_r *ListHostsResp, err error)
+  // Parameters:
+  //  - Req
+  GetPartsAlloc(req *GetPartsAllocReq) (_r *GetPartsAllocResp, err error)
+  // Parameters:
+  //  - Req
+  ListParts(req *ListPartsReq) (_r *ListPartsResp, err error)
+  // Parameters:
+  //  - Req
+  MultiPut(req *MultiPutReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  Get(req *GetReq) (_r *GetResp, err error)
+  // Parameters:
+  //  - Req
+  MultiGet(req *MultiGetReq) (_r *MultiGetResp, err error)
+  // Parameters:
+  //  - Req
+  Remove(req *RemoveReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  RemoveRange(req *RemoveRangeReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  Scan(req *ScanReq) (_r *ScanResp, err error)
+  // Parameters:
+  //  - Req
+  CreateTagIndex(req *CreateTagIndexReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropTagIndex(req *DropTagIndexReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  GetTagIndex(req *GetTagIndexReq) (_r *GetTagIndexResp, err error)
+  // Parameters:
+  //  - Req
+  ListTagIndexes(req *ListTagIndexesReq) (_r *ListTagIndexesResp, err error)
+  // Parameters:
+  //  - Req
+  RebuildTagIndex(req *RebuildIndexReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListTagIndexStatus(req *ListIndexStatusReq) (_r *ListIndexStatusResp, err error)
+  // Parameters:
+  //  - Req
+  CreateEdgeIndex(req *CreateEdgeIndexReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropEdgeIndex(req *DropEdgeIndexReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  GetEdgeIndex(req *GetEdgeIndexReq) (_r *GetEdgeIndexResp, err error)
+  // Parameters:
+  //  - Req
+  ListEdgeIndexes(req *ListEdgeIndexesReq) (_r *ListEdgeIndexesResp, err error)
+  // Parameters:
+  //  - Req
+  RebuildEdgeIndex(req *RebuildIndexReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListEdgeIndexStatus(req *ListIndexStatusReq) (_r *ListIndexStatusResp, err error)
+  // Parameters:
+  //  - Req
+  CreateUser(req *CreateUserReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropUser(req *DropUserReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  AlterUser(req *AlterUserReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  GrantRole(req *GrantRoleReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  RevokeRole(req *RevokeRoleReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListUsers(req *ListUsersReq) (_r *ListUsersResp, err error)
+  // Parameters:
+  //  - Req
+  ListRoles(req *ListRolesReq) (_r *ListRolesResp, err error)
+  // Parameters:
+  //  - Req
+  GetUserRoles(req *GetUserRolesReq) (_r *ListRolesResp, err error)
+  // Parameters:
+  //  - Req
+  ChangePassword(req *ChangePasswordReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  HeartBeat(req *HBReq) (_r *HBResp, err error)
+  // Parameters:
+  //  - Req
+  Balance(req *BalanceReq) (_r *BalanceResp, err error)
+  // Parameters:
+  //  - Req
+  LeaderBalance(req *LeaderBalanceReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  RegConfig(req *RegConfigReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  GetConfig(req *GetConfigReq) (_r *GetConfigResp, err error)
+  // Parameters:
+  //  - Req
+  SetConfig(req *SetConfigReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListConfigs(req *ListConfigsReq) (_r *ListConfigsResp, err error)
+  // Parameters:
+  //  - Req
+  CreateSnapshot(req *CreateSnapshotReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropSnapshot(req *DropSnapshotReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListSnapshots(req *ListSnapshotsReq) (_r *ListSnapshotsResp, err error)
+  // Parameters:
+  //  - Req
+  RunAdminJob(req *AdminJobReq) (_r *AdminJobResp, err error)
+  // Parameters:
+  //  - Req
+  AddZone(req *AddZoneReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropZone(req *DropZoneReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  AddHostIntoZone(req *AddHostIntoZoneReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropHostFromZone(req *DropHostFromZoneReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  GetZone(req *GetZoneReq) (_r *GetZoneResp, err error)
+  // Parameters:
+  //  - Req
+  ListZones(req *ListZonesReq) (_r *ListZonesResp, err error)
+  // Parameters:
+  //  - Req
+  AddGroup(req *AddGroupReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropGroup(req *DropGroupReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  AddZoneIntoGroup(req *AddZoneIntoGroupReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropZoneFromGroup(req *DropZoneFromGroupReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  GetGroup(req *GetGroupReq) (_r *GetGroupResp, err error)
+  // Parameters:
+  //  - Req
+  ListGroups(req *ListGroupsReq) (_r *ListGroupsResp, err error)
+  // Parameters:
+  //  - Req
+  CreateBackup(req *CreateBackupReq) (_r *CreateBackupResp, err error)
+  // Parameters:
+  //  - Req
+  RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  AddListener(req *AddListenerReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  RemoveListener(req *RemoveListenerReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListListener(req *ListListenerReq) (_r *ListListenerResp, err error)
+  // Parameters:
+  //  - Req
+  GetStatis(req *GetStatisReq) (_r *GetStatisResp, err error)
+  // Parameters:
+  //  - Req
+  SignInFTService(req *SignInFTServiceReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  SignOutFTService(req *SignOutFTServiceReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListFTClients(req *ListFTClientsReq) (_r *ListFTClientsResp, err error)
+  // Parameters:
+  //  - Req
+  CreateSession(req *CreateSessionReq) (_r *CreateSessionResp, err error)
+  // Parameters:
+  //  - Req
+  UpdateSessions(req *UpdateSessionsReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListSessions(req *ListSessionsReq) (_r *ListSessionsResp, err error)
+  // Parameters:
+  //  - Req
+  GetSession(req *GetSessionReq) (_r *GetSessionResp, err error)
+  // Parameters:
+  //  - Req
+  RemoveSession(req *RemoveSessionReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ReportTaskFinish(req *ReportTaskReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListCluster(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error)
+  // Parameters:
+  //  - Req
+  GetMetaDirInfo(req *GetMetaDirInfoReq) (_r *GetMetaDirInfoResp, err error)
 }
 
 type MetaServiceClient struct {
-  Transport thrift.Transport
-  ProtocolFactory thrift.ProtocolFactory
-  InputProtocol thrift.Protocol
-  OutputProtocol thrift.Protocol
-  SeqId int32
+  MetaServiceClientInterface
+  CC thrift.ClientConn
 }
 
-func (client *MetaServiceClient) Close() error {
-  return client.Transport.Close()
+func(client *MetaServiceClient) Open() error {
+  return client.CC.Open()
+}
+
+func(client *MetaServiceClient) Close() error {
+  return client.CC.Close()
+}
+
+func(client *MetaServiceClient) IsOpen() bool {
+  return client.CC.IsOpen()
 }
 
 func NewMetaServiceClientFactory(t thrift.Transport, f thrift.ProtocolFactory) *MetaServiceClient {
-  return &MetaServiceClient{Transport: t,
-    ProtocolFactory: f,
-    InputProtocol: f.GetProtocol(t),
-    OutputProtocol: f.GetProtocol(t),
-    SeqId: 0,
-  }
+  return &MetaServiceClient{ CC: thrift.NewClientConn(t, f) }
 }
 
 func NewMetaServiceClient(t thrift.Transport, iprot thrift.Protocol, oprot thrift.Protocol) *MetaServiceClient {
-  return &MetaServiceClient{Transport: t,
-    ProtocolFactory: nil,
-    InputProtocol: iprot,
-    OutputProtocol: oprot,
-    SeqId: 0,
-  }
+  return &MetaServiceClient{ CC: thrift.NewClientConnWithProtocols(t, iprot, oprot) }
+}
+
+func NewMetaServiceClientProtocol(prot thrift.Protocol) *MetaServiceClient {
+  return NewMetaServiceClient(prot.Transport(), prot, prot)
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) CreateSpace(req *CreateSpaceReq) (r *ExecResp, err error) {
-  if err = p.sendCreateSpace(req); err != nil { return }
-  return p.recvCreateSpace()
-}
-
-func (p *MetaServiceClient) sendCreateSpace(req *CreateSpaceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createSpace", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) CreateSpace(req *CreateSpaceReq) (_r *ExecResp, err error) {
   args := MetaServiceCreateSpaceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createSpace", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateSpace()
 }
 
 
 func (p *MetaServiceClient) recvCreateSpace() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createSpace" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createSpace failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createSpace failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error80 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error81 error
-    error81, err = error80.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error81
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createSpace failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateSpaceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateSpaceResult
+  err = p.CC.RecvMsg("createSpace", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) DropSpace(req *DropSpaceReq) (r *ExecResp, err error) {
-  if err = p.sendDropSpace(req); err != nil { return }
-  return p.recvDropSpace()
-}
-
-func (p *MetaServiceClient) sendDropSpace(req *DropSpaceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropSpace", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) DropSpace(req *DropSpaceReq) (_r *ExecResp, err error) {
   args := MetaServiceDropSpaceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropSpace", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropSpace()
 }
 
 
 func (p *MetaServiceClient) recvDropSpace() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropSpace" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropSpace failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropSpace failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error82 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error83 error
-    error83, err = error82.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error83
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropSpace failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropSpaceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropSpaceResult
+  err = p.CC.RecvMsg("dropSpace", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetSpace(req *GetSpaceReq) (r *GetSpaceResp, err error) {
-  if err = p.sendGetSpace(req); err != nil { return }
-  return p.recvGetSpace()
-}
-
-func (p *MetaServiceClient) sendGetSpace(req *GetSpaceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getSpace", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetSpace(req *GetSpaceReq) (_r *GetSpaceResp, err error) {
   args := MetaServiceGetSpaceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getSpace", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetSpace()
 }
 
 
 func (p *MetaServiceClient) recvGetSpace() (value *GetSpaceResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getSpace" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getSpace failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getSpace failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error84 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error85 error
-    error85, err = error84.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error85
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getSpace failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetSpaceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetSpaceResult
+  err = p.CC.RecvMsg("getSpace", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListSpaces(req *ListSpacesReq) (r *ListSpacesResp, err error) {
-  if err = p.sendListSpaces(req); err != nil { return }
-  return p.recvListSpaces()
-}
-
-func (p *MetaServiceClient) sendListSpaces(req *ListSpacesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listSpaces", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListSpaces(req *ListSpacesReq) (_r *ListSpacesResp, err error) {
   args := MetaServiceListSpacesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listSpaces", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListSpaces()
 }
 
 
 func (p *MetaServiceClient) recvListSpaces() (value *ListSpacesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listSpaces" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listSpaces failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listSpaces failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error86 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error87 error
-    error87, err = error86.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error87
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listSpaces failed: invalid message type")
-    return
-  }
-  result := MetaServiceListSpacesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListSpacesResult
+  err = p.CC.RecvMsg("listSpaces", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) CreateTag(req *CreateTagReq) (r *ExecResp, err error) {
-  if err = p.sendCreateTag(req); err != nil { return }
-  return p.recvCreateTag()
-}
-
-func (p *MetaServiceClient) sendCreateTag(req *CreateTagReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createTag", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) CreateTag(req *CreateTagReq) (_r *ExecResp, err error) {
   args := MetaServiceCreateTagArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createTag", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateTag()
 }
 
 
 func (p *MetaServiceClient) recvCreateTag() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createTag" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createTag failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createTag failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error88 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error89 error
-    error89, err = error88.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error89
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createTag failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateTagResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateTagResult
+  err = p.CC.RecvMsg("createTag", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) AlterTag(req *AlterTagReq) (r *ExecResp, err error) {
-  if err = p.sendAlterTag(req); err != nil { return }
-  return p.recvAlterTag()
-}
-
-func (p *MetaServiceClient) sendAlterTag(req *AlterTagReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("alterTag", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) AlterTag(req *AlterTagReq) (_r *ExecResp, err error) {
   args := MetaServiceAlterTagArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("alterTag", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAlterTag()
 }
 
 
 func (p *MetaServiceClient) recvAlterTag() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "alterTag" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "alterTag failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "alterTag failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error90 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error91 error
-    error91, err = error90.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error91
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "alterTag failed: invalid message type")
-    return
-  }
-  result := MetaServiceAlterTagResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAlterTagResult
+  err = p.CC.RecvMsg("alterTag", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) DropTag(req *DropTagReq) (r *ExecResp, err error) {
-  if err = p.sendDropTag(req); err != nil { return }
-  return p.recvDropTag()
-}
-
-func (p *MetaServiceClient) sendDropTag(req *DropTagReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropTag", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) DropTag(req *DropTagReq) (_r *ExecResp, err error) {
   args := MetaServiceDropTagArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropTag", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropTag()
 }
 
 
 func (p *MetaServiceClient) recvDropTag() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropTag" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropTag failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropTag failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error92 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error93 error
-    error93, err = error92.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error93
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropTag failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropTagResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropTagResult
+  err = p.CC.RecvMsg("dropTag", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetTag(req *GetTagReq) (r *GetTagResp, err error) {
-  if err = p.sendGetTag(req); err != nil { return }
-  return p.recvGetTag()
-}
-
-func (p *MetaServiceClient) sendGetTag(req *GetTagReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getTag", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetTag(req *GetTagReq) (_r *GetTagResp, err error) {
   args := MetaServiceGetTagArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getTag", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetTag()
 }
 
 
 func (p *MetaServiceClient) recvGetTag() (value *GetTagResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getTag" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getTag failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getTag failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error94 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error95 error
-    error95, err = error94.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error95
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getTag failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetTagResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetTagResult
+  err = p.CC.RecvMsg("getTag", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListTags(req *ListTagsReq) (r *ListTagsResp, err error) {
-  if err = p.sendListTags(req); err != nil { return }
-  return p.recvListTags()
-}
-
-func (p *MetaServiceClient) sendListTags(req *ListTagsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listTags", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListTags(req *ListTagsReq) (_r *ListTagsResp, err error) {
   args := MetaServiceListTagsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listTags", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListTags()
 }
 
 
 func (p *MetaServiceClient) recvListTags() (value *ListTagsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listTags" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listTags failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listTags failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error96 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error97 error
-    error97, err = error96.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error97
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listTags failed: invalid message type")
-    return
-  }
-  result := MetaServiceListTagsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListTagsResult
+  err = p.CC.RecvMsg("listTags", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) CreateEdge(req *CreateEdgeReq) (r *ExecResp, err error) {
-  if err = p.sendCreateEdge(req); err != nil { return }
-  return p.recvCreateEdge()
-}
-
-func (p *MetaServiceClient) sendCreateEdge(req *CreateEdgeReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createEdge", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) CreateEdge(req *CreateEdgeReq) (_r *ExecResp, err error) {
   args := MetaServiceCreateEdgeArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createEdge", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateEdge()
 }
 
 
 func (p *MetaServiceClient) recvCreateEdge() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createEdge" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createEdge failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createEdge failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error98 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error99 error
-    error99, err = error98.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error99
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createEdge failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateEdgeResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateEdgeResult
+  err = p.CC.RecvMsg("createEdge", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) AlterEdge(req *AlterEdgeReq) (r *ExecResp, err error) {
-  if err = p.sendAlterEdge(req); err != nil { return }
-  return p.recvAlterEdge()
-}
-
-func (p *MetaServiceClient) sendAlterEdge(req *AlterEdgeReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("alterEdge", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) AlterEdge(req *AlterEdgeReq) (_r *ExecResp, err error) {
   args := MetaServiceAlterEdgeArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("alterEdge", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAlterEdge()
 }
 
 
 func (p *MetaServiceClient) recvAlterEdge() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "alterEdge" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "alterEdge failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "alterEdge failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error100 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error101 error
-    error101, err = error100.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error101
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "alterEdge failed: invalid message type")
-    return
-  }
-  result := MetaServiceAlterEdgeResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAlterEdgeResult
+  err = p.CC.RecvMsg("alterEdge", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) DropEdge(req *DropEdgeReq) (r *ExecResp, err error) {
-  if err = p.sendDropEdge(req); err != nil { return }
-  return p.recvDropEdge()
-}
-
-func (p *MetaServiceClient) sendDropEdge(req *DropEdgeReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropEdge", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) DropEdge(req *DropEdgeReq) (_r *ExecResp, err error) {
   args := MetaServiceDropEdgeArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropEdge", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropEdge()
 }
 
 
 func (p *MetaServiceClient) recvDropEdge() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropEdge" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropEdge failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropEdge failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error102 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error103 error
-    error103, err = error102.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error103
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropEdge failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropEdgeResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropEdgeResult
+  err = p.CC.RecvMsg("dropEdge", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetEdge(req *GetEdgeReq) (r *GetEdgeResp, err error) {
-  if err = p.sendGetEdge(req); err != nil { return }
-  return p.recvGetEdge()
-}
-
-func (p *MetaServiceClient) sendGetEdge(req *GetEdgeReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getEdge", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetEdge(req *GetEdgeReq) (_r *GetEdgeResp, err error) {
   args := MetaServiceGetEdgeArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getEdge", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetEdge()
 }
 
 
 func (p *MetaServiceClient) recvGetEdge() (value *GetEdgeResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getEdge" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getEdge failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getEdge failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error104 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error105 error
-    error105, err = error104.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error105
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getEdge failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetEdgeResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetEdgeResult
+  err = p.CC.RecvMsg("getEdge", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListEdges(req *ListEdgesReq) (r *ListEdgesResp, err error) {
-  if err = p.sendListEdges(req); err != nil { return }
-  return p.recvListEdges()
-}
-
-func (p *MetaServiceClient) sendListEdges(req *ListEdgesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listEdges", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListEdges(req *ListEdgesReq) (_r *ListEdgesResp, err error) {
   args := MetaServiceListEdgesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listEdges", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListEdges()
 }
 
 
 func (p *MetaServiceClient) recvListEdges() (value *ListEdgesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listEdges" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listEdges failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listEdges failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error106 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error107 error
-    error107, err = error106.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error107
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listEdges failed: invalid message type")
-    return
-  }
-  result := MetaServiceListEdgesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListEdgesResult
+  err = p.CC.RecvMsg("listEdges", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListHosts(req *ListHostsReq) (r *ListHostsResp, err error) {
-  if err = p.sendListHosts(req); err != nil { return }
-  return p.recvListHosts()
-}
-
-func (p *MetaServiceClient) sendListHosts(req *ListHostsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listHosts", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListHosts(req *ListHostsReq) (_r *ListHostsResp, err error) {
   args := MetaServiceListHostsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listHosts", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListHosts()
 }
 
 
 func (p *MetaServiceClient) recvListHosts() (value *ListHostsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listHosts" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listHosts failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listHosts failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error108 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error109 error
-    error109, err = error108.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error109
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listHosts failed: invalid message type")
-    return
-  }
-  result := MetaServiceListHostsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListHostsResult
+  err = p.CC.RecvMsg("listHosts", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetPartsAlloc(req *GetPartsAllocReq) (r *GetPartsAllocResp, err error) {
-  if err = p.sendGetPartsAlloc(req); err != nil { return }
-  return p.recvGetPartsAlloc()
-}
-
-func (p *MetaServiceClient) sendGetPartsAlloc(req *GetPartsAllocReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getPartsAlloc", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetPartsAlloc(req *GetPartsAllocReq) (_r *GetPartsAllocResp, err error) {
   args := MetaServiceGetPartsAllocArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getPartsAlloc", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetPartsAlloc()
 }
 
 
 func (p *MetaServiceClient) recvGetPartsAlloc() (value *GetPartsAllocResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getPartsAlloc" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getPartsAlloc failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getPartsAlloc failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error110 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error111 error
-    error111, err = error110.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error111
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getPartsAlloc failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetPartsAllocResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetPartsAllocResult
+  err = p.CC.RecvMsg("getPartsAlloc", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListParts(req *ListPartsReq) (r *ListPartsResp, err error) {
-  if err = p.sendListParts(req); err != nil { return }
-  return p.recvListParts()
-}
-
-func (p *MetaServiceClient) sendListParts(req *ListPartsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listParts", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListParts(req *ListPartsReq) (_r *ListPartsResp, err error) {
   args := MetaServiceListPartsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listParts", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListParts()
 }
 
 
 func (p *MetaServiceClient) recvListParts() (value *ListPartsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listParts" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listParts failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listParts failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error112 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error113 error
-    error113, err = error112.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error113
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listParts failed: invalid message type")
-    return
-  }
-  result := MetaServiceListPartsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListPartsResult
+  err = p.CC.RecvMsg("listParts", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) MultiPut(req *MultiPutReq) (r *ExecResp, err error) {
-  if err = p.sendMultiPut(req); err != nil { return }
-  return p.recvMultiPut()
-}
-
-func (p *MetaServiceClient) sendMultiPut(req *MultiPutReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("multiPut", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) MultiPut(req *MultiPutReq) (_r *ExecResp, err error) {
   args := MetaServiceMultiPutArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("multiPut", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvMultiPut()
 }
 
 
 func (p *MetaServiceClient) recvMultiPut() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "multiPut" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "multiPut failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "multiPut failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error114 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error115 error
-    error115, err = error114.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error115
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "multiPut failed: invalid message type")
-    return
-  }
-  result := MetaServiceMultiPutResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceMultiPutResult
+  err = p.CC.RecvMsg("multiPut", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) Get(req *GetReq) (r *GetResp, err error) {
-  if err = p.sendGet(req); err != nil { return }
-  return p.recvGet()
-}
-
-func (p *MetaServiceClient) sendGet(req *GetReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("get", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) Get(req *GetReq) (_r *GetResp, err error) {
   args := MetaServiceGetArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("get", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGet()
 }
 
 
 func (p *MetaServiceClient) recvGet() (value *GetResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "get" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "get failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "get failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error116 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error117 error
-    error117, err = error116.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error117
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "get failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetResult
+  err = p.CC.RecvMsg("get", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) MultiGet(req *MultiGetReq) (r *MultiGetResp, err error) {
-  if err = p.sendMultiGet(req); err != nil { return }
-  return p.recvMultiGet()
-}
-
-func (p *MetaServiceClient) sendMultiGet(req *MultiGetReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("multiGet", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) MultiGet(req *MultiGetReq) (_r *MultiGetResp, err error) {
   args := MetaServiceMultiGetArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("multiGet", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvMultiGet()
 }
 
 
 func (p *MetaServiceClient) recvMultiGet() (value *MultiGetResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "multiGet" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "multiGet failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "multiGet failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error118 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error119 error
-    error119, err = error118.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error119
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "multiGet failed: invalid message type")
-    return
-  }
-  result := MetaServiceMultiGetResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceMultiGetResult
+  err = p.CC.RecvMsg("multiGet", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) Remove(req *RemoveReq) (r *ExecResp, err error) {
-  if err = p.sendRemove(req); err != nil { return }
-  return p.recvRemove()
-}
-
-func (p *MetaServiceClient) sendRemove(req *RemoveReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("remove", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) Remove(req *RemoveReq) (_r *ExecResp, err error) {
   args := MetaServiceRemoveArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("remove", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemove()
 }
 
 
 func (p *MetaServiceClient) recvRemove() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "remove" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "remove failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "remove failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error120 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error121 error
-    error121, err = error120.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error121
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "remove failed: invalid message type")
-    return
-  }
-  result := MetaServiceRemoveResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRemoveResult
+  err = p.CC.RecvMsg("remove", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) RemoveRange(req *RemoveRangeReq) (r *ExecResp, err error) {
-  if err = p.sendRemoveRange(req); err != nil { return }
-  return p.recvRemoveRange()
-}
-
-func (p *MetaServiceClient) sendRemoveRange(req *RemoveRangeReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("removeRange", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) RemoveRange(req *RemoveRangeReq) (_r *ExecResp, err error) {
   args := MetaServiceRemoveRangeArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("removeRange", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemoveRange()
 }
 
 
 func (p *MetaServiceClient) recvRemoveRange() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "removeRange" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "removeRange failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "removeRange failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error122 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error123 error
-    error123, err = error122.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error123
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "removeRange failed: invalid message type")
-    return
-  }
-  result := MetaServiceRemoveRangeResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRemoveRangeResult
+  err = p.CC.RecvMsg("removeRange", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) Scan(req *ScanReq) (r *ScanResp, err error) {
-  if err = p.sendScan(req); err != nil { return }
-  return p.recvScan()
-}
-
-func (p *MetaServiceClient) sendScan(req *ScanReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("scan", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) Scan(req *ScanReq) (_r *ScanResp, err error) {
   args := MetaServiceScanArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("scan", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvScan()
 }
 
 
 func (p *MetaServiceClient) recvScan() (value *ScanResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "scan" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "scan failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "scan failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error124 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error125 error
-    error125, err = error124.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error125
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "scan failed: invalid message type")
-    return
-  }
-  result := MetaServiceScanResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceScanResult
+  err = p.CC.RecvMsg("scan", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) CreateTagIndex(req *CreateTagIndexReq) (r *ExecResp, err error) {
-  if err = p.sendCreateTagIndex(req); err != nil { return }
-  return p.recvCreateTagIndex()
-}
-
-func (p *MetaServiceClient) sendCreateTagIndex(req *CreateTagIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createTagIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) CreateTagIndex(req *CreateTagIndexReq) (_r *ExecResp, err error) {
   args := MetaServiceCreateTagIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createTagIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateTagIndex()
 }
 
 
 func (p *MetaServiceClient) recvCreateTagIndex() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createTagIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createTagIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createTagIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error126 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error127 error
-    error127, err = error126.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error127
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createTagIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateTagIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateTagIndexResult
+  err = p.CC.RecvMsg("createTagIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) DropTagIndex(req *DropTagIndexReq) (r *ExecResp, err error) {
-  if err = p.sendDropTagIndex(req); err != nil { return }
-  return p.recvDropTagIndex()
-}
-
-func (p *MetaServiceClient) sendDropTagIndex(req *DropTagIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropTagIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) DropTagIndex(req *DropTagIndexReq) (_r *ExecResp, err error) {
   args := MetaServiceDropTagIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropTagIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropTagIndex()
 }
 
 
 func (p *MetaServiceClient) recvDropTagIndex() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropTagIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropTagIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropTagIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error128 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error129 error
-    error129, err = error128.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error129
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropTagIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropTagIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropTagIndexResult
+  err = p.CC.RecvMsg("dropTagIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetTagIndex(req *GetTagIndexReq) (r *GetTagIndexResp, err error) {
-  if err = p.sendGetTagIndex(req); err != nil { return }
-  return p.recvGetTagIndex()
-}
-
-func (p *MetaServiceClient) sendGetTagIndex(req *GetTagIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getTagIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetTagIndex(req *GetTagIndexReq) (_r *GetTagIndexResp, err error) {
   args := MetaServiceGetTagIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getTagIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetTagIndex()
 }
 
 
 func (p *MetaServiceClient) recvGetTagIndex() (value *GetTagIndexResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getTagIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getTagIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getTagIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error130 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error131 error
-    error131, err = error130.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error131
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getTagIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetTagIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetTagIndexResult
+  err = p.CC.RecvMsg("getTagIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListTagIndexes(req *ListTagIndexesReq) (r *ListTagIndexesResp, err error) {
-  if err = p.sendListTagIndexes(req); err != nil { return }
-  return p.recvListTagIndexes()
-}
-
-func (p *MetaServiceClient) sendListTagIndexes(req *ListTagIndexesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listTagIndexes", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListTagIndexes(req *ListTagIndexesReq) (_r *ListTagIndexesResp, err error) {
   args := MetaServiceListTagIndexesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listTagIndexes", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListTagIndexes()
 }
 
 
 func (p *MetaServiceClient) recvListTagIndexes() (value *ListTagIndexesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listTagIndexes" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listTagIndexes failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listTagIndexes failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error132 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error133 error
-    error133, err = error132.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error133
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listTagIndexes failed: invalid message type")
-    return
-  }
-  result := MetaServiceListTagIndexesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListTagIndexesResult
+  err = p.CC.RecvMsg("listTagIndexes", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) RebuildTagIndex(req *RebuildIndexReq) (r *ExecResp, err error) {
-  if err = p.sendRebuildTagIndex(req); err != nil { return }
-  return p.recvRebuildTagIndex()
-}
-
-func (p *MetaServiceClient) sendRebuildTagIndex(req *RebuildIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("rebuildTagIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) RebuildTagIndex(req *RebuildIndexReq) (_r *ExecResp, err error) {
   args := MetaServiceRebuildTagIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("rebuildTagIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRebuildTagIndex()
 }
 
 
 func (p *MetaServiceClient) recvRebuildTagIndex() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "rebuildTagIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "rebuildTagIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "rebuildTagIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error134 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error135 error
-    error135, err = error134.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error135
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "rebuildTagIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceRebuildTagIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRebuildTagIndexResult
+  err = p.CC.RecvMsg("rebuildTagIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListTagIndexStatus(req *ListIndexStatusReq) (r *ListIndexStatusResp, err error) {
-  if err = p.sendListTagIndexStatus(req); err != nil { return }
-  return p.recvListTagIndexStatus()
-}
-
-func (p *MetaServiceClient) sendListTagIndexStatus(req *ListIndexStatusReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listTagIndexStatus", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListTagIndexStatus(req *ListIndexStatusReq) (_r *ListIndexStatusResp, err error) {
   args := MetaServiceListTagIndexStatusArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listTagIndexStatus", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListTagIndexStatus()
 }
 
 
 func (p *MetaServiceClient) recvListTagIndexStatus() (value *ListIndexStatusResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listTagIndexStatus" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listTagIndexStatus failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listTagIndexStatus failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error136 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error137 error
-    error137, err = error136.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error137
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listTagIndexStatus failed: invalid message type")
-    return
-  }
-  result := MetaServiceListTagIndexStatusResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListTagIndexStatusResult
+  err = p.CC.RecvMsg("listTagIndexStatus", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) CreateEdgeIndex(req *CreateEdgeIndexReq) (r *ExecResp, err error) {
-  if err = p.sendCreateEdgeIndex(req); err != nil { return }
-  return p.recvCreateEdgeIndex()
-}
-
-func (p *MetaServiceClient) sendCreateEdgeIndex(req *CreateEdgeIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createEdgeIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) CreateEdgeIndex(req *CreateEdgeIndexReq) (_r *ExecResp, err error) {
   args := MetaServiceCreateEdgeIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createEdgeIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateEdgeIndex()
 }
 
 
 func (p *MetaServiceClient) recvCreateEdgeIndex() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createEdgeIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createEdgeIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createEdgeIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error138 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error139 error
-    error139, err = error138.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error139
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createEdgeIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateEdgeIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateEdgeIndexResult
+  err = p.CC.RecvMsg("createEdgeIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) DropEdgeIndex(req *DropEdgeIndexReq) (r *ExecResp, err error) {
-  if err = p.sendDropEdgeIndex(req); err != nil { return }
-  return p.recvDropEdgeIndex()
-}
-
-func (p *MetaServiceClient) sendDropEdgeIndex(req *DropEdgeIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropEdgeIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) DropEdgeIndex(req *DropEdgeIndexReq) (_r *ExecResp, err error) {
   args := MetaServiceDropEdgeIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropEdgeIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropEdgeIndex()
 }
 
 
 func (p *MetaServiceClient) recvDropEdgeIndex() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropEdgeIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropEdgeIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropEdgeIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error140 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error141 error
-    error141, err = error140.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error141
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropEdgeIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropEdgeIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropEdgeIndexResult
+  err = p.CC.RecvMsg("dropEdgeIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetEdgeIndex(req *GetEdgeIndexReq) (r *GetEdgeIndexResp, err error) {
-  if err = p.sendGetEdgeIndex(req); err != nil { return }
-  return p.recvGetEdgeIndex()
-}
-
-func (p *MetaServiceClient) sendGetEdgeIndex(req *GetEdgeIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getEdgeIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetEdgeIndex(req *GetEdgeIndexReq) (_r *GetEdgeIndexResp, err error) {
   args := MetaServiceGetEdgeIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getEdgeIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetEdgeIndex()
 }
 
 
 func (p *MetaServiceClient) recvGetEdgeIndex() (value *GetEdgeIndexResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getEdgeIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getEdgeIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getEdgeIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error142 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error143 error
-    error143, err = error142.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error143
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getEdgeIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetEdgeIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetEdgeIndexResult
+  err = p.CC.RecvMsg("getEdgeIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListEdgeIndexes(req *ListEdgeIndexesReq) (r *ListEdgeIndexesResp, err error) {
-  if err = p.sendListEdgeIndexes(req); err != nil { return }
-  return p.recvListEdgeIndexes()
-}
-
-func (p *MetaServiceClient) sendListEdgeIndexes(req *ListEdgeIndexesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listEdgeIndexes", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListEdgeIndexes(req *ListEdgeIndexesReq) (_r *ListEdgeIndexesResp, err error) {
   args := MetaServiceListEdgeIndexesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listEdgeIndexes", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListEdgeIndexes()
 }
 
 
 func (p *MetaServiceClient) recvListEdgeIndexes() (value *ListEdgeIndexesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listEdgeIndexes" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listEdgeIndexes failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listEdgeIndexes failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error144 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error145 error
-    error145, err = error144.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error145
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listEdgeIndexes failed: invalid message type")
-    return
-  }
-  result := MetaServiceListEdgeIndexesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListEdgeIndexesResult
+  err = p.CC.RecvMsg("listEdgeIndexes", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) RebuildEdgeIndex(req *RebuildIndexReq) (r *ExecResp, err error) {
-  if err = p.sendRebuildEdgeIndex(req); err != nil { return }
-  return p.recvRebuildEdgeIndex()
-}
-
-func (p *MetaServiceClient) sendRebuildEdgeIndex(req *RebuildIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("rebuildEdgeIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) RebuildEdgeIndex(req *RebuildIndexReq) (_r *ExecResp, err error) {
   args := MetaServiceRebuildEdgeIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("rebuildEdgeIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRebuildEdgeIndex()
 }
 
 
 func (p *MetaServiceClient) recvRebuildEdgeIndex() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "rebuildEdgeIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "rebuildEdgeIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "rebuildEdgeIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error146 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error147 error
-    error147, err = error146.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error147
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "rebuildEdgeIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceRebuildEdgeIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRebuildEdgeIndexResult
+  err = p.CC.RecvMsg("rebuildEdgeIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListEdgeIndexStatus(req *ListIndexStatusReq) (r *ListIndexStatusResp, err error) {
-  if err = p.sendListEdgeIndexStatus(req); err != nil { return }
-  return p.recvListEdgeIndexStatus()
-}
-
-func (p *MetaServiceClient) sendListEdgeIndexStatus(req *ListIndexStatusReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listEdgeIndexStatus", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListEdgeIndexStatus(req *ListIndexStatusReq) (_r *ListIndexStatusResp, err error) {
   args := MetaServiceListEdgeIndexStatusArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listEdgeIndexStatus", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListEdgeIndexStatus()
 }
 
 
 func (p *MetaServiceClient) recvListEdgeIndexStatus() (value *ListIndexStatusResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listEdgeIndexStatus" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listEdgeIndexStatus failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listEdgeIndexStatus failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error148 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error149 error
-    error149, err = error148.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error149
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listEdgeIndexStatus failed: invalid message type")
-    return
-  }
-  result := MetaServiceListEdgeIndexStatusResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListEdgeIndexStatusResult
+  err = p.CC.RecvMsg("listEdgeIndexStatus", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) CreateUser(req *CreateUserReq) (r *ExecResp, err error) {
-  if err = p.sendCreateUser(req); err != nil { return }
-  return p.recvCreateUser()
-}
-
-func (p *MetaServiceClient) sendCreateUser(req *CreateUserReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createUser", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) CreateUser(req *CreateUserReq) (_r *ExecResp, err error) {
   args := MetaServiceCreateUserArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createUser", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateUser()
 }
 
 
 func (p *MetaServiceClient) recvCreateUser() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createUser" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createUser failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createUser failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error150 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error151 error
-    error151, err = error150.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error151
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createUser failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateUserResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateUserResult
+  err = p.CC.RecvMsg("createUser", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) DropUser(req *DropUserReq) (r *ExecResp, err error) {
-  if err = p.sendDropUser(req); err != nil { return }
-  return p.recvDropUser()
-}
-
-func (p *MetaServiceClient) sendDropUser(req *DropUserReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropUser", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) DropUser(req *DropUserReq) (_r *ExecResp, err error) {
   args := MetaServiceDropUserArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropUser", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropUser()
 }
 
 
 func (p *MetaServiceClient) recvDropUser() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropUser" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropUser failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropUser failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error152 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error153 error
-    error153, err = error152.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error153
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropUser failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropUserResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropUserResult
+  err = p.CC.RecvMsg("dropUser", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) AlterUser(req *AlterUserReq) (r *ExecResp, err error) {
-  if err = p.sendAlterUser(req); err != nil { return }
-  return p.recvAlterUser()
-}
-
-func (p *MetaServiceClient) sendAlterUser(req *AlterUserReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("alterUser", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) AlterUser(req *AlterUserReq) (_r *ExecResp, err error) {
   args := MetaServiceAlterUserArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("alterUser", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAlterUser()
 }
 
 
 func (p *MetaServiceClient) recvAlterUser() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "alterUser" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "alterUser failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "alterUser failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error154 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error155 error
-    error155, err = error154.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error155
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "alterUser failed: invalid message type")
-    return
-  }
-  result := MetaServiceAlterUserResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAlterUserResult
+  err = p.CC.RecvMsg("alterUser", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GrantRole(req *GrantRoleReq) (r *ExecResp, err error) {
-  if err = p.sendGrantRole(req); err != nil { return }
-  return p.recvGrantRole()
-}
-
-func (p *MetaServiceClient) sendGrantRole(req *GrantRoleReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("grantRole", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GrantRole(req *GrantRoleReq) (_r *ExecResp, err error) {
   args := MetaServiceGrantRoleArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("grantRole", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGrantRole()
 }
 
 
 func (p *MetaServiceClient) recvGrantRole() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "grantRole" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "grantRole failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "grantRole failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error156 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error157 error
-    error157, err = error156.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error157
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "grantRole failed: invalid message type")
-    return
-  }
-  result := MetaServiceGrantRoleResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGrantRoleResult
+  err = p.CC.RecvMsg("grantRole", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) RevokeRole(req *RevokeRoleReq) (r *ExecResp, err error) {
-  if err = p.sendRevokeRole(req); err != nil { return }
-  return p.recvRevokeRole()
-}
-
-func (p *MetaServiceClient) sendRevokeRole(req *RevokeRoleReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("revokeRole", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) RevokeRole(req *RevokeRoleReq) (_r *ExecResp, err error) {
   args := MetaServiceRevokeRoleArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("revokeRole", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRevokeRole()
 }
 
 
 func (p *MetaServiceClient) recvRevokeRole() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "revokeRole" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "revokeRole failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "revokeRole failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error158 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error159 error
-    error159, err = error158.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error159
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "revokeRole failed: invalid message type")
-    return
-  }
-  result := MetaServiceRevokeRoleResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRevokeRoleResult
+  err = p.CC.RecvMsg("revokeRole", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListUsers(req *ListUsersReq) (r *ListUsersResp, err error) {
-  if err = p.sendListUsers(req); err != nil { return }
-  return p.recvListUsers()
-}
-
-func (p *MetaServiceClient) sendListUsers(req *ListUsersReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listUsers", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListUsers(req *ListUsersReq) (_r *ListUsersResp, err error) {
   args := MetaServiceListUsersArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listUsers", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListUsers()
 }
 
 
 func (p *MetaServiceClient) recvListUsers() (value *ListUsersResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listUsers" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listUsers failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listUsers failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error160 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error161 error
-    error161, err = error160.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error161
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listUsers failed: invalid message type")
-    return
-  }
-  result := MetaServiceListUsersResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListUsersResult
+  err = p.CC.RecvMsg("listUsers", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListRoles(req *ListRolesReq) (r *ListRolesResp, err error) {
-  if err = p.sendListRoles(req); err != nil { return }
-  return p.recvListRoles()
-}
-
-func (p *MetaServiceClient) sendListRoles(req *ListRolesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listRoles", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListRoles(req *ListRolesReq) (_r *ListRolesResp, err error) {
   args := MetaServiceListRolesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listRoles", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListRoles()
 }
 
 
 func (p *MetaServiceClient) recvListRoles() (value *ListRolesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listRoles" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listRoles failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listRoles failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error162 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error163 error
-    error163, err = error162.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error163
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listRoles failed: invalid message type")
-    return
-  }
-  result := MetaServiceListRolesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListRolesResult
+  err = p.CC.RecvMsg("listRoles", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetUserRoles(req *GetUserRolesReq) (r *ListRolesResp, err error) {
-  if err = p.sendGetUserRoles(req); err != nil { return }
-  return p.recvGetUserRoles()
-}
-
-func (p *MetaServiceClient) sendGetUserRoles(req *GetUserRolesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getUserRoles", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetUserRoles(req *GetUserRolesReq) (_r *ListRolesResp, err error) {
   args := MetaServiceGetUserRolesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getUserRoles", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetUserRoles()
 }
 
 
 func (p *MetaServiceClient) recvGetUserRoles() (value *ListRolesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getUserRoles" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getUserRoles failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getUserRoles failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error164 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error165 error
-    error165, err = error164.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error165
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getUserRoles failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetUserRolesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetUserRolesResult
+  err = p.CC.RecvMsg("getUserRoles", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ChangePassword(req *ChangePasswordReq) (r *ExecResp, err error) {
-  if err = p.sendChangePassword(req); err != nil { return }
-  return p.recvChangePassword()
-}
-
-func (p *MetaServiceClient) sendChangePassword(req *ChangePasswordReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("changePassword", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ChangePassword(req *ChangePasswordReq) (_r *ExecResp, err error) {
   args := MetaServiceChangePasswordArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("changePassword", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvChangePassword()
 }
 
 
 func (p *MetaServiceClient) recvChangePassword() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "changePassword" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "changePassword failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "changePassword failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error166 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error167 error
-    error167, err = error166.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error167
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "changePassword failed: invalid message type")
-    return
-  }
-  result := MetaServiceChangePasswordResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceChangePasswordResult
+  err = p.CC.RecvMsg("changePassword", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) HeartBeat(req *HBReq) (r *HBResp, err error) {
-  if err = p.sendHeartBeat(req); err != nil { return }
-  return p.recvHeartBeat()
-}
-
-func (p *MetaServiceClient) sendHeartBeat(req *HBReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("heartBeat", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) HeartBeat(req *HBReq) (_r *HBResp, err error) {
   args := MetaServiceHeartBeatArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("heartBeat", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvHeartBeat()
 }
 
 
 func (p *MetaServiceClient) recvHeartBeat() (value *HBResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "heartBeat" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "heartBeat failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "heartBeat failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error168 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error169 error
-    error169, err = error168.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error169
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "heartBeat failed: invalid message type")
-    return
-  }
-  result := MetaServiceHeartBeatResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceHeartBeatResult
+  err = p.CC.RecvMsg("heartBeat", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) Balance(req *BalanceReq) (r *BalanceResp, err error) {
-  if err = p.sendBalance(req); err != nil { return }
-  return p.recvBalance()
-}
-
-func (p *MetaServiceClient) sendBalance(req *BalanceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("balance", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) Balance(req *BalanceReq) (_r *BalanceResp, err error) {
   args := MetaServiceBalanceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("balance", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvBalance()
 }
 
 
 func (p *MetaServiceClient) recvBalance() (value *BalanceResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "balance" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "balance failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "balance failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error170 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error171 error
-    error171, err = error170.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error171
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "balance failed: invalid message type")
-    return
-  }
-  result := MetaServiceBalanceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceBalanceResult
+  err = p.CC.RecvMsg("balance", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) LeaderBalance(req *LeaderBalanceReq) (r *ExecResp, err error) {
-  if err = p.sendLeaderBalance(req); err != nil { return }
-  return p.recvLeaderBalance()
-}
-
-func (p *MetaServiceClient) sendLeaderBalance(req *LeaderBalanceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("leaderBalance", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) LeaderBalance(req *LeaderBalanceReq) (_r *ExecResp, err error) {
   args := MetaServiceLeaderBalanceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("leaderBalance", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvLeaderBalance()
 }
 
 
 func (p *MetaServiceClient) recvLeaderBalance() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "leaderBalance" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "leaderBalance failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "leaderBalance failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error172 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error173 error
-    error173, err = error172.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error173
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "leaderBalance failed: invalid message type")
-    return
-  }
-  result := MetaServiceLeaderBalanceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceLeaderBalanceResult
+  err = p.CC.RecvMsg("leaderBalance", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) RegConfig(req *RegConfigReq) (r *ExecResp, err error) {
-  if err = p.sendRegConfig(req); err != nil { return }
-  return p.recvRegConfig()
-}
-
-func (p *MetaServiceClient) sendRegConfig(req *RegConfigReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("regConfig", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) RegConfig(req *RegConfigReq) (_r *ExecResp, err error) {
   args := MetaServiceRegConfigArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("regConfig", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRegConfig()
 }
 
 
 func (p *MetaServiceClient) recvRegConfig() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "regConfig" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "regConfig failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "regConfig failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error174 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error175 error
-    error175, err = error174.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error175
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "regConfig failed: invalid message type")
-    return
-  }
-  result := MetaServiceRegConfigResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRegConfigResult
+  err = p.CC.RecvMsg("regConfig", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetConfig(req *GetConfigReq) (r *GetConfigResp, err error) {
-  if err = p.sendGetConfig(req); err != nil { return }
-  return p.recvGetConfig()
-}
-
-func (p *MetaServiceClient) sendGetConfig(req *GetConfigReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getConfig", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetConfig(req *GetConfigReq) (_r *GetConfigResp, err error) {
   args := MetaServiceGetConfigArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getConfig", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetConfig()
 }
 
 
 func (p *MetaServiceClient) recvGetConfig() (value *GetConfigResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getConfig" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getConfig failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getConfig failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error176 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error177 error
-    error177, err = error176.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error177
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getConfig failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetConfigResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetConfigResult
+  err = p.CC.RecvMsg("getConfig", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) SetConfig(req *SetConfigReq) (r *ExecResp, err error) {
-  if err = p.sendSetConfig(req); err != nil { return }
-  return p.recvSetConfig()
-}
-
-func (p *MetaServiceClient) sendSetConfig(req *SetConfigReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("setConfig", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) SetConfig(req *SetConfigReq) (_r *ExecResp, err error) {
   args := MetaServiceSetConfigArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("setConfig", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvSetConfig()
 }
 
 
 func (p *MetaServiceClient) recvSetConfig() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "setConfig" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "setConfig failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "setConfig failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error178 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error179 error
-    error179, err = error178.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error179
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "setConfig failed: invalid message type")
-    return
-  }
-  result := MetaServiceSetConfigResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceSetConfigResult
+  err = p.CC.RecvMsg("setConfig", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListConfigs(req *ListConfigsReq) (r *ListConfigsResp, err error) {
-  if err = p.sendListConfigs(req); err != nil { return }
-  return p.recvListConfigs()
-}
-
-func (p *MetaServiceClient) sendListConfigs(req *ListConfigsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listConfigs", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListConfigs(req *ListConfigsReq) (_r *ListConfigsResp, err error) {
   args := MetaServiceListConfigsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listConfigs", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListConfigs()
 }
 
 
 func (p *MetaServiceClient) recvListConfigs() (value *ListConfigsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listConfigs" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listConfigs failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listConfigs failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error180 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error181 error
-    error181, err = error180.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error181
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listConfigs failed: invalid message type")
-    return
-  }
-  result := MetaServiceListConfigsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListConfigsResult
+  err = p.CC.RecvMsg("listConfigs", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) CreateSnapshot(req *CreateSnapshotReq) (r *ExecResp, err error) {
-  if err = p.sendCreateSnapshot(req); err != nil { return }
-  return p.recvCreateSnapshot()
-}
-
-func (p *MetaServiceClient) sendCreateSnapshot(req *CreateSnapshotReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createSnapshot", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) CreateSnapshot(req *CreateSnapshotReq) (_r *ExecResp, err error) {
   args := MetaServiceCreateSnapshotArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createSnapshot", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateSnapshot()
 }
 
 
 func (p *MetaServiceClient) recvCreateSnapshot() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createSnapshot" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createSnapshot failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createSnapshot failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error182 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error183 error
-    error183, err = error182.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error183
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createSnapshot failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateSnapshotResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateSnapshotResult
+  err = p.CC.RecvMsg("createSnapshot", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) DropSnapshot(req *DropSnapshotReq) (r *ExecResp, err error) {
-  if err = p.sendDropSnapshot(req); err != nil { return }
-  return p.recvDropSnapshot()
-}
-
-func (p *MetaServiceClient) sendDropSnapshot(req *DropSnapshotReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropSnapshot", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) DropSnapshot(req *DropSnapshotReq) (_r *ExecResp, err error) {
   args := MetaServiceDropSnapshotArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropSnapshot", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropSnapshot()
 }
 
 
 func (p *MetaServiceClient) recvDropSnapshot() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropSnapshot" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropSnapshot failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropSnapshot failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error184 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error185 error
-    error185, err = error184.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error185
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropSnapshot failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropSnapshotResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropSnapshotResult
+  err = p.CC.RecvMsg("dropSnapshot", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListSnapshots(req *ListSnapshotsReq) (r *ListSnapshotsResp, err error) {
-  if err = p.sendListSnapshots(req); err != nil { return }
-  return p.recvListSnapshots()
-}
-
-func (p *MetaServiceClient) sendListSnapshots(req *ListSnapshotsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listSnapshots", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListSnapshots(req *ListSnapshotsReq) (_r *ListSnapshotsResp, err error) {
   args := MetaServiceListSnapshotsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listSnapshots", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListSnapshots()
 }
 
 
 func (p *MetaServiceClient) recvListSnapshots() (value *ListSnapshotsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listSnapshots" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listSnapshots failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listSnapshots failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error186 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error187 error
-    error187, err = error186.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error187
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listSnapshots failed: invalid message type")
-    return
-  }
-  result := MetaServiceListSnapshotsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListSnapshotsResult
+  err = p.CC.RecvMsg("listSnapshots", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) RunAdminJob(req *AdminJobReq) (r *AdminJobResp, err error) {
-  if err = p.sendRunAdminJob(req); err != nil { return }
-  return p.recvRunAdminJob()
-}
-
-func (p *MetaServiceClient) sendRunAdminJob(req *AdminJobReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("runAdminJob", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) RunAdminJob(req *AdminJobReq) (_r *AdminJobResp, err error) {
   args := MetaServiceRunAdminJobArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("runAdminJob", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRunAdminJob()
 }
 
 
 func (p *MetaServiceClient) recvRunAdminJob() (value *AdminJobResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "runAdminJob" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "runAdminJob failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "runAdminJob failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error188 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error189 error
-    error189, err = error188.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error189
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "runAdminJob failed: invalid message type")
-    return
-  }
-  result := MetaServiceRunAdminJobResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRunAdminJobResult
+  err = p.CC.RecvMsg("runAdminJob", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) AddZone(req *AddZoneReq) (r *ExecResp, err error) {
-  if err = p.sendAddZone(req); err != nil { return }
-  return p.recvAddZone()
-}
-
-func (p *MetaServiceClient) sendAddZone(req *AddZoneReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addZone", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) AddZone(req *AddZoneReq) (_r *ExecResp, err error) {
   args := MetaServiceAddZoneArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addZone", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddZone()
 }
 
 
 func (p *MetaServiceClient) recvAddZone() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addZone" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addZone failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addZone failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error190 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error191 error
-    error191, err = error190.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error191
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addZone failed: invalid message type")
-    return
-  }
-  result := MetaServiceAddZoneResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAddZoneResult
+  err = p.CC.RecvMsg("addZone", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) DropZone(req *DropZoneReq) (r *ExecResp, err error) {
-  if err = p.sendDropZone(req); err != nil { return }
-  return p.recvDropZone()
-}
-
-func (p *MetaServiceClient) sendDropZone(req *DropZoneReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropZone", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) DropZone(req *DropZoneReq) (_r *ExecResp, err error) {
   args := MetaServiceDropZoneArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropZone", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropZone()
 }
 
 
 func (p *MetaServiceClient) recvDropZone() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropZone" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropZone failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropZone failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error192 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error193 error
-    error193, err = error192.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error193
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropZone failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropZoneResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropZoneResult
+  err = p.CC.RecvMsg("dropZone", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) AddHostIntoZone(req *AddHostIntoZoneReq) (r *ExecResp, err error) {
-  if err = p.sendAddHostIntoZone(req); err != nil { return }
-  return p.recvAddHostIntoZone()
-}
-
-func (p *MetaServiceClient) sendAddHostIntoZone(req *AddHostIntoZoneReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addHostIntoZone", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) AddHostIntoZone(req *AddHostIntoZoneReq) (_r *ExecResp, err error) {
   args := MetaServiceAddHostIntoZoneArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addHostIntoZone", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddHostIntoZone()
 }
 
 
 func (p *MetaServiceClient) recvAddHostIntoZone() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addHostIntoZone" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addHostIntoZone failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addHostIntoZone failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error194 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error195 error
-    error195, err = error194.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error195
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addHostIntoZone failed: invalid message type")
-    return
-  }
-  result := MetaServiceAddHostIntoZoneResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAddHostIntoZoneResult
+  err = p.CC.RecvMsg("addHostIntoZone", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) DropHostFromZone(req *DropHostFromZoneReq) (r *ExecResp, err error) {
-  if err = p.sendDropHostFromZone(req); err != nil { return }
-  return p.recvDropHostFromZone()
-}
-
-func (p *MetaServiceClient) sendDropHostFromZone(req *DropHostFromZoneReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropHostFromZone", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) DropHostFromZone(req *DropHostFromZoneReq) (_r *ExecResp, err error) {
   args := MetaServiceDropHostFromZoneArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropHostFromZone", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropHostFromZone()
 }
 
 
 func (p *MetaServiceClient) recvDropHostFromZone() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropHostFromZone" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropHostFromZone failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropHostFromZone failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error196 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error197 error
-    error197, err = error196.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error197
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropHostFromZone failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropHostFromZoneResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropHostFromZoneResult
+  err = p.CC.RecvMsg("dropHostFromZone", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetZone(req *GetZoneReq) (r *GetZoneResp, err error) {
-  if err = p.sendGetZone(req); err != nil { return }
-  return p.recvGetZone()
-}
-
-func (p *MetaServiceClient) sendGetZone(req *GetZoneReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getZone", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetZone(req *GetZoneReq) (_r *GetZoneResp, err error) {
   args := MetaServiceGetZoneArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getZone", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetZone()
 }
 
 
 func (p *MetaServiceClient) recvGetZone() (value *GetZoneResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getZone" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getZone failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getZone failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error198 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error199 error
-    error199, err = error198.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error199
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getZone failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetZoneResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetZoneResult
+  err = p.CC.RecvMsg("getZone", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListZones(req *ListZonesReq) (r *ListZonesResp, err error) {
-  if err = p.sendListZones(req); err != nil { return }
-  return p.recvListZones()
-}
-
-func (p *MetaServiceClient) sendListZones(req *ListZonesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listZones", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListZones(req *ListZonesReq) (_r *ListZonesResp, err error) {
   args := MetaServiceListZonesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listZones", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListZones()
 }
 
 
 func (p *MetaServiceClient) recvListZones() (value *ListZonesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listZones" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listZones failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listZones failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error200 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error201 error
-    error201, err = error200.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error201
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listZones failed: invalid message type")
-    return
-  }
-  result := MetaServiceListZonesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListZonesResult
+  err = p.CC.RecvMsg("listZones", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) AddGroup(req *AddGroupReq) (r *ExecResp, err error) {
-  if err = p.sendAddGroup(req); err != nil { return }
-  return p.recvAddGroup()
-}
-
-func (p *MetaServiceClient) sendAddGroup(req *AddGroupReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addGroup", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) AddGroup(req *AddGroupReq) (_r *ExecResp, err error) {
   args := MetaServiceAddGroupArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addGroup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddGroup()
 }
 
 
 func (p *MetaServiceClient) recvAddGroup() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addGroup" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addGroup failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addGroup failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error202 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error203 error
-    error203, err = error202.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error203
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addGroup failed: invalid message type")
-    return
-  }
-  result := MetaServiceAddGroupResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAddGroupResult
+  err = p.CC.RecvMsg("addGroup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) DropGroup(req *DropGroupReq) (r *ExecResp, err error) {
-  if err = p.sendDropGroup(req); err != nil { return }
-  return p.recvDropGroup()
-}
-
-func (p *MetaServiceClient) sendDropGroup(req *DropGroupReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropGroup", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) DropGroup(req *DropGroupReq) (_r *ExecResp, err error) {
   args := MetaServiceDropGroupArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropGroup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropGroup()
 }
 
 
 func (p *MetaServiceClient) recvDropGroup() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropGroup" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropGroup failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropGroup failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error204 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error205 error
-    error205, err = error204.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error205
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropGroup failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropGroupResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropGroupResult
+  err = p.CC.RecvMsg("dropGroup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) AddZoneIntoGroup(req *AddZoneIntoGroupReq) (r *ExecResp, err error) {
-  if err = p.sendAddZoneIntoGroup(req); err != nil { return }
-  return p.recvAddZoneIntoGroup()
-}
-
-func (p *MetaServiceClient) sendAddZoneIntoGroup(req *AddZoneIntoGroupReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addZoneIntoGroup", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) AddZoneIntoGroup(req *AddZoneIntoGroupReq) (_r *ExecResp, err error) {
   args := MetaServiceAddZoneIntoGroupArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addZoneIntoGroup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddZoneIntoGroup()
 }
 
 
 func (p *MetaServiceClient) recvAddZoneIntoGroup() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addZoneIntoGroup" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addZoneIntoGroup failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addZoneIntoGroup failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error206 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error207 error
-    error207, err = error206.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error207
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addZoneIntoGroup failed: invalid message type")
-    return
-  }
-  result := MetaServiceAddZoneIntoGroupResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAddZoneIntoGroupResult
+  err = p.CC.RecvMsg("addZoneIntoGroup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) DropZoneFromGroup(req *DropZoneFromGroupReq) (r *ExecResp, err error) {
-  if err = p.sendDropZoneFromGroup(req); err != nil { return }
-  return p.recvDropZoneFromGroup()
-}
-
-func (p *MetaServiceClient) sendDropZoneFromGroup(req *DropZoneFromGroupReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropZoneFromGroup", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) DropZoneFromGroup(req *DropZoneFromGroupReq) (_r *ExecResp, err error) {
   args := MetaServiceDropZoneFromGroupArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropZoneFromGroup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropZoneFromGroup()
 }
 
 
 func (p *MetaServiceClient) recvDropZoneFromGroup() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropZoneFromGroup" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropZoneFromGroup failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropZoneFromGroup failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error208 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error209 error
-    error209, err = error208.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error209
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropZoneFromGroup failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropZoneFromGroupResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropZoneFromGroupResult
+  err = p.CC.RecvMsg("dropZoneFromGroup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetGroup(req *GetGroupReq) (r *GetGroupResp, err error) {
-  if err = p.sendGetGroup(req); err != nil { return }
-  return p.recvGetGroup()
-}
-
-func (p *MetaServiceClient) sendGetGroup(req *GetGroupReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getGroup", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetGroup(req *GetGroupReq) (_r *GetGroupResp, err error) {
   args := MetaServiceGetGroupArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getGroup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetGroup()
 }
 
 
 func (p *MetaServiceClient) recvGetGroup() (value *GetGroupResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getGroup" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getGroup failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getGroup failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error210 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error211 error
-    error211, err = error210.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error211
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getGroup failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetGroupResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetGroupResult
+  err = p.CC.RecvMsg("getGroup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListGroups(req *ListGroupsReq) (r *ListGroupsResp, err error) {
-  if err = p.sendListGroups(req); err != nil { return }
-  return p.recvListGroups()
-}
-
-func (p *MetaServiceClient) sendListGroups(req *ListGroupsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listGroups", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListGroups(req *ListGroupsReq) (_r *ListGroupsResp, err error) {
   args := MetaServiceListGroupsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listGroups", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListGroups()
 }
 
 
 func (p *MetaServiceClient) recvListGroups() (value *ListGroupsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listGroups" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listGroups failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listGroups failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error212 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error213 error
-    error213, err = error212.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error213
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listGroups failed: invalid message type")
-    return
-  }
-  result := MetaServiceListGroupsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListGroupsResult
+  err = p.CC.RecvMsg("listGroups", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) CreateBackup(req *CreateBackupReq) (r *CreateBackupResp, err error) {
-  if err = p.sendCreateBackup(req); err != nil { return }
-  return p.recvCreateBackup()
-}
-
-func (p *MetaServiceClient) sendCreateBackup(req *CreateBackupReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createBackup", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) CreateBackup(req *CreateBackupReq) (_r *CreateBackupResp, err error) {
   args := MetaServiceCreateBackupArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createBackup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateBackup()
 }
 
 
 func (p *MetaServiceClient) recvCreateBackup() (value *CreateBackupResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createBackup" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createBackup failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createBackup failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error214 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error215 error
-    error215, err = error214.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error215
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createBackup failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateBackupResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateBackupResult
+  err = p.CC.RecvMsg("createBackup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) RestoreMeta(req *RestoreMetaReq) (r *ExecResp, err error) {
-  if err = p.sendRestoreMeta(req); err != nil { return }
-  return p.recvRestoreMeta()
-}
-
-func (p *MetaServiceClient) sendRestoreMeta(req *RestoreMetaReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("restoreMeta", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err error) {
   args := MetaServiceRestoreMetaArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("restoreMeta", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRestoreMeta()
 }
 
 
 func (p *MetaServiceClient) recvRestoreMeta() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "restoreMeta" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "restoreMeta failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "restoreMeta failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error216 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error217 error
-    error217, err = error216.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error217
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "restoreMeta failed: invalid message type")
-    return
-  }
-  result := MetaServiceRestoreMetaResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRestoreMetaResult
+  err = p.CC.RecvMsg("restoreMeta", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) AddListener(req *AddListenerReq) (r *ExecResp, err error) {
-  if err = p.sendAddListener(req); err != nil { return }
-  return p.recvAddListener()
-}
-
-func (p *MetaServiceClient) sendAddListener(req *AddListenerReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addListener", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) AddListener(req *AddListenerReq) (_r *ExecResp, err error) {
   args := MetaServiceAddListenerArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addListener", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddListener()
 }
 
 
 func (p *MetaServiceClient) recvAddListener() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addListener" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addListener failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addListener failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error218 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error219 error
-    error219, err = error218.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error219
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addListener failed: invalid message type")
-    return
-  }
-  result := MetaServiceAddListenerResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAddListenerResult
+  err = p.CC.RecvMsg("addListener", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) RemoveListener(req *RemoveListenerReq) (r *ExecResp, err error) {
-  if err = p.sendRemoveListener(req); err != nil { return }
-  return p.recvRemoveListener()
-}
-
-func (p *MetaServiceClient) sendRemoveListener(req *RemoveListenerReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("removeListener", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) RemoveListener(req *RemoveListenerReq) (_r *ExecResp, err error) {
   args := MetaServiceRemoveListenerArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("removeListener", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemoveListener()
 }
 
 
 func (p *MetaServiceClient) recvRemoveListener() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "removeListener" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "removeListener failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "removeListener failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error220 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error221 error
-    error221, err = error220.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error221
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "removeListener failed: invalid message type")
-    return
-  }
-  result := MetaServiceRemoveListenerResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRemoveListenerResult
+  err = p.CC.RecvMsg("removeListener", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListListener(req *ListListenerReq) (r *ListListenerResp, err error) {
-  if err = p.sendListListener(req); err != nil { return }
-  return p.recvListListener()
-}
-
-func (p *MetaServiceClient) sendListListener(req *ListListenerReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listListener", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListListener(req *ListListenerReq) (_r *ListListenerResp, err error) {
   args := MetaServiceListListenerArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listListener", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListListener()
 }
 
 
 func (p *MetaServiceClient) recvListListener() (value *ListListenerResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listListener" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listListener failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listListener failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error222 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error223 error
-    error223, err = error222.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error223
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listListener failed: invalid message type")
-    return
-  }
-  result := MetaServiceListListenerResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListListenerResult
+  err = p.CC.RecvMsg("listListener", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetStatis(req *GetStatisReq) (r *GetStatisResp, err error) {
-  if err = p.sendGetStatis(req); err != nil { return }
-  return p.recvGetStatis()
-}
-
-func (p *MetaServiceClient) sendGetStatis(req *GetStatisReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getStatis", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetStatis(req *GetStatisReq) (_r *GetStatisResp, err error) {
   args := MetaServiceGetStatisArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getStatis", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetStatis()
 }
 
 
 func (p *MetaServiceClient) recvGetStatis() (value *GetStatisResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getStatis" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getStatis failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getStatis failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error224 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error225 error
-    error225, err = error224.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error225
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getStatis failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetStatisResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetStatisResult
+  err = p.CC.RecvMsg("getStatis", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) SignInFTService(req *SignInFTServiceReq) (r *ExecResp, err error) {
-  if err = p.sendSignInFTService(req); err != nil { return }
-  return p.recvSignInFTService()
-}
-
-func (p *MetaServiceClient) sendSignInFTService(req *SignInFTServiceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("signInFTService", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) SignInFTService(req *SignInFTServiceReq) (_r *ExecResp, err error) {
   args := MetaServiceSignInFTServiceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("signInFTService", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvSignInFTService()
 }
 
 
 func (p *MetaServiceClient) recvSignInFTService() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "signInFTService" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "signInFTService failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "signInFTService failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error226 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error227 error
-    error227, err = error226.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error227
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "signInFTService failed: invalid message type")
-    return
-  }
-  result := MetaServiceSignInFTServiceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceSignInFTServiceResult
+  err = p.CC.RecvMsg("signInFTService", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) SignOutFTService(req *SignOutFTServiceReq) (r *ExecResp, err error) {
-  if err = p.sendSignOutFTService(req); err != nil { return }
-  return p.recvSignOutFTService()
-}
-
-func (p *MetaServiceClient) sendSignOutFTService(req *SignOutFTServiceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("signOutFTService", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) SignOutFTService(req *SignOutFTServiceReq) (_r *ExecResp, err error) {
   args := MetaServiceSignOutFTServiceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("signOutFTService", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvSignOutFTService()
 }
 
 
 func (p *MetaServiceClient) recvSignOutFTService() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "signOutFTService" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "signOutFTService failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "signOutFTService failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error228 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error229 error
-    error229, err = error228.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error229
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "signOutFTService failed: invalid message type")
-    return
-  }
-  result := MetaServiceSignOutFTServiceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceSignOutFTServiceResult
+  err = p.CC.RecvMsg("signOutFTService", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListFTClients(req *ListFTClientsReq) (r *ListFTClientsResp, err error) {
-  if err = p.sendListFTClients(req); err != nil { return }
-  return p.recvListFTClients()
-}
-
-func (p *MetaServiceClient) sendListFTClients(req *ListFTClientsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listFTClients", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListFTClients(req *ListFTClientsReq) (_r *ListFTClientsResp, err error) {
   args := MetaServiceListFTClientsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listFTClients", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListFTClients()
 }
 
 
 func (p *MetaServiceClient) recvListFTClients() (value *ListFTClientsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listFTClients" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listFTClients failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listFTClients failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error230 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error231 error
-    error231, err = error230.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error231
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listFTClients failed: invalid message type")
-    return
-  }
-  result := MetaServiceListFTClientsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListFTClientsResult
+  err = p.CC.RecvMsg("listFTClients", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) CreateSession(req *CreateSessionReq) (r *CreateSessionResp, err error) {
-  if err = p.sendCreateSession(req); err != nil { return }
-  return p.recvCreateSession()
-}
-
-func (p *MetaServiceClient) sendCreateSession(req *CreateSessionReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createSession", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) CreateSession(req *CreateSessionReq) (_r *CreateSessionResp, err error) {
   args := MetaServiceCreateSessionArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createSession", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateSession()
 }
 
 
 func (p *MetaServiceClient) recvCreateSession() (value *CreateSessionResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createSession" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createSession failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createSession failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error232 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error233 error
-    error233, err = error232.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error233
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createSession failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateSessionResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateSessionResult
+  err = p.CC.RecvMsg("createSession", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) UpdateSessions(req *UpdateSessionsReq) (r *ExecResp, err error) {
-  if err = p.sendUpdateSessions(req); err != nil { return }
-  return p.recvUpdateSessions()
-}
-
-func (p *MetaServiceClient) sendUpdateSessions(req *UpdateSessionsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("updateSessions", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) UpdateSessions(req *UpdateSessionsReq) (_r *ExecResp, err error) {
   args := MetaServiceUpdateSessionsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("updateSessions", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvUpdateSessions()
 }
 
 
 func (p *MetaServiceClient) recvUpdateSessions() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "updateSessions" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "updateSessions failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "updateSessions failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error234 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error235 error
-    error235, err = error234.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error235
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "updateSessions failed: invalid message type")
-    return
-  }
-  result := MetaServiceUpdateSessionsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceUpdateSessionsResult
+  err = p.CC.RecvMsg("updateSessions", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListSessions(req *ListSessionsReq) (r *ListSessionsResp, err error) {
-  if err = p.sendListSessions(req); err != nil { return }
-  return p.recvListSessions()
-}
-
-func (p *MetaServiceClient) sendListSessions(req *ListSessionsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listSessions", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListSessions(req *ListSessionsReq) (_r *ListSessionsResp, err error) {
   args := MetaServiceListSessionsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listSessions", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListSessions()
 }
 
 
 func (p *MetaServiceClient) recvListSessions() (value *ListSessionsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listSessions" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listSessions failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listSessions failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error236 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error237 error
-    error237, err = error236.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error237
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listSessions failed: invalid message type")
-    return
-  }
-  result := MetaServiceListSessionsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListSessionsResult
+  err = p.CC.RecvMsg("listSessions", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetSession(req *GetSessionReq) (r *GetSessionResp, err error) {
-  if err = p.sendGetSession(req); err != nil { return }
-  return p.recvGetSession()
-}
-
-func (p *MetaServiceClient) sendGetSession(req *GetSessionReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getSession", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetSession(req *GetSessionReq) (_r *GetSessionResp, err error) {
   args := MetaServiceGetSessionArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getSession", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetSession()
 }
 
 
 func (p *MetaServiceClient) recvGetSession() (value *GetSessionResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getSession" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getSession failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getSession failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error238 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error239 error
-    error239, err = error238.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error239
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getSession failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetSessionResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetSessionResult
+  err = p.CC.RecvMsg("getSession", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) RemoveSession(req *RemoveSessionReq) (r *ExecResp, err error) {
-  if err = p.sendRemoveSession(req); err != nil { return }
-  return p.recvRemoveSession()
-}
-
-func (p *MetaServiceClient) sendRemoveSession(req *RemoveSessionReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("removeSession", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) RemoveSession(req *RemoveSessionReq) (_r *ExecResp, err error) {
   args := MetaServiceRemoveSessionArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("removeSession", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemoveSession()
 }
 
 
 func (p *MetaServiceClient) recvRemoveSession() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "removeSession" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "removeSession failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "removeSession failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error240 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error241 error
-    error241, err = error240.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error241
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "removeSession failed: invalid message type")
-    return
-  }
-  result := MetaServiceRemoveSessionResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRemoveSessionResult
+  err = p.CC.RecvMsg("removeSession", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ReportTaskFinish(req *ReportTaskReq) (r *ExecResp, err error) {
-  if err = p.sendReportTaskFinish(req); err != nil { return }
-  return p.recvReportTaskFinish()
-}
-
-func (p *MetaServiceClient) sendReportTaskFinish(req *ReportTaskReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("reportTaskFinish", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ReportTaskFinish(req *ReportTaskReq) (_r *ExecResp, err error) {
   args := MetaServiceReportTaskFinishArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("reportTaskFinish", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvReportTaskFinish()
 }
 
 
 func (p *MetaServiceClient) recvReportTaskFinish() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "reportTaskFinish" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "reportTaskFinish failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "reportTaskFinish failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error242 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error243 error
-    error243, err = error242.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error243
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "reportTaskFinish failed: invalid message type")
-    return
-  }
-  result := MetaServiceReportTaskFinishResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceReportTaskFinishResult
+  err = p.CC.RecvMsg("reportTaskFinish", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) ListCluster(req *ListClusterInfoReq) (r *ListClusterInfoResp, err error) {
-  if err = p.sendListCluster(req); err != nil { return }
-  return p.recvListCluster()
-}
-
-func (p *MetaServiceClient) sendListCluster(req *ListClusterInfoReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listCluster", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) ListCluster(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
   args := MetaServiceListClusterArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listCluster", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListCluster()
 }
 
 
 func (p *MetaServiceClient) recvListCluster() (value *ListClusterInfoResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listCluster" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listCluster failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listCluster failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error244 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error245 error
-    error245, err = error244.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error245
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listCluster failed: invalid message type")
-    return
-  }
-  result := MetaServiceListClusterResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListClusterResult
+  err = p.CC.RecvMsg("listCluster", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetMetaDirInfo(req *GetMetaDirInfoReq) (r *GetMetaDirInfoResp, err error) {
-  if err = p.sendGetMetaDirInfo(req); err != nil { return }
-  return p.recvGetMetaDirInfo()
-}
-
-func (p *MetaServiceClient) sendGetMetaDirInfo(req *GetMetaDirInfoReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getMetaDirInfo", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *MetaServiceClient) GetMetaDirInfo(req *GetMetaDirInfoReq) (_r *GetMetaDirInfoResp, err error) {
   args := MetaServiceGetMetaDirInfoArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getMetaDirInfo", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetMetaDirInfo()
 }
 
 
 func (p *MetaServiceClient) recvGetMetaDirInfo() (value *GetMetaDirInfoResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getMetaDirInfo" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getMetaDirInfo failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getMetaDirInfo failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error246 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error247 error
-    error247, err = error246.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error247
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getMetaDirInfo failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetMetaDirInfoResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetMetaDirInfoResult
+  err = p.CC.RecvMsg("getMetaDirInfo", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 
 type MetaServiceThreadsafeClient struct {
-  Transport thrift.Transport
-  ProtocolFactory thrift.ProtocolFactory
-  InputProtocol thrift.Protocol
-  OutputProtocol thrift.Protocol
-  SeqId int32
+  MetaServiceClientInterface
+  CC thrift.ClientConn
   Mu sync.Mutex
 }
 
+func(client *MetaServiceThreadsafeClient) Open() error {
+  client.Mu.Lock()
+  defer client.Mu.Unlock()
+  return client.CC.Open()
+}
+
+func(client *MetaServiceThreadsafeClient) Close() error {
+  client.Mu.Lock()
+  defer client.Mu.Unlock()
+  return client.CC.Close()
+}
+
+func(client *MetaServiceThreadsafeClient) IsOpen() bool {
+  client.Mu.Lock()
+  defer client.Mu.Unlock()
+  return client.CC.IsOpen()
+}
+
 func NewMetaServiceThreadsafeClientFactory(t thrift.Transport, f thrift.ProtocolFactory) *MetaServiceThreadsafeClient {
-  return &MetaServiceThreadsafeClient{Transport: t,
-    ProtocolFactory: f,
-    InputProtocol: f.GetProtocol(t),
-    OutputProtocol: f.GetProtocol(t),
-    SeqId: 0,
-  }
+  return &MetaServiceThreadsafeClient{ CC: thrift.NewClientConn(t, f) }
 }
 
 func NewMetaServiceThreadsafeClient(t thrift.Transport, iprot thrift.Protocol, oprot thrift.Protocol) *MetaServiceThreadsafeClient {
-  return &MetaServiceThreadsafeClient{Transport: t,
-    ProtocolFactory: nil,
-    InputProtocol: iprot,
-    OutputProtocol: oprot,
-    SeqId: 0,
-  }
+  return &MetaServiceThreadsafeClient{ CC: thrift.NewClientConnWithProtocols(t, iprot, oprot) }
 }
 
-func (p *MetaServiceThreadsafeClient) Threadsafe() {}
+func NewMetaServiceThreadsafeClientProtocol(prot thrift.Protocol) *MetaServiceThreadsafeClient {
+  return NewMetaServiceThreadsafeClient(prot.Transport(), prot, prot)
+}
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) CreateSpace(req *CreateSpaceReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) CreateSpace(req *CreateSpaceReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendCreateSpace(req); err != nil { return }
-  return p.recvCreateSpace()
-}
-
-func (p *MetaServiceThreadsafeClient) sendCreateSpace(req *CreateSpaceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createSpace", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceCreateSpaceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createSpace", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateSpace()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvCreateSpace() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createSpace" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createSpace failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createSpace failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error248 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error249 error
-    error249, err = error248.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error249
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createSpace failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateSpaceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateSpaceResult
+  err = p.CC.RecvMsg("createSpace", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) DropSpace(req *DropSpaceReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) DropSpace(req *DropSpaceReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendDropSpace(req); err != nil { return }
-  return p.recvDropSpace()
-}
-
-func (p *MetaServiceThreadsafeClient) sendDropSpace(req *DropSpaceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropSpace", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceDropSpaceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropSpace", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropSpace()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvDropSpace() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropSpace" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropSpace failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropSpace failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error250 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error251 error
-    error251, err = error250.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error251
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropSpace failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropSpaceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropSpaceResult
+  err = p.CC.RecvMsg("dropSpace", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetSpace(req *GetSpaceReq) (r *GetSpaceResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetSpace(req *GetSpaceReq) (_r *GetSpaceResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetSpace(req); err != nil { return }
-  return p.recvGetSpace()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetSpace(req *GetSpaceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getSpace", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetSpaceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getSpace", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetSpace()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetSpace() (value *GetSpaceResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getSpace" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getSpace failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getSpace failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error252 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error253 error
-    error253, err = error252.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error253
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getSpace failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetSpaceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetSpaceResult
+  err = p.CC.RecvMsg("getSpace", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListSpaces(req *ListSpacesReq) (r *ListSpacesResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListSpaces(req *ListSpacesReq) (_r *ListSpacesResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListSpaces(req); err != nil { return }
-  return p.recvListSpaces()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListSpaces(req *ListSpacesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listSpaces", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListSpacesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listSpaces", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListSpaces()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListSpaces() (value *ListSpacesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listSpaces" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listSpaces failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listSpaces failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error254 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error255 error
-    error255, err = error254.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error255
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listSpaces failed: invalid message type")
-    return
-  }
-  result := MetaServiceListSpacesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListSpacesResult
+  err = p.CC.RecvMsg("listSpaces", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) CreateTag(req *CreateTagReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) CreateTag(req *CreateTagReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendCreateTag(req); err != nil { return }
-  return p.recvCreateTag()
-}
-
-func (p *MetaServiceThreadsafeClient) sendCreateTag(req *CreateTagReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createTag", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceCreateTagArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createTag", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateTag()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvCreateTag() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createTag" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createTag failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createTag failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error256 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error257 error
-    error257, err = error256.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error257
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createTag failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateTagResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateTagResult
+  err = p.CC.RecvMsg("createTag", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) AlterTag(req *AlterTagReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) AlterTag(req *AlterTagReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendAlterTag(req); err != nil { return }
-  return p.recvAlterTag()
-}
-
-func (p *MetaServiceThreadsafeClient) sendAlterTag(req *AlterTagReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("alterTag", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceAlterTagArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("alterTag", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAlterTag()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvAlterTag() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "alterTag" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "alterTag failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "alterTag failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error258 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error259 error
-    error259, err = error258.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error259
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "alterTag failed: invalid message type")
-    return
-  }
-  result := MetaServiceAlterTagResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAlterTagResult
+  err = p.CC.RecvMsg("alterTag", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) DropTag(req *DropTagReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) DropTag(req *DropTagReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendDropTag(req); err != nil { return }
-  return p.recvDropTag()
-}
-
-func (p *MetaServiceThreadsafeClient) sendDropTag(req *DropTagReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropTag", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceDropTagArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropTag", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropTag()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvDropTag() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropTag" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropTag failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropTag failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error260 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error261 error
-    error261, err = error260.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error261
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropTag failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropTagResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropTagResult
+  err = p.CC.RecvMsg("dropTag", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetTag(req *GetTagReq) (r *GetTagResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetTag(req *GetTagReq) (_r *GetTagResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetTag(req); err != nil { return }
-  return p.recvGetTag()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetTag(req *GetTagReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getTag", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetTagArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getTag", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetTag()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetTag() (value *GetTagResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getTag" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getTag failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getTag failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error262 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error263 error
-    error263, err = error262.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error263
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getTag failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetTagResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetTagResult
+  err = p.CC.RecvMsg("getTag", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListTags(req *ListTagsReq) (r *ListTagsResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListTags(req *ListTagsReq) (_r *ListTagsResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListTags(req); err != nil { return }
-  return p.recvListTags()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListTags(req *ListTagsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listTags", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListTagsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listTags", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListTags()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListTags() (value *ListTagsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listTags" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listTags failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listTags failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error264 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error265 error
-    error265, err = error264.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error265
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listTags failed: invalid message type")
-    return
-  }
-  result := MetaServiceListTagsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListTagsResult
+  err = p.CC.RecvMsg("listTags", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) CreateEdge(req *CreateEdgeReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) CreateEdge(req *CreateEdgeReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendCreateEdge(req); err != nil { return }
-  return p.recvCreateEdge()
-}
-
-func (p *MetaServiceThreadsafeClient) sendCreateEdge(req *CreateEdgeReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createEdge", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceCreateEdgeArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createEdge", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateEdge()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvCreateEdge() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createEdge" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createEdge failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createEdge failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error266 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error267 error
-    error267, err = error266.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error267
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createEdge failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateEdgeResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateEdgeResult
+  err = p.CC.RecvMsg("createEdge", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) AlterEdge(req *AlterEdgeReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) AlterEdge(req *AlterEdgeReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendAlterEdge(req); err != nil { return }
-  return p.recvAlterEdge()
-}
-
-func (p *MetaServiceThreadsafeClient) sendAlterEdge(req *AlterEdgeReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("alterEdge", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceAlterEdgeArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("alterEdge", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAlterEdge()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvAlterEdge() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "alterEdge" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "alterEdge failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "alterEdge failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error268 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error269 error
-    error269, err = error268.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error269
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "alterEdge failed: invalid message type")
-    return
-  }
-  result := MetaServiceAlterEdgeResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAlterEdgeResult
+  err = p.CC.RecvMsg("alterEdge", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) DropEdge(req *DropEdgeReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) DropEdge(req *DropEdgeReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendDropEdge(req); err != nil { return }
-  return p.recvDropEdge()
-}
-
-func (p *MetaServiceThreadsafeClient) sendDropEdge(req *DropEdgeReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropEdge", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceDropEdgeArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropEdge", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropEdge()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvDropEdge() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropEdge" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropEdge failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropEdge failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error270 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error271 error
-    error271, err = error270.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error271
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropEdge failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropEdgeResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropEdgeResult
+  err = p.CC.RecvMsg("dropEdge", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetEdge(req *GetEdgeReq) (r *GetEdgeResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetEdge(req *GetEdgeReq) (_r *GetEdgeResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetEdge(req); err != nil { return }
-  return p.recvGetEdge()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetEdge(req *GetEdgeReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getEdge", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetEdgeArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getEdge", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetEdge()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetEdge() (value *GetEdgeResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getEdge" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getEdge failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getEdge failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error272 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error273 error
-    error273, err = error272.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error273
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getEdge failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetEdgeResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetEdgeResult
+  err = p.CC.RecvMsg("getEdge", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListEdges(req *ListEdgesReq) (r *ListEdgesResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListEdges(req *ListEdgesReq) (_r *ListEdgesResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListEdges(req); err != nil { return }
-  return p.recvListEdges()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListEdges(req *ListEdgesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listEdges", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListEdgesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listEdges", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListEdges()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListEdges() (value *ListEdgesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listEdges" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listEdges failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listEdges failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error274 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error275 error
-    error275, err = error274.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error275
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listEdges failed: invalid message type")
-    return
-  }
-  result := MetaServiceListEdgesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListEdgesResult
+  err = p.CC.RecvMsg("listEdges", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListHosts(req *ListHostsReq) (r *ListHostsResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListHosts(req *ListHostsReq) (_r *ListHostsResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListHosts(req); err != nil { return }
-  return p.recvListHosts()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListHosts(req *ListHostsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listHosts", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListHostsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listHosts", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListHosts()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListHosts() (value *ListHostsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listHosts" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listHosts failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listHosts failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error276 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error277 error
-    error277, err = error276.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error277
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listHosts failed: invalid message type")
-    return
-  }
-  result := MetaServiceListHostsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListHostsResult
+  err = p.CC.RecvMsg("listHosts", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetPartsAlloc(req *GetPartsAllocReq) (r *GetPartsAllocResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetPartsAlloc(req *GetPartsAllocReq) (_r *GetPartsAllocResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetPartsAlloc(req); err != nil { return }
-  return p.recvGetPartsAlloc()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetPartsAlloc(req *GetPartsAllocReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getPartsAlloc", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetPartsAllocArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getPartsAlloc", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetPartsAlloc()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetPartsAlloc() (value *GetPartsAllocResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getPartsAlloc" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getPartsAlloc failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getPartsAlloc failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error278 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error279 error
-    error279, err = error278.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error279
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getPartsAlloc failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetPartsAllocResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetPartsAllocResult
+  err = p.CC.RecvMsg("getPartsAlloc", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListParts(req *ListPartsReq) (r *ListPartsResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListParts(req *ListPartsReq) (_r *ListPartsResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListParts(req); err != nil { return }
-  return p.recvListParts()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListParts(req *ListPartsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listParts", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListPartsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listParts", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListParts()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListParts() (value *ListPartsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listParts" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listParts failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listParts failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error280 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error281 error
-    error281, err = error280.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error281
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listParts failed: invalid message type")
-    return
-  }
-  result := MetaServiceListPartsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListPartsResult
+  err = p.CC.RecvMsg("listParts", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) MultiPut(req *MultiPutReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) MultiPut(req *MultiPutReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendMultiPut(req); err != nil { return }
-  return p.recvMultiPut()
-}
-
-func (p *MetaServiceThreadsafeClient) sendMultiPut(req *MultiPutReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("multiPut", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceMultiPutArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("multiPut", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvMultiPut()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvMultiPut() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "multiPut" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "multiPut failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "multiPut failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error282 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error283 error
-    error283, err = error282.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error283
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "multiPut failed: invalid message type")
-    return
-  }
-  result := MetaServiceMultiPutResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceMultiPutResult
+  err = p.CC.RecvMsg("multiPut", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) Get(req *GetReq) (r *GetResp, err error) {
+func (p *MetaServiceThreadsafeClient) Get(req *GetReq) (_r *GetResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGet(req); err != nil { return }
-  return p.recvGet()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGet(req *GetReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("get", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("get", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGet()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGet() (value *GetResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "get" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "get failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "get failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error284 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error285 error
-    error285, err = error284.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error285
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "get failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetResult
+  err = p.CC.RecvMsg("get", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) MultiGet(req *MultiGetReq) (r *MultiGetResp, err error) {
+func (p *MetaServiceThreadsafeClient) MultiGet(req *MultiGetReq) (_r *MultiGetResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendMultiGet(req); err != nil { return }
-  return p.recvMultiGet()
-}
-
-func (p *MetaServiceThreadsafeClient) sendMultiGet(req *MultiGetReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("multiGet", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceMultiGetArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("multiGet", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvMultiGet()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvMultiGet() (value *MultiGetResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "multiGet" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "multiGet failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "multiGet failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error286 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error287 error
-    error287, err = error286.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error287
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "multiGet failed: invalid message type")
-    return
-  }
-  result := MetaServiceMultiGetResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceMultiGetResult
+  err = p.CC.RecvMsg("multiGet", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) Remove(req *RemoveReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) Remove(req *RemoveReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRemove(req); err != nil { return }
-  return p.recvRemove()
-}
-
-func (p *MetaServiceThreadsafeClient) sendRemove(req *RemoveReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("remove", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceRemoveArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("remove", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemove()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvRemove() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "remove" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "remove failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "remove failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error288 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error289 error
-    error289, err = error288.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error289
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "remove failed: invalid message type")
-    return
-  }
-  result := MetaServiceRemoveResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRemoveResult
+  err = p.CC.RecvMsg("remove", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) RemoveRange(req *RemoveRangeReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) RemoveRange(req *RemoveRangeReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRemoveRange(req); err != nil { return }
-  return p.recvRemoveRange()
-}
-
-func (p *MetaServiceThreadsafeClient) sendRemoveRange(req *RemoveRangeReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("removeRange", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceRemoveRangeArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("removeRange", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemoveRange()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvRemoveRange() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "removeRange" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "removeRange failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "removeRange failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error290 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error291 error
-    error291, err = error290.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error291
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "removeRange failed: invalid message type")
-    return
-  }
-  result := MetaServiceRemoveRangeResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRemoveRangeResult
+  err = p.CC.RecvMsg("removeRange", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) Scan(req *ScanReq) (r *ScanResp, err error) {
+func (p *MetaServiceThreadsafeClient) Scan(req *ScanReq) (_r *ScanResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendScan(req); err != nil { return }
-  return p.recvScan()
-}
-
-func (p *MetaServiceThreadsafeClient) sendScan(req *ScanReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("scan", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceScanArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("scan", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvScan()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvScan() (value *ScanResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "scan" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "scan failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "scan failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error292 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error293 error
-    error293, err = error292.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error293
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "scan failed: invalid message type")
-    return
-  }
-  result := MetaServiceScanResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceScanResult
+  err = p.CC.RecvMsg("scan", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) CreateTagIndex(req *CreateTagIndexReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) CreateTagIndex(req *CreateTagIndexReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendCreateTagIndex(req); err != nil { return }
-  return p.recvCreateTagIndex()
-}
-
-func (p *MetaServiceThreadsafeClient) sendCreateTagIndex(req *CreateTagIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createTagIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceCreateTagIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createTagIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateTagIndex()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvCreateTagIndex() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createTagIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createTagIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createTagIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error294 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error295 error
-    error295, err = error294.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error295
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createTagIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateTagIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateTagIndexResult
+  err = p.CC.RecvMsg("createTagIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) DropTagIndex(req *DropTagIndexReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) DropTagIndex(req *DropTagIndexReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendDropTagIndex(req); err != nil { return }
-  return p.recvDropTagIndex()
-}
-
-func (p *MetaServiceThreadsafeClient) sendDropTagIndex(req *DropTagIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropTagIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceDropTagIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropTagIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropTagIndex()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvDropTagIndex() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropTagIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropTagIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropTagIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error296 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error297 error
-    error297, err = error296.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error297
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropTagIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropTagIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropTagIndexResult
+  err = p.CC.RecvMsg("dropTagIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetTagIndex(req *GetTagIndexReq) (r *GetTagIndexResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetTagIndex(req *GetTagIndexReq) (_r *GetTagIndexResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetTagIndex(req); err != nil { return }
-  return p.recvGetTagIndex()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetTagIndex(req *GetTagIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getTagIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetTagIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getTagIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetTagIndex()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetTagIndex() (value *GetTagIndexResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getTagIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getTagIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getTagIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error298 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error299 error
-    error299, err = error298.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error299
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getTagIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetTagIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetTagIndexResult
+  err = p.CC.RecvMsg("getTagIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListTagIndexes(req *ListTagIndexesReq) (r *ListTagIndexesResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListTagIndexes(req *ListTagIndexesReq) (_r *ListTagIndexesResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListTagIndexes(req); err != nil { return }
-  return p.recvListTagIndexes()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListTagIndexes(req *ListTagIndexesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listTagIndexes", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListTagIndexesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listTagIndexes", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListTagIndexes()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListTagIndexes() (value *ListTagIndexesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listTagIndexes" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listTagIndexes failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listTagIndexes failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error300 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error301 error
-    error301, err = error300.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error301
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listTagIndexes failed: invalid message type")
-    return
-  }
-  result := MetaServiceListTagIndexesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListTagIndexesResult
+  err = p.CC.RecvMsg("listTagIndexes", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) RebuildTagIndex(req *RebuildIndexReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) RebuildTagIndex(req *RebuildIndexReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRebuildTagIndex(req); err != nil { return }
-  return p.recvRebuildTagIndex()
-}
-
-func (p *MetaServiceThreadsafeClient) sendRebuildTagIndex(req *RebuildIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("rebuildTagIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceRebuildTagIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("rebuildTagIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRebuildTagIndex()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvRebuildTagIndex() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "rebuildTagIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "rebuildTagIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "rebuildTagIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error302 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error303 error
-    error303, err = error302.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error303
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "rebuildTagIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceRebuildTagIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRebuildTagIndexResult
+  err = p.CC.RecvMsg("rebuildTagIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListTagIndexStatus(req *ListIndexStatusReq) (r *ListIndexStatusResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListTagIndexStatus(req *ListIndexStatusReq) (_r *ListIndexStatusResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListTagIndexStatus(req); err != nil { return }
-  return p.recvListTagIndexStatus()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListTagIndexStatus(req *ListIndexStatusReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listTagIndexStatus", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListTagIndexStatusArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listTagIndexStatus", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListTagIndexStatus()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListTagIndexStatus() (value *ListIndexStatusResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listTagIndexStatus" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listTagIndexStatus failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listTagIndexStatus failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error304 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error305 error
-    error305, err = error304.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error305
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listTagIndexStatus failed: invalid message type")
-    return
-  }
-  result := MetaServiceListTagIndexStatusResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListTagIndexStatusResult
+  err = p.CC.RecvMsg("listTagIndexStatus", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) CreateEdgeIndex(req *CreateEdgeIndexReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) CreateEdgeIndex(req *CreateEdgeIndexReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendCreateEdgeIndex(req); err != nil { return }
-  return p.recvCreateEdgeIndex()
-}
-
-func (p *MetaServiceThreadsafeClient) sendCreateEdgeIndex(req *CreateEdgeIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createEdgeIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceCreateEdgeIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createEdgeIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateEdgeIndex()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvCreateEdgeIndex() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createEdgeIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createEdgeIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createEdgeIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error306 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error307 error
-    error307, err = error306.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error307
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createEdgeIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateEdgeIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateEdgeIndexResult
+  err = p.CC.RecvMsg("createEdgeIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) DropEdgeIndex(req *DropEdgeIndexReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) DropEdgeIndex(req *DropEdgeIndexReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendDropEdgeIndex(req); err != nil { return }
-  return p.recvDropEdgeIndex()
-}
-
-func (p *MetaServiceThreadsafeClient) sendDropEdgeIndex(req *DropEdgeIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropEdgeIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceDropEdgeIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropEdgeIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropEdgeIndex()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvDropEdgeIndex() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropEdgeIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropEdgeIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropEdgeIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error308 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error309 error
-    error309, err = error308.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error309
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropEdgeIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropEdgeIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropEdgeIndexResult
+  err = p.CC.RecvMsg("dropEdgeIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetEdgeIndex(req *GetEdgeIndexReq) (r *GetEdgeIndexResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetEdgeIndex(req *GetEdgeIndexReq) (_r *GetEdgeIndexResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetEdgeIndex(req); err != nil { return }
-  return p.recvGetEdgeIndex()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetEdgeIndex(req *GetEdgeIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getEdgeIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetEdgeIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getEdgeIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetEdgeIndex()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetEdgeIndex() (value *GetEdgeIndexResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getEdgeIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getEdgeIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getEdgeIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error310 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error311 error
-    error311, err = error310.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error311
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getEdgeIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetEdgeIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetEdgeIndexResult
+  err = p.CC.RecvMsg("getEdgeIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListEdgeIndexes(req *ListEdgeIndexesReq) (r *ListEdgeIndexesResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListEdgeIndexes(req *ListEdgeIndexesReq) (_r *ListEdgeIndexesResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListEdgeIndexes(req); err != nil { return }
-  return p.recvListEdgeIndexes()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListEdgeIndexes(req *ListEdgeIndexesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listEdgeIndexes", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListEdgeIndexesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listEdgeIndexes", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListEdgeIndexes()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListEdgeIndexes() (value *ListEdgeIndexesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listEdgeIndexes" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listEdgeIndexes failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listEdgeIndexes failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error312 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error313 error
-    error313, err = error312.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error313
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listEdgeIndexes failed: invalid message type")
-    return
-  }
-  result := MetaServiceListEdgeIndexesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListEdgeIndexesResult
+  err = p.CC.RecvMsg("listEdgeIndexes", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) RebuildEdgeIndex(req *RebuildIndexReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) RebuildEdgeIndex(req *RebuildIndexReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRebuildEdgeIndex(req); err != nil { return }
-  return p.recvRebuildEdgeIndex()
-}
-
-func (p *MetaServiceThreadsafeClient) sendRebuildEdgeIndex(req *RebuildIndexReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("rebuildEdgeIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceRebuildEdgeIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("rebuildEdgeIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRebuildEdgeIndex()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvRebuildEdgeIndex() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "rebuildEdgeIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "rebuildEdgeIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "rebuildEdgeIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error314 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error315 error
-    error315, err = error314.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error315
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "rebuildEdgeIndex failed: invalid message type")
-    return
-  }
-  result := MetaServiceRebuildEdgeIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRebuildEdgeIndexResult
+  err = p.CC.RecvMsg("rebuildEdgeIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListEdgeIndexStatus(req *ListIndexStatusReq) (r *ListIndexStatusResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListEdgeIndexStatus(req *ListIndexStatusReq) (_r *ListIndexStatusResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListEdgeIndexStatus(req); err != nil { return }
-  return p.recvListEdgeIndexStatus()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListEdgeIndexStatus(req *ListIndexStatusReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listEdgeIndexStatus", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListEdgeIndexStatusArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listEdgeIndexStatus", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListEdgeIndexStatus()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListEdgeIndexStatus() (value *ListIndexStatusResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listEdgeIndexStatus" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listEdgeIndexStatus failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listEdgeIndexStatus failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error316 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error317 error
-    error317, err = error316.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error317
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listEdgeIndexStatus failed: invalid message type")
-    return
-  }
-  result := MetaServiceListEdgeIndexStatusResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListEdgeIndexStatusResult
+  err = p.CC.RecvMsg("listEdgeIndexStatus", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) CreateUser(req *CreateUserReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) CreateUser(req *CreateUserReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendCreateUser(req); err != nil { return }
-  return p.recvCreateUser()
-}
-
-func (p *MetaServiceThreadsafeClient) sendCreateUser(req *CreateUserReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createUser", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceCreateUserArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createUser", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateUser()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvCreateUser() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createUser" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createUser failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createUser failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error318 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error319 error
-    error319, err = error318.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error319
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createUser failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateUserResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateUserResult
+  err = p.CC.RecvMsg("createUser", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) DropUser(req *DropUserReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) DropUser(req *DropUserReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendDropUser(req); err != nil { return }
-  return p.recvDropUser()
-}
-
-func (p *MetaServiceThreadsafeClient) sendDropUser(req *DropUserReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropUser", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceDropUserArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropUser", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropUser()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvDropUser() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropUser" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropUser failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropUser failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error320 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error321 error
-    error321, err = error320.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error321
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropUser failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropUserResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropUserResult
+  err = p.CC.RecvMsg("dropUser", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) AlterUser(req *AlterUserReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) AlterUser(req *AlterUserReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendAlterUser(req); err != nil { return }
-  return p.recvAlterUser()
-}
-
-func (p *MetaServiceThreadsafeClient) sendAlterUser(req *AlterUserReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("alterUser", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceAlterUserArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("alterUser", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAlterUser()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvAlterUser() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "alterUser" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "alterUser failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "alterUser failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error322 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error323 error
-    error323, err = error322.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error323
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "alterUser failed: invalid message type")
-    return
-  }
-  result := MetaServiceAlterUserResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAlterUserResult
+  err = p.CC.RecvMsg("alterUser", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GrantRole(req *GrantRoleReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) GrantRole(req *GrantRoleReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGrantRole(req); err != nil { return }
-  return p.recvGrantRole()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGrantRole(req *GrantRoleReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("grantRole", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGrantRoleArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("grantRole", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGrantRole()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGrantRole() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "grantRole" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "grantRole failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "grantRole failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error324 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error325 error
-    error325, err = error324.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error325
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "grantRole failed: invalid message type")
-    return
-  }
-  result := MetaServiceGrantRoleResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGrantRoleResult
+  err = p.CC.RecvMsg("grantRole", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) RevokeRole(req *RevokeRoleReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) RevokeRole(req *RevokeRoleReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRevokeRole(req); err != nil { return }
-  return p.recvRevokeRole()
-}
-
-func (p *MetaServiceThreadsafeClient) sendRevokeRole(req *RevokeRoleReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("revokeRole", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceRevokeRoleArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("revokeRole", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRevokeRole()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvRevokeRole() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "revokeRole" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "revokeRole failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "revokeRole failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error326 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error327 error
-    error327, err = error326.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error327
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "revokeRole failed: invalid message type")
-    return
-  }
-  result := MetaServiceRevokeRoleResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRevokeRoleResult
+  err = p.CC.RecvMsg("revokeRole", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListUsers(req *ListUsersReq) (r *ListUsersResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListUsers(req *ListUsersReq) (_r *ListUsersResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListUsers(req); err != nil { return }
-  return p.recvListUsers()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListUsers(req *ListUsersReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listUsers", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListUsersArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listUsers", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListUsers()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListUsers() (value *ListUsersResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listUsers" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listUsers failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listUsers failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error328 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error329 error
-    error329, err = error328.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error329
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listUsers failed: invalid message type")
-    return
-  }
-  result := MetaServiceListUsersResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListUsersResult
+  err = p.CC.RecvMsg("listUsers", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListRoles(req *ListRolesReq) (r *ListRolesResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListRoles(req *ListRolesReq) (_r *ListRolesResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListRoles(req); err != nil { return }
-  return p.recvListRoles()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListRoles(req *ListRolesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listRoles", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListRolesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listRoles", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListRoles()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListRoles() (value *ListRolesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listRoles" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listRoles failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listRoles failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error330 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error331 error
-    error331, err = error330.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error331
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listRoles failed: invalid message type")
-    return
-  }
-  result := MetaServiceListRolesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListRolesResult
+  err = p.CC.RecvMsg("listRoles", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetUserRoles(req *GetUserRolesReq) (r *ListRolesResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetUserRoles(req *GetUserRolesReq) (_r *ListRolesResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetUserRoles(req); err != nil { return }
-  return p.recvGetUserRoles()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetUserRoles(req *GetUserRolesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getUserRoles", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetUserRolesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getUserRoles", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetUserRoles()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetUserRoles() (value *ListRolesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getUserRoles" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getUserRoles failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getUserRoles failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error332 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error333 error
-    error333, err = error332.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error333
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getUserRoles failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetUserRolesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetUserRolesResult
+  err = p.CC.RecvMsg("getUserRoles", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ChangePassword(req *ChangePasswordReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) ChangePassword(req *ChangePasswordReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendChangePassword(req); err != nil { return }
-  return p.recvChangePassword()
-}
-
-func (p *MetaServiceThreadsafeClient) sendChangePassword(req *ChangePasswordReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("changePassword", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceChangePasswordArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("changePassword", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvChangePassword()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvChangePassword() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "changePassword" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "changePassword failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "changePassword failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error334 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error335 error
-    error335, err = error334.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error335
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "changePassword failed: invalid message type")
-    return
-  }
-  result := MetaServiceChangePasswordResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceChangePasswordResult
+  err = p.CC.RecvMsg("changePassword", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) HeartBeat(req *HBReq) (r *HBResp, err error) {
+func (p *MetaServiceThreadsafeClient) HeartBeat(req *HBReq) (_r *HBResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendHeartBeat(req); err != nil { return }
-  return p.recvHeartBeat()
-}
-
-func (p *MetaServiceThreadsafeClient) sendHeartBeat(req *HBReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("heartBeat", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceHeartBeatArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("heartBeat", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvHeartBeat()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvHeartBeat() (value *HBResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "heartBeat" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "heartBeat failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "heartBeat failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error336 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error337 error
-    error337, err = error336.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error337
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "heartBeat failed: invalid message type")
-    return
-  }
-  result := MetaServiceHeartBeatResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceHeartBeatResult
+  err = p.CC.RecvMsg("heartBeat", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) Balance(req *BalanceReq) (r *BalanceResp, err error) {
+func (p *MetaServiceThreadsafeClient) Balance(req *BalanceReq) (_r *BalanceResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendBalance(req); err != nil { return }
-  return p.recvBalance()
-}
-
-func (p *MetaServiceThreadsafeClient) sendBalance(req *BalanceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("balance", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceBalanceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("balance", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvBalance()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvBalance() (value *BalanceResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "balance" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "balance failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "balance failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error338 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error339 error
-    error339, err = error338.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error339
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "balance failed: invalid message type")
-    return
-  }
-  result := MetaServiceBalanceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceBalanceResult
+  err = p.CC.RecvMsg("balance", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) LeaderBalance(req *LeaderBalanceReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) LeaderBalance(req *LeaderBalanceReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendLeaderBalance(req); err != nil { return }
-  return p.recvLeaderBalance()
-}
-
-func (p *MetaServiceThreadsafeClient) sendLeaderBalance(req *LeaderBalanceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("leaderBalance", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceLeaderBalanceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("leaderBalance", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvLeaderBalance()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvLeaderBalance() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "leaderBalance" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "leaderBalance failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "leaderBalance failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error340 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error341 error
-    error341, err = error340.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error341
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "leaderBalance failed: invalid message type")
-    return
-  }
-  result := MetaServiceLeaderBalanceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceLeaderBalanceResult
+  err = p.CC.RecvMsg("leaderBalance", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) RegConfig(req *RegConfigReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) RegConfig(req *RegConfigReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRegConfig(req); err != nil { return }
-  return p.recvRegConfig()
-}
-
-func (p *MetaServiceThreadsafeClient) sendRegConfig(req *RegConfigReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("regConfig", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceRegConfigArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("regConfig", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRegConfig()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvRegConfig() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "regConfig" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "regConfig failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "regConfig failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error342 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error343 error
-    error343, err = error342.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error343
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "regConfig failed: invalid message type")
-    return
-  }
-  result := MetaServiceRegConfigResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRegConfigResult
+  err = p.CC.RecvMsg("regConfig", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetConfig(req *GetConfigReq) (r *GetConfigResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetConfig(req *GetConfigReq) (_r *GetConfigResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetConfig(req); err != nil { return }
-  return p.recvGetConfig()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetConfig(req *GetConfigReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getConfig", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetConfigArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getConfig", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetConfig()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetConfig() (value *GetConfigResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getConfig" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getConfig failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getConfig failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error344 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error345 error
-    error345, err = error344.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error345
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getConfig failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetConfigResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetConfigResult
+  err = p.CC.RecvMsg("getConfig", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) SetConfig(req *SetConfigReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) SetConfig(req *SetConfigReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendSetConfig(req); err != nil { return }
-  return p.recvSetConfig()
-}
-
-func (p *MetaServiceThreadsafeClient) sendSetConfig(req *SetConfigReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("setConfig", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceSetConfigArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("setConfig", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvSetConfig()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvSetConfig() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "setConfig" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "setConfig failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "setConfig failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error346 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error347 error
-    error347, err = error346.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error347
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "setConfig failed: invalid message type")
-    return
-  }
-  result := MetaServiceSetConfigResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceSetConfigResult
+  err = p.CC.RecvMsg("setConfig", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListConfigs(req *ListConfigsReq) (r *ListConfigsResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListConfigs(req *ListConfigsReq) (_r *ListConfigsResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListConfigs(req); err != nil { return }
-  return p.recvListConfigs()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListConfigs(req *ListConfigsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listConfigs", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListConfigsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listConfigs", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListConfigs()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListConfigs() (value *ListConfigsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listConfigs" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listConfigs failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listConfigs failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error348 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error349 error
-    error349, err = error348.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error349
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listConfigs failed: invalid message type")
-    return
-  }
-  result := MetaServiceListConfigsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListConfigsResult
+  err = p.CC.RecvMsg("listConfigs", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) CreateSnapshot(req *CreateSnapshotReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) CreateSnapshot(req *CreateSnapshotReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendCreateSnapshot(req); err != nil { return }
-  return p.recvCreateSnapshot()
-}
-
-func (p *MetaServiceThreadsafeClient) sendCreateSnapshot(req *CreateSnapshotReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createSnapshot", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceCreateSnapshotArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createSnapshot", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateSnapshot()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvCreateSnapshot() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createSnapshot" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createSnapshot failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createSnapshot failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error350 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error351 error
-    error351, err = error350.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error351
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createSnapshot failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateSnapshotResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateSnapshotResult
+  err = p.CC.RecvMsg("createSnapshot", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) DropSnapshot(req *DropSnapshotReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) DropSnapshot(req *DropSnapshotReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendDropSnapshot(req); err != nil { return }
-  return p.recvDropSnapshot()
-}
-
-func (p *MetaServiceThreadsafeClient) sendDropSnapshot(req *DropSnapshotReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropSnapshot", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceDropSnapshotArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropSnapshot", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropSnapshot()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvDropSnapshot() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropSnapshot" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropSnapshot failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropSnapshot failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error352 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error353 error
-    error353, err = error352.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error353
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropSnapshot failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropSnapshotResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropSnapshotResult
+  err = p.CC.RecvMsg("dropSnapshot", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListSnapshots(req *ListSnapshotsReq) (r *ListSnapshotsResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListSnapshots(req *ListSnapshotsReq) (_r *ListSnapshotsResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListSnapshots(req); err != nil { return }
-  return p.recvListSnapshots()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListSnapshots(req *ListSnapshotsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listSnapshots", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListSnapshotsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listSnapshots", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListSnapshots()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListSnapshots() (value *ListSnapshotsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listSnapshots" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listSnapshots failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listSnapshots failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error354 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error355 error
-    error355, err = error354.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error355
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listSnapshots failed: invalid message type")
-    return
-  }
-  result := MetaServiceListSnapshotsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListSnapshotsResult
+  err = p.CC.RecvMsg("listSnapshots", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) RunAdminJob(req *AdminJobReq) (r *AdminJobResp, err error) {
+func (p *MetaServiceThreadsafeClient) RunAdminJob(req *AdminJobReq) (_r *AdminJobResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRunAdminJob(req); err != nil { return }
-  return p.recvRunAdminJob()
-}
-
-func (p *MetaServiceThreadsafeClient) sendRunAdminJob(req *AdminJobReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("runAdminJob", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceRunAdminJobArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("runAdminJob", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRunAdminJob()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvRunAdminJob() (value *AdminJobResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "runAdminJob" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "runAdminJob failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "runAdminJob failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error356 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error357 error
-    error357, err = error356.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error357
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "runAdminJob failed: invalid message type")
-    return
-  }
-  result := MetaServiceRunAdminJobResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRunAdminJobResult
+  err = p.CC.RecvMsg("runAdminJob", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) AddZone(req *AddZoneReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) AddZone(req *AddZoneReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendAddZone(req); err != nil { return }
-  return p.recvAddZone()
-}
-
-func (p *MetaServiceThreadsafeClient) sendAddZone(req *AddZoneReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addZone", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceAddZoneArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addZone", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddZone()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvAddZone() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addZone" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addZone failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addZone failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error358 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error359 error
-    error359, err = error358.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error359
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addZone failed: invalid message type")
-    return
-  }
-  result := MetaServiceAddZoneResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAddZoneResult
+  err = p.CC.RecvMsg("addZone", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) DropZone(req *DropZoneReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) DropZone(req *DropZoneReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendDropZone(req); err != nil { return }
-  return p.recvDropZone()
-}
-
-func (p *MetaServiceThreadsafeClient) sendDropZone(req *DropZoneReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropZone", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceDropZoneArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropZone", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropZone()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvDropZone() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropZone" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropZone failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropZone failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error360 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error361 error
-    error361, err = error360.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error361
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropZone failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropZoneResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropZoneResult
+  err = p.CC.RecvMsg("dropZone", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) AddHostIntoZone(req *AddHostIntoZoneReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) AddHostIntoZone(req *AddHostIntoZoneReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendAddHostIntoZone(req); err != nil { return }
-  return p.recvAddHostIntoZone()
-}
-
-func (p *MetaServiceThreadsafeClient) sendAddHostIntoZone(req *AddHostIntoZoneReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addHostIntoZone", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceAddHostIntoZoneArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addHostIntoZone", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddHostIntoZone()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvAddHostIntoZone() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addHostIntoZone" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addHostIntoZone failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addHostIntoZone failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error362 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error363 error
-    error363, err = error362.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error363
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addHostIntoZone failed: invalid message type")
-    return
-  }
-  result := MetaServiceAddHostIntoZoneResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAddHostIntoZoneResult
+  err = p.CC.RecvMsg("addHostIntoZone", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) DropHostFromZone(req *DropHostFromZoneReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) DropHostFromZone(req *DropHostFromZoneReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendDropHostFromZone(req); err != nil { return }
-  return p.recvDropHostFromZone()
-}
-
-func (p *MetaServiceThreadsafeClient) sendDropHostFromZone(req *DropHostFromZoneReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropHostFromZone", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceDropHostFromZoneArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropHostFromZone", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropHostFromZone()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvDropHostFromZone() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropHostFromZone" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropHostFromZone failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropHostFromZone failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error364 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error365 error
-    error365, err = error364.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error365
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropHostFromZone failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropHostFromZoneResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropHostFromZoneResult
+  err = p.CC.RecvMsg("dropHostFromZone", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetZone(req *GetZoneReq) (r *GetZoneResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetZone(req *GetZoneReq) (_r *GetZoneResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetZone(req); err != nil { return }
-  return p.recvGetZone()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetZone(req *GetZoneReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getZone", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetZoneArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getZone", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetZone()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetZone() (value *GetZoneResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getZone" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getZone failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getZone failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error366 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error367 error
-    error367, err = error366.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error367
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getZone failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetZoneResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetZoneResult
+  err = p.CC.RecvMsg("getZone", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListZones(req *ListZonesReq) (r *ListZonesResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListZones(req *ListZonesReq) (_r *ListZonesResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListZones(req); err != nil { return }
-  return p.recvListZones()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListZones(req *ListZonesReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listZones", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListZonesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listZones", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListZones()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListZones() (value *ListZonesResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listZones" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listZones failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listZones failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error368 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error369 error
-    error369, err = error368.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error369
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listZones failed: invalid message type")
-    return
-  }
-  result := MetaServiceListZonesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListZonesResult
+  err = p.CC.RecvMsg("listZones", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) AddGroup(req *AddGroupReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) AddGroup(req *AddGroupReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendAddGroup(req); err != nil { return }
-  return p.recvAddGroup()
-}
-
-func (p *MetaServiceThreadsafeClient) sendAddGroup(req *AddGroupReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addGroup", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceAddGroupArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addGroup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddGroup()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvAddGroup() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addGroup" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addGroup failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addGroup failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error370 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error371 error
-    error371, err = error370.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error371
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addGroup failed: invalid message type")
-    return
-  }
-  result := MetaServiceAddGroupResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAddGroupResult
+  err = p.CC.RecvMsg("addGroup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) DropGroup(req *DropGroupReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) DropGroup(req *DropGroupReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendDropGroup(req); err != nil { return }
-  return p.recvDropGroup()
-}
-
-func (p *MetaServiceThreadsafeClient) sendDropGroup(req *DropGroupReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropGroup", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceDropGroupArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropGroup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropGroup()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvDropGroup() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropGroup" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropGroup failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropGroup failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error372 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error373 error
-    error373, err = error372.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error373
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropGroup failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropGroupResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropGroupResult
+  err = p.CC.RecvMsg("dropGroup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) AddZoneIntoGroup(req *AddZoneIntoGroupReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) AddZoneIntoGroup(req *AddZoneIntoGroupReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendAddZoneIntoGroup(req); err != nil { return }
-  return p.recvAddZoneIntoGroup()
-}
-
-func (p *MetaServiceThreadsafeClient) sendAddZoneIntoGroup(req *AddZoneIntoGroupReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addZoneIntoGroup", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceAddZoneIntoGroupArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addZoneIntoGroup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddZoneIntoGroup()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvAddZoneIntoGroup() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addZoneIntoGroup" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addZoneIntoGroup failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addZoneIntoGroup failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error374 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error375 error
-    error375, err = error374.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error375
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addZoneIntoGroup failed: invalid message type")
-    return
-  }
-  result := MetaServiceAddZoneIntoGroupResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAddZoneIntoGroupResult
+  err = p.CC.RecvMsg("addZoneIntoGroup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) DropZoneFromGroup(req *DropZoneFromGroupReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) DropZoneFromGroup(req *DropZoneFromGroupReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendDropZoneFromGroup(req); err != nil { return }
-  return p.recvDropZoneFromGroup()
-}
-
-func (p *MetaServiceThreadsafeClient) sendDropZoneFromGroup(req *DropZoneFromGroupReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropZoneFromGroup", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceDropZoneFromGroupArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropZoneFromGroup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropZoneFromGroup()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvDropZoneFromGroup() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropZoneFromGroup" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropZoneFromGroup failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropZoneFromGroup failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error376 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error377 error
-    error377, err = error376.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error377
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropZoneFromGroup failed: invalid message type")
-    return
-  }
-  result := MetaServiceDropZoneFromGroupResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceDropZoneFromGroupResult
+  err = p.CC.RecvMsg("dropZoneFromGroup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetGroup(req *GetGroupReq) (r *GetGroupResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetGroup(req *GetGroupReq) (_r *GetGroupResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetGroup(req); err != nil { return }
-  return p.recvGetGroup()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetGroup(req *GetGroupReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getGroup", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetGroupArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getGroup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetGroup()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetGroup() (value *GetGroupResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getGroup" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getGroup failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getGroup failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error378 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error379 error
-    error379, err = error378.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error379
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getGroup failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetGroupResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetGroupResult
+  err = p.CC.RecvMsg("getGroup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListGroups(req *ListGroupsReq) (r *ListGroupsResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListGroups(req *ListGroupsReq) (_r *ListGroupsResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListGroups(req); err != nil { return }
-  return p.recvListGroups()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListGroups(req *ListGroupsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listGroups", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListGroupsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listGroups", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListGroups()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListGroups() (value *ListGroupsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listGroups" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listGroups failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listGroups failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error380 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error381 error
-    error381, err = error380.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error381
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listGroups failed: invalid message type")
-    return
-  }
-  result := MetaServiceListGroupsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListGroupsResult
+  err = p.CC.RecvMsg("listGroups", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) CreateBackup(req *CreateBackupReq) (r *CreateBackupResp, err error) {
+func (p *MetaServiceThreadsafeClient) CreateBackup(req *CreateBackupReq) (_r *CreateBackupResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendCreateBackup(req); err != nil { return }
-  return p.recvCreateBackup()
-}
-
-func (p *MetaServiceThreadsafeClient) sendCreateBackup(req *CreateBackupReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createBackup", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceCreateBackupArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createBackup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateBackup()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvCreateBackup() (value *CreateBackupResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createBackup" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createBackup failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createBackup failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error382 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error383 error
-    error383, err = error382.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error383
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createBackup failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateBackupResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateBackupResult
+  err = p.CC.RecvMsg("createBackup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) RestoreMeta(req *RestoreMetaReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRestoreMeta(req); err != nil { return }
-  return p.recvRestoreMeta()
-}
-
-func (p *MetaServiceThreadsafeClient) sendRestoreMeta(req *RestoreMetaReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("restoreMeta", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceRestoreMetaArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("restoreMeta", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRestoreMeta()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvRestoreMeta() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "restoreMeta" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "restoreMeta failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "restoreMeta failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error384 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error385 error
-    error385, err = error384.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error385
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "restoreMeta failed: invalid message type")
-    return
-  }
-  result := MetaServiceRestoreMetaResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRestoreMetaResult
+  err = p.CC.RecvMsg("restoreMeta", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) AddListener(req *AddListenerReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) AddListener(req *AddListenerReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendAddListener(req); err != nil { return }
-  return p.recvAddListener()
-}
-
-func (p *MetaServiceThreadsafeClient) sendAddListener(req *AddListenerReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addListener", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceAddListenerArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addListener", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddListener()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvAddListener() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addListener" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addListener failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addListener failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error386 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error387 error
-    error387, err = error386.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error387
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addListener failed: invalid message type")
-    return
-  }
-  result := MetaServiceAddListenerResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceAddListenerResult
+  err = p.CC.RecvMsg("addListener", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) RemoveListener(req *RemoveListenerReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) RemoveListener(req *RemoveListenerReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRemoveListener(req); err != nil { return }
-  return p.recvRemoveListener()
-}
-
-func (p *MetaServiceThreadsafeClient) sendRemoveListener(req *RemoveListenerReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("removeListener", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceRemoveListenerArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("removeListener", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemoveListener()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvRemoveListener() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "removeListener" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "removeListener failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "removeListener failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error388 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error389 error
-    error389, err = error388.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error389
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "removeListener failed: invalid message type")
-    return
-  }
-  result := MetaServiceRemoveListenerResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRemoveListenerResult
+  err = p.CC.RecvMsg("removeListener", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListListener(req *ListListenerReq) (r *ListListenerResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListListener(req *ListListenerReq) (_r *ListListenerResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListListener(req); err != nil { return }
-  return p.recvListListener()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListListener(req *ListListenerReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listListener", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListListenerArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listListener", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListListener()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListListener() (value *ListListenerResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listListener" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listListener failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listListener failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error390 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error391 error
-    error391, err = error390.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error391
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listListener failed: invalid message type")
-    return
-  }
-  result := MetaServiceListListenerResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListListenerResult
+  err = p.CC.RecvMsg("listListener", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetStatis(req *GetStatisReq) (r *GetStatisResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetStatis(req *GetStatisReq) (_r *GetStatisResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetStatis(req); err != nil { return }
-  return p.recvGetStatis()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetStatis(req *GetStatisReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getStatis", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetStatisArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getStatis", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetStatis()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetStatis() (value *GetStatisResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getStatis" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getStatis failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getStatis failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error392 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error393 error
-    error393, err = error392.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error393
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getStatis failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetStatisResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetStatisResult
+  err = p.CC.RecvMsg("getStatis", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) SignInFTService(req *SignInFTServiceReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) SignInFTService(req *SignInFTServiceReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendSignInFTService(req); err != nil { return }
-  return p.recvSignInFTService()
-}
-
-func (p *MetaServiceThreadsafeClient) sendSignInFTService(req *SignInFTServiceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("signInFTService", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceSignInFTServiceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("signInFTService", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvSignInFTService()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvSignInFTService() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "signInFTService" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "signInFTService failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "signInFTService failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error394 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error395 error
-    error395, err = error394.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error395
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "signInFTService failed: invalid message type")
-    return
-  }
-  result := MetaServiceSignInFTServiceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceSignInFTServiceResult
+  err = p.CC.RecvMsg("signInFTService", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) SignOutFTService(req *SignOutFTServiceReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) SignOutFTService(req *SignOutFTServiceReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendSignOutFTService(req); err != nil { return }
-  return p.recvSignOutFTService()
-}
-
-func (p *MetaServiceThreadsafeClient) sendSignOutFTService(req *SignOutFTServiceReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("signOutFTService", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceSignOutFTServiceArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("signOutFTService", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvSignOutFTService()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvSignOutFTService() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "signOutFTService" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "signOutFTService failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "signOutFTService failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error396 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error397 error
-    error397, err = error396.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error397
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "signOutFTService failed: invalid message type")
-    return
-  }
-  result := MetaServiceSignOutFTServiceResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceSignOutFTServiceResult
+  err = p.CC.RecvMsg("signOutFTService", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListFTClients(req *ListFTClientsReq) (r *ListFTClientsResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListFTClients(req *ListFTClientsReq) (_r *ListFTClientsResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListFTClients(req); err != nil { return }
-  return p.recvListFTClients()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListFTClients(req *ListFTClientsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listFTClients", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListFTClientsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listFTClients", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListFTClients()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListFTClients() (value *ListFTClientsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listFTClients" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listFTClients failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listFTClients failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error398 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error399 error
-    error399, err = error398.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error399
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listFTClients failed: invalid message type")
-    return
-  }
-  result := MetaServiceListFTClientsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListFTClientsResult
+  err = p.CC.RecvMsg("listFTClients", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) CreateSession(req *CreateSessionReq) (r *CreateSessionResp, err error) {
+func (p *MetaServiceThreadsafeClient) CreateSession(req *CreateSessionReq) (_r *CreateSessionResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendCreateSession(req); err != nil { return }
-  return p.recvCreateSession()
-}
-
-func (p *MetaServiceThreadsafeClient) sendCreateSession(req *CreateSessionReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createSession", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceCreateSessionArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createSession", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateSession()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvCreateSession() (value *CreateSessionResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createSession" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createSession failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createSession failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error400 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error401 error
-    error401, err = error400.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error401
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createSession failed: invalid message type")
-    return
-  }
-  result := MetaServiceCreateSessionResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceCreateSessionResult
+  err = p.CC.RecvMsg("createSession", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) UpdateSessions(req *UpdateSessionsReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) UpdateSessions(req *UpdateSessionsReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendUpdateSessions(req); err != nil { return }
-  return p.recvUpdateSessions()
-}
-
-func (p *MetaServiceThreadsafeClient) sendUpdateSessions(req *UpdateSessionsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("updateSessions", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceUpdateSessionsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("updateSessions", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvUpdateSessions()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvUpdateSessions() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "updateSessions" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "updateSessions failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "updateSessions failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error402 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error403 error
-    error403, err = error402.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error403
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "updateSessions failed: invalid message type")
-    return
-  }
-  result := MetaServiceUpdateSessionsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceUpdateSessionsResult
+  err = p.CC.RecvMsg("updateSessions", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListSessions(req *ListSessionsReq) (r *ListSessionsResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListSessions(req *ListSessionsReq) (_r *ListSessionsResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListSessions(req); err != nil { return }
-  return p.recvListSessions()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListSessions(req *ListSessionsReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listSessions", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListSessionsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listSessions", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListSessions()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListSessions() (value *ListSessionsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listSessions" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listSessions failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listSessions failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error404 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error405 error
-    error405, err = error404.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error405
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listSessions failed: invalid message type")
-    return
-  }
-  result := MetaServiceListSessionsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListSessionsResult
+  err = p.CC.RecvMsg("listSessions", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetSession(req *GetSessionReq) (r *GetSessionResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetSession(req *GetSessionReq) (_r *GetSessionResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetSession(req); err != nil { return }
-  return p.recvGetSession()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetSession(req *GetSessionReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getSession", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetSessionArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getSession", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetSession()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetSession() (value *GetSessionResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getSession" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getSession failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getSession failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error406 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error407 error
-    error407, err = error406.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error407
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getSession failed: invalid message type")
-    return
-  }
-  result := MetaServiceGetSessionResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetSessionResult
+  err = p.CC.RecvMsg("getSession", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) RemoveSession(req *RemoveSessionReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) RemoveSession(req *RemoveSessionReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRemoveSession(req); err != nil { return }
-  return p.recvRemoveSession()
-}
-
-func (p *MetaServiceThreadsafeClient) sendRemoveSession(req *RemoveSessionReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("removeSession", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceRemoveSessionArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("removeSession", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemoveSession()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvRemoveSession() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "removeSession" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "removeSession failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "removeSession failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error408 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error409 error
-    error409, err = error408.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error409
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "removeSession failed: invalid message type")
-    return
-  }
-  result := MetaServiceRemoveSessionResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceRemoveSessionResult
+  err = p.CC.RecvMsg("removeSession", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ReportTaskFinish(req *ReportTaskReq) (r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) ReportTaskFinish(req *ReportTaskReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendReportTaskFinish(req); err != nil { return }
-  return p.recvReportTaskFinish()
-}
-
-func (p *MetaServiceThreadsafeClient) sendReportTaskFinish(req *ReportTaskReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("reportTaskFinish", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceReportTaskFinishArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("reportTaskFinish", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvReportTaskFinish()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvReportTaskFinish() (value *ExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "reportTaskFinish" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "reportTaskFinish failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "reportTaskFinish failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error410 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error411 error
-    error411, err = error410.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error411
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "reportTaskFinish failed: invalid message type")
-    return
-  }
-  result := MetaServiceReportTaskFinishResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceReportTaskFinishResult
+  err = p.CC.RecvMsg("reportTaskFinish", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) ListCluster(req *ListClusterInfoReq) (r *ListClusterInfoResp, err error) {
+func (p *MetaServiceThreadsafeClient) ListCluster(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendListCluster(req); err != nil { return }
-  return p.recvListCluster()
-}
-
-func (p *MetaServiceThreadsafeClient) sendListCluster(req *ListClusterInfoReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("listCluster", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceListClusterArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("listCluster", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListCluster()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvListCluster() (value *ListClusterInfoResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "listCluster" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "listCluster failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "listCluster failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error412 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error413 error
-    error413, err = error412.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error413
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "listCluster failed: invalid message type")
-    return
-  }
-  result := MetaServiceListClusterResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceListClusterResult
+  err = p.CC.RecvMsg("listCluster", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetMetaDirInfo(req *GetMetaDirInfoReq) (r *GetMetaDirInfoResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetMetaDirInfo(req *GetMetaDirInfoReq) (_r *GetMetaDirInfoResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetMetaDirInfo(req); err != nil { return }
-  return p.recvGetMetaDirInfo()
-}
-
-func (p *MetaServiceThreadsafeClient) sendGetMetaDirInfo(req *GetMetaDirInfoReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getMetaDirInfo", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := MetaServiceGetMetaDirInfoArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getMetaDirInfo", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetMetaDirInfo()
 }
 
 
 func (p *MetaServiceThreadsafeClient) recvGetMetaDirInfo() (value *GetMetaDirInfoResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
+  var result MetaServiceGetMetaDirInfoResult
+  err = p.CC.RecvMsg("getMetaDirInfo", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+
+type MetaServiceChannelClient struct {
+  RequestChannel thrift.RequestChannel
+}
+
+func (c *MetaServiceChannelClient) Close() error {
+  return c.RequestChannel.Close()
+}
+
+func (c *MetaServiceChannelClient) IsOpen() bool {
+  return c.RequestChannel.IsOpen()
+}
+
+func (c *MetaServiceChannelClient) Open() error {
+  return c.RequestChannel.Open()
+}
+
+func NewMetaServiceChannelClient(channel thrift.RequestChannel) *MetaServiceChannelClient {
+  return &MetaServiceChannelClient{RequestChannel: channel}
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) CreateSpace(ctx context.Context, req *CreateSpaceReq) (_r *ExecResp, err error) {
+  args := MetaServiceCreateSpaceArgs{
+    Req : req,
   }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
+  var result MetaServiceCreateSpaceResult
+  err = p.RequestChannel.Call(ctx, "createSpace", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropSpace(ctx context.Context, req *DropSpaceReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropSpaceArgs{
+    Req : req,
   }
-  if method != "getMetaDirInfo" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getMetaDirInfo failed: wrong method name")
-    return
+  var result MetaServiceDropSpaceResult
+  err = p.RequestChannel.Call(ctx, "dropSpace", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetSpace(ctx context.Context, req *GetSpaceReq) (_r *GetSpaceResp, err error) {
+  args := MetaServiceGetSpaceArgs{
+    Req : req,
   }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getMetaDirInfo failed: out of sequence response")
-    return
+  var result MetaServiceGetSpaceResult
+  err = p.RequestChannel.Call(ctx, "getSpace", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListSpaces(ctx context.Context, req *ListSpacesReq) (_r *ListSpacesResp, err error) {
+  args := MetaServiceListSpacesArgs{
+    Req : req,
   }
-  if mTypeId == thrift.EXCEPTION {
-    error414 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error415 error
-    error415, err = error414.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error415
-    return
+  var result MetaServiceListSpacesResult
+  err = p.RequestChannel.Call(ctx, "listSpaces", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) CreateTag(ctx context.Context, req *CreateTagReq) (_r *ExecResp, err error) {
+  args := MetaServiceCreateTagArgs{
+    Req : req,
   }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getMetaDirInfo failed: invalid message type")
-    return
+  var result MetaServiceCreateTagResult
+  err = p.RequestChannel.Call(ctx, "createTag", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) AlterTag(ctx context.Context, req *AlterTagReq) (_r *ExecResp, err error) {
+  args := MetaServiceAlterTagArgs{
+    Req : req,
   }
-  result := MetaServiceGetMetaDirInfoResult{}
-  if err = result.Read(iprot); err != nil {
-    return
+  var result MetaServiceAlterTagResult
+  err = p.RequestChannel.Call(ctx, "alterTag", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropTag(ctx context.Context, req *DropTagReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropTagArgs{
+    Req : req,
   }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
+  var result MetaServiceDropTagResult
+  err = p.RequestChannel.Call(ctx, "dropTag", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetTag(ctx context.Context, req *GetTagReq) (_r *GetTagResp, err error) {
+  args := MetaServiceGetTagArgs{
+    Req : req,
   }
-  value = result.GetSuccess()
-  return
+  var result MetaServiceGetTagResult
+  err = p.RequestChannel.Call(ctx, "getTag", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListTags(ctx context.Context, req *ListTagsReq) (_r *ListTagsResp, err error) {
+  args := MetaServiceListTagsArgs{
+    Req : req,
+  }
+  var result MetaServiceListTagsResult
+  err = p.RequestChannel.Call(ctx, "listTags", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) CreateEdge(ctx context.Context, req *CreateEdgeReq) (_r *ExecResp, err error) {
+  args := MetaServiceCreateEdgeArgs{
+    Req : req,
+  }
+  var result MetaServiceCreateEdgeResult
+  err = p.RequestChannel.Call(ctx, "createEdge", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) AlterEdge(ctx context.Context, req *AlterEdgeReq) (_r *ExecResp, err error) {
+  args := MetaServiceAlterEdgeArgs{
+    Req : req,
+  }
+  var result MetaServiceAlterEdgeResult
+  err = p.RequestChannel.Call(ctx, "alterEdge", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropEdge(ctx context.Context, req *DropEdgeReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropEdgeArgs{
+    Req : req,
+  }
+  var result MetaServiceDropEdgeResult
+  err = p.RequestChannel.Call(ctx, "dropEdge", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetEdge(ctx context.Context, req *GetEdgeReq) (_r *GetEdgeResp, err error) {
+  args := MetaServiceGetEdgeArgs{
+    Req : req,
+  }
+  var result MetaServiceGetEdgeResult
+  err = p.RequestChannel.Call(ctx, "getEdge", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListEdges(ctx context.Context, req *ListEdgesReq) (_r *ListEdgesResp, err error) {
+  args := MetaServiceListEdgesArgs{
+    Req : req,
+  }
+  var result MetaServiceListEdgesResult
+  err = p.RequestChannel.Call(ctx, "listEdges", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListHosts(ctx context.Context, req *ListHostsReq) (_r *ListHostsResp, err error) {
+  args := MetaServiceListHostsArgs{
+    Req : req,
+  }
+  var result MetaServiceListHostsResult
+  err = p.RequestChannel.Call(ctx, "listHosts", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetPartsAlloc(ctx context.Context, req *GetPartsAllocReq) (_r *GetPartsAllocResp, err error) {
+  args := MetaServiceGetPartsAllocArgs{
+    Req : req,
+  }
+  var result MetaServiceGetPartsAllocResult
+  err = p.RequestChannel.Call(ctx, "getPartsAlloc", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListParts(ctx context.Context, req *ListPartsReq) (_r *ListPartsResp, err error) {
+  args := MetaServiceListPartsArgs{
+    Req : req,
+  }
+  var result MetaServiceListPartsResult
+  err = p.RequestChannel.Call(ctx, "listParts", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) MultiPut(ctx context.Context, req *MultiPutReq) (_r *ExecResp, err error) {
+  args := MetaServiceMultiPutArgs{
+    Req : req,
+  }
+  var result MetaServiceMultiPutResult
+  err = p.RequestChannel.Call(ctx, "multiPut", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) Get(ctx context.Context, req *GetReq) (_r *GetResp, err error) {
+  args := MetaServiceGetArgs{
+    Req : req,
+  }
+  var result MetaServiceGetResult
+  err = p.RequestChannel.Call(ctx, "get", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) MultiGet(ctx context.Context, req *MultiGetReq) (_r *MultiGetResp, err error) {
+  args := MetaServiceMultiGetArgs{
+    Req : req,
+  }
+  var result MetaServiceMultiGetResult
+  err = p.RequestChannel.Call(ctx, "multiGet", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) Remove(ctx context.Context, req *RemoveReq) (_r *ExecResp, err error) {
+  args := MetaServiceRemoveArgs{
+    Req : req,
+  }
+  var result MetaServiceRemoveResult
+  err = p.RequestChannel.Call(ctx, "remove", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) RemoveRange(ctx context.Context, req *RemoveRangeReq) (_r *ExecResp, err error) {
+  args := MetaServiceRemoveRangeArgs{
+    Req : req,
+  }
+  var result MetaServiceRemoveRangeResult
+  err = p.RequestChannel.Call(ctx, "removeRange", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) Scan(ctx context.Context, req *ScanReq) (_r *ScanResp, err error) {
+  args := MetaServiceScanArgs{
+    Req : req,
+  }
+  var result MetaServiceScanResult
+  err = p.RequestChannel.Call(ctx, "scan", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) CreateTagIndex(ctx context.Context, req *CreateTagIndexReq) (_r *ExecResp, err error) {
+  args := MetaServiceCreateTagIndexArgs{
+    Req : req,
+  }
+  var result MetaServiceCreateTagIndexResult
+  err = p.RequestChannel.Call(ctx, "createTagIndex", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropTagIndex(ctx context.Context, req *DropTagIndexReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropTagIndexArgs{
+    Req : req,
+  }
+  var result MetaServiceDropTagIndexResult
+  err = p.RequestChannel.Call(ctx, "dropTagIndex", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetTagIndex(ctx context.Context, req *GetTagIndexReq) (_r *GetTagIndexResp, err error) {
+  args := MetaServiceGetTagIndexArgs{
+    Req : req,
+  }
+  var result MetaServiceGetTagIndexResult
+  err = p.RequestChannel.Call(ctx, "getTagIndex", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListTagIndexes(ctx context.Context, req *ListTagIndexesReq) (_r *ListTagIndexesResp, err error) {
+  args := MetaServiceListTagIndexesArgs{
+    Req : req,
+  }
+  var result MetaServiceListTagIndexesResult
+  err = p.RequestChannel.Call(ctx, "listTagIndexes", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) RebuildTagIndex(ctx context.Context, req *RebuildIndexReq) (_r *ExecResp, err error) {
+  args := MetaServiceRebuildTagIndexArgs{
+    Req : req,
+  }
+  var result MetaServiceRebuildTagIndexResult
+  err = p.RequestChannel.Call(ctx, "rebuildTagIndex", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListTagIndexStatus(ctx context.Context, req *ListIndexStatusReq) (_r *ListIndexStatusResp, err error) {
+  args := MetaServiceListTagIndexStatusArgs{
+    Req : req,
+  }
+  var result MetaServiceListTagIndexStatusResult
+  err = p.RequestChannel.Call(ctx, "listTagIndexStatus", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) CreateEdgeIndex(ctx context.Context, req *CreateEdgeIndexReq) (_r *ExecResp, err error) {
+  args := MetaServiceCreateEdgeIndexArgs{
+    Req : req,
+  }
+  var result MetaServiceCreateEdgeIndexResult
+  err = p.RequestChannel.Call(ctx, "createEdgeIndex", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropEdgeIndex(ctx context.Context, req *DropEdgeIndexReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropEdgeIndexArgs{
+    Req : req,
+  }
+  var result MetaServiceDropEdgeIndexResult
+  err = p.RequestChannel.Call(ctx, "dropEdgeIndex", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetEdgeIndex(ctx context.Context, req *GetEdgeIndexReq) (_r *GetEdgeIndexResp, err error) {
+  args := MetaServiceGetEdgeIndexArgs{
+    Req : req,
+  }
+  var result MetaServiceGetEdgeIndexResult
+  err = p.RequestChannel.Call(ctx, "getEdgeIndex", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListEdgeIndexes(ctx context.Context, req *ListEdgeIndexesReq) (_r *ListEdgeIndexesResp, err error) {
+  args := MetaServiceListEdgeIndexesArgs{
+    Req : req,
+  }
+  var result MetaServiceListEdgeIndexesResult
+  err = p.RequestChannel.Call(ctx, "listEdgeIndexes", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) RebuildEdgeIndex(ctx context.Context, req *RebuildIndexReq) (_r *ExecResp, err error) {
+  args := MetaServiceRebuildEdgeIndexArgs{
+    Req : req,
+  }
+  var result MetaServiceRebuildEdgeIndexResult
+  err = p.RequestChannel.Call(ctx, "rebuildEdgeIndex", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListEdgeIndexStatus(ctx context.Context, req *ListIndexStatusReq) (_r *ListIndexStatusResp, err error) {
+  args := MetaServiceListEdgeIndexStatusArgs{
+    Req : req,
+  }
+  var result MetaServiceListEdgeIndexStatusResult
+  err = p.RequestChannel.Call(ctx, "listEdgeIndexStatus", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) CreateUser(ctx context.Context, req *CreateUserReq) (_r *ExecResp, err error) {
+  args := MetaServiceCreateUserArgs{
+    Req : req,
+  }
+  var result MetaServiceCreateUserResult
+  err = p.RequestChannel.Call(ctx, "createUser", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropUser(ctx context.Context, req *DropUserReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropUserArgs{
+    Req : req,
+  }
+  var result MetaServiceDropUserResult
+  err = p.RequestChannel.Call(ctx, "dropUser", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) AlterUser(ctx context.Context, req *AlterUserReq) (_r *ExecResp, err error) {
+  args := MetaServiceAlterUserArgs{
+    Req : req,
+  }
+  var result MetaServiceAlterUserResult
+  err = p.RequestChannel.Call(ctx, "alterUser", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GrantRole(ctx context.Context, req *GrantRoleReq) (_r *ExecResp, err error) {
+  args := MetaServiceGrantRoleArgs{
+    Req : req,
+  }
+  var result MetaServiceGrantRoleResult
+  err = p.RequestChannel.Call(ctx, "grantRole", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) RevokeRole(ctx context.Context, req *RevokeRoleReq) (_r *ExecResp, err error) {
+  args := MetaServiceRevokeRoleArgs{
+    Req : req,
+  }
+  var result MetaServiceRevokeRoleResult
+  err = p.RequestChannel.Call(ctx, "revokeRole", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListUsers(ctx context.Context, req *ListUsersReq) (_r *ListUsersResp, err error) {
+  args := MetaServiceListUsersArgs{
+    Req : req,
+  }
+  var result MetaServiceListUsersResult
+  err = p.RequestChannel.Call(ctx, "listUsers", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListRoles(ctx context.Context, req *ListRolesReq) (_r *ListRolesResp, err error) {
+  args := MetaServiceListRolesArgs{
+    Req : req,
+  }
+  var result MetaServiceListRolesResult
+  err = p.RequestChannel.Call(ctx, "listRoles", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetUserRoles(ctx context.Context, req *GetUserRolesReq) (_r *ListRolesResp, err error) {
+  args := MetaServiceGetUserRolesArgs{
+    Req : req,
+  }
+  var result MetaServiceGetUserRolesResult
+  err = p.RequestChannel.Call(ctx, "getUserRoles", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ChangePassword(ctx context.Context, req *ChangePasswordReq) (_r *ExecResp, err error) {
+  args := MetaServiceChangePasswordArgs{
+    Req : req,
+  }
+  var result MetaServiceChangePasswordResult
+  err = p.RequestChannel.Call(ctx, "changePassword", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) HeartBeat(ctx context.Context, req *HBReq) (_r *HBResp, err error) {
+  args := MetaServiceHeartBeatArgs{
+    Req : req,
+  }
+  var result MetaServiceHeartBeatResult
+  err = p.RequestChannel.Call(ctx, "heartBeat", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) Balance(ctx context.Context, req *BalanceReq) (_r *BalanceResp, err error) {
+  args := MetaServiceBalanceArgs{
+    Req : req,
+  }
+  var result MetaServiceBalanceResult
+  err = p.RequestChannel.Call(ctx, "balance", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) LeaderBalance(ctx context.Context, req *LeaderBalanceReq) (_r *ExecResp, err error) {
+  args := MetaServiceLeaderBalanceArgs{
+    Req : req,
+  }
+  var result MetaServiceLeaderBalanceResult
+  err = p.RequestChannel.Call(ctx, "leaderBalance", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) RegConfig(ctx context.Context, req *RegConfigReq) (_r *ExecResp, err error) {
+  args := MetaServiceRegConfigArgs{
+    Req : req,
+  }
+  var result MetaServiceRegConfigResult
+  err = p.RequestChannel.Call(ctx, "regConfig", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetConfig(ctx context.Context, req *GetConfigReq) (_r *GetConfigResp, err error) {
+  args := MetaServiceGetConfigArgs{
+    Req : req,
+  }
+  var result MetaServiceGetConfigResult
+  err = p.RequestChannel.Call(ctx, "getConfig", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) SetConfig(ctx context.Context, req *SetConfigReq) (_r *ExecResp, err error) {
+  args := MetaServiceSetConfigArgs{
+    Req : req,
+  }
+  var result MetaServiceSetConfigResult
+  err = p.RequestChannel.Call(ctx, "setConfig", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListConfigs(ctx context.Context, req *ListConfigsReq) (_r *ListConfigsResp, err error) {
+  args := MetaServiceListConfigsArgs{
+    Req : req,
+  }
+  var result MetaServiceListConfigsResult
+  err = p.RequestChannel.Call(ctx, "listConfigs", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) CreateSnapshot(ctx context.Context, req *CreateSnapshotReq) (_r *ExecResp, err error) {
+  args := MetaServiceCreateSnapshotArgs{
+    Req : req,
+  }
+  var result MetaServiceCreateSnapshotResult
+  err = p.RequestChannel.Call(ctx, "createSnapshot", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropSnapshot(ctx context.Context, req *DropSnapshotReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropSnapshotArgs{
+    Req : req,
+  }
+  var result MetaServiceDropSnapshotResult
+  err = p.RequestChannel.Call(ctx, "dropSnapshot", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListSnapshots(ctx context.Context, req *ListSnapshotsReq) (_r *ListSnapshotsResp, err error) {
+  args := MetaServiceListSnapshotsArgs{
+    Req : req,
+  }
+  var result MetaServiceListSnapshotsResult
+  err = p.RequestChannel.Call(ctx, "listSnapshots", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) RunAdminJob(ctx context.Context, req *AdminJobReq) (_r *AdminJobResp, err error) {
+  args := MetaServiceRunAdminJobArgs{
+    Req : req,
+  }
+  var result MetaServiceRunAdminJobResult
+  err = p.RequestChannel.Call(ctx, "runAdminJob", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) AddZone(ctx context.Context, req *AddZoneReq) (_r *ExecResp, err error) {
+  args := MetaServiceAddZoneArgs{
+    Req : req,
+  }
+  var result MetaServiceAddZoneResult
+  err = p.RequestChannel.Call(ctx, "addZone", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropZone(ctx context.Context, req *DropZoneReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropZoneArgs{
+    Req : req,
+  }
+  var result MetaServiceDropZoneResult
+  err = p.RequestChannel.Call(ctx, "dropZone", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) AddHostIntoZone(ctx context.Context, req *AddHostIntoZoneReq) (_r *ExecResp, err error) {
+  args := MetaServiceAddHostIntoZoneArgs{
+    Req : req,
+  }
+  var result MetaServiceAddHostIntoZoneResult
+  err = p.RequestChannel.Call(ctx, "addHostIntoZone", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropHostFromZone(ctx context.Context, req *DropHostFromZoneReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropHostFromZoneArgs{
+    Req : req,
+  }
+  var result MetaServiceDropHostFromZoneResult
+  err = p.RequestChannel.Call(ctx, "dropHostFromZone", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetZone(ctx context.Context, req *GetZoneReq) (_r *GetZoneResp, err error) {
+  args := MetaServiceGetZoneArgs{
+    Req : req,
+  }
+  var result MetaServiceGetZoneResult
+  err = p.RequestChannel.Call(ctx, "getZone", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListZones(ctx context.Context, req *ListZonesReq) (_r *ListZonesResp, err error) {
+  args := MetaServiceListZonesArgs{
+    Req : req,
+  }
+  var result MetaServiceListZonesResult
+  err = p.RequestChannel.Call(ctx, "listZones", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) AddGroup(ctx context.Context, req *AddGroupReq) (_r *ExecResp, err error) {
+  args := MetaServiceAddGroupArgs{
+    Req : req,
+  }
+  var result MetaServiceAddGroupResult
+  err = p.RequestChannel.Call(ctx, "addGroup", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropGroup(ctx context.Context, req *DropGroupReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropGroupArgs{
+    Req : req,
+  }
+  var result MetaServiceDropGroupResult
+  err = p.RequestChannel.Call(ctx, "dropGroup", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) AddZoneIntoGroup(ctx context.Context, req *AddZoneIntoGroupReq) (_r *ExecResp, err error) {
+  args := MetaServiceAddZoneIntoGroupArgs{
+    Req : req,
+  }
+  var result MetaServiceAddZoneIntoGroupResult
+  err = p.RequestChannel.Call(ctx, "addZoneIntoGroup", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropZoneFromGroup(ctx context.Context, req *DropZoneFromGroupReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropZoneFromGroupArgs{
+    Req : req,
+  }
+  var result MetaServiceDropZoneFromGroupResult
+  err = p.RequestChannel.Call(ctx, "dropZoneFromGroup", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetGroup(ctx context.Context, req *GetGroupReq) (_r *GetGroupResp, err error) {
+  args := MetaServiceGetGroupArgs{
+    Req : req,
+  }
+  var result MetaServiceGetGroupResult
+  err = p.RequestChannel.Call(ctx, "getGroup", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListGroups(ctx context.Context, req *ListGroupsReq) (_r *ListGroupsResp, err error) {
+  args := MetaServiceListGroupsArgs{
+    Req : req,
+  }
+  var result MetaServiceListGroupsResult
+  err = p.RequestChannel.Call(ctx, "listGroups", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) CreateBackup(ctx context.Context, req *CreateBackupReq) (_r *CreateBackupResp, err error) {
+  args := MetaServiceCreateBackupArgs{
+    Req : req,
+  }
+  var result MetaServiceCreateBackupResult
+  err = p.RequestChannel.Call(ctx, "createBackup", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) RestoreMeta(ctx context.Context, req *RestoreMetaReq) (_r *ExecResp, err error) {
+  args := MetaServiceRestoreMetaArgs{
+    Req : req,
+  }
+  var result MetaServiceRestoreMetaResult
+  err = p.RequestChannel.Call(ctx, "restoreMeta", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) AddListener(ctx context.Context, req *AddListenerReq) (_r *ExecResp, err error) {
+  args := MetaServiceAddListenerArgs{
+    Req : req,
+  }
+  var result MetaServiceAddListenerResult
+  err = p.RequestChannel.Call(ctx, "addListener", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) RemoveListener(ctx context.Context, req *RemoveListenerReq) (_r *ExecResp, err error) {
+  args := MetaServiceRemoveListenerArgs{
+    Req : req,
+  }
+  var result MetaServiceRemoveListenerResult
+  err = p.RequestChannel.Call(ctx, "removeListener", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListListener(ctx context.Context, req *ListListenerReq) (_r *ListListenerResp, err error) {
+  args := MetaServiceListListenerArgs{
+    Req : req,
+  }
+  var result MetaServiceListListenerResult
+  err = p.RequestChannel.Call(ctx, "listListener", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetStatis(ctx context.Context, req *GetStatisReq) (_r *GetStatisResp, err error) {
+  args := MetaServiceGetStatisArgs{
+    Req : req,
+  }
+  var result MetaServiceGetStatisResult
+  err = p.RequestChannel.Call(ctx, "getStatis", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) SignInFTService(ctx context.Context, req *SignInFTServiceReq) (_r *ExecResp, err error) {
+  args := MetaServiceSignInFTServiceArgs{
+    Req : req,
+  }
+  var result MetaServiceSignInFTServiceResult
+  err = p.RequestChannel.Call(ctx, "signInFTService", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) SignOutFTService(ctx context.Context, req *SignOutFTServiceReq) (_r *ExecResp, err error) {
+  args := MetaServiceSignOutFTServiceArgs{
+    Req : req,
+  }
+  var result MetaServiceSignOutFTServiceResult
+  err = p.RequestChannel.Call(ctx, "signOutFTService", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListFTClients(ctx context.Context, req *ListFTClientsReq) (_r *ListFTClientsResp, err error) {
+  args := MetaServiceListFTClientsArgs{
+    Req : req,
+  }
+  var result MetaServiceListFTClientsResult
+  err = p.RequestChannel.Call(ctx, "listFTClients", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) CreateSession(ctx context.Context, req *CreateSessionReq) (_r *CreateSessionResp, err error) {
+  args := MetaServiceCreateSessionArgs{
+    Req : req,
+  }
+  var result MetaServiceCreateSessionResult
+  err = p.RequestChannel.Call(ctx, "createSession", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) UpdateSessions(ctx context.Context, req *UpdateSessionsReq) (_r *ExecResp, err error) {
+  args := MetaServiceUpdateSessionsArgs{
+    Req : req,
+  }
+  var result MetaServiceUpdateSessionsResult
+  err = p.RequestChannel.Call(ctx, "updateSessions", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListSessions(ctx context.Context, req *ListSessionsReq) (_r *ListSessionsResp, err error) {
+  args := MetaServiceListSessionsArgs{
+    Req : req,
+  }
+  var result MetaServiceListSessionsResult
+  err = p.RequestChannel.Call(ctx, "listSessions", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetSession(ctx context.Context, req *GetSessionReq) (_r *GetSessionResp, err error) {
+  args := MetaServiceGetSessionArgs{
+    Req : req,
+  }
+  var result MetaServiceGetSessionResult
+  err = p.RequestChannel.Call(ctx, "getSession", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) RemoveSession(ctx context.Context, req *RemoveSessionReq) (_r *ExecResp, err error) {
+  args := MetaServiceRemoveSessionArgs{
+    Req : req,
+  }
+  var result MetaServiceRemoveSessionResult
+  err = p.RequestChannel.Call(ctx, "removeSession", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ReportTaskFinish(ctx context.Context, req *ReportTaskReq) (_r *ExecResp, err error) {
+  args := MetaServiceReportTaskFinishArgs{
+    Req : req,
+  }
+  var result MetaServiceReportTaskFinishResult
+  err = p.RequestChannel.Call(ctx, "reportTaskFinish", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListCluster(ctx context.Context, req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
+  args := MetaServiceListClusterArgs{
+    Req : req,
+  }
+  var result MetaServiceListClusterResult
+  err = p.RequestChannel.Call(ctx, "listCluster", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetMetaDirInfo(ctx context.Context, req *GetMetaDirInfoReq) (_r *GetMetaDirInfoResp, err error) {
+  args := MetaServiceGetMetaDirInfoArgs{
+    Req : req,
+  }
+  var result MetaServiceGetMetaDirInfoResult
+  err = p.RequestChannel.Call(ctx, "getMetaDirInfo", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 
 type MetaServiceProcessor struct {
-  processorMap map[string]thrift.ProcessorFunction
+  processorMap map[string]thrift.ProcessorFunctionContext
   handler MetaService
 }
 
-func (p *MetaServiceProcessor) AddToProcessorMap(key string, processor thrift.ProcessorFunction) {
+func (p *MetaServiceProcessor) AddToProcessorMap(key string, processor thrift.ProcessorFunctionContext) {
   p.processorMap[key] = processor
 }
 
-func (p *MetaServiceProcessor) GetProcessorFunction(key string) (processor thrift.ProcessorFunction, err error) {
+func (p *MetaServiceProcessor) GetProcessorFunctionContext(key string) (processor thrift.ProcessorFunctionContext, err error) {
   if processor, ok := p.processorMap[key]; ok {
     return processor, nil
   }
   return nil, nil // generic error message will be sent
 }
 
-func (p *MetaServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunction {
+func (p *MetaServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunctionContext {
   return p.processorMap
 }
 
 func NewMetaServiceProcessor(handler MetaService) *MetaServiceProcessor {
-  self416 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
-  self416.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
-  self416.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
-  self416.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
-  self416.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
-  self416.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
-  self416.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
-  self416.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
-  self416.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
-  self416.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
-  self416.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
-  self416.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
-  self416.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
-  self416.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
-  self416.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
-  self416.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
-  self416.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
-  self416.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
-  self416.processorMap["multiPut"] = &metaServiceProcessorMultiPut{handler:handler}
-  self416.processorMap["get"] = &metaServiceProcessorGet{handler:handler}
-  self416.processorMap["multiGet"] = &metaServiceProcessorMultiGet{handler:handler}
-  self416.processorMap["remove"] = &metaServiceProcessorRemove{handler:handler}
-  self416.processorMap["removeRange"] = &metaServiceProcessorRemoveRange{handler:handler}
-  self416.processorMap["scan"] = &metaServiceProcessorScan{handler:handler}
-  self416.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
-  self416.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
-  self416.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
-  self416.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
-  self416.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
-  self416.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
-  self416.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
-  self416.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
-  self416.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
-  self416.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
-  self416.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
-  self416.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
-  self416.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
-  self416.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
-  self416.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
-  self416.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
-  self416.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
-  self416.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
-  self416.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
-  self416.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
-  self416.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
-  self416.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
-  self416.processorMap["balance"] = &metaServiceProcessorBalance{handler:handler}
-  self416.processorMap["leaderBalance"] = &metaServiceProcessorLeaderBalance{handler:handler}
-  self416.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
-  self416.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
-  self416.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
-  self416.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
-  self416.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
-  self416.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
-  self416.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
-  self416.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
-  self416.processorMap["addZone"] = &metaServiceProcessorAddZone{handler:handler}
-  self416.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
-  self416.processorMap["addHostIntoZone"] = &metaServiceProcessorAddHostIntoZone{handler:handler}
-  self416.processorMap["dropHostFromZone"] = &metaServiceProcessorDropHostFromZone{handler:handler}
-  self416.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
-  self416.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
-  self416.processorMap["addGroup"] = &metaServiceProcessorAddGroup{handler:handler}
-  self416.processorMap["dropGroup"] = &metaServiceProcessorDropGroup{handler:handler}
-  self416.processorMap["addZoneIntoGroup"] = &metaServiceProcessorAddZoneIntoGroup{handler:handler}
-  self416.processorMap["dropZoneFromGroup"] = &metaServiceProcessorDropZoneFromGroup{handler:handler}
-  self416.processorMap["getGroup"] = &metaServiceProcessorGetGroup{handler:handler}
-  self416.processorMap["listGroups"] = &metaServiceProcessorListGroups{handler:handler}
-  self416.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
-  self416.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
-  self416.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
-  self416.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
-  self416.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
-  self416.processorMap["getStatis"] = &metaServiceProcessorGetStatis{handler:handler}
-  self416.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
-  self416.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
-  self416.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
-  self416.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
-  self416.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
-  self416.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
-  self416.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
-  self416.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
-  self416.processorMap["reportTaskFinish"] = &metaServiceProcessorReportTaskFinish{handler:handler}
-  self416.processorMap["listCluster"] = &metaServiceProcessorListCluster{handler:handler}
-  self416.processorMap["getMetaDirInfo"] = &metaServiceProcessorGetMetaDirInfo{handler:handler}
-  return self416
+  self82 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self82.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
+  self82.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
+  self82.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
+  self82.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
+  self82.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
+  self82.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
+  self82.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
+  self82.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
+  self82.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
+  self82.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
+  self82.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
+  self82.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
+  self82.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
+  self82.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
+  self82.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
+  self82.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
+  self82.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
+  self82.processorMap["multiPut"] = &metaServiceProcessorMultiPut{handler:handler}
+  self82.processorMap["get"] = &metaServiceProcessorGet{handler:handler}
+  self82.processorMap["multiGet"] = &metaServiceProcessorMultiGet{handler:handler}
+  self82.processorMap["remove"] = &metaServiceProcessorRemove{handler:handler}
+  self82.processorMap["removeRange"] = &metaServiceProcessorRemoveRange{handler:handler}
+  self82.processorMap["scan"] = &metaServiceProcessorScan{handler:handler}
+  self82.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
+  self82.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
+  self82.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
+  self82.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
+  self82.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
+  self82.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
+  self82.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
+  self82.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
+  self82.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
+  self82.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
+  self82.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
+  self82.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
+  self82.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
+  self82.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
+  self82.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
+  self82.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
+  self82.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
+  self82.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
+  self82.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
+  self82.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
+  self82.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
+  self82.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
+  self82.processorMap["balance"] = &metaServiceProcessorBalance{handler:handler}
+  self82.processorMap["leaderBalance"] = &metaServiceProcessorLeaderBalance{handler:handler}
+  self82.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
+  self82.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
+  self82.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
+  self82.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
+  self82.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
+  self82.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
+  self82.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
+  self82.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
+  self82.processorMap["addZone"] = &metaServiceProcessorAddZone{handler:handler}
+  self82.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
+  self82.processorMap["addHostIntoZone"] = &metaServiceProcessorAddHostIntoZone{handler:handler}
+  self82.processorMap["dropHostFromZone"] = &metaServiceProcessorDropHostFromZone{handler:handler}
+  self82.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
+  self82.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
+  self82.processorMap["addGroup"] = &metaServiceProcessorAddGroup{handler:handler}
+  self82.processorMap["dropGroup"] = &metaServiceProcessorDropGroup{handler:handler}
+  self82.processorMap["addZoneIntoGroup"] = &metaServiceProcessorAddZoneIntoGroup{handler:handler}
+  self82.processorMap["dropZoneFromGroup"] = &metaServiceProcessorDropZoneFromGroup{handler:handler}
+  self82.processorMap["getGroup"] = &metaServiceProcessorGetGroup{handler:handler}
+  self82.processorMap["listGroups"] = &metaServiceProcessorListGroups{handler:handler}
+  self82.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
+  self82.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
+  self82.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
+  self82.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
+  self82.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
+  self82.processorMap["getStatis"] = &metaServiceProcessorGetStatis{handler:handler}
+  self82.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
+  self82.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
+  self82.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
+  self82.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
+  self82.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
+  self82.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
+  self82.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
+  self82.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
+  self82.processorMap["reportTaskFinish"] = &metaServiceProcessorReportTaskFinish{handler:handler}
+  self82.processorMap["listCluster"] = &metaServiceProcessorListCluster{handler:handler}
+  self82.processorMap["getMetaDirInfo"] = &metaServiceProcessorGetMetaDirInfo{handler:handler}
+  return self82
 }
 
 type metaServiceProcessorCreateSpace struct {
@@ -13416,10 +5385,10 @@ func (p *metaServiceProcessorCreateSpace) Write(seqId int32, result thrift.Writa
   return err
 }
 
-func (p *metaServiceProcessorCreateSpace) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorCreateSpace) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceCreateSpaceArgs)
   var result MetaServiceCreateSpaceResult
-  if retval, err := p.handler.CreateSpace(args.Req); err != nil {
+  if retval, err := p.handler.CreateSpace(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createSpace: " + err.Error())
@@ -13466,10 +5435,10 @@ func (p *metaServiceProcessorDropSpace) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorDropSpace) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorDropSpace) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceDropSpaceArgs)
   var result MetaServiceDropSpaceResult
-  if retval, err := p.handler.DropSpace(args.Req); err != nil {
+  if retval, err := p.handler.DropSpace(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropSpace: " + err.Error())
@@ -13516,10 +5485,10 @@ func (p *metaServiceProcessorGetSpace) Write(seqId int32, result thrift.Writable
   return err
 }
 
-func (p *metaServiceProcessorGetSpace) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetSpace) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetSpaceArgs)
   var result MetaServiceGetSpaceResult
-  if retval, err := p.handler.GetSpace(args.Req); err != nil {
+  if retval, err := p.handler.GetSpace(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getSpace: " + err.Error())
@@ -13566,10 +5535,10 @@ func (p *metaServiceProcessorListSpaces) Write(seqId int32, result thrift.Writab
   return err
 }
 
-func (p *metaServiceProcessorListSpaces) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListSpaces) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListSpacesArgs)
   var result MetaServiceListSpacesResult
-  if retval, err := p.handler.ListSpaces(args.Req); err != nil {
+  if retval, err := p.handler.ListSpaces(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listSpaces: " + err.Error())
@@ -13616,10 +5585,10 @@ func (p *metaServiceProcessorCreateTag) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorCreateTag) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorCreateTag) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceCreateTagArgs)
   var result MetaServiceCreateTagResult
-  if retval, err := p.handler.CreateTag(args.Req); err != nil {
+  if retval, err := p.handler.CreateTag(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createTag: " + err.Error())
@@ -13666,10 +5635,10 @@ func (p *metaServiceProcessorAlterTag) Write(seqId int32, result thrift.Writable
   return err
 }
 
-func (p *metaServiceProcessorAlterTag) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorAlterTag) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceAlterTagArgs)
   var result MetaServiceAlterTagResult
-  if retval, err := p.handler.AlterTag(args.Req); err != nil {
+  if retval, err := p.handler.AlterTag(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing alterTag: " + err.Error())
@@ -13716,10 +5685,10 @@ func (p *metaServiceProcessorDropTag) Write(seqId int32, result thrift.WritableS
   return err
 }
 
-func (p *metaServiceProcessorDropTag) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorDropTag) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceDropTagArgs)
   var result MetaServiceDropTagResult
-  if retval, err := p.handler.DropTag(args.Req); err != nil {
+  if retval, err := p.handler.DropTag(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropTag: " + err.Error())
@@ -13766,10 +5735,10 @@ func (p *metaServiceProcessorGetTag) Write(seqId int32, result thrift.WritableSt
   return err
 }
 
-func (p *metaServiceProcessorGetTag) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetTag) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetTagArgs)
   var result MetaServiceGetTagResult
-  if retval, err := p.handler.GetTag(args.Req); err != nil {
+  if retval, err := p.handler.GetTag(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getTag: " + err.Error())
@@ -13816,10 +5785,10 @@ func (p *metaServiceProcessorListTags) Write(seqId int32, result thrift.Writable
   return err
 }
 
-func (p *metaServiceProcessorListTags) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListTags) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListTagsArgs)
   var result MetaServiceListTagsResult
-  if retval, err := p.handler.ListTags(args.Req); err != nil {
+  if retval, err := p.handler.ListTags(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listTags: " + err.Error())
@@ -13866,10 +5835,10 @@ func (p *metaServiceProcessorCreateEdge) Write(seqId int32, result thrift.Writab
   return err
 }
 
-func (p *metaServiceProcessorCreateEdge) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorCreateEdge) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceCreateEdgeArgs)
   var result MetaServiceCreateEdgeResult
-  if retval, err := p.handler.CreateEdge(args.Req); err != nil {
+  if retval, err := p.handler.CreateEdge(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createEdge: " + err.Error())
@@ -13916,10 +5885,10 @@ func (p *metaServiceProcessorAlterEdge) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorAlterEdge) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorAlterEdge) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceAlterEdgeArgs)
   var result MetaServiceAlterEdgeResult
-  if retval, err := p.handler.AlterEdge(args.Req); err != nil {
+  if retval, err := p.handler.AlterEdge(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing alterEdge: " + err.Error())
@@ -13966,10 +5935,10 @@ func (p *metaServiceProcessorDropEdge) Write(seqId int32, result thrift.Writable
   return err
 }
 
-func (p *metaServiceProcessorDropEdge) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorDropEdge) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceDropEdgeArgs)
   var result MetaServiceDropEdgeResult
-  if retval, err := p.handler.DropEdge(args.Req); err != nil {
+  if retval, err := p.handler.DropEdge(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropEdge: " + err.Error())
@@ -14016,10 +5985,10 @@ func (p *metaServiceProcessorGetEdge) Write(seqId int32, result thrift.WritableS
   return err
 }
 
-func (p *metaServiceProcessorGetEdge) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetEdge) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetEdgeArgs)
   var result MetaServiceGetEdgeResult
-  if retval, err := p.handler.GetEdge(args.Req); err != nil {
+  if retval, err := p.handler.GetEdge(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getEdge: " + err.Error())
@@ -14066,10 +6035,10 @@ func (p *metaServiceProcessorListEdges) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorListEdges) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListEdges) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListEdgesArgs)
   var result MetaServiceListEdgesResult
-  if retval, err := p.handler.ListEdges(args.Req); err != nil {
+  if retval, err := p.handler.ListEdges(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listEdges: " + err.Error())
@@ -14116,10 +6085,10 @@ func (p *metaServiceProcessorListHosts) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorListHosts) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListHosts) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListHostsArgs)
   var result MetaServiceListHostsResult
-  if retval, err := p.handler.ListHosts(args.Req); err != nil {
+  if retval, err := p.handler.ListHosts(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listHosts: " + err.Error())
@@ -14166,10 +6135,10 @@ func (p *metaServiceProcessorGetPartsAlloc) Write(seqId int32, result thrift.Wri
   return err
 }
 
-func (p *metaServiceProcessorGetPartsAlloc) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetPartsAlloc) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetPartsAllocArgs)
   var result MetaServiceGetPartsAllocResult
-  if retval, err := p.handler.GetPartsAlloc(args.Req); err != nil {
+  if retval, err := p.handler.GetPartsAlloc(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getPartsAlloc: " + err.Error())
@@ -14216,10 +6185,10 @@ func (p *metaServiceProcessorListParts) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorListParts) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListParts) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListPartsArgs)
   var result MetaServiceListPartsResult
-  if retval, err := p.handler.ListParts(args.Req); err != nil {
+  if retval, err := p.handler.ListParts(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listParts: " + err.Error())
@@ -14266,10 +6235,10 @@ func (p *metaServiceProcessorMultiPut) Write(seqId int32, result thrift.Writable
   return err
 }
 
-func (p *metaServiceProcessorMultiPut) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorMultiPut) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceMultiPutArgs)
   var result MetaServiceMultiPutResult
-  if retval, err := p.handler.MultiPut(args.Req); err != nil {
+  if retval, err := p.handler.MultiPut(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing multiPut: " + err.Error())
@@ -14316,10 +6285,10 @@ func (p *metaServiceProcessorGet) Write(seqId int32, result thrift.WritableStruc
   return err
 }
 
-func (p *metaServiceProcessorGet) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGet) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetArgs)
   var result MetaServiceGetResult
-  if retval, err := p.handler.Get(args.Req); err != nil {
+  if retval, err := p.handler.Get(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing get: " + err.Error())
@@ -14366,10 +6335,10 @@ func (p *metaServiceProcessorMultiGet) Write(seqId int32, result thrift.Writable
   return err
 }
 
-func (p *metaServiceProcessorMultiGet) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorMultiGet) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceMultiGetArgs)
   var result MetaServiceMultiGetResult
-  if retval, err := p.handler.MultiGet(args.Req); err != nil {
+  if retval, err := p.handler.MultiGet(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing multiGet: " + err.Error())
@@ -14416,10 +6385,10 @@ func (p *metaServiceProcessorRemove) Write(seqId int32, result thrift.WritableSt
   return err
 }
 
-func (p *metaServiceProcessorRemove) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorRemove) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceRemoveArgs)
   var result MetaServiceRemoveResult
-  if retval, err := p.handler.Remove(args.Req); err != nil {
+  if retval, err := p.handler.Remove(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing remove: " + err.Error())
@@ -14466,10 +6435,10 @@ func (p *metaServiceProcessorRemoveRange) Write(seqId int32, result thrift.Writa
   return err
 }
 
-func (p *metaServiceProcessorRemoveRange) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorRemoveRange) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceRemoveRangeArgs)
   var result MetaServiceRemoveRangeResult
-  if retval, err := p.handler.RemoveRange(args.Req); err != nil {
+  if retval, err := p.handler.RemoveRange(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing removeRange: " + err.Error())
@@ -14516,10 +6485,10 @@ func (p *metaServiceProcessorScan) Write(seqId int32, result thrift.WritableStru
   return err
 }
 
-func (p *metaServiceProcessorScan) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorScan) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceScanArgs)
   var result MetaServiceScanResult
-  if retval, err := p.handler.Scan(args.Req); err != nil {
+  if retval, err := p.handler.Scan(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing scan: " + err.Error())
@@ -14566,10 +6535,10 @@ func (p *metaServiceProcessorCreateTagIndex) Write(seqId int32, result thrift.Wr
   return err
 }
 
-func (p *metaServiceProcessorCreateTagIndex) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorCreateTagIndex) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceCreateTagIndexArgs)
   var result MetaServiceCreateTagIndexResult
-  if retval, err := p.handler.CreateTagIndex(args.Req); err != nil {
+  if retval, err := p.handler.CreateTagIndex(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createTagIndex: " + err.Error())
@@ -14616,10 +6585,10 @@ func (p *metaServiceProcessorDropTagIndex) Write(seqId int32, result thrift.Writ
   return err
 }
 
-func (p *metaServiceProcessorDropTagIndex) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorDropTagIndex) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceDropTagIndexArgs)
   var result MetaServiceDropTagIndexResult
-  if retval, err := p.handler.DropTagIndex(args.Req); err != nil {
+  if retval, err := p.handler.DropTagIndex(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropTagIndex: " + err.Error())
@@ -14666,10 +6635,10 @@ func (p *metaServiceProcessorGetTagIndex) Write(seqId int32, result thrift.Writa
   return err
 }
 
-func (p *metaServiceProcessorGetTagIndex) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetTagIndex) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetTagIndexArgs)
   var result MetaServiceGetTagIndexResult
-  if retval, err := p.handler.GetTagIndex(args.Req); err != nil {
+  if retval, err := p.handler.GetTagIndex(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getTagIndex: " + err.Error())
@@ -14716,10 +6685,10 @@ func (p *metaServiceProcessorListTagIndexes) Write(seqId int32, result thrift.Wr
   return err
 }
 
-func (p *metaServiceProcessorListTagIndexes) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListTagIndexes) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListTagIndexesArgs)
   var result MetaServiceListTagIndexesResult
-  if retval, err := p.handler.ListTagIndexes(args.Req); err != nil {
+  if retval, err := p.handler.ListTagIndexes(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listTagIndexes: " + err.Error())
@@ -14766,10 +6735,10 @@ func (p *metaServiceProcessorRebuildTagIndex) Write(seqId int32, result thrift.W
   return err
 }
 
-func (p *metaServiceProcessorRebuildTagIndex) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorRebuildTagIndex) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceRebuildTagIndexArgs)
   var result MetaServiceRebuildTagIndexResult
-  if retval, err := p.handler.RebuildTagIndex(args.Req); err != nil {
+  if retval, err := p.handler.RebuildTagIndex(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing rebuildTagIndex: " + err.Error())
@@ -14816,10 +6785,10 @@ func (p *metaServiceProcessorListTagIndexStatus) Write(seqId int32, result thrif
   return err
 }
 
-func (p *metaServiceProcessorListTagIndexStatus) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListTagIndexStatus) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListTagIndexStatusArgs)
   var result MetaServiceListTagIndexStatusResult
-  if retval, err := p.handler.ListTagIndexStatus(args.Req); err != nil {
+  if retval, err := p.handler.ListTagIndexStatus(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listTagIndexStatus: " + err.Error())
@@ -14866,10 +6835,10 @@ func (p *metaServiceProcessorCreateEdgeIndex) Write(seqId int32, result thrift.W
   return err
 }
 
-func (p *metaServiceProcessorCreateEdgeIndex) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorCreateEdgeIndex) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceCreateEdgeIndexArgs)
   var result MetaServiceCreateEdgeIndexResult
-  if retval, err := p.handler.CreateEdgeIndex(args.Req); err != nil {
+  if retval, err := p.handler.CreateEdgeIndex(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createEdgeIndex: " + err.Error())
@@ -14916,10 +6885,10 @@ func (p *metaServiceProcessorDropEdgeIndex) Write(seqId int32, result thrift.Wri
   return err
 }
 
-func (p *metaServiceProcessorDropEdgeIndex) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorDropEdgeIndex) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceDropEdgeIndexArgs)
   var result MetaServiceDropEdgeIndexResult
-  if retval, err := p.handler.DropEdgeIndex(args.Req); err != nil {
+  if retval, err := p.handler.DropEdgeIndex(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropEdgeIndex: " + err.Error())
@@ -14966,10 +6935,10 @@ func (p *metaServiceProcessorGetEdgeIndex) Write(seqId int32, result thrift.Writ
   return err
 }
 
-func (p *metaServiceProcessorGetEdgeIndex) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetEdgeIndex) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetEdgeIndexArgs)
   var result MetaServiceGetEdgeIndexResult
-  if retval, err := p.handler.GetEdgeIndex(args.Req); err != nil {
+  if retval, err := p.handler.GetEdgeIndex(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getEdgeIndex: " + err.Error())
@@ -15016,10 +6985,10 @@ func (p *metaServiceProcessorListEdgeIndexes) Write(seqId int32, result thrift.W
   return err
 }
 
-func (p *metaServiceProcessorListEdgeIndexes) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListEdgeIndexes) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListEdgeIndexesArgs)
   var result MetaServiceListEdgeIndexesResult
-  if retval, err := p.handler.ListEdgeIndexes(args.Req); err != nil {
+  if retval, err := p.handler.ListEdgeIndexes(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listEdgeIndexes: " + err.Error())
@@ -15066,10 +7035,10 @@ func (p *metaServiceProcessorRebuildEdgeIndex) Write(seqId int32, result thrift.
   return err
 }
 
-func (p *metaServiceProcessorRebuildEdgeIndex) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorRebuildEdgeIndex) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceRebuildEdgeIndexArgs)
   var result MetaServiceRebuildEdgeIndexResult
-  if retval, err := p.handler.RebuildEdgeIndex(args.Req); err != nil {
+  if retval, err := p.handler.RebuildEdgeIndex(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing rebuildEdgeIndex: " + err.Error())
@@ -15116,10 +7085,10 @@ func (p *metaServiceProcessorListEdgeIndexStatus) Write(seqId int32, result thri
   return err
 }
 
-func (p *metaServiceProcessorListEdgeIndexStatus) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListEdgeIndexStatus) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListEdgeIndexStatusArgs)
   var result MetaServiceListEdgeIndexStatusResult
-  if retval, err := p.handler.ListEdgeIndexStatus(args.Req); err != nil {
+  if retval, err := p.handler.ListEdgeIndexStatus(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listEdgeIndexStatus: " + err.Error())
@@ -15166,10 +7135,10 @@ func (p *metaServiceProcessorCreateUser) Write(seqId int32, result thrift.Writab
   return err
 }
 
-func (p *metaServiceProcessorCreateUser) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorCreateUser) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceCreateUserArgs)
   var result MetaServiceCreateUserResult
-  if retval, err := p.handler.CreateUser(args.Req); err != nil {
+  if retval, err := p.handler.CreateUser(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createUser: " + err.Error())
@@ -15216,10 +7185,10 @@ func (p *metaServiceProcessorDropUser) Write(seqId int32, result thrift.Writable
   return err
 }
 
-func (p *metaServiceProcessorDropUser) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorDropUser) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceDropUserArgs)
   var result MetaServiceDropUserResult
-  if retval, err := p.handler.DropUser(args.Req); err != nil {
+  if retval, err := p.handler.DropUser(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropUser: " + err.Error())
@@ -15266,10 +7235,10 @@ func (p *metaServiceProcessorAlterUser) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorAlterUser) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorAlterUser) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceAlterUserArgs)
   var result MetaServiceAlterUserResult
-  if retval, err := p.handler.AlterUser(args.Req); err != nil {
+  if retval, err := p.handler.AlterUser(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing alterUser: " + err.Error())
@@ -15316,10 +7285,10 @@ func (p *metaServiceProcessorGrantRole) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorGrantRole) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGrantRole) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGrantRoleArgs)
   var result MetaServiceGrantRoleResult
-  if retval, err := p.handler.GrantRole(args.Req); err != nil {
+  if retval, err := p.handler.GrantRole(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing grantRole: " + err.Error())
@@ -15366,10 +7335,10 @@ func (p *metaServiceProcessorRevokeRole) Write(seqId int32, result thrift.Writab
   return err
 }
 
-func (p *metaServiceProcessorRevokeRole) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorRevokeRole) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceRevokeRoleArgs)
   var result MetaServiceRevokeRoleResult
-  if retval, err := p.handler.RevokeRole(args.Req); err != nil {
+  if retval, err := p.handler.RevokeRole(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing revokeRole: " + err.Error())
@@ -15416,10 +7385,10 @@ func (p *metaServiceProcessorListUsers) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorListUsers) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListUsers) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListUsersArgs)
   var result MetaServiceListUsersResult
-  if retval, err := p.handler.ListUsers(args.Req); err != nil {
+  if retval, err := p.handler.ListUsers(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listUsers: " + err.Error())
@@ -15466,10 +7435,10 @@ func (p *metaServiceProcessorListRoles) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorListRoles) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListRoles) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListRolesArgs)
   var result MetaServiceListRolesResult
-  if retval, err := p.handler.ListRoles(args.Req); err != nil {
+  if retval, err := p.handler.ListRoles(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listRoles: " + err.Error())
@@ -15516,10 +7485,10 @@ func (p *metaServiceProcessorGetUserRoles) Write(seqId int32, result thrift.Writ
   return err
 }
 
-func (p *metaServiceProcessorGetUserRoles) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetUserRoles) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetUserRolesArgs)
   var result MetaServiceGetUserRolesResult
-  if retval, err := p.handler.GetUserRoles(args.Req); err != nil {
+  if retval, err := p.handler.GetUserRoles(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getUserRoles: " + err.Error())
@@ -15566,10 +7535,10 @@ func (p *metaServiceProcessorChangePassword) Write(seqId int32, result thrift.Wr
   return err
 }
 
-func (p *metaServiceProcessorChangePassword) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorChangePassword) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceChangePasswordArgs)
   var result MetaServiceChangePasswordResult
-  if retval, err := p.handler.ChangePassword(args.Req); err != nil {
+  if retval, err := p.handler.ChangePassword(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing changePassword: " + err.Error())
@@ -15616,10 +7585,10 @@ func (p *metaServiceProcessorHeartBeat) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorHeartBeat) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorHeartBeat) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceHeartBeatArgs)
   var result MetaServiceHeartBeatResult
-  if retval, err := p.handler.HeartBeat(args.Req); err != nil {
+  if retval, err := p.handler.HeartBeat(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing heartBeat: " + err.Error())
@@ -15666,10 +7635,10 @@ func (p *metaServiceProcessorBalance) Write(seqId int32, result thrift.WritableS
   return err
 }
 
-func (p *metaServiceProcessorBalance) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorBalance) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceBalanceArgs)
   var result MetaServiceBalanceResult
-  if retval, err := p.handler.Balance(args.Req); err != nil {
+  if retval, err := p.handler.Balance(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing balance: " + err.Error())
@@ -15716,10 +7685,10 @@ func (p *metaServiceProcessorLeaderBalance) Write(seqId int32, result thrift.Wri
   return err
 }
 
-func (p *metaServiceProcessorLeaderBalance) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorLeaderBalance) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceLeaderBalanceArgs)
   var result MetaServiceLeaderBalanceResult
-  if retval, err := p.handler.LeaderBalance(args.Req); err != nil {
+  if retval, err := p.handler.LeaderBalance(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing leaderBalance: " + err.Error())
@@ -15766,10 +7735,10 @@ func (p *metaServiceProcessorRegConfig) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorRegConfig) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorRegConfig) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceRegConfigArgs)
   var result MetaServiceRegConfigResult
-  if retval, err := p.handler.RegConfig(args.Req); err != nil {
+  if retval, err := p.handler.RegConfig(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing regConfig: " + err.Error())
@@ -15816,10 +7785,10 @@ func (p *metaServiceProcessorGetConfig) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorGetConfig) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetConfig) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetConfigArgs)
   var result MetaServiceGetConfigResult
-  if retval, err := p.handler.GetConfig(args.Req); err != nil {
+  if retval, err := p.handler.GetConfig(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getConfig: " + err.Error())
@@ -15866,10 +7835,10 @@ func (p *metaServiceProcessorSetConfig) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorSetConfig) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorSetConfig) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceSetConfigArgs)
   var result MetaServiceSetConfigResult
-  if retval, err := p.handler.SetConfig(args.Req); err != nil {
+  if retval, err := p.handler.SetConfig(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing setConfig: " + err.Error())
@@ -15916,10 +7885,10 @@ func (p *metaServiceProcessorListConfigs) Write(seqId int32, result thrift.Writa
   return err
 }
 
-func (p *metaServiceProcessorListConfigs) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListConfigs) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListConfigsArgs)
   var result MetaServiceListConfigsResult
-  if retval, err := p.handler.ListConfigs(args.Req); err != nil {
+  if retval, err := p.handler.ListConfigs(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listConfigs: " + err.Error())
@@ -15966,10 +7935,10 @@ func (p *metaServiceProcessorCreateSnapshot) Write(seqId int32, result thrift.Wr
   return err
 }
 
-func (p *metaServiceProcessorCreateSnapshot) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorCreateSnapshot) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceCreateSnapshotArgs)
   var result MetaServiceCreateSnapshotResult
-  if retval, err := p.handler.CreateSnapshot(args.Req); err != nil {
+  if retval, err := p.handler.CreateSnapshot(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createSnapshot: " + err.Error())
@@ -16016,10 +7985,10 @@ func (p *metaServiceProcessorDropSnapshot) Write(seqId int32, result thrift.Writ
   return err
 }
 
-func (p *metaServiceProcessorDropSnapshot) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorDropSnapshot) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceDropSnapshotArgs)
   var result MetaServiceDropSnapshotResult
-  if retval, err := p.handler.DropSnapshot(args.Req); err != nil {
+  if retval, err := p.handler.DropSnapshot(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropSnapshot: " + err.Error())
@@ -16066,10 +8035,10 @@ func (p *metaServiceProcessorListSnapshots) Write(seqId int32, result thrift.Wri
   return err
 }
 
-func (p *metaServiceProcessorListSnapshots) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListSnapshots) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListSnapshotsArgs)
   var result MetaServiceListSnapshotsResult
-  if retval, err := p.handler.ListSnapshots(args.Req); err != nil {
+  if retval, err := p.handler.ListSnapshots(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listSnapshots: " + err.Error())
@@ -16116,10 +8085,10 @@ func (p *metaServiceProcessorRunAdminJob) Write(seqId int32, result thrift.Writa
   return err
 }
 
-func (p *metaServiceProcessorRunAdminJob) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorRunAdminJob) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceRunAdminJobArgs)
   var result MetaServiceRunAdminJobResult
-  if retval, err := p.handler.RunAdminJob(args.Req); err != nil {
+  if retval, err := p.handler.RunAdminJob(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing runAdminJob: " + err.Error())
@@ -16166,10 +8135,10 @@ func (p *metaServiceProcessorAddZone) Write(seqId int32, result thrift.WritableS
   return err
 }
 
-func (p *metaServiceProcessorAddZone) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorAddZone) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceAddZoneArgs)
   var result MetaServiceAddZoneResult
-  if retval, err := p.handler.AddZone(args.Req); err != nil {
+  if retval, err := p.handler.AddZone(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing addZone: " + err.Error())
@@ -16216,10 +8185,10 @@ func (p *metaServiceProcessorDropZone) Write(seqId int32, result thrift.Writable
   return err
 }
 
-func (p *metaServiceProcessorDropZone) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorDropZone) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceDropZoneArgs)
   var result MetaServiceDropZoneResult
-  if retval, err := p.handler.DropZone(args.Req); err != nil {
+  if retval, err := p.handler.DropZone(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropZone: " + err.Error())
@@ -16266,10 +8235,10 @@ func (p *metaServiceProcessorAddHostIntoZone) Write(seqId int32, result thrift.W
   return err
 }
 
-func (p *metaServiceProcessorAddHostIntoZone) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorAddHostIntoZone) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceAddHostIntoZoneArgs)
   var result MetaServiceAddHostIntoZoneResult
-  if retval, err := p.handler.AddHostIntoZone(args.Req); err != nil {
+  if retval, err := p.handler.AddHostIntoZone(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing addHostIntoZone: " + err.Error())
@@ -16316,10 +8285,10 @@ func (p *metaServiceProcessorDropHostFromZone) Write(seqId int32, result thrift.
   return err
 }
 
-func (p *metaServiceProcessorDropHostFromZone) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorDropHostFromZone) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceDropHostFromZoneArgs)
   var result MetaServiceDropHostFromZoneResult
-  if retval, err := p.handler.DropHostFromZone(args.Req); err != nil {
+  if retval, err := p.handler.DropHostFromZone(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropHostFromZone: " + err.Error())
@@ -16366,10 +8335,10 @@ func (p *metaServiceProcessorGetZone) Write(seqId int32, result thrift.WritableS
   return err
 }
 
-func (p *metaServiceProcessorGetZone) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetZone) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetZoneArgs)
   var result MetaServiceGetZoneResult
-  if retval, err := p.handler.GetZone(args.Req); err != nil {
+  if retval, err := p.handler.GetZone(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getZone: " + err.Error())
@@ -16416,10 +8385,10 @@ func (p *metaServiceProcessorListZones) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorListZones) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListZones) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListZonesArgs)
   var result MetaServiceListZonesResult
-  if retval, err := p.handler.ListZones(args.Req); err != nil {
+  if retval, err := p.handler.ListZones(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listZones: " + err.Error())
@@ -16466,10 +8435,10 @@ func (p *metaServiceProcessorAddGroup) Write(seqId int32, result thrift.Writable
   return err
 }
 
-func (p *metaServiceProcessorAddGroup) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorAddGroup) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceAddGroupArgs)
   var result MetaServiceAddGroupResult
-  if retval, err := p.handler.AddGroup(args.Req); err != nil {
+  if retval, err := p.handler.AddGroup(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing addGroup: " + err.Error())
@@ -16516,10 +8485,10 @@ func (p *metaServiceProcessorDropGroup) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorDropGroup) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorDropGroup) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceDropGroupArgs)
   var result MetaServiceDropGroupResult
-  if retval, err := p.handler.DropGroup(args.Req); err != nil {
+  if retval, err := p.handler.DropGroup(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropGroup: " + err.Error())
@@ -16566,10 +8535,10 @@ func (p *metaServiceProcessorAddZoneIntoGroup) Write(seqId int32, result thrift.
   return err
 }
 
-func (p *metaServiceProcessorAddZoneIntoGroup) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorAddZoneIntoGroup) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceAddZoneIntoGroupArgs)
   var result MetaServiceAddZoneIntoGroupResult
-  if retval, err := p.handler.AddZoneIntoGroup(args.Req); err != nil {
+  if retval, err := p.handler.AddZoneIntoGroup(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing addZoneIntoGroup: " + err.Error())
@@ -16616,10 +8585,10 @@ func (p *metaServiceProcessorDropZoneFromGroup) Write(seqId int32, result thrift
   return err
 }
 
-func (p *metaServiceProcessorDropZoneFromGroup) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorDropZoneFromGroup) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceDropZoneFromGroupArgs)
   var result MetaServiceDropZoneFromGroupResult
-  if retval, err := p.handler.DropZoneFromGroup(args.Req); err != nil {
+  if retval, err := p.handler.DropZoneFromGroup(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropZoneFromGroup: " + err.Error())
@@ -16666,10 +8635,10 @@ func (p *metaServiceProcessorGetGroup) Write(seqId int32, result thrift.Writable
   return err
 }
 
-func (p *metaServiceProcessorGetGroup) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetGroup) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetGroupArgs)
   var result MetaServiceGetGroupResult
-  if retval, err := p.handler.GetGroup(args.Req); err != nil {
+  if retval, err := p.handler.GetGroup(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getGroup: " + err.Error())
@@ -16716,10 +8685,10 @@ func (p *metaServiceProcessorListGroups) Write(seqId int32, result thrift.Writab
   return err
 }
 
-func (p *metaServiceProcessorListGroups) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListGroups) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListGroupsArgs)
   var result MetaServiceListGroupsResult
-  if retval, err := p.handler.ListGroups(args.Req); err != nil {
+  if retval, err := p.handler.ListGroups(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listGroups: " + err.Error())
@@ -16766,10 +8735,10 @@ func (p *metaServiceProcessorCreateBackup) Write(seqId int32, result thrift.Writ
   return err
 }
 
-func (p *metaServiceProcessorCreateBackup) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorCreateBackup) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceCreateBackupArgs)
   var result MetaServiceCreateBackupResult
-  if retval, err := p.handler.CreateBackup(args.Req); err != nil {
+  if retval, err := p.handler.CreateBackup(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createBackup: " + err.Error())
@@ -16816,10 +8785,10 @@ func (p *metaServiceProcessorRestoreMeta) Write(seqId int32, result thrift.Writa
   return err
 }
 
-func (p *metaServiceProcessorRestoreMeta) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorRestoreMeta) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceRestoreMetaArgs)
   var result MetaServiceRestoreMetaResult
-  if retval, err := p.handler.RestoreMeta(args.Req); err != nil {
+  if retval, err := p.handler.RestoreMeta(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing restoreMeta: " + err.Error())
@@ -16866,10 +8835,10 @@ func (p *metaServiceProcessorAddListener) Write(seqId int32, result thrift.Writa
   return err
 }
 
-func (p *metaServiceProcessorAddListener) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorAddListener) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceAddListenerArgs)
   var result MetaServiceAddListenerResult
-  if retval, err := p.handler.AddListener(args.Req); err != nil {
+  if retval, err := p.handler.AddListener(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing addListener: " + err.Error())
@@ -16916,10 +8885,10 @@ func (p *metaServiceProcessorRemoveListener) Write(seqId int32, result thrift.Wr
   return err
 }
 
-func (p *metaServiceProcessorRemoveListener) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorRemoveListener) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceRemoveListenerArgs)
   var result MetaServiceRemoveListenerResult
-  if retval, err := p.handler.RemoveListener(args.Req); err != nil {
+  if retval, err := p.handler.RemoveListener(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing removeListener: " + err.Error())
@@ -16966,10 +8935,10 @@ func (p *metaServiceProcessorListListener) Write(seqId int32, result thrift.Writ
   return err
 }
 
-func (p *metaServiceProcessorListListener) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListListener) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListListenerArgs)
   var result MetaServiceListListenerResult
-  if retval, err := p.handler.ListListener(args.Req); err != nil {
+  if retval, err := p.handler.ListListener(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listListener: " + err.Error())
@@ -17016,10 +8985,10 @@ func (p *metaServiceProcessorGetStatis) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorGetStatis) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetStatis) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetStatisArgs)
   var result MetaServiceGetStatisResult
-  if retval, err := p.handler.GetStatis(args.Req); err != nil {
+  if retval, err := p.handler.GetStatis(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getStatis: " + err.Error())
@@ -17066,10 +9035,10 @@ func (p *metaServiceProcessorSignInFTService) Write(seqId int32, result thrift.W
   return err
 }
 
-func (p *metaServiceProcessorSignInFTService) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorSignInFTService) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceSignInFTServiceArgs)
   var result MetaServiceSignInFTServiceResult
-  if retval, err := p.handler.SignInFTService(args.Req); err != nil {
+  if retval, err := p.handler.SignInFTService(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing signInFTService: " + err.Error())
@@ -17116,10 +9085,10 @@ func (p *metaServiceProcessorSignOutFTService) Write(seqId int32, result thrift.
   return err
 }
 
-func (p *metaServiceProcessorSignOutFTService) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorSignOutFTService) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceSignOutFTServiceArgs)
   var result MetaServiceSignOutFTServiceResult
-  if retval, err := p.handler.SignOutFTService(args.Req); err != nil {
+  if retval, err := p.handler.SignOutFTService(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing signOutFTService: " + err.Error())
@@ -17166,10 +9135,10 @@ func (p *metaServiceProcessorListFTClients) Write(seqId int32, result thrift.Wri
   return err
 }
 
-func (p *metaServiceProcessorListFTClients) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListFTClients) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListFTClientsArgs)
   var result MetaServiceListFTClientsResult
-  if retval, err := p.handler.ListFTClients(args.Req); err != nil {
+  if retval, err := p.handler.ListFTClients(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listFTClients: " + err.Error())
@@ -17216,10 +9185,10 @@ func (p *metaServiceProcessorCreateSession) Write(seqId int32, result thrift.Wri
   return err
 }
 
-func (p *metaServiceProcessorCreateSession) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorCreateSession) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceCreateSessionArgs)
   var result MetaServiceCreateSessionResult
-  if retval, err := p.handler.CreateSession(args.Req); err != nil {
+  if retval, err := p.handler.CreateSession(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createSession: " + err.Error())
@@ -17266,10 +9235,10 @@ func (p *metaServiceProcessorUpdateSessions) Write(seqId int32, result thrift.Wr
   return err
 }
 
-func (p *metaServiceProcessorUpdateSessions) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorUpdateSessions) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceUpdateSessionsArgs)
   var result MetaServiceUpdateSessionsResult
-  if retval, err := p.handler.UpdateSessions(args.Req); err != nil {
+  if retval, err := p.handler.UpdateSessions(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing updateSessions: " + err.Error())
@@ -17316,10 +9285,10 @@ func (p *metaServiceProcessorListSessions) Write(seqId int32, result thrift.Writ
   return err
 }
 
-func (p *metaServiceProcessorListSessions) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListSessions) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListSessionsArgs)
   var result MetaServiceListSessionsResult
-  if retval, err := p.handler.ListSessions(args.Req); err != nil {
+  if retval, err := p.handler.ListSessions(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listSessions: " + err.Error())
@@ -17366,10 +9335,10 @@ func (p *metaServiceProcessorGetSession) Write(seqId int32, result thrift.Writab
   return err
 }
 
-func (p *metaServiceProcessorGetSession) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetSession) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetSessionArgs)
   var result MetaServiceGetSessionResult
-  if retval, err := p.handler.GetSession(args.Req); err != nil {
+  if retval, err := p.handler.GetSession(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getSession: " + err.Error())
@@ -17416,10 +9385,10 @@ func (p *metaServiceProcessorRemoveSession) Write(seqId int32, result thrift.Wri
   return err
 }
 
-func (p *metaServiceProcessorRemoveSession) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorRemoveSession) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceRemoveSessionArgs)
   var result MetaServiceRemoveSessionResult
-  if retval, err := p.handler.RemoveSession(args.Req); err != nil {
+  if retval, err := p.handler.RemoveSession(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing removeSession: " + err.Error())
@@ -17466,10 +9435,10 @@ func (p *metaServiceProcessorReportTaskFinish) Write(seqId int32, result thrift.
   return err
 }
 
-func (p *metaServiceProcessorReportTaskFinish) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorReportTaskFinish) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceReportTaskFinishArgs)
   var result MetaServiceReportTaskFinishResult
-  if retval, err := p.handler.ReportTaskFinish(args.Req); err != nil {
+  if retval, err := p.handler.ReportTaskFinish(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing reportTaskFinish: " + err.Error())
@@ -17516,10 +9485,10 @@ func (p *metaServiceProcessorListCluster) Write(seqId int32, result thrift.Writa
   return err
 }
 
-func (p *metaServiceProcessorListCluster) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorListCluster) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceListClusterArgs)
   var result MetaServiceListClusterResult
-  if retval, err := p.handler.ListCluster(args.Req); err != nil {
+  if retval, err := p.handler.ListCluster(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listCluster: " + err.Error())
@@ -17566,10 +9535,10 @@ func (p *metaServiceProcessorGetMetaDirInfo) Write(seqId int32, result thrift.Wr
   return err
 }
 
-func (p *metaServiceProcessorGetMetaDirInfo) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *metaServiceProcessorGetMetaDirInfo) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*MetaServiceGetMetaDirInfoArgs)
   var result MetaServiceGetMetaDirInfoResult
-  if retval, err := p.handler.GetMetaDirInfo(args.Req); err != nil {
+  if retval, err := p.handler.GetMetaDirInfo(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getMetaDirInfo: " + err.Error())
@@ -17587,11 +9556,14 @@ func (p *metaServiceProcessorGetMetaDirInfo) Run(argStruct thrift.Struct) (thrif
 // Attributes:
 //  - Req
 type MetaServiceCreateSpaceArgs struct {
+  thrift.IRequest
   Req *CreateSpaceReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceCreateSpaceArgs() *MetaServiceCreateSpaceArgs {
-  return &MetaServiceCreateSpaceArgs{}
+  return &MetaServiceCreateSpaceArgs{
+    Req: NewCreateSpaceReq(),
+  }
 }
 
 var MetaServiceCreateSpaceArgs_Req_DEFAULT *CreateSpaceReq
@@ -17602,7 +9574,7 @@ func (p *MetaServiceCreateSpaceArgs) GetReq() *CreateSpaceReq {
 return p.Req
 }
 func (p *MetaServiceCreateSpaceArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceCreateSpaceArgs) Read(iprot thrift.Protocol) error {
@@ -17671,12 +9643,20 @@ func (p *MetaServiceCreateSpaceArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateSpaceArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceCreateSpaceArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceCreateSpaceResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -17692,7 +9672,7 @@ func (p *MetaServiceCreateSpaceResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceCreateSpaceResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceCreateSpaceResult) Read(iprot thrift.Protocol) error {
@@ -17763,17 +9743,27 @@ func (p *MetaServiceCreateSpaceResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateSpaceResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceCreateSpaceResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceDropSpaceArgs struct {
+  thrift.IRequest
   Req *DropSpaceReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceDropSpaceArgs() *MetaServiceDropSpaceArgs {
-  return &MetaServiceDropSpaceArgs{}
+  return &MetaServiceDropSpaceArgs{
+    Req: NewDropSpaceReq(),
+  }
 }
 
 var MetaServiceDropSpaceArgs_Req_DEFAULT *DropSpaceReq
@@ -17784,7 +9774,7 @@ func (p *MetaServiceDropSpaceArgs) GetReq() *DropSpaceReq {
 return p.Req
 }
 func (p *MetaServiceDropSpaceArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceDropSpaceArgs) Read(iprot thrift.Protocol) error {
@@ -17853,12 +9843,20 @@ func (p *MetaServiceDropSpaceArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropSpaceArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropSpaceArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceDropSpaceResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -17874,7 +9872,7 @@ func (p *MetaServiceDropSpaceResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceDropSpaceResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceDropSpaceResult) Read(iprot thrift.Protocol) error {
@@ -17945,17 +9943,27 @@ func (p *MetaServiceDropSpaceResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropSpaceResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropSpaceResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetSpaceArgs struct {
+  thrift.IRequest
   Req *GetSpaceReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetSpaceArgs() *MetaServiceGetSpaceArgs {
-  return &MetaServiceGetSpaceArgs{}
+  return &MetaServiceGetSpaceArgs{
+    Req: NewGetSpaceReq(),
+  }
 }
 
 var MetaServiceGetSpaceArgs_Req_DEFAULT *GetSpaceReq
@@ -17966,7 +9974,7 @@ func (p *MetaServiceGetSpaceArgs) GetReq() *GetSpaceReq {
 return p.Req
 }
 func (p *MetaServiceGetSpaceArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetSpaceArgs) Read(iprot thrift.Protocol) error {
@@ -18035,12 +10043,20 @@ func (p *MetaServiceGetSpaceArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetSpaceArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetSpaceArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetSpaceResult struct {
+  thrift.IResponse
   Success *GetSpaceResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -18056,7 +10072,7 @@ func (p *MetaServiceGetSpaceResult) GetSuccess() *GetSpaceResp {
 return p.Success
 }
 func (p *MetaServiceGetSpaceResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetSpaceResult) Read(iprot thrift.Protocol) error {
@@ -18127,17 +10143,27 @@ func (p *MetaServiceGetSpaceResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetSpaceResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetSpaceResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListSpacesArgs struct {
+  thrift.IRequest
   Req *ListSpacesReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListSpacesArgs() *MetaServiceListSpacesArgs {
-  return &MetaServiceListSpacesArgs{}
+  return &MetaServiceListSpacesArgs{
+    Req: NewListSpacesReq(),
+  }
 }
 
 var MetaServiceListSpacesArgs_Req_DEFAULT *ListSpacesReq
@@ -18148,7 +10174,7 @@ func (p *MetaServiceListSpacesArgs) GetReq() *ListSpacesReq {
 return p.Req
 }
 func (p *MetaServiceListSpacesArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListSpacesArgs) Read(iprot thrift.Protocol) error {
@@ -18217,12 +10243,20 @@ func (p *MetaServiceListSpacesArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListSpacesArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListSpacesArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListSpacesResult struct {
+  thrift.IResponse
   Success *ListSpacesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -18238,7 +10272,7 @@ func (p *MetaServiceListSpacesResult) GetSuccess() *ListSpacesResp {
 return p.Success
 }
 func (p *MetaServiceListSpacesResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListSpacesResult) Read(iprot thrift.Protocol) error {
@@ -18309,17 +10343,27 @@ func (p *MetaServiceListSpacesResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListSpacesResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListSpacesResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceCreateTagArgs struct {
+  thrift.IRequest
   Req *CreateTagReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceCreateTagArgs() *MetaServiceCreateTagArgs {
-  return &MetaServiceCreateTagArgs{}
+  return &MetaServiceCreateTagArgs{
+    Req: NewCreateTagReq(),
+  }
 }
 
 var MetaServiceCreateTagArgs_Req_DEFAULT *CreateTagReq
@@ -18330,7 +10374,7 @@ func (p *MetaServiceCreateTagArgs) GetReq() *CreateTagReq {
 return p.Req
 }
 func (p *MetaServiceCreateTagArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceCreateTagArgs) Read(iprot thrift.Protocol) error {
@@ -18399,12 +10443,20 @@ func (p *MetaServiceCreateTagArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateTagArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceCreateTagArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceCreateTagResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -18420,7 +10472,7 @@ func (p *MetaServiceCreateTagResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceCreateTagResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceCreateTagResult) Read(iprot thrift.Protocol) error {
@@ -18491,17 +10543,27 @@ func (p *MetaServiceCreateTagResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateTagResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceCreateTagResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceAlterTagArgs struct {
+  thrift.IRequest
   Req *AlterTagReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceAlterTagArgs() *MetaServiceAlterTagArgs {
-  return &MetaServiceAlterTagArgs{}
+  return &MetaServiceAlterTagArgs{
+    Req: NewAlterTagReq(),
+  }
 }
 
 var MetaServiceAlterTagArgs_Req_DEFAULT *AlterTagReq
@@ -18512,7 +10574,7 @@ func (p *MetaServiceAlterTagArgs) GetReq() *AlterTagReq {
 return p.Req
 }
 func (p *MetaServiceAlterTagArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceAlterTagArgs) Read(iprot thrift.Protocol) error {
@@ -18581,12 +10643,20 @@ func (p *MetaServiceAlterTagArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAlterTagArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceAlterTagArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceAlterTagResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -18602,7 +10672,7 @@ func (p *MetaServiceAlterTagResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceAlterTagResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceAlterTagResult) Read(iprot thrift.Protocol) error {
@@ -18673,17 +10743,27 @@ func (p *MetaServiceAlterTagResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAlterTagResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceAlterTagResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceDropTagArgs struct {
+  thrift.IRequest
   Req *DropTagReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceDropTagArgs() *MetaServiceDropTagArgs {
-  return &MetaServiceDropTagArgs{}
+  return &MetaServiceDropTagArgs{
+    Req: NewDropTagReq(),
+  }
 }
 
 var MetaServiceDropTagArgs_Req_DEFAULT *DropTagReq
@@ -18694,7 +10774,7 @@ func (p *MetaServiceDropTagArgs) GetReq() *DropTagReq {
 return p.Req
 }
 func (p *MetaServiceDropTagArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceDropTagArgs) Read(iprot thrift.Protocol) error {
@@ -18763,12 +10843,20 @@ func (p *MetaServiceDropTagArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropTagArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropTagArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceDropTagResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -18784,7 +10872,7 @@ func (p *MetaServiceDropTagResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceDropTagResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceDropTagResult) Read(iprot thrift.Protocol) error {
@@ -18855,17 +10943,27 @@ func (p *MetaServiceDropTagResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropTagResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropTagResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetTagArgs struct {
+  thrift.IRequest
   Req *GetTagReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetTagArgs() *MetaServiceGetTagArgs {
-  return &MetaServiceGetTagArgs{}
+  return &MetaServiceGetTagArgs{
+    Req: NewGetTagReq(),
+  }
 }
 
 var MetaServiceGetTagArgs_Req_DEFAULT *GetTagReq
@@ -18876,7 +10974,7 @@ func (p *MetaServiceGetTagArgs) GetReq() *GetTagReq {
 return p.Req
 }
 func (p *MetaServiceGetTagArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetTagArgs) Read(iprot thrift.Protocol) error {
@@ -18945,12 +11043,20 @@ func (p *MetaServiceGetTagArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetTagArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetTagArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetTagResult struct {
+  thrift.IResponse
   Success *GetTagResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -18966,7 +11072,7 @@ func (p *MetaServiceGetTagResult) GetSuccess() *GetTagResp {
 return p.Success
 }
 func (p *MetaServiceGetTagResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetTagResult) Read(iprot thrift.Protocol) error {
@@ -19037,17 +11143,27 @@ func (p *MetaServiceGetTagResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetTagResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetTagResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListTagsArgs struct {
+  thrift.IRequest
   Req *ListTagsReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListTagsArgs() *MetaServiceListTagsArgs {
-  return &MetaServiceListTagsArgs{}
+  return &MetaServiceListTagsArgs{
+    Req: NewListTagsReq(),
+  }
 }
 
 var MetaServiceListTagsArgs_Req_DEFAULT *ListTagsReq
@@ -19058,7 +11174,7 @@ func (p *MetaServiceListTagsArgs) GetReq() *ListTagsReq {
 return p.Req
 }
 func (p *MetaServiceListTagsArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListTagsArgs) Read(iprot thrift.Protocol) error {
@@ -19127,12 +11243,20 @@ func (p *MetaServiceListTagsArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListTagsArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListTagsArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListTagsResult struct {
+  thrift.IResponse
   Success *ListTagsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -19148,7 +11272,7 @@ func (p *MetaServiceListTagsResult) GetSuccess() *ListTagsResp {
 return p.Success
 }
 func (p *MetaServiceListTagsResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListTagsResult) Read(iprot thrift.Protocol) error {
@@ -19219,17 +11343,27 @@ func (p *MetaServiceListTagsResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListTagsResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListTagsResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceCreateEdgeArgs struct {
+  thrift.IRequest
   Req *CreateEdgeReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceCreateEdgeArgs() *MetaServiceCreateEdgeArgs {
-  return &MetaServiceCreateEdgeArgs{}
+  return &MetaServiceCreateEdgeArgs{
+    Req: NewCreateEdgeReq(),
+  }
 }
 
 var MetaServiceCreateEdgeArgs_Req_DEFAULT *CreateEdgeReq
@@ -19240,7 +11374,7 @@ func (p *MetaServiceCreateEdgeArgs) GetReq() *CreateEdgeReq {
 return p.Req
 }
 func (p *MetaServiceCreateEdgeArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceCreateEdgeArgs) Read(iprot thrift.Protocol) error {
@@ -19309,12 +11443,20 @@ func (p *MetaServiceCreateEdgeArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateEdgeArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceCreateEdgeArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceCreateEdgeResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -19330,7 +11472,7 @@ func (p *MetaServiceCreateEdgeResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceCreateEdgeResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceCreateEdgeResult) Read(iprot thrift.Protocol) error {
@@ -19401,17 +11543,27 @@ func (p *MetaServiceCreateEdgeResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateEdgeResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceCreateEdgeResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceAlterEdgeArgs struct {
+  thrift.IRequest
   Req *AlterEdgeReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceAlterEdgeArgs() *MetaServiceAlterEdgeArgs {
-  return &MetaServiceAlterEdgeArgs{}
+  return &MetaServiceAlterEdgeArgs{
+    Req: NewAlterEdgeReq(),
+  }
 }
 
 var MetaServiceAlterEdgeArgs_Req_DEFAULT *AlterEdgeReq
@@ -19422,7 +11574,7 @@ func (p *MetaServiceAlterEdgeArgs) GetReq() *AlterEdgeReq {
 return p.Req
 }
 func (p *MetaServiceAlterEdgeArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceAlterEdgeArgs) Read(iprot thrift.Protocol) error {
@@ -19491,12 +11643,20 @@ func (p *MetaServiceAlterEdgeArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAlterEdgeArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceAlterEdgeArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceAlterEdgeResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -19512,7 +11672,7 @@ func (p *MetaServiceAlterEdgeResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceAlterEdgeResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceAlterEdgeResult) Read(iprot thrift.Protocol) error {
@@ -19583,17 +11743,27 @@ func (p *MetaServiceAlterEdgeResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAlterEdgeResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceAlterEdgeResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceDropEdgeArgs struct {
+  thrift.IRequest
   Req *DropEdgeReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceDropEdgeArgs() *MetaServiceDropEdgeArgs {
-  return &MetaServiceDropEdgeArgs{}
+  return &MetaServiceDropEdgeArgs{
+    Req: NewDropEdgeReq(),
+  }
 }
 
 var MetaServiceDropEdgeArgs_Req_DEFAULT *DropEdgeReq
@@ -19604,7 +11774,7 @@ func (p *MetaServiceDropEdgeArgs) GetReq() *DropEdgeReq {
 return p.Req
 }
 func (p *MetaServiceDropEdgeArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceDropEdgeArgs) Read(iprot thrift.Protocol) error {
@@ -19673,12 +11843,20 @@ func (p *MetaServiceDropEdgeArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropEdgeArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropEdgeArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceDropEdgeResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -19694,7 +11872,7 @@ func (p *MetaServiceDropEdgeResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceDropEdgeResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceDropEdgeResult) Read(iprot thrift.Protocol) error {
@@ -19765,17 +11943,27 @@ func (p *MetaServiceDropEdgeResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropEdgeResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropEdgeResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetEdgeArgs struct {
+  thrift.IRequest
   Req *GetEdgeReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetEdgeArgs() *MetaServiceGetEdgeArgs {
-  return &MetaServiceGetEdgeArgs{}
+  return &MetaServiceGetEdgeArgs{
+    Req: NewGetEdgeReq(),
+  }
 }
 
 var MetaServiceGetEdgeArgs_Req_DEFAULT *GetEdgeReq
@@ -19786,7 +11974,7 @@ func (p *MetaServiceGetEdgeArgs) GetReq() *GetEdgeReq {
 return p.Req
 }
 func (p *MetaServiceGetEdgeArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetEdgeArgs) Read(iprot thrift.Protocol) error {
@@ -19855,12 +12043,20 @@ func (p *MetaServiceGetEdgeArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetEdgeArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetEdgeArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetEdgeResult struct {
+  thrift.IResponse
   Success *GetEdgeResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -19876,7 +12072,7 @@ func (p *MetaServiceGetEdgeResult) GetSuccess() *GetEdgeResp {
 return p.Success
 }
 func (p *MetaServiceGetEdgeResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetEdgeResult) Read(iprot thrift.Protocol) error {
@@ -19947,17 +12143,27 @@ func (p *MetaServiceGetEdgeResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetEdgeResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetEdgeResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListEdgesArgs struct {
+  thrift.IRequest
   Req *ListEdgesReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListEdgesArgs() *MetaServiceListEdgesArgs {
-  return &MetaServiceListEdgesArgs{}
+  return &MetaServiceListEdgesArgs{
+    Req: NewListEdgesReq(),
+  }
 }
 
 var MetaServiceListEdgesArgs_Req_DEFAULT *ListEdgesReq
@@ -19968,7 +12174,7 @@ func (p *MetaServiceListEdgesArgs) GetReq() *ListEdgesReq {
 return p.Req
 }
 func (p *MetaServiceListEdgesArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListEdgesArgs) Read(iprot thrift.Protocol) error {
@@ -20037,12 +12243,20 @@ func (p *MetaServiceListEdgesArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListEdgesArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListEdgesArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListEdgesResult struct {
+  thrift.IResponse
   Success *ListEdgesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -20058,7 +12272,7 @@ func (p *MetaServiceListEdgesResult) GetSuccess() *ListEdgesResp {
 return p.Success
 }
 func (p *MetaServiceListEdgesResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListEdgesResult) Read(iprot thrift.Protocol) error {
@@ -20129,17 +12343,27 @@ func (p *MetaServiceListEdgesResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListEdgesResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListEdgesResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListHostsArgs struct {
+  thrift.IRequest
   Req *ListHostsReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListHostsArgs() *MetaServiceListHostsArgs {
-  return &MetaServiceListHostsArgs{}
+  return &MetaServiceListHostsArgs{
+    Req: NewListHostsReq(),
+  }
 }
 
 var MetaServiceListHostsArgs_Req_DEFAULT *ListHostsReq
@@ -20150,7 +12374,7 @@ func (p *MetaServiceListHostsArgs) GetReq() *ListHostsReq {
 return p.Req
 }
 func (p *MetaServiceListHostsArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListHostsArgs) Read(iprot thrift.Protocol) error {
@@ -20219,12 +12443,20 @@ func (p *MetaServiceListHostsArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListHostsArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListHostsArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListHostsResult struct {
+  thrift.IResponse
   Success *ListHostsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -20240,7 +12472,7 @@ func (p *MetaServiceListHostsResult) GetSuccess() *ListHostsResp {
 return p.Success
 }
 func (p *MetaServiceListHostsResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListHostsResult) Read(iprot thrift.Protocol) error {
@@ -20311,17 +12543,27 @@ func (p *MetaServiceListHostsResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListHostsResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListHostsResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetPartsAllocArgs struct {
+  thrift.IRequest
   Req *GetPartsAllocReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetPartsAllocArgs() *MetaServiceGetPartsAllocArgs {
-  return &MetaServiceGetPartsAllocArgs{}
+  return &MetaServiceGetPartsAllocArgs{
+    Req: NewGetPartsAllocReq(),
+  }
 }
 
 var MetaServiceGetPartsAllocArgs_Req_DEFAULT *GetPartsAllocReq
@@ -20332,7 +12574,7 @@ func (p *MetaServiceGetPartsAllocArgs) GetReq() *GetPartsAllocReq {
 return p.Req
 }
 func (p *MetaServiceGetPartsAllocArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetPartsAllocArgs) Read(iprot thrift.Protocol) error {
@@ -20401,12 +12643,20 @@ func (p *MetaServiceGetPartsAllocArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetPartsAllocArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetPartsAllocArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetPartsAllocResult struct {
+  thrift.IResponse
   Success *GetPartsAllocResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -20422,7 +12672,7 @@ func (p *MetaServiceGetPartsAllocResult) GetSuccess() *GetPartsAllocResp {
 return p.Success
 }
 func (p *MetaServiceGetPartsAllocResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetPartsAllocResult) Read(iprot thrift.Protocol) error {
@@ -20493,17 +12743,27 @@ func (p *MetaServiceGetPartsAllocResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetPartsAllocResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetPartsAllocResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListPartsArgs struct {
+  thrift.IRequest
   Req *ListPartsReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListPartsArgs() *MetaServiceListPartsArgs {
-  return &MetaServiceListPartsArgs{}
+  return &MetaServiceListPartsArgs{
+    Req: NewListPartsReq(),
+  }
 }
 
 var MetaServiceListPartsArgs_Req_DEFAULT *ListPartsReq
@@ -20514,7 +12774,7 @@ func (p *MetaServiceListPartsArgs) GetReq() *ListPartsReq {
 return p.Req
 }
 func (p *MetaServiceListPartsArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListPartsArgs) Read(iprot thrift.Protocol) error {
@@ -20583,12 +12843,20 @@ func (p *MetaServiceListPartsArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListPartsArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListPartsArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListPartsResult struct {
+  thrift.IResponse
   Success *ListPartsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -20604,7 +12872,7 @@ func (p *MetaServiceListPartsResult) GetSuccess() *ListPartsResp {
 return p.Success
 }
 func (p *MetaServiceListPartsResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListPartsResult) Read(iprot thrift.Protocol) error {
@@ -20675,17 +12943,27 @@ func (p *MetaServiceListPartsResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListPartsResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListPartsResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceMultiPutArgs struct {
+  thrift.IRequest
   Req *MultiPutReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceMultiPutArgs() *MetaServiceMultiPutArgs {
-  return &MetaServiceMultiPutArgs{}
+  return &MetaServiceMultiPutArgs{
+    Req: NewMultiPutReq(),
+  }
 }
 
 var MetaServiceMultiPutArgs_Req_DEFAULT *MultiPutReq
@@ -20696,7 +12974,7 @@ func (p *MetaServiceMultiPutArgs) GetReq() *MultiPutReq {
 return p.Req
 }
 func (p *MetaServiceMultiPutArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceMultiPutArgs) Read(iprot thrift.Protocol) error {
@@ -20765,12 +13043,20 @@ func (p *MetaServiceMultiPutArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceMultiPutArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceMultiPutArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceMultiPutResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -20786,7 +13072,7 @@ func (p *MetaServiceMultiPutResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceMultiPutResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceMultiPutResult) Read(iprot thrift.Protocol) error {
@@ -20857,17 +13143,27 @@ func (p *MetaServiceMultiPutResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceMultiPutResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceMultiPutResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetArgs struct {
+  thrift.IRequest
   Req *GetReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetArgs() *MetaServiceGetArgs {
-  return &MetaServiceGetArgs{}
+  return &MetaServiceGetArgs{
+    Req: NewGetReq(),
+  }
 }
 
 var MetaServiceGetArgs_Req_DEFAULT *GetReq
@@ -20878,7 +13174,7 @@ func (p *MetaServiceGetArgs) GetReq() *GetReq {
 return p.Req
 }
 func (p *MetaServiceGetArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetArgs) Read(iprot thrift.Protocol) error {
@@ -20947,12 +13243,20 @@ func (p *MetaServiceGetArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetResult struct {
+  thrift.IResponse
   Success *GetResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -20968,7 +13272,7 @@ func (p *MetaServiceGetResult) GetSuccess() *GetResp {
 return p.Success
 }
 func (p *MetaServiceGetResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetResult) Read(iprot thrift.Protocol) error {
@@ -21039,17 +13343,27 @@ func (p *MetaServiceGetResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceMultiGetArgs struct {
+  thrift.IRequest
   Req *MultiGetReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceMultiGetArgs() *MetaServiceMultiGetArgs {
-  return &MetaServiceMultiGetArgs{}
+  return &MetaServiceMultiGetArgs{
+    Req: NewMultiGetReq(),
+  }
 }
 
 var MetaServiceMultiGetArgs_Req_DEFAULT *MultiGetReq
@@ -21060,7 +13374,7 @@ func (p *MetaServiceMultiGetArgs) GetReq() *MultiGetReq {
 return p.Req
 }
 func (p *MetaServiceMultiGetArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceMultiGetArgs) Read(iprot thrift.Protocol) error {
@@ -21129,12 +13443,20 @@ func (p *MetaServiceMultiGetArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceMultiGetArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceMultiGetArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceMultiGetResult struct {
+  thrift.IResponse
   Success *MultiGetResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -21150,7 +13472,7 @@ func (p *MetaServiceMultiGetResult) GetSuccess() *MultiGetResp {
 return p.Success
 }
 func (p *MetaServiceMultiGetResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceMultiGetResult) Read(iprot thrift.Protocol) error {
@@ -21221,17 +13543,27 @@ func (p *MetaServiceMultiGetResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceMultiGetResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceMultiGetResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceRemoveArgs struct {
+  thrift.IRequest
   Req *RemoveReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceRemoveArgs() *MetaServiceRemoveArgs {
-  return &MetaServiceRemoveArgs{}
+  return &MetaServiceRemoveArgs{
+    Req: NewRemoveReq(),
+  }
 }
 
 var MetaServiceRemoveArgs_Req_DEFAULT *RemoveReq
@@ -21242,7 +13574,7 @@ func (p *MetaServiceRemoveArgs) GetReq() *RemoveReq {
 return p.Req
 }
 func (p *MetaServiceRemoveArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceRemoveArgs) Read(iprot thrift.Protocol) error {
@@ -21311,12 +13643,20 @@ func (p *MetaServiceRemoveArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRemoveArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceRemoveArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceRemoveResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -21332,7 +13672,7 @@ func (p *MetaServiceRemoveResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceRemoveResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceRemoveResult) Read(iprot thrift.Protocol) error {
@@ -21403,17 +13743,27 @@ func (p *MetaServiceRemoveResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRemoveResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceRemoveResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceRemoveRangeArgs struct {
+  thrift.IRequest
   Req *RemoveRangeReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceRemoveRangeArgs() *MetaServiceRemoveRangeArgs {
-  return &MetaServiceRemoveRangeArgs{}
+  return &MetaServiceRemoveRangeArgs{
+    Req: NewRemoveRangeReq(),
+  }
 }
 
 var MetaServiceRemoveRangeArgs_Req_DEFAULT *RemoveRangeReq
@@ -21424,7 +13774,7 @@ func (p *MetaServiceRemoveRangeArgs) GetReq() *RemoveRangeReq {
 return p.Req
 }
 func (p *MetaServiceRemoveRangeArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceRemoveRangeArgs) Read(iprot thrift.Protocol) error {
@@ -21493,12 +13843,20 @@ func (p *MetaServiceRemoveRangeArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRemoveRangeArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceRemoveRangeArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceRemoveRangeResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -21514,7 +13872,7 @@ func (p *MetaServiceRemoveRangeResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceRemoveRangeResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceRemoveRangeResult) Read(iprot thrift.Protocol) error {
@@ -21585,17 +13943,27 @@ func (p *MetaServiceRemoveRangeResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRemoveRangeResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceRemoveRangeResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceScanArgs struct {
+  thrift.IRequest
   Req *ScanReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceScanArgs() *MetaServiceScanArgs {
-  return &MetaServiceScanArgs{}
+  return &MetaServiceScanArgs{
+    Req: NewScanReq(),
+  }
 }
 
 var MetaServiceScanArgs_Req_DEFAULT *ScanReq
@@ -21606,7 +13974,7 @@ func (p *MetaServiceScanArgs) GetReq() *ScanReq {
 return p.Req
 }
 func (p *MetaServiceScanArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceScanArgs) Read(iprot thrift.Protocol) error {
@@ -21675,12 +14043,20 @@ func (p *MetaServiceScanArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceScanArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceScanArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceScanResult struct {
+  thrift.IResponse
   Success *ScanResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -21696,7 +14072,7 @@ func (p *MetaServiceScanResult) GetSuccess() *ScanResp {
 return p.Success
 }
 func (p *MetaServiceScanResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceScanResult) Read(iprot thrift.Protocol) error {
@@ -21767,17 +14143,27 @@ func (p *MetaServiceScanResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceScanResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceScanResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceCreateTagIndexArgs struct {
+  thrift.IRequest
   Req *CreateTagIndexReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceCreateTagIndexArgs() *MetaServiceCreateTagIndexArgs {
-  return &MetaServiceCreateTagIndexArgs{}
+  return &MetaServiceCreateTagIndexArgs{
+    Req: NewCreateTagIndexReq(),
+  }
 }
 
 var MetaServiceCreateTagIndexArgs_Req_DEFAULT *CreateTagIndexReq
@@ -21788,7 +14174,7 @@ func (p *MetaServiceCreateTagIndexArgs) GetReq() *CreateTagIndexReq {
 return p.Req
 }
 func (p *MetaServiceCreateTagIndexArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceCreateTagIndexArgs) Read(iprot thrift.Protocol) error {
@@ -21857,12 +14243,20 @@ func (p *MetaServiceCreateTagIndexArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateTagIndexArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceCreateTagIndexArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceCreateTagIndexResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -21878,7 +14272,7 @@ func (p *MetaServiceCreateTagIndexResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceCreateTagIndexResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceCreateTagIndexResult) Read(iprot thrift.Protocol) error {
@@ -21949,17 +14343,27 @@ func (p *MetaServiceCreateTagIndexResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateTagIndexResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceCreateTagIndexResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceDropTagIndexArgs struct {
+  thrift.IRequest
   Req *DropTagIndexReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceDropTagIndexArgs() *MetaServiceDropTagIndexArgs {
-  return &MetaServiceDropTagIndexArgs{}
+  return &MetaServiceDropTagIndexArgs{
+    Req: NewDropTagIndexReq(),
+  }
 }
 
 var MetaServiceDropTagIndexArgs_Req_DEFAULT *DropTagIndexReq
@@ -21970,7 +14374,7 @@ func (p *MetaServiceDropTagIndexArgs) GetReq() *DropTagIndexReq {
 return p.Req
 }
 func (p *MetaServiceDropTagIndexArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceDropTagIndexArgs) Read(iprot thrift.Protocol) error {
@@ -22039,12 +14443,20 @@ func (p *MetaServiceDropTagIndexArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropTagIndexArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropTagIndexArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceDropTagIndexResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -22060,7 +14472,7 @@ func (p *MetaServiceDropTagIndexResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceDropTagIndexResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceDropTagIndexResult) Read(iprot thrift.Protocol) error {
@@ -22131,17 +14543,27 @@ func (p *MetaServiceDropTagIndexResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropTagIndexResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropTagIndexResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetTagIndexArgs struct {
+  thrift.IRequest
   Req *GetTagIndexReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetTagIndexArgs() *MetaServiceGetTagIndexArgs {
-  return &MetaServiceGetTagIndexArgs{}
+  return &MetaServiceGetTagIndexArgs{
+    Req: NewGetTagIndexReq(),
+  }
 }
 
 var MetaServiceGetTagIndexArgs_Req_DEFAULT *GetTagIndexReq
@@ -22152,7 +14574,7 @@ func (p *MetaServiceGetTagIndexArgs) GetReq() *GetTagIndexReq {
 return p.Req
 }
 func (p *MetaServiceGetTagIndexArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetTagIndexArgs) Read(iprot thrift.Protocol) error {
@@ -22221,12 +14643,20 @@ func (p *MetaServiceGetTagIndexArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetTagIndexArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetTagIndexArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetTagIndexResult struct {
+  thrift.IResponse
   Success *GetTagIndexResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -22242,7 +14672,7 @@ func (p *MetaServiceGetTagIndexResult) GetSuccess() *GetTagIndexResp {
 return p.Success
 }
 func (p *MetaServiceGetTagIndexResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetTagIndexResult) Read(iprot thrift.Protocol) error {
@@ -22313,17 +14743,27 @@ func (p *MetaServiceGetTagIndexResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetTagIndexResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetTagIndexResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListTagIndexesArgs struct {
+  thrift.IRequest
   Req *ListTagIndexesReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListTagIndexesArgs() *MetaServiceListTagIndexesArgs {
-  return &MetaServiceListTagIndexesArgs{}
+  return &MetaServiceListTagIndexesArgs{
+    Req: NewListTagIndexesReq(),
+  }
 }
 
 var MetaServiceListTagIndexesArgs_Req_DEFAULT *ListTagIndexesReq
@@ -22334,7 +14774,7 @@ func (p *MetaServiceListTagIndexesArgs) GetReq() *ListTagIndexesReq {
 return p.Req
 }
 func (p *MetaServiceListTagIndexesArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListTagIndexesArgs) Read(iprot thrift.Protocol) error {
@@ -22403,12 +14843,20 @@ func (p *MetaServiceListTagIndexesArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListTagIndexesArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListTagIndexesArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListTagIndexesResult struct {
+  thrift.IResponse
   Success *ListTagIndexesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -22424,7 +14872,7 @@ func (p *MetaServiceListTagIndexesResult) GetSuccess() *ListTagIndexesResp {
 return p.Success
 }
 func (p *MetaServiceListTagIndexesResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListTagIndexesResult) Read(iprot thrift.Protocol) error {
@@ -22495,17 +14943,27 @@ func (p *MetaServiceListTagIndexesResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListTagIndexesResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListTagIndexesResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceRebuildTagIndexArgs struct {
+  thrift.IRequest
   Req *RebuildIndexReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceRebuildTagIndexArgs() *MetaServiceRebuildTagIndexArgs {
-  return &MetaServiceRebuildTagIndexArgs{}
+  return &MetaServiceRebuildTagIndexArgs{
+    Req: NewRebuildIndexReq(),
+  }
 }
 
 var MetaServiceRebuildTagIndexArgs_Req_DEFAULT *RebuildIndexReq
@@ -22516,7 +14974,7 @@ func (p *MetaServiceRebuildTagIndexArgs) GetReq() *RebuildIndexReq {
 return p.Req
 }
 func (p *MetaServiceRebuildTagIndexArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceRebuildTagIndexArgs) Read(iprot thrift.Protocol) error {
@@ -22585,12 +15043,20 @@ func (p *MetaServiceRebuildTagIndexArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRebuildTagIndexArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceRebuildTagIndexArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceRebuildTagIndexResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -22606,7 +15072,7 @@ func (p *MetaServiceRebuildTagIndexResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceRebuildTagIndexResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceRebuildTagIndexResult) Read(iprot thrift.Protocol) error {
@@ -22677,17 +15143,27 @@ func (p *MetaServiceRebuildTagIndexResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRebuildTagIndexResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceRebuildTagIndexResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListTagIndexStatusArgs struct {
+  thrift.IRequest
   Req *ListIndexStatusReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListTagIndexStatusArgs() *MetaServiceListTagIndexStatusArgs {
-  return &MetaServiceListTagIndexStatusArgs{}
+  return &MetaServiceListTagIndexStatusArgs{
+    Req: NewListIndexStatusReq(),
+  }
 }
 
 var MetaServiceListTagIndexStatusArgs_Req_DEFAULT *ListIndexStatusReq
@@ -22698,7 +15174,7 @@ func (p *MetaServiceListTagIndexStatusArgs) GetReq() *ListIndexStatusReq {
 return p.Req
 }
 func (p *MetaServiceListTagIndexStatusArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListTagIndexStatusArgs) Read(iprot thrift.Protocol) error {
@@ -22767,12 +15243,20 @@ func (p *MetaServiceListTagIndexStatusArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListTagIndexStatusArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListTagIndexStatusArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListTagIndexStatusResult struct {
+  thrift.IResponse
   Success *ListIndexStatusResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -22788,7 +15272,7 @@ func (p *MetaServiceListTagIndexStatusResult) GetSuccess() *ListIndexStatusResp 
 return p.Success
 }
 func (p *MetaServiceListTagIndexStatusResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListTagIndexStatusResult) Read(iprot thrift.Protocol) error {
@@ -22859,17 +15343,27 @@ func (p *MetaServiceListTagIndexStatusResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListTagIndexStatusResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListTagIndexStatusResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceCreateEdgeIndexArgs struct {
+  thrift.IRequest
   Req *CreateEdgeIndexReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceCreateEdgeIndexArgs() *MetaServiceCreateEdgeIndexArgs {
-  return &MetaServiceCreateEdgeIndexArgs{}
+  return &MetaServiceCreateEdgeIndexArgs{
+    Req: NewCreateEdgeIndexReq(),
+  }
 }
 
 var MetaServiceCreateEdgeIndexArgs_Req_DEFAULT *CreateEdgeIndexReq
@@ -22880,7 +15374,7 @@ func (p *MetaServiceCreateEdgeIndexArgs) GetReq() *CreateEdgeIndexReq {
 return p.Req
 }
 func (p *MetaServiceCreateEdgeIndexArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceCreateEdgeIndexArgs) Read(iprot thrift.Protocol) error {
@@ -22949,12 +15443,20 @@ func (p *MetaServiceCreateEdgeIndexArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateEdgeIndexArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceCreateEdgeIndexArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceCreateEdgeIndexResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -22970,7 +15472,7 @@ func (p *MetaServiceCreateEdgeIndexResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceCreateEdgeIndexResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceCreateEdgeIndexResult) Read(iprot thrift.Protocol) error {
@@ -23041,17 +15543,27 @@ func (p *MetaServiceCreateEdgeIndexResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateEdgeIndexResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceCreateEdgeIndexResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceDropEdgeIndexArgs struct {
+  thrift.IRequest
   Req *DropEdgeIndexReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceDropEdgeIndexArgs() *MetaServiceDropEdgeIndexArgs {
-  return &MetaServiceDropEdgeIndexArgs{}
+  return &MetaServiceDropEdgeIndexArgs{
+    Req: NewDropEdgeIndexReq(),
+  }
 }
 
 var MetaServiceDropEdgeIndexArgs_Req_DEFAULT *DropEdgeIndexReq
@@ -23062,7 +15574,7 @@ func (p *MetaServiceDropEdgeIndexArgs) GetReq() *DropEdgeIndexReq {
 return p.Req
 }
 func (p *MetaServiceDropEdgeIndexArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceDropEdgeIndexArgs) Read(iprot thrift.Protocol) error {
@@ -23131,12 +15643,20 @@ func (p *MetaServiceDropEdgeIndexArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropEdgeIndexArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropEdgeIndexArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceDropEdgeIndexResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -23152,7 +15672,7 @@ func (p *MetaServiceDropEdgeIndexResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceDropEdgeIndexResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceDropEdgeIndexResult) Read(iprot thrift.Protocol) error {
@@ -23223,17 +15743,27 @@ func (p *MetaServiceDropEdgeIndexResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropEdgeIndexResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropEdgeIndexResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetEdgeIndexArgs struct {
+  thrift.IRequest
   Req *GetEdgeIndexReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetEdgeIndexArgs() *MetaServiceGetEdgeIndexArgs {
-  return &MetaServiceGetEdgeIndexArgs{}
+  return &MetaServiceGetEdgeIndexArgs{
+    Req: NewGetEdgeIndexReq(),
+  }
 }
 
 var MetaServiceGetEdgeIndexArgs_Req_DEFAULT *GetEdgeIndexReq
@@ -23244,7 +15774,7 @@ func (p *MetaServiceGetEdgeIndexArgs) GetReq() *GetEdgeIndexReq {
 return p.Req
 }
 func (p *MetaServiceGetEdgeIndexArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetEdgeIndexArgs) Read(iprot thrift.Protocol) error {
@@ -23313,12 +15843,20 @@ func (p *MetaServiceGetEdgeIndexArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetEdgeIndexArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetEdgeIndexArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetEdgeIndexResult struct {
+  thrift.IResponse
   Success *GetEdgeIndexResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -23334,7 +15872,7 @@ func (p *MetaServiceGetEdgeIndexResult) GetSuccess() *GetEdgeIndexResp {
 return p.Success
 }
 func (p *MetaServiceGetEdgeIndexResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetEdgeIndexResult) Read(iprot thrift.Protocol) error {
@@ -23405,17 +15943,27 @@ func (p *MetaServiceGetEdgeIndexResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetEdgeIndexResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetEdgeIndexResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListEdgeIndexesArgs struct {
+  thrift.IRequest
   Req *ListEdgeIndexesReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListEdgeIndexesArgs() *MetaServiceListEdgeIndexesArgs {
-  return &MetaServiceListEdgeIndexesArgs{}
+  return &MetaServiceListEdgeIndexesArgs{
+    Req: NewListEdgeIndexesReq(),
+  }
 }
 
 var MetaServiceListEdgeIndexesArgs_Req_DEFAULT *ListEdgeIndexesReq
@@ -23426,7 +15974,7 @@ func (p *MetaServiceListEdgeIndexesArgs) GetReq() *ListEdgeIndexesReq {
 return p.Req
 }
 func (p *MetaServiceListEdgeIndexesArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListEdgeIndexesArgs) Read(iprot thrift.Protocol) error {
@@ -23495,12 +16043,20 @@ func (p *MetaServiceListEdgeIndexesArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListEdgeIndexesArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListEdgeIndexesArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListEdgeIndexesResult struct {
+  thrift.IResponse
   Success *ListEdgeIndexesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -23516,7 +16072,7 @@ func (p *MetaServiceListEdgeIndexesResult) GetSuccess() *ListEdgeIndexesResp {
 return p.Success
 }
 func (p *MetaServiceListEdgeIndexesResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListEdgeIndexesResult) Read(iprot thrift.Protocol) error {
@@ -23587,17 +16143,27 @@ func (p *MetaServiceListEdgeIndexesResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListEdgeIndexesResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListEdgeIndexesResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceRebuildEdgeIndexArgs struct {
+  thrift.IRequest
   Req *RebuildIndexReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceRebuildEdgeIndexArgs() *MetaServiceRebuildEdgeIndexArgs {
-  return &MetaServiceRebuildEdgeIndexArgs{}
+  return &MetaServiceRebuildEdgeIndexArgs{
+    Req: NewRebuildIndexReq(),
+  }
 }
 
 var MetaServiceRebuildEdgeIndexArgs_Req_DEFAULT *RebuildIndexReq
@@ -23608,7 +16174,7 @@ func (p *MetaServiceRebuildEdgeIndexArgs) GetReq() *RebuildIndexReq {
 return p.Req
 }
 func (p *MetaServiceRebuildEdgeIndexArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceRebuildEdgeIndexArgs) Read(iprot thrift.Protocol) error {
@@ -23677,12 +16243,20 @@ func (p *MetaServiceRebuildEdgeIndexArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRebuildEdgeIndexArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceRebuildEdgeIndexArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceRebuildEdgeIndexResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -23698,7 +16272,7 @@ func (p *MetaServiceRebuildEdgeIndexResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceRebuildEdgeIndexResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceRebuildEdgeIndexResult) Read(iprot thrift.Protocol) error {
@@ -23769,17 +16343,27 @@ func (p *MetaServiceRebuildEdgeIndexResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRebuildEdgeIndexResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceRebuildEdgeIndexResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListEdgeIndexStatusArgs struct {
+  thrift.IRequest
   Req *ListIndexStatusReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListEdgeIndexStatusArgs() *MetaServiceListEdgeIndexStatusArgs {
-  return &MetaServiceListEdgeIndexStatusArgs{}
+  return &MetaServiceListEdgeIndexStatusArgs{
+    Req: NewListIndexStatusReq(),
+  }
 }
 
 var MetaServiceListEdgeIndexStatusArgs_Req_DEFAULT *ListIndexStatusReq
@@ -23790,7 +16374,7 @@ func (p *MetaServiceListEdgeIndexStatusArgs) GetReq() *ListIndexStatusReq {
 return p.Req
 }
 func (p *MetaServiceListEdgeIndexStatusArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListEdgeIndexStatusArgs) Read(iprot thrift.Protocol) error {
@@ -23859,12 +16443,20 @@ func (p *MetaServiceListEdgeIndexStatusArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListEdgeIndexStatusArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListEdgeIndexStatusArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListEdgeIndexStatusResult struct {
+  thrift.IResponse
   Success *ListIndexStatusResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -23880,7 +16472,7 @@ func (p *MetaServiceListEdgeIndexStatusResult) GetSuccess() *ListIndexStatusResp
 return p.Success
 }
 func (p *MetaServiceListEdgeIndexStatusResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListEdgeIndexStatusResult) Read(iprot thrift.Protocol) error {
@@ -23951,17 +16543,27 @@ func (p *MetaServiceListEdgeIndexStatusResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListEdgeIndexStatusResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListEdgeIndexStatusResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceCreateUserArgs struct {
+  thrift.IRequest
   Req *CreateUserReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceCreateUserArgs() *MetaServiceCreateUserArgs {
-  return &MetaServiceCreateUserArgs{}
+  return &MetaServiceCreateUserArgs{
+    Req: NewCreateUserReq(),
+  }
 }
 
 var MetaServiceCreateUserArgs_Req_DEFAULT *CreateUserReq
@@ -23972,7 +16574,7 @@ func (p *MetaServiceCreateUserArgs) GetReq() *CreateUserReq {
 return p.Req
 }
 func (p *MetaServiceCreateUserArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceCreateUserArgs) Read(iprot thrift.Protocol) error {
@@ -24041,12 +16643,20 @@ func (p *MetaServiceCreateUserArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateUserArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceCreateUserArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceCreateUserResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -24062,7 +16672,7 @@ func (p *MetaServiceCreateUserResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceCreateUserResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceCreateUserResult) Read(iprot thrift.Protocol) error {
@@ -24133,17 +16743,27 @@ func (p *MetaServiceCreateUserResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateUserResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceCreateUserResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceDropUserArgs struct {
+  thrift.IRequest
   Req *DropUserReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceDropUserArgs() *MetaServiceDropUserArgs {
-  return &MetaServiceDropUserArgs{}
+  return &MetaServiceDropUserArgs{
+    Req: NewDropUserReq(),
+  }
 }
 
 var MetaServiceDropUserArgs_Req_DEFAULT *DropUserReq
@@ -24154,7 +16774,7 @@ func (p *MetaServiceDropUserArgs) GetReq() *DropUserReq {
 return p.Req
 }
 func (p *MetaServiceDropUserArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceDropUserArgs) Read(iprot thrift.Protocol) error {
@@ -24223,12 +16843,20 @@ func (p *MetaServiceDropUserArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropUserArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropUserArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceDropUserResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -24244,7 +16872,7 @@ func (p *MetaServiceDropUserResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceDropUserResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceDropUserResult) Read(iprot thrift.Protocol) error {
@@ -24315,17 +16943,27 @@ func (p *MetaServiceDropUserResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropUserResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropUserResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceAlterUserArgs struct {
+  thrift.IRequest
   Req *AlterUserReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceAlterUserArgs() *MetaServiceAlterUserArgs {
-  return &MetaServiceAlterUserArgs{}
+  return &MetaServiceAlterUserArgs{
+    Req: NewAlterUserReq(),
+  }
 }
 
 var MetaServiceAlterUserArgs_Req_DEFAULT *AlterUserReq
@@ -24336,7 +16974,7 @@ func (p *MetaServiceAlterUserArgs) GetReq() *AlterUserReq {
 return p.Req
 }
 func (p *MetaServiceAlterUserArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceAlterUserArgs) Read(iprot thrift.Protocol) error {
@@ -24405,12 +17043,20 @@ func (p *MetaServiceAlterUserArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAlterUserArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceAlterUserArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceAlterUserResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -24426,7 +17072,7 @@ func (p *MetaServiceAlterUserResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceAlterUserResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceAlterUserResult) Read(iprot thrift.Protocol) error {
@@ -24497,17 +17143,27 @@ func (p *MetaServiceAlterUserResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAlterUserResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceAlterUserResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGrantRoleArgs struct {
+  thrift.IRequest
   Req *GrantRoleReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGrantRoleArgs() *MetaServiceGrantRoleArgs {
-  return &MetaServiceGrantRoleArgs{}
+  return &MetaServiceGrantRoleArgs{
+    Req: NewGrantRoleReq(),
+  }
 }
 
 var MetaServiceGrantRoleArgs_Req_DEFAULT *GrantRoleReq
@@ -24518,7 +17174,7 @@ func (p *MetaServiceGrantRoleArgs) GetReq() *GrantRoleReq {
 return p.Req
 }
 func (p *MetaServiceGrantRoleArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGrantRoleArgs) Read(iprot thrift.Protocol) error {
@@ -24587,12 +17243,20 @@ func (p *MetaServiceGrantRoleArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGrantRoleArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGrantRoleArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGrantRoleResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -24608,7 +17272,7 @@ func (p *MetaServiceGrantRoleResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceGrantRoleResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGrantRoleResult) Read(iprot thrift.Protocol) error {
@@ -24679,17 +17343,27 @@ func (p *MetaServiceGrantRoleResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGrantRoleResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGrantRoleResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceRevokeRoleArgs struct {
+  thrift.IRequest
   Req *RevokeRoleReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceRevokeRoleArgs() *MetaServiceRevokeRoleArgs {
-  return &MetaServiceRevokeRoleArgs{}
+  return &MetaServiceRevokeRoleArgs{
+    Req: NewRevokeRoleReq(),
+  }
 }
 
 var MetaServiceRevokeRoleArgs_Req_DEFAULT *RevokeRoleReq
@@ -24700,7 +17374,7 @@ func (p *MetaServiceRevokeRoleArgs) GetReq() *RevokeRoleReq {
 return p.Req
 }
 func (p *MetaServiceRevokeRoleArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceRevokeRoleArgs) Read(iprot thrift.Protocol) error {
@@ -24769,12 +17443,20 @@ func (p *MetaServiceRevokeRoleArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRevokeRoleArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceRevokeRoleArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceRevokeRoleResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -24790,7 +17472,7 @@ func (p *MetaServiceRevokeRoleResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceRevokeRoleResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceRevokeRoleResult) Read(iprot thrift.Protocol) error {
@@ -24861,17 +17543,27 @@ func (p *MetaServiceRevokeRoleResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRevokeRoleResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceRevokeRoleResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListUsersArgs struct {
+  thrift.IRequest
   Req *ListUsersReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListUsersArgs() *MetaServiceListUsersArgs {
-  return &MetaServiceListUsersArgs{}
+  return &MetaServiceListUsersArgs{
+    Req: NewListUsersReq(),
+  }
 }
 
 var MetaServiceListUsersArgs_Req_DEFAULT *ListUsersReq
@@ -24882,7 +17574,7 @@ func (p *MetaServiceListUsersArgs) GetReq() *ListUsersReq {
 return p.Req
 }
 func (p *MetaServiceListUsersArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListUsersArgs) Read(iprot thrift.Protocol) error {
@@ -24951,12 +17643,20 @@ func (p *MetaServiceListUsersArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListUsersArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListUsersArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListUsersResult struct {
+  thrift.IResponse
   Success *ListUsersResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -24972,7 +17672,7 @@ func (p *MetaServiceListUsersResult) GetSuccess() *ListUsersResp {
 return p.Success
 }
 func (p *MetaServiceListUsersResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListUsersResult) Read(iprot thrift.Protocol) error {
@@ -25043,17 +17743,27 @@ func (p *MetaServiceListUsersResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListUsersResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListUsersResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListRolesArgs struct {
+  thrift.IRequest
   Req *ListRolesReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListRolesArgs() *MetaServiceListRolesArgs {
-  return &MetaServiceListRolesArgs{}
+  return &MetaServiceListRolesArgs{
+    Req: NewListRolesReq(),
+  }
 }
 
 var MetaServiceListRolesArgs_Req_DEFAULT *ListRolesReq
@@ -25064,7 +17774,7 @@ func (p *MetaServiceListRolesArgs) GetReq() *ListRolesReq {
 return p.Req
 }
 func (p *MetaServiceListRolesArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListRolesArgs) Read(iprot thrift.Protocol) error {
@@ -25133,12 +17843,20 @@ func (p *MetaServiceListRolesArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListRolesArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListRolesArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListRolesResult struct {
+  thrift.IResponse
   Success *ListRolesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -25154,7 +17872,7 @@ func (p *MetaServiceListRolesResult) GetSuccess() *ListRolesResp {
 return p.Success
 }
 func (p *MetaServiceListRolesResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListRolesResult) Read(iprot thrift.Protocol) error {
@@ -25225,17 +17943,27 @@ func (p *MetaServiceListRolesResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListRolesResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListRolesResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetUserRolesArgs struct {
+  thrift.IRequest
   Req *GetUserRolesReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetUserRolesArgs() *MetaServiceGetUserRolesArgs {
-  return &MetaServiceGetUserRolesArgs{}
+  return &MetaServiceGetUserRolesArgs{
+    Req: NewGetUserRolesReq(),
+  }
 }
 
 var MetaServiceGetUserRolesArgs_Req_DEFAULT *GetUserRolesReq
@@ -25246,7 +17974,7 @@ func (p *MetaServiceGetUserRolesArgs) GetReq() *GetUserRolesReq {
 return p.Req
 }
 func (p *MetaServiceGetUserRolesArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetUserRolesArgs) Read(iprot thrift.Protocol) error {
@@ -25315,12 +18043,20 @@ func (p *MetaServiceGetUserRolesArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetUserRolesArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetUserRolesArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetUserRolesResult struct {
+  thrift.IResponse
   Success *ListRolesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -25336,7 +18072,7 @@ func (p *MetaServiceGetUserRolesResult) GetSuccess() *ListRolesResp {
 return p.Success
 }
 func (p *MetaServiceGetUserRolesResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetUserRolesResult) Read(iprot thrift.Protocol) error {
@@ -25407,17 +18143,27 @@ func (p *MetaServiceGetUserRolesResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetUserRolesResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetUserRolesResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceChangePasswordArgs struct {
+  thrift.IRequest
   Req *ChangePasswordReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceChangePasswordArgs() *MetaServiceChangePasswordArgs {
-  return &MetaServiceChangePasswordArgs{}
+  return &MetaServiceChangePasswordArgs{
+    Req: NewChangePasswordReq(),
+  }
 }
 
 var MetaServiceChangePasswordArgs_Req_DEFAULT *ChangePasswordReq
@@ -25428,7 +18174,7 @@ func (p *MetaServiceChangePasswordArgs) GetReq() *ChangePasswordReq {
 return p.Req
 }
 func (p *MetaServiceChangePasswordArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceChangePasswordArgs) Read(iprot thrift.Protocol) error {
@@ -25497,12 +18243,20 @@ func (p *MetaServiceChangePasswordArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceChangePasswordArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceChangePasswordArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceChangePasswordResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -25518,7 +18272,7 @@ func (p *MetaServiceChangePasswordResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceChangePasswordResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceChangePasswordResult) Read(iprot thrift.Protocol) error {
@@ -25589,17 +18343,27 @@ func (p *MetaServiceChangePasswordResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceChangePasswordResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceChangePasswordResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceHeartBeatArgs struct {
+  thrift.IRequest
   Req *HBReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceHeartBeatArgs() *MetaServiceHeartBeatArgs {
-  return &MetaServiceHeartBeatArgs{}
+  return &MetaServiceHeartBeatArgs{
+    Req: NewHBReq(),
+  }
 }
 
 var MetaServiceHeartBeatArgs_Req_DEFAULT *HBReq
@@ -25610,7 +18374,7 @@ func (p *MetaServiceHeartBeatArgs) GetReq() *HBReq {
 return p.Req
 }
 func (p *MetaServiceHeartBeatArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceHeartBeatArgs) Read(iprot thrift.Protocol) error {
@@ -25679,12 +18443,20 @@ func (p *MetaServiceHeartBeatArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceHeartBeatArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceHeartBeatArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceHeartBeatResult struct {
+  thrift.IResponse
   Success *HBResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -25700,7 +18472,7 @@ func (p *MetaServiceHeartBeatResult) GetSuccess() *HBResp {
 return p.Success
 }
 func (p *MetaServiceHeartBeatResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceHeartBeatResult) Read(iprot thrift.Protocol) error {
@@ -25771,17 +18543,27 @@ func (p *MetaServiceHeartBeatResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceHeartBeatResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceHeartBeatResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceBalanceArgs struct {
+  thrift.IRequest
   Req *BalanceReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceBalanceArgs() *MetaServiceBalanceArgs {
-  return &MetaServiceBalanceArgs{}
+  return &MetaServiceBalanceArgs{
+    Req: NewBalanceReq(),
+  }
 }
 
 var MetaServiceBalanceArgs_Req_DEFAULT *BalanceReq
@@ -25792,7 +18574,7 @@ func (p *MetaServiceBalanceArgs) GetReq() *BalanceReq {
 return p.Req
 }
 func (p *MetaServiceBalanceArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceBalanceArgs) Read(iprot thrift.Protocol) error {
@@ -25861,12 +18643,20 @@ func (p *MetaServiceBalanceArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceBalanceArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceBalanceArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceBalanceResult struct {
+  thrift.IResponse
   Success *BalanceResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -25882,7 +18672,7 @@ func (p *MetaServiceBalanceResult) GetSuccess() *BalanceResp {
 return p.Success
 }
 func (p *MetaServiceBalanceResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceBalanceResult) Read(iprot thrift.Protocol) error {
@@ -25953,17 +18743,27 @@ func (p *MetaServiceBalanceResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceBalanceResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceBalanceResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceLeaderBalanceArgs struct {
+  thrift.IRequest
   Req *LeaderBalanceReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceLeaderBalanceArgs() *MetaServiceLeaderBalanceArgs {
-  return &MetaServiceLeaderBalanceArgs{}
+  return &MetaServiceLeaderBalanceArgs{
+    Req: NewLeaderBalanceReq(),
+  }
 }
 
 var MetaServiceLeaderBalanceArgs_Req_DEFAULT *LeaderBalanceReq
@@ -25974,7 +18774,7 @@ func (p *MetaServiceLeaderBalanceArgs) GetReq() *LeaderBalanceReq {
 return p.Req
 }
 func (p *MetaServiceLeaderBalanceArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceLeaderBalanceArgs) Read(iprot thrift.Protocol) error {
@@ -26043,12 +18843,20 @@ func (p *MetaServiceLeaderBalanceArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceLeaderBalanceArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceLeaderBalanceArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceLeaderBalanceResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -26064,7 +18872,7 @@ func (p *MetaServiceLeaderBalanceResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceLeaderBalanceResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceLeaderBalanceResult) Read(iprot thrift.Protocol) error {
@@ -26135,17 +18943,27 @@ func (p *MetaServiceLeaderBalanceResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceLeaderBalanceResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceLeaderBalanceResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceRegConfigArgs struct {
+  thrift.IRequest
   Req *RegConfigReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceRegConfigArgs() *MetaServiceRegConfigArgs {
-  return &MetaServiceRegConfigArgs{}
+  return &MetaServiceRegConfigArgs{
+    Req: NewRegConfigReq(),
+  }
 }
 
 var MetaServiceRegConfigArgs_Req_DEFAULT *RegConfigReq
@@ -26156,7 +18974,7 @@ func (p *MetaServiceRegConfigArgs) GetReq() *RegConfigReq {
 return p.Req
 }
 func (p *MetaServiceRegConfigArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceRegConfigArgs) Read(iprot thrift.Protocol) error {
@@ -26225,12 +19043,20 @@ func (p *MetaServiceRegConfigArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRegConfigArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceRegConfigArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceRegConfigResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -26246,7 +19072,7 @@ func (p *MetaServiceRegConfigResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceRegConfigResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceRegConfigResult) Read(iprot thrift.Protocol) error {
@@ -26317,17 +19143,27 @@ func (p *MetaServiceRegConfigResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRegConfigResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceRegConfigResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetConfigArgs struct {
+  thrift.IRequest
   Req *GetConfigReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetConfigArgs() *MetaServiceGetConfigArgs {
-  return &MetaServiceGetConfigArgs{}
+  return &MetaServiceGetConfigArgs{
+    Req: NewGetConfigReq(),
+  }
 }
 
 var MetaServiceGetConfigArgs_Req_DEFAULT *GetConfigReq
@@ -26338,7 +19174,7 @@ func (p *MetaServiceGetConfigArgs) GetReq() *GetConfigReq {
 return p.Req
 }
 func (p *MetaServiceGetConfigArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetConfigArgs) Read(iprot thrift.Protocol) error {
@@ -26407,12 +19243,20 @@ func (p *MetaServiceGetConfigArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetConfigArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetConfigArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetConfigResult struct {
+  thrift.IResponse
   Success *GetConfigResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -26428,7 +19272,7 @@ func (p *MetaServiceGetConfigResult) GetSuccess() *GetConfigResp {
 return p.Success
 }
 func (p *MetaServiceGetConfigResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetConfigResult) Read(iprot thrift.Protocol) error {
@@ -26499,17 +19343,27 @@ func (p *MetaServiceGetConfigResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetConfigResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetConfigResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceSetConfigArgs struct {
+  thrift.IRequest
   Req *SetConfigReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceSetConfigArgs() *MetaServiceSetConfigArgs {
-  return &MetaServiceSetConfigArgs{}
+  return &MetaServiceSetConfigArgs{
+    Req: NewSetConfigReq(),
+  }
 }
 
 var MetaServiceSetConfigArgs_Req_DEFAULT *SetConfigReq
@@ -26520,7 +19374,7 @@ func (p *MetaServiceSetConfigArgs) GetReq() *SetConfigReq {
 return p.Req
 }
 func (p *MetaServiceSetConfigArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceSetConfigArgs) Read(iprot thrift.Protocol) error {
@@ -26589,12 +19443,20 @@ func (p *MetaServiceSetConfigArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceSetConfigArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceSetConfigArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceSetConfigResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -26610,7 +19472,7 @@ func (p *MetaServiceSetConfigResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceSetConfigResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceSetConfigResult) Read(iprot thrift.Protocol) error {
@@ -26681,17 +19543,27 @@ func (p *MetaServiceSetConfigResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceSetConfigResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceSetConfigResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListConfigsArgs struct {
+  thrift.IRequest
   Req *ListConfigsReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListConfigsArgs() *MetaServiceListConfigsArgs {
-  return &MetaServiceListConfigsArgs{}
+  return &MetaServiceListConfigsArgs{
+    Req: NewListConfigsReq(),
+  }
 }
 
 var MetaServiceListConfigsArgs_Req_DEFAULT *ListConfigsReq
@@ -26702,7 +19574,7 @@ func (p *MetaServiceListConfigsArgs) GetReq() *ListConfigsReq {
 return p.Req
 }
 func (p *MetaServiceListConfigsArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListConfigsArgs) Read(iprot thrift.Protocol) error {
@@ -26771,12 +19643,20 @@ func (p *MetaServiceListConfigsArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListConfigsArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListConfigsArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListConfigsResult struct {
+  thrift.IResponse
   Success *ListConfigsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -26792,7 +19672,7 @@ func (p *MetaServiceListConfigsResult) GetSuccess() *ListConfigsResp {
 return p.Success
 }
 func (p *MetaServiceListConfigsResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListConfigsResult) Read(iprot thrift.Protocol) error {
@@ -26863,17 +19743,27 @@ func (p *MetaServiceListConfigsResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListConfigsResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListConfigsResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceCreateSnapshotArgs struct {
+  thrift.IRequest
   Req *CreateSnapshotReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceCreateSnapshotArgs() *MetaServiceCreateSnapshotArgs {
-  return &MetaServiceCreateSnapshotArgs{}
+  return &MetaServiceCreateSnapshotArgs{
+    Req: NewCreateSnapshotReq(),
+  }
 }
 
 var MetaServiceCreateSnapshotArgs_Req_DEFAULT *CreateSnapshotReq
@@ -26884,7 +19774,7 @@ func (p *MetaServiceCreateSnapshotArgs) GetReq() *CreateSnapshotReq {
 return p.Req
 }
 func (p *MetaServiceCreateSnapshotArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceCreateSnapshotArgs) Read(iprot thrift.Protocol) error {
@@ -26953,12 +19843,20 @@ func (p *MetaServiceCreateSnapshotArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateSnapshotArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceCreateSnapshotArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceCreateSnapshotResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -26974,7 +19872,7 @@ func (p *MetaServiceCreateSnapshotResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceCreateSnapshotResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceCreateSnapshotResult) Read(iprot thrift.Protocol) error {
@@ -27045,17 +19943,27 @@ func (p *MetaServiceCreateSnapshotResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateSnapshotResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceCreateSnapshotResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceDropSnapshotArgs struct {
+  thrift.IRequest
   Req *DropSnapshotReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceDropSnapshotArgs() *MetaServiceDropSnapshotArgs {
-  return &MetaServiceDropSnapshotArgs{}
+  return &MetaServiceDropSnapshotArgs{
+    Req: NewDropSnapshotReq(),
+  }
 }
 
 var MetaServiceDropSnapshotArgs_Req_DEFAULT *DropSnapshotReq
@@ -27066,7 +19974,7 @@ func (p *MetaServiceDropSnapshotArgs) GetReq() *DropSnapshotReq {
 return p.Req
 }
 func (p *MetaServiceDropSnapshotArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceDropSnapshotArgs) Read(iprot thrift.Protocol) error {
@@ -27135,12 +20043,20 @@ func (p *MetaServiceDropSnapshotArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropSnapshotArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropSnapshotArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceDropSnapshotResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -27156,7 +20072,7 @@ func (p *MetaServiceDropSnapshotResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceDropSnapshotResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceDropSnapshotResult) Read(iprot thrift.Protocol) error {
@@ -27227,17 +20143,27 @@ func (p *MetaServiceDropSnapshotResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropSnapshotResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropSnapshotResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListSnapshotsArgs struct {
+  thrift.IRequest
   Req *ListSnapshotsReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListSnapshotsArgs() *MetaServiceListSnapshotsArgs {
-  return &MetaServiceListSnapshotsArgs{}
+  return &MetaServiceListSnapshotsArgs{
+    Req: NewListSnapshotsReq(),
+  }
 }
 
 var MetaServiceListSnapshotsArgs_Req_DEFAULT *ListSnapshotsReq
@@ -27248,7 +20174,7 @@ func (p *MetaServiceListSnapshotsArgs) GetReq() *ListSnapshotsReq {
 return p.Req
 }
 func (p *MetaServiceListSnapshotsArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListSnapshotsArgs) Read(iprot thrift.Protocol) error {
@@ -27317,12 +20243,20 @@ func (p *MetaServiceListSnapshotsArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListSnapshotsArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListSnapshotsArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListSnapshotsResult struct {
+  thrift.IResponse
   Success *ListSnapshotsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -27338,7 +20272,7 @@ func (p *MetaServiceListSnapshotsResult) GetSuccess() *ListSnapshotsResp {
 return p.Success
 }
 func (p *MetaServiceListSnapshotsResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListSnapshotsResult) Read(iprot thrift.Protocol) error {
@@ -27409,17 +20343,27 @@ func (p *MetaServiceListSnapshotsResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListSnapshotsResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListSnapshotsResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceRunAdminJobArgs struct {
+  thrift.IRequest
   Req *AdminJobReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceRunAdminJobArgs() *MetaServiceRunAdminJobArgs {
-  return &MetaServiceRunAdminJobArgs{}
+  return &MetaServiceRunAdminJobArgs{
+    Req: NewAdminJobReq(),
+  }
 }
 
 var MetaServiceRunAdminJobArgs_Req_DEFAULT *AdminJobReq
@@ -27430,7 +20374,7 @@ func (p *MetaServiceRunAdminJobArgs) GetReq() *AdminJobReq {
 return p.Req
 }
 func (p *MetaServiceRunAdminJobArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceRunAdminJobArgs) Read(iprot thrift.Protocol) error {
@@ -27499,12 +20443,20 @@ func (p *MetaServiceRunAdminJobArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRunAdminJobArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceRunAdminJobArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceRunAdminJobResult struct {
+  thrift.IResponse
   Success *AdminJobResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -27520,7 +20472,7 @@ func (p *MetaServiceRunAdminJobResult) GetSuccess() *AdminJobResp {
 return p.Success
 }
 func (p *MetaServiceRunAdminJobResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceRunAdminJobResult) Read(iprot thrift.Protocol) error {
@@ -27591,17 +20543,27 @@ func (p *MetaServiceRunAdminJobResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRunAdminJobResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceRunAdminJobResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceAddZoneArgs struct {
+  thrift.IRequest
   Req *AddZoneReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceAddZoneArgs() *MetaServiceAddZoneArgs {
-  return &MetaServiceAddZoneArgs{}
+  return &MetaServiceAddZoneArgs{
+    Req: NewAddZoneReq(),
+  }
 }
 
 var MetaServiceAddZoneArgs_Req_DEFAULT *AddZoneReq
@@ -27612,7 +20574,7 @@ func (p *MetaServiceAddZoneArgs) GetReq() *AddZoneReq {
 return p.Req
 }
 func (p *MetaServiceAddZoneArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceAddZoneArgs) Read(iprot thrift.Protocol) error {
@@ -27681,12 +20643,20 @@ func (p *MetaServiceAddZoneArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAddZoneArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceAddZoneArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceAddZoneResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -27702,7 +20672,7 @@ func (p *MetaServiceAddZoneResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceAddZoneResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceAddZoneResult) Read(iprot thrift.Protocol) error {
@@ -27773,17 +20743,27 @@ func (p *MetaServiceAddZoneResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAddZoneResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceAddZoneResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceDropZoneArgs struct {
+  thrift.IRequest
   Req *DropZoneReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceDropZoneArgs() *MetaServiceDropZoneArgs {
-  return &MetaServiceDropZoneArgs{}
+  return &MetaServiceDropZoneArgs{
+    Req: NewDropZoneReq(),
+  }
 }
 
 var MetaServiceDropZoneArgs_Req_DEFAULT *DropZoneReq
@@ -27794,7 +20774,7 @@ func (p *MetaServiceDropZoneArgs) GetReq() *DropZoneReq {
 return p.Req
 }
 func (p *MetaServiceDropZoneArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceDropZoneArgs) Read(iprot thrift.Protocol) error {
@@ -27863,12 +20843,20 @@ func (p *MetaServiceDropZoneArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropZoneArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropZoneArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceDropZoneResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -27884,7 +20872,7 @@ func (p *MetaServiceDropZoneResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceDropZoneResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceDropZoneResult) Read(iprot thrift.Protocol) error {
@@ -27955,17 +20943,27 @@ func (p *MetaServiceDropZoneResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropZoneResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropZoneResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceAddHostIntoZoneArgs struct {
+  thrift.IRequest
   Req *AddHostIntoZoneReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceAddHostIntoZoneArgs() *MetaServiceAddHostIntoZoneArgs {
-  return &MetaServiceAddHostIntoZoneArgs{}
+  return &MetaServiceAddHostIntoZoneArgs{
+    Req: NewAddHostIntoZoneReq(),
+  }
 }
 
 var MetaServiceAddHostIntoZoneArgs_Req_DEFAULT *AddHostIntoZoneReq
@@ -27976,7 +20974,7 @@ func (p *MetaServiceAddHostIntoZoneArgs) GetReq() *AddHostIntoZoneReq {
 return p.Req
 }
 func (p *MetaServiceAddHostIntoZoneArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceAddHostIntoZoneArgs) Read(iprot thrift.Protocol) error {
@@ -28045,12 +21043,20 @@ func (p *MetaServiceAddHostIntoZoneArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAddHostIntoZoneArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceAddHostIntoZoneArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceAddHostIntoZoneResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -28066,7 +21072,7 @@ func (p *MetaServiceAddHostIntoZoneResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceAddHostIntoZoneResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceAddHostIntoZoneResult) Read(iprot thrift.Protocol) error {
@@ -28137,17 +21143,27 @@ func (p *MetaServiceAddHostIntoZoneResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAddHostIntoZoneResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceAddHostIntoZoneResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceDropHostFromZoneArgs struct {
+  thrift.IRequest
   Req *DropHostFromZoneReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceDropHostFromZoneArgs() *MetaServiceDropHostFromZoneArgs {
-  return &MetaServiceDropHostFromZoneArgs{}
+  return &MetaServiceDropHostFromZoneArgs{
+    Req: NewDropHostFromZoneReq(),
+  }
 }
 
 var MetaServiceDropHostFromZoneArgs_Req_DEFAULT *DropHostFromZoneReq
@@ -28158,7 +21174,7 @@ func (p *MetaServiceDropHostFromZoneArgs) GetReq() *DropHostFromZoneReq {
 return p.Req
 }
 func (p *MetaServiceDropHostFromZoneArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceDropHostFromZoneArgs) Read(iprot thrift.Protocol) error {
@@ -28227,12 +21243,20 @@ func (p *MetaServiceDropHostFromZoneArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropHostFromZoneArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropHostFromZoneArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceDropHostFromZoneResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -28248,7 +21272,7 @@ func (p *MetaServiceDropHostFromZoneResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceDropHostFromZoneResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceDropHostFromZoneResult) Read(iprot thrift.Protocol) error {
@@ -28319,17 +21343,27 @@ func (p *MetaServiceDropHostFromZoneResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropHostFromZoneResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropHostFromZoneResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetZoneArgs struct {
+  thrift.IRequest
   Req *GetZoneReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetZoneArgs() *MetaServiceGetZoneArgs {
-  return &MetaServiceGetZoneArgs{}
+  return &MetaServiceGetZoneArgs{
+    Req: NewGetZoneReq(),
+  }
 }
 
 var MetaServiceGetZoneArgs_Req_DEFAULT *GetZoneReq
@@ -28340,7 +21374,7 @@ func (p *MetaServiceGetZoneArgs) GetReq() *GetZoneReq {
 return p.Req
 }
 func (p *MetaServiceGetZoneArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetZoneArgs) Read(iprot thrift.Protocol) error {
@@ -28409,12 +21443,20 @@ func (p *MetaServiceGetZoneArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetZoneArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetZoneArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetZoneResult struct {
+  thrift.IResponse
   Success *GetZoneResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -28430,7 +21472,7 @@ func (p *MetaServiceGetZoneResult) GetSuccess() *GetZoneResp {
 return p.Success
 }
 func (p *MetaServiceGetZoneResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetZoneResult) Read(iprot thrift.Protocol) error {
@@ -28501,17 +21543,27 @@ func (p *MetaServiceGetZoneResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetZoneResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetZoneResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListZonesArgs struct {
+  thrift.IRequest
   Req *ListZonesReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListZonesArgs() *MetaServiceListZonesArgs {
-  return &MetaServiceListZonesArgs{}
+  return &MetaServiceListZonesArgs{
+    Req: NewListZonesReq(),
+  }
 }
 
 var MetaServiceListZonesArgs_Req_DEFAULT *ListZonesReq
@@ -28522,7 +21574,7 @@ func (p *MetaServiceListZonesArgs) GetReq() *ListZonesReq {
 return p.Req
 }
 func (p *MetaServiceListZonesArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListZonesArgs) Read(iprot thrift.Protocol) error {
@@ -28591,12 +21643,20 @@ func (p *MetaServiceListZonesArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListZonesArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListZonesArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListZonesResult struct {
+  thrift.IResponse
   Success *ListZonesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -28612,7 +21672,7 @@ func (p *MetaServiceListZonesResult) GetSuccess() *ListZonesResp {
 return p.Success
 }
 func (p *MetaServiceListZonesResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListZonesResult) Read(iprot thrift.Protocol) error {
@@ -28683,17 +21743,27 @@ func (p *MetaServiceListZonesResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListZonesResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListZonesResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceAddGroupArgs struct {
+  thrift.IRequest
   Req *AddGroupReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceAddGroupArgs() *MetaServiceAddGroupArgs {
-  return &MetaServiceAddGroupArgs{}
+  return &MetaServiceAddGroupArgs{
+    Req: NewAddGroupReq(),
+  }
 }
 
 var MetaServiceAddGroupArgs_Req_DEFAULT *AddGroupReq
@@ -28704,7 +21774,7 @@ func (p *MetaServiceAddGroupArgs) GetReq() *AddGroupReq {
 return p.Req
 }
 func (p *MetaServiceAddGroupArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceAddGroupArgs) Read(iprot thrift.Protocol) error {
@@ -28773,12 +21843,20 @@ func (p *MetaServiceAddGroupArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAddGroupArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceAddGroupArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceAddGroupResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -28794,7 +21872,7 @@ func (p *MetaServiceAddGroupResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceAddGroupResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceAddGroupResult) Read(iprot thrift.Protocol) error {
@@ -28865,17 +21943,27 @@ func (p *MetaServiceAddGroupResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAddGroupResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceAddGroupResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceDropGroupArgs struct {
+  thrift.IRequest
   Req *DropGroupReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceDropGroupArgs() *MetaServiceDropGroupArgs {
-  return &MetaServiceDropGroupArgs{}
+  return &MetaServiceDropGroupArgs{
+    Req: NewDropGroupReq(),
+  }
 }
 
 var MetaServiceDropGroupArgs_Req_DEFAULT *DropGroupReq
@@ -28886,7 +21974,7 @@ func (p *MetaServiceDropGroupArgs) GetReq() *DropGroupReq {
 return p.Req
 }
 func (p *MetaServiceDropGroupArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceDropGroupArgs) Read(iprot thrift.Protocol) error {
@@ -28955,12 +22043,20 @@ func (p *MetaServiceDropGroupArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropGroupArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropGroupArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceDropGroupResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -28976,7 +22072,7 @@ func (p *MetaServiceDropGroupResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceDropGroupResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceDropGroupResult) Read(iprot thrift.Protocol) error {
@@ -29047,17 +22143,27 @@ func (p *MetaServiceDropGroupResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropGroupResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropGroupResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceAddZoneIntoGroupArgs struct {
+  thrift.IRequest
   Req *AddZoneIntoGroupReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceAddZoneIntoGroupArgs() *MetaServiceAddZoneIntoGroupArgs {
-  return &MetaServiceAddZoneIntoGroupArgs{}
+  return &MetaServiceAddZoneIntoGroupArgs{
+    Req: NewAddZoneIntoGroupReq(),
+  }
 }
 
 var MetaServiceAddZoneIntoGroupArgs_Req_DEFAULT *AddZoneIntoGroupReq
@@ -29068,7 +22174,7 @@ func (p *MetaServiceAddZoneIntoGroupArgs) GetReq() *AddZoneIntoGroupReq {
 return p.Req
 }
 func (p *MetaServiceAddZoneIntoGroupArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceAddZoneIntoGroupArgs) Read(iprot thrift.Protocol) error {
@@ -29137,12 +22243,20 @@ func (p *MetaServiceAddZoneIntoGroupArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAddZoneIntoGroupArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceAddZoneIntoGroupArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceAddZoneIntoGroupResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -29158,7 +22272,7 @@ func (p *MetaServiceAddZoneIntoGroupResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceAddZoneIntoGroupResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceAddZoneIntoGroupResult) Read(iprot thrift.Protocol) error {
@@ -29229,17 +22343,27 @@ func (p *MetaServiceAddZoneIntoGroupResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAddZoneIntoGroupResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceAddZoneIntoGroupResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceDropZoneFromGroupArgs struct {
+  thrift.IRequest
   Req *DropZoneFromGroupReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceDropZoneFromGroupArgs() *MetaServiceDropZoneFromGroupArgs {
-  return &MetaServiceDropZoneFromGroupArgs{}
+  return &MetaServiceDropZoneFromGroupArgs{
+    Req: NewDropZoneFromGroupReq(),
+  }
 }
 
 var MetaServiceDropZoneFromGroupArgs_Req_DEFAULT *DropZoneFromGroupReq
@@ -29250,7 +22374,7 @@ func (p *MetaServiceDropZoneFromGroupArgs) GetReq() *DropZoneFromGroupReq {
 return p.Req
 }
 func (p *MetaServiceDropZoneFromGroupArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceDropZoneFromGroupArgs) Read(iprot thrift.Protocol) error {
@@ -29319,12 +22443,20 @@ func (p *MetaServiceDropZoneFromGroupArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropZoneFromGroupArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropZoneFromGroupArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceDropZoneFromGroupResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -29340,7 +22472,7 @@ func (p *MetaServiceDropZoneFromGroupResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceDropZoneFromGroupResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceDropZoneFromGroupResult) Read(iprot thrift.Protocol) error {
@@ -29411,17 +22543,27 @@ func (p *MetaServiceDropZoneFromGroupResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceDropZoneFromGroupResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropZoneFromGroupResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetGroupArgs struct {
+  thrift.IRequest
   Req *GetGroupReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetGroupArgs() *MetaServiceGetGroupArgs {
-  return &MetaServiceGetGroupArgs{}
+  return &MetaServiceGetGroupArgs{
+    Req: NewGetGroupReq(),
+  }
 }
 
 var MetaServiceGetGroupArgs_Req_DEFAULT *GetGroupReq
@@ -29432,7 +22574,7 @@ func (p *MetaServiceGetGroupArgs) GetReq() *GetGroupReq {
 return p.Req
 }
 func (p *MetaServiceGetGroupArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetGroupArgs) Read(iprot thrift.Protocol) error {
@@ -29501,12 +22643,20 @@ func (p *MetaServiceGetGroupArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetGroupArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetGroupArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetGroupResult struct {
+  thrift.IResponse
   Success *GetGroupResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -29522,7 +22672,7 @@ func (p *MetaServiceGetGroupResult) GetSuccess() *GetGroupResp {
 return p.Success
 }
 func (p *MetaServiceGetGroupResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetGroupResult) Read(iprot thrift.Protocol) error {
@@ -29593,17 +22743,27 @@ func (p *MetaServiceGetGroupResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetGroupResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetGroupResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListGroupsArgs struct {
+  thrift.IRequest
   Req *ListGroupsReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListGroupsArgs() *MetaServiceListGroupsArgs {
-  return &MetaServiceListGroupsArgs{}
+  return &MetaServiceListGroupsArgs{
+    Req: NewListGroupsReq(),
+  }
 }
 
 var MetaServiceListGroupsArgs_Req_DEFAULT *ListGroupsReq
@@ -29614,7 +22774,7 @@ func (p *MetaServiceListGroupsArgs) GetReq() *ListGroupsReq {
 return p.Req
 }
 func (p *MetaServiceListGroupsArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListGroupsArgs) Read(iprot thrift.Protocol) error {
@@ -29683,12 +22843,20 @@ func (p *MetaServiceListGroupsArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListGroupsArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListGroupsArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListGroupsResult struct {
+  thrift.IResponse
   Success *ListGroupsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -29704,7 +22872,7 @@ func (p *MetaServiceListGroupsResult) GetSuccess() *ListGroupsResp {
 return p.Success
 }
 func (p *MetaServiceListGroupsResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListGroupsResult) Read(iprot thrift.Protocol) error {
@@ -29775,17 +22943,27 @@ func (p *MetaServiceListGroupsResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListGroupsResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListGroupsResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceCreateBackupArgs struct {
+  thrift.IRequest
   Req *CreateBackupReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceCreateBackupArgs() *MetaServiceCreateBackupArgs {
-  return &MetaServiceCreateBackupArgs{}
+  return &MetaServiceCreateBackupArgs{
+    Req: NewCreateBackupReq(),
+  }
 }
 
 var MetaServiceCreateBackupArgs_Req_DEFAULT *CreateBackupReq
@@ -29796,7 +22974,7 @@ func (p *MetaServiceCreateBackupArgs) GetReq() *CreateBackupReq {
 return p.Req
 }
 func (p *MetaServiceCreateBackupArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceCreateBackupArgs) Read(iprot thrift.Protocol) error {
@@ -29865,12 +23043,20 @@ func (p *MetaServiceCreateBackupArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateBackupArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceCreateBackupArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceCreateBackupResult struct {
+  thrift.IResponse
   Success *CreateBackupResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -29886,7 +23072,7 @@ func (p *MetaServiceCreateBackupResult) GetSuccess() *CreateBackupResp {
 return p.Success
 }
 func (p *MetaServiceCreateBackupResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceCreateBackupResult) Read(iprot thrift.Protocol) error {
@@ -29957,17 +23143,27 @@ func (p *MetaServiceCreateBackupResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateBackupResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceCreateBackupResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceRestoreMetaArgs struct {
+  thrift.IRequest
   Req *RestoreMetaReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceRestoreMetaArgs() *MetaServiceRestoreMetaArgs {
-  return &MetaServiceRestoreMetaArgs{}
+  return &MetaServiceRestoreMetaArgs{
+    Req: NewRestoreMetaReq(),
+  }
 }
 
 var MetaServiceRestoreMetaArgs_Req_DEFAULT *RestoreMetaReq
@@ -29978,7 +23174,7 @@ func (p *MetaServiceRestoreMetaArgs) GetReq() *RestoreMetaReq {
 return p.Req
 }
 func (p *MetaServiceRestoreMetaArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceRestoreMetaArgs) Read(iprot thrift.Protocol) error {
@@ -30047,12 +23243,20 @@ func (p *MetaServiceRestoreMetaArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRestoreMetaArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceRestoreMetaArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceRestoreMetaResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -30068,7 +23272,7 @@ func (p *MetaServiceRestoreMetaResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceRestoreMetaResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceRestoreMetaResult) Read(iprot thrift.Protocol) error {
@@ -30139,17 +23343,27 @@ func (p *MetaServiceRestoreMetaResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRestoreMetaResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceRestoreMetaResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceAddListenerArgs struct {
+  thrift.IRequest
   Req *AddListenerReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceAddListenerArgs() *MetaServiceAddListenerArgs {
-  return &MetaServiceAddListenerArgs{}
+  return &MetaServiceAddListenerArgs{
+    Req: NewAddListenerReq(),
+  }
 }
 
 var MetaServiceAddListenerArgs_Req_DEFAULT *AddListenerReq
@@ -30160,7 +23374,7 @@ func (p *MetaServiceAddListenerArgs) GetReq() *AddListenerReq {
 return p.Req
 }
 func (p *MetaServiceAddListenerArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceAddListenerArgs) Read(iprot thrift.Protocol) error {
@@ -30229,12 +23443,20 @@ func (p *MetaServiceAddListenerArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAddListenerArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceAddListenerArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceAddListenerResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -30250,7 +23472,7 @@ func (p *MetaServiceAddListenerResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceAddListenerResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceAddListenerResult) Read(iprot thrift.Protocol) error {
@@ -30321,17 +23543,27 @@ func (p *MetaServiceAddListenerResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceAddListenerResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceAddListenerResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceRemoveListenerArgs struct {
+  thrift.IRequest
   Req *RemoveListenerReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceRemoveListenerArgs() *MetaServiceRemoveListenerArgs {
-  return &MetaServiceRemoveListenerArgs{}
+  return &MetaServiceRemoveListenerArgs{
+    Req: NewRemoveListenerReq(),
+  }
 }
 
 var MetaServiceRemoveListenerArgs_Req_DEFAULT *RemoveListenerReq
@@ -30342,7 +23574,7 @@ func (p *MetaServiceRemoveListenerArgs) GetReq() *RemoveListenerReq {
 return p.Req
 }
 func (p *MetaServiceRemoveListenerArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceRemoveListenerArgs) Read(iprot thrift.Protocol) error {
@@ -30411,12 +23643,20 @@ func (p *MetaServiceRemoveListenerArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRemoveListenerArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceRemoveListenerArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceRemoveListenerResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -30432,7 +23672,7 @@ func (p *MetaServiceRemoveListenerResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceRemoveListenerResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceRemoveListenerResult) Read(iprot thrift.Protocol) error {
@@ -30503,17 +23743,27 @@ func (p *MetaServiceRemoveListenerResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRemoveListenerResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceRemoveListenerResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListListenerArgs struct {
+  thrift.IRequest
   Req *ListListenerReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListListenerArgs() *MetaServiceListListenerArgs {
-  return &MetaServiceListListenerArgs{}
+  return &MetaServiceListListenerArgs{
+    Req: NewListListenerReq(),
+  }
 }
 
 var MetaServiceListListenerArgs_Req_DEFAULT *ListListenerReq
@@ -30524,7 +23774,7 @@ func (p *MetaServiceListListenerArgs) GetReq() *ListListenerReq {
 return p.Req
 }
 func (p *MetaServiceListListenerArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListListenerArgs) Read(iprot thrift.Protocol) error {
@@ -30593,12 +23843,20 @@ func (p *MetaServiceListListenerArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListListenerArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListListenerArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListListenerResult struct {
+  thrift.IResponse
   Success *ListListenerResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -30614,7 +23872,7 @@ func (p *MetaServiceListListenerResult) GetSuccess() *ListListenerResp {
 return p.Success
 }
 func (p *MetaServiceListListenerResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListListenerResult) Read(iprot thrift.Protocol) error {
@@ -30685,17 +23943,27 @@ func (p *MetaServiceListListenerResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListListenerResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListListenerResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetStatisArgs struct {
+  thrift.IRequest
   Req *GetStatisReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetStatisArgs() *MetaServiceGetStatisArgs {
-  return &MetaServiceGetStatisArgs{}
+  return &MetaServiceGetStatisArgs{
+    Req: NewGetStatisReq(),
+  }
 }
 
 var MetaServiceGetStatisArgs_Req_DEFAULT *GetStatisReq
@@ -30706,7 +23974,7 @@ func (p *MetaServiceGetStatisArgs) GetReq() *GetStatisReq {
 return p.Req
 }
 func (p *MetaServiceGetStatisArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetStatisArgs) Read(iprot thrift.Protocol) error {
@@ -30775,12 +24043,20 @@ func (p *MetaServiceGetStatisArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetStatisArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetStatisArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetStatisResult struct {
+  thrift.IResponse
   Success *GetStatisResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -30796,7 +24072,7 @@ func (p *MetaServiceGetStatisResult) GetSuccess() *GetStatisResp {
 return p.Success
 }
 func (p *MetaServiceGetStatisResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetStatisResult) Read(iprot thrift.Protocol) error {
@@ -30867,17 +24143,27 @@ func (p *MetaServiceGetStatisResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetStatisResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetStatisResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceSignInFTServiceArgs struct {
+  thrift.IRequest
   Req *SignInFTServiceReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceSignInFTServiceArgs() *MetaServiceSignInFTServiceArgs {
-  return &MetaServiceSignInFTServiceArgs{}
+  return &MetaServiceSignInFTServiceArgs{
+    Req: NewSignInFTServiceReq(),
+  }
 }
 
 var MetaServiceSignInFTServiceArgs_Req_DEFAULT *SignInFTServiceReq
@@ -30888,7 +24174,7 @@ func (p *MetaServiceSignInFTServiceArgs) GetReq() *SignInFTServiceReq {
 return p.Req
 }
 func (p *MetaServiceSignInFTServiceArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceSignInFTServiceArgs) Read(iprot thrift.Protocol) error {
@@ -30957,12 +24243,20 @@ func (p *MetaServiceSignInFTServiceArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceSignInFTServiceArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceSignInFTServiceArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceSignInFTServiceResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -30978,7 +24272,7 @@ func (p *MetaServiceSignInFTServiceResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceSignInFTServiceResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceSignInFTServiceResult) Read(iprot thrift.Protocol) error {
@@ -31049,17 +24343,27 @@ func (p *MetaServiceSignInFTServiceResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceSignInFTServiceResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceSignInFTServiceResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceSignOutFTServiceArgs struct {
+  thrift.IRequest
   Req *SignOutFTServiceReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceSignOutFTServiceArgs() *MetaServiceSignOutFTServiceArgs {
-  return &MetaServiceSignOutFTServiceArgs{}
+  return &MetaServiceSignOutFTServiceArgs{
+    Req: NewSignOutFTServiceReq(),
+  }
 }
 
 var MetaServiceSignOutFTServiceArgs_Req_DEFAULT *SignOutFTServiceReq
@@ -31070,7 +24374,7 @@ func (p *MetaServiceSignOutFTServiceArgs) GetReq() *SignOutFTServiceReq {
 return p.Req
 }
 func (p *MetaServiceSignOutFTServiceArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceSignOutFTServiceArgs) Read(iprot thrift.Protocol) error {
@@ -31139,12 +24443,20 @@ func (p *MetaServiceSignOutFTServiceArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceSignOutFTServiceArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceSignOutFTServiceArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceSignOutFTServiceResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -31160,7 +24472,7 @@ func (p *MetaServiceSignOutFTServiceResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceSignOutFTServiceResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceSignOutFTServiceResult) Read(iprot thrift.Protocol) error {
@@ -31231,17 +24543,27 @@ func (p *MetaServiceSignOutFTServiceResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceSignOutFTServiceResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceSignOutFTServiceResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListFTClientsArgs struct {
+  thrift.IRequest
   Req *ListFTClientsReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListFTClientsArgs() *MetaServiceListFTClientsArgs {
-  return &MetaServiceListFTClientsArgs{}
+  return &MetaServiceListFTClientsArgs{
+    Req: NewListFTClientsReq(),
+  }
 }
 
 var MetaServiceListFTClientsArgs_Req_DEFAULT *ListFTClientsReq
@@ -31252,7 +24574,7 @@ func (p *MetaServiceListFTClientsArgs) GetReq() *ListFTClientsReq {
 return p.Req
 }
 func (p *MetaServiceListFTClientsArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListFTClientsArgs) Read(iprot thrift.Protocol) error {
@@ -31321,12 +24643,20 @@ func (p *MetaServiceListFTClientsArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListFTClientsArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListFTClientsArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListFTClientsResult struct {
+  thrift.IResponse
   Success *ListFTClientsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -31342,7 +24672,7 @@ func (p *MetaServiceListFTClientsResult) GetSuccess() *ListFTClientsResp {
 return p.Success
 }
 func (p *MetaServiceListFTClientsResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListFTClientsResult) Read(iprot thrift.Protocol) error {
@@ -31413,17 +24743,27 @@ func (p *MetaServiceListFTClientsResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListFTClientsResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListFTClientsResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceCreateSessionArgs struct {
+  thrift.IRequest
   Req *CreateSessionReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceCreateSessionArgs() *MetaServiceCreateSessionArgs {
-  return &MetaServiceCreateSessionArgs{}
+  return &MetaServiceCreateSessionArgs{
+    Req: NewCreateSessionReq(),
+  }
 }
 
 var MetaServiceCreateSessionArgs_Req_DEFAULT *CreateSessionReq
@@ -31434,7 +24774,7 @@ func (p *MetaServiceCreateSessionArgs) GetReq() *CreateSessionReq {
 return p.Req
 }
 func (p *MetaServiceCreateSessionArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceCreateSessionArgs) Read(iprot thrift.Protocol) error {
@@ -31503,12 +24843,20 @@ func (p *MetaServiceCreateSessionArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateSessionArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceCreateSessionArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceCreateSessionResult struct {
+  thrift.IResponse
   Success *CreateSessionResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -31524,7 +24872,7 @@ func (p *MetaServiceCreateSessionResult) GetSuccess() *CreateSessionResp {
 return p.Success
 }
 func (p *MetaServiceCreateSessionResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceCreateSessionResult) Read(iprot thrift.Protocol) error {
@@ -31595,17 +24943,27 @@ func (p *MetaServiceCreateSessionResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceCreateSessionResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceCreateSessionResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceUpdateSessionsArgs struct {
+  thrift.IRequest
   Req *UpdateSessionsReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceUpdateSessionsArgs() *MetaServiceUpdateSessionsArgs {
-  return &MetaServiceUpdateSessionsArgs{}
+  return &MetaServiceUpdateSessionsArgs{
+    Req: NewUpdateSessionsReq(),
+  }
 }
 
 var MetaServiceUpdateSessionsArgs_Req_DEFAULT *UpdateSessionsReq
@@ -31616,7 +24974,7 @@ func (p *MetaServiceUpdateSessionsArgs) GetReq() *UpdateSessionsReq {
 return p.Req
 }
 func (p *MetaServiceUpdateSessionsArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceUpdateSessionsArgs) Read(iprot thrift.Protocol) error {
@@ -31685,12 +25043,20 @@ func (p *MetaServiceUpdateSessionsArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceUpdateSessionsArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceUpdateSessionsArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceUpdateSessionsResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -31706,7 +25072,7 @@ func (p *MetaServiceUpdateSessionsResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceUpdateSessionsResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceUpdateSessionsResult) Read(iprot thrift.Protocol) error {
@@ -31777,17 +25143,27 @@ func (p *MetaServiceUpdateSessionsResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceUpdateSessionsResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceUpdateSessionsResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListSessionsArgs struct {
+  thrift.IRequest
   Req *ListSessionsReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListSessionsArgs() *MetaServiceListSessionsArgs {
-  return &MetaServiceListSessionsArgs{}
+  return &MetaServiceListSessionsArgs{
+    Req: NewListSessionsReq(),
+  }
 }
 
 var MetaServiceListSessionsArgs_Req_DEFAULT *ListSessionsReq
@@ -31798,7 +25174,7 @@ func (p *MetaServiceListSessionsArgs) GetReq() *ListSessionsReq {
 return p.Req
 }
 func (p *MetaServiceListSessionsArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListSessionsArgs) Read(iprot thrift.Protocol) error {
@@ -31867,12 +25243,20 @@ func (p *MetaServiceListSessionsArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListSessionsArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListSessionsArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListSessionsResult struct {
+  thrift.IResponse
   Success *ListSessionsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -31888,7 +25272,7 @@ func (p *MetaServiceListSessionsResult) GetSuccess() *ListSessionsResp {
 return p.Success
 }
 func (p *MetaServiceListSessionsResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListSessionsResult) Read(iprot thrift.Protocol) error {
@@ -31959,17 +25343,27 @@ func (p *MetaServiceListSessionsResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListSessionsResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListSessionsResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetSessionArgs struct {
+  thrift.IRequest
   Req *GetSessionReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetSessionArgs() *MetaServiceGetSessionArgs {
-  return &MetaServiceGetSessionArgs{}
+  return &MetaServiceGetSessionArgs{
+    Req: NewGetSessionReq(),
+  }
 }
 
 var MetaServiceGetSessionArgs_Req_DEFAULT *GetSessionReq
@@ -31980,7 +25374,7 @@ func (p *MetaServiceGetSessionArgs) GetReq() *GetSessionReq {
 return p.Req
 }
 func (p *MetaServiceGetSessionArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetSessionArgs) Read(iprot thrift.Protocol) error {
@@ -32049,12 +25443,20 @@ func (p *MetaServiceGetSessionArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetSessionArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetSessionArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetSessionResult struct {
+  thrift.IResponse
   Success *GetSessionResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -32070,7 +25472,7 @@ func (p *MetaServiceGetSessionResult) GetSuccess() *GetSessionResp {
 return p.Success
 }
 func (p *MetaServiceGetSessionResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetSessionResult) Read(iprot thrift.Protocol) error {
@@ -32141,17 +25543,27 @@ func (p *MetaServiceGetSessionResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetSessionResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetSessionResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceRemoveSessionArgs struct {
+  thrift.IRequest
   Req *RemoveSessionReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceRemoveSessionArgs() *MetaServiceRemoveSessionArgs {
-  return &MetaServiceRemoveSessionArgs{}
+  return &MetaServiceRemoveSessionArgs{
+    Req: NewRemoveSessionReq(),
+  }
 }
 
 var MetaServiceRemoveSessionArgs_Req_DEFAULT *RemoveSessionReq
@@ -32162,7 +25574,7 @@ func (p *MetaServiceRemoveSessionArgs) GetReq() *RemoveSessionReq {
 return p.Req
 }
 func (p *MetaServiceRemoveSessionArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceRemoveSessionArgs) Read(iprot thrift.Protocol) error {
@@ -32231,12 +25643,20 @@ func (p *MetaServiceRemoveSessionArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRemoveSessionArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceRemoveSessionArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceRemoveSessionResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -32252,7 +25672,7 @@ func (p *MetaServiceRemoveSessionResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceRemoveSessionResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceRemoveSessionResult) Read(iprot thrift.Protocol) error {
@@ -32323,17 +25743,27 @@ func (p *MetaServiceRemoveSessionResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceRemoveSessionResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceRemoveSessionResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceReportTaskFinishArgs struct {
+  thrift.IRequest
   Req *ReportTaskReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceReportTaskFinishArgs() *MetaServiceReportTaskFinishArgs {
-  return &MetaServiceReportTaskFinishArgs{}
+  return &MetaServiceReportTaskFinishArgs{
+    Req: NewReportTaskReq(),
+  }
 }
 
 var MetaServiceReportTaskFinishArgs_Req_DEFAULT *ReportTaskReq
@@ -32344,7 +25774,7 @@ func (p *MetaServiceReportTaskFinishArgs) GetReq() *ReportTaskReq {
 return p.Req
 }
 func (p *MetaServiceReportTaskFinishArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceReportTaskFinishArgs) Read(iprot thrift.Protocol) error {
@@ -32413,12 +25843,20 @@ func (p *MetaServiceReportTaskFinishArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceReportTaskFinishArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceReportTaskFinishArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceReportTaskFinishResult struct {
+  thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -32434,7 +25872,7 @@ func (p *MetaServiceReportTaskFinishResult) GetSuccess() *ExecResp {
 return p.Success
 }
 func (p *MetaServiceReportTaskFinishResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceReportTaskFinishResult) Read(iprot thrift.Protocol) error {
@@ -32505,17 +25943,27 @@ func (p *MetaServiceReportTaskFinishResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceReportTaskFinishResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceReportTaskFinishResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceListClusterArgs struct {
+  thrift.IRequest
   Req *ListClusterInfoReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceListClusterArgs() *MetaServiceListClusterArgs {
-  return &MetaServiceListClusterArgs{}
+  return &MetaServiceListClusterArgs{
+    Req: NewListClusterInfoReq(),
+  }
 }
 
 var MetaServiceListClusterArgs_Req_DEFAULT *ListClusterInfoReq
@@ -32526,7 +25974,7 @@ func (p *MetaServiceListClusterArgs) GetReq() *ListClusterInfoReq {
 return p.Req
 }
 func (p *MetaServiceListClusterArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceListClusterArgs) Read(iprot thrift.Protocol) error {
@@ -32595,12 +26043,20 @@ func (p *MetaServiceListClusterArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListClusterArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListClusterArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceListClusterResult struct {
+  thrift.IResponse
   Success *ListClusterInfoResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -32616,7 +26072,7 @@ func (p *MetaServiceListClusterResult) GetSuccess() *ListClusterInfoResp {
 return p.Success
 }
 func (p *MetaServiceListClusterResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceListClusterResult) Read(iprot thrift.Protocol) error {
@@ -32687,17 +26143,27 @@ func (p *MetaServiceListClusterResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceListClusterResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListClusterResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type MetaServiceGetMetaDirInfoArgs struct {
+  thrift.IRequest
   Req *GetMetaDirInfoReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewMetaServiceGetMetaDirInfoArgs() *MetaServiceGetMetaDirInfoArgs {
-  return &MetaServiceGetMetaDirInfoArgs{}
+  return &MetaServiceGetMetaDirInfoArgs{
+    Req: NewGetMetaDirInfoReq(),
+  }
 }
 
 var MetaServiceGetMetaDirInfoArgs_Req_DEFAULT *GetMetaDirInfoReq
@@ -32708,7 +26174,7 @@ func (p *MetaServiceGetMetaDirInfoArgs) GetReq() *GetMetaDirInfoReq {
 return p.Req
 }
 func (p *MetaServiceGetMetaDirInfoArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *MetaServiceGetMetaDirInfoArgs) Read(iprot thrift.Protocol) error {
@@ -32777,12 +26243,20 @@ func (p *MetaServiceGetMetaDirInfoArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetMetaDirInfoArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetMetaDirInfoArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type MetaServiceGetMetaDirInfoResult struct {
+  thrift.IResponse
   Success *GetMetaDirInfoResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -32798,7 +26272,7 @@ func (p *MetaServiceGetMetaDirInfoResult) GetSuccess() *GetMetaDirInfoResp {
 return p.Success
 }
 func (p *MetaServiceGetMetaDirInfoResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *MetaServiceGetMetaDirInfoResult) Read(iprot thrift.Protocol) error {
@@ -32869,7 +26343,14 @@ func (p *MetaServiceGetMetaDirInfoResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("MetaServiceGetMetaDirInfoResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetMetaDirInfoResult({Success:%s})", successVal)
 }
 
 

@@ -6,6 +6,7 @@ package nebula
 
 import (
 	"bytes"
+	"context"
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -16,6 +17,7 @@ var _ = thrift.ZERO
 var _ = fmt.Printf
 var _ = sync.Mutex{}
 var _ = bytes.Equal
+var _ = context.Background
 
 
 func init() {
