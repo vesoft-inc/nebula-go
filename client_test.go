@@ -218,6 +218,108 @@ func TestInvalidHostTimeout(t *testing.T) {
 	}
 }
 
+func TestDataIO(t *testing.T) {
+	hostAdress := HostAddress{Host: address, Port: port}
+	hostList := []HostAddress{}
+	hostList = append(hostList, hostAdress)
+
+	testPoolConfig = PoolConfig{
+		TimeOut:         0 * time.Millisecond,
+		IdleTime:        0 * time.Millisecond,
+		MaxConnPoolSize: 10,
+		MinConnPoolSize: 1,
+	}
+
+	// Initialize connectin pool
+	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+	if err != nil {
+		t.Fatalf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+	}
+	// close all connections in the pool
+	defer pool.Close()
+
+	// Create session
+	session, err := pool.GetSession(username, password)
+	if err != nil {
+		t.Fatalf("Fail to create a new session from connection pool, username: %s, password: %s, %s",
+			username, password, err.Error())
+	}
+	defer session.Release()
+
+	// Method used to check execution response
+	checkResultSet := func(prefix string, res *ResultSet) {
+		if !res.IsSucceed() {
+			fmt.Printf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, res.GetErrorCode(), res.GetErrorMsg())
+		}
+	}
+	// Do some data read/write
+	{
+		createSchema := "CREATE SPACE IF NOT EXISTS test_space; " +
+			"USE test_space;" +
+			"CREATE TAG IF NOT EXISTS person(name string, age int);" +
+			"CREATE EDGE IF NOT EXISTS like(likeness double)"
+
+		// Excute a query
+		resultSet, err := session.Execute(createSchema)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResultSet(createSchema, resultSet)
+	}
+	time.Sleep(5 * time.Second)
+	{
+		insertVertexes := "INSERT VERTEX person(name, age) VALUES " +
+			"'Bob':('Bob', 10), " +
+			"'Lily':('Lily', 9), " +
+			"'Tom':('Tom', 10), " +
+			"'Jerry':('Jerry', 13), " +
+			"'John':('John', 11);"
+
+		// Insert multiple vertexes
+		resultSet, err := session.Execute(insertVertexes)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResultSet(insertVertexes, resultSet)
+	}
+	{
+		insertEdges := "INSERT EDGE like(likeness) VALUES " +
+			"'Bob'->'Lily':(80.0), " +
+			"'Bob'->'Tom':(70.0), " +
+			"'Lily'->'Jerry':(84.0), " +
+			"'Tom'->'Jerry':(68.3), " +
+			"'Bob'->'John':(97.2);"
+
+		resultSet, err := session.Execute(insertEdges)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResultSet(insertEdges, resultSet)
+	}
+	{
+		query := "GO FROM 'Bob' OVER like YIELD $^.person.name, $^.person.age, like.likeness"
+		// Send query
+		resultSet, err := session.Execute(query)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResultSet(query, resultSet)
+	}
+	// Drop space
+	{
+		query := "DROP SPACE test_space;"
+		_, err := session.Execute(query)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+	}
+}
+
 func TestPool_SingleHost(t *testing.T) {
 	hostAdress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
