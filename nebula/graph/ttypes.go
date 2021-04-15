@@ -6,7 +6,6 @@ package graph
 
 import (
 	"bytes"
-	"context"
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -19,7 +18,6 @@ var _ = thrift.ZERO
 var _ = fmt.Printf
 var _ = sync.Mutex{}
 var _ = bytes.Equal
-var _ = context.Background
 
 var _ = nebula0.GoUnusedProtection__
 var GoUnusedProtection__ int;
@@ -40,7 +38,6 @@ const (
   ErrorCode_E_BAD_PERMISSION ErrorCode = -11
   ErrorCode_E_SEMANTIC_ERROR ErrorCode = -12
   ErrorCode_E_TOO_MANY_CONNECTIONS ErrorCode = -13
-  ErrorCode_E_PARTIAL_SUCCEEDED ErrorCode = -14
 )
 
 var ErrorCodeToName = map[ErrorCode]string {
@@ -58,7 +55,6 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_BAD_PERMISSION: "E_BAD_PERMISSION",
   ErrorCode_E_SEMANTIC_ERROR: "E_SEMANTIC_ERROR",
   ErrorCode_E_TOO_MANY_CONNECTIONS: "E_TOO_MANY_CONNECTIONS",
-  ErrorCode_E_PARTIAL_SUCCEEDED: "E_PARTIAL_SUCCEEDED",
 }
 
 var ErrorCodeToValue = map[string]ErrorCode {
@@ -76,43 +72,6 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_BAD_PERMISSION": ErrorCode_E_BAD_PERMISSION,
   "E_SEMANTIC_ERROR": ErrorCode_E_SEMANTIC_ERROR,
   "E_TOO_MANY_CONNECTIONS": ErrorCode_E_TOO_MANY_CONNECTIONS,
-  "E_PARTIAL_SUCCEEDED": ErrorCode_E_PARTIAL_SUCCEEDED,
-}
-
-var ErrorCodeNames = []string {
-  "SUCCEEDED",
-  "E_DISCONNECTED",
-  "E_FAIL_TO_CONNECT",
-  "E_RPC_FAILURE",
-  "E_BAD_USERNAME_PASSWORD",
-  "E_SESSION_INVALID",
-  "E_SESSION_TIMEOUT",
-  "E_SYNTAX_ERROR",
-  "E_EXECUTION_ERROR",
-  "E_STATEMENT_EMPTY",
-  "E_USER_NOT_FOUND",
-  "E_BAD_PERMISSION",
-  "E_SEMANTIC_ERROR",
-  "E_TOO_MANY_CONNECTIONS",
-  "E_PARTIAL_SUCCEEDED",
-}
-
-var ErrorCodeValues = []ErrorCode {
-  ErrorCode_SUCCEEDED,
-  ErrorCode_E_DISCONNECTED,
-  ErrorCode_E_FAIL_TO_CONNECT,
-  ErrorCode_E_RPC_FAILURE,
-  ErrorCode_E_BAD_USERNAME_PASSWORD,
-  ErrorCode_E_SESSION_INVALID,
-  ErrorCode_E_SESSION_TIMEOUT,
-  ErrorCode_E_SYNTAX_ERROR,
-  ErrorCode_E_EXECUTION_ERROR,
-  ErrorCode_E_STATEMENT_EMPTY,
-  ErrorCode_E_USER_NOT_FOUND,
-  ErrorCode_E_BAD_PERMISSION,
-  ErrorCode_E_SEMANTIC_ERROR,
-  ErrorCode_E_TOO_MANY_CONNECTIONS,
-  ErrorCode_E_PARTIAL_SUCCEEDED,
 }
 
 func (p ErrorCode) String() string {
@@ -165,7 +124,7 @@ func (p *ProfilingStats) GetOtherStats() map[string][]byte {
   return p.OtherStats
 }
 func (p *ProfilingStats) IsSetOtherStats() bool {
-  return p != nil && p.OtherStats != nil
+  return p.OtherStats != nil
 }
 
 func (p *ProfilingStats) Read(iprot thrift.Protocol) error {
@@ -352,12 +311,7 @@ func (p *ProfilingStats) String() string {
   if p == nil {
     return "<nil>"
   }
-
-  rowsVal := fmt.Sprintf("%v", p.Rows)
-  execDurationInUsVal := fmt.Sprintf("%v", p.ExecDurationInUs)
-  totalDurationInUsVal := fmt.Sprintf("%v", p.TotalDurationInUs)
-  otherStatsVal := fmt.Sprintf("%v", p.OtherStats)
-  return fmt.Sprintf("ProfilingStats({Rows:%s ExecDurationInUs:%s TotalDurationInUs:%s OtherStats:%s})", rowsVal, execDurationInUsVal, totalDurationInUsVal, otherStatsVal)
+  return fmt.Sprintf("ProfilingStats(%+v)", *p)
 }
 
 // Attributes:
@@ -480,10 +434,7 @@ func (p *PlanNodeBranchInfo) String() string {
   if p == nil {
     return "<nil>"
   }
-
-  isDoBranchVal := fmt.Sprintf("%v", p.IsDoBranch)
-  conditionNodeIDVal := fmt.Sprintf("%v", p.ConditionNodeID)
-  return fmt.Sprintf("PlanNodeBranchInfo({IsDoBranch:%s ConditionNodeID:%s})", isDoBranchVal, conditionNodeIDVal)
+  return fmt.Sprintf("PlanNodeBranchInfo(%+v)", *p)
 }
 
 // Attributes:
@@ -606,10 +557,7 @@ func (p *Pair) String() string {
   if p == nil {
     return "<nil>"
   }
-
-  keyVal := fmt.Sprintf("%v", p.Key)
-  valueVal := fmt.Sprintf("%v", p.Value)
-  return fmt.Sprintf("Pair({Key:%s Value:%s})", keyVal, valueVal)
+  return fmt.Sprintf("Pair(%+v)", *p)
 }
 
 // Attributes:
@@ -669,19 +617,19 @@ func (p *PlanNodeDescription) GetDependencies() []int64 {
   return p.Dependencies
 }
 func (p *PlanNodeDescription) IsSetDescription() bool {
-  return p != nil && p.Description != nil
+  return p.Description != nil
 }
 
 func (p *PlanNodeDescription) IsSetProfiles() bool {
-  return p != nil && p.Profiles != nil
+  return p.Profiles != nil
 }
 
 func (p *PlanNodeDescription) IsSetBranchInfo() bool {
-  return p != nil && p.BranchInfo != nil
+  return p.BranchInfo != nil
 }
 
 func (p *PlanNodeDescription) IsSetDependencies() bool {
-  return p != nil && p.Dependencies != nil
+  return p.Dependencies != nil
 }
 
 func (p *PlanNodeDescription) Read(iprot thrift.Protocol) error {
@@ -978,20 +926,7 @@ func (p *PlanNodeDescription) String() string {
   if p == nil {
     return "<nil>"
   }
-
-  nameVal := fmt.Sprintf("%v", p.Name)
-  idVal := fmt.Sprintf("%v", p.Id)
-  outputVarVal := fmt.Sprintf("%v", p.OutputVar)
-  descriptionVal := fmt.Sprintf("%v", p.Description)
-  profilesVal := fmt.Sprintf("%v", p.Profiles)
-  var branchInfoVal string
-  if p.BranchInfo == nil {
-    branchInfoVal = "<nil>"
-  } else {
-    branchInfoVal = fmt.Sprintf("%v", p.BranchInfo)
-  }
-  dependenciesVal := fmt.Sprintf("%v", p.Dependencies)
-  return fmt.Sprintf("PlanNodeDescription({Name:%s Id:%s OutputVar:%s Description:%s Profiles:%s BranchInfo:%s Dependencies:%s})", nameVal, idVal, outputVarVal, descriptionVal, profilesVal, branchInfoVal, dependenciesVal)
+  return fmt.Sprintf("PlanNodeDescription(%+v)", *p)
 }
 
 // Attributes:
@@ -1233,12 +1168,7 @@ func (p *PlanDescription) String() string {
   if p == nil {
     return "<nil>"
   }
-
-  planNodeDescsVal := fmt.Sprintf("%v", p.PlanNodeDescs)
-  nodeIndexMapVal := fmt.Sprintf("%v", p.NodeIndexMap)
-  formatVal := fmt.Sprintf("%v", p.Format)
-  optimizeTimeInUsVal := fmt.Sprintf("%v", p.OptimizeTimeInUs)
-  return fmt.Sprintf("PlanDescription({PlanNodeDescs:%s NodeIndexMap:%s Format:%s OptimizeTimeInUs:%s})", planNodeDescsVal, nodeIndexMapVal, formatVal, optimizeTimeInUsVal)
+  return fmt.Sprintf("PlanDescription(%+v)", *p)
 }
 
 // Attributes:
@@ -1301,23 +1231,23 @@ func (p *ExecutionResponse) GetComment() []byte {
   return p.Comment
 }
 func (p *ExecutionResponse) IsSetData() bool {
-  return p != nil && p.Data != nil
+  return p.Data != nil
 }
 
 func (p *ExecutionResponse) IsSetSpaceName() bool {
-  return p != nil && p.SpaceName != nil
+  return p.SpaceName != nil
 }
 
 func (p *ExecutionResponse) IsSetErrorMsg() bool {
-  return p != nil && p.ErrorMsg != nil
+  return p.ErrorMsg != nil
 }
 
 func (p *ExecutionResponse) IsSetPlanDesc() bool {
-  return p != nil && p.PlanDesc != nil
+  return p.PlanDesc != nil
 }
 
 func (p *ExecutionResponse) IsSetComment() bool {
-  return p != nil && p.Comment != nil
+  return p.Comment != nil
 }
 
 func (p *ExecutionResponse) Read(iprot thrift.Protocol) error {
@@ -1551,25 +1481,7 @@ func (p *ExecutionResponse) String() string {
   if p == nil {
     return "<nil>"
   }
-
-  errorCodeVal := fmt.Sprintf("%v", p.ErrorCode)
-  latencyInUsVal := fmt.Sprintf("%v", p.LatencyInUs)
-  var dataVal string
-  if p.Data == nil {
-    dataVal = "<nil>"
-  } else {
-    dataVal = fmt.Sprintf("%v", p.Data)
-  }
-  spaceNameVal := fmt.Sprintf("%v", p.SpaceName)
-  errorMsgVal := fmt.Sprintf("%v", p.ErrorMsg)
-  var planDescVal string
-  if p.PlanDesc == nil {
-    planDescVal = "<nil>"
-  } else {
-    planDescVal = fmt.Sprintf("%v", p.PlanDesc)
-  }
-  commentVal := fmt.Sprintf("%v", p.Comment)
-  return fmt.Sprintf("ExecutionResponse({ErrorCode:%s LatencyInUs:%s Data:%s SpaceName:%s ErrorMsg:%s PlanDesc:%s Comment:%s})", errorCodeVal, latencyInUsVal, dataVal, spaceNameVal, errorMsgVal, planDescVal, commentVal)
+  return fmt.Sprintf("ExecutionResponse(%+v)", *p)
 }
 
 // Attributes:
@@ -1603,11 +1515,11 @@ func (p *AuthResponse) GetSessionID() int64 {
 return *p.SessionID
 }
 func (p *AuthResponse) IsSetErrorMsg() bool {
-  return p != nil && p.ErrorMsg != nil
+  return p.ErrorMsg != nil
 }
 
 func (p *AuthResponse) IsSetSessionID() bool {
-  return p != nil && p.SessionID != nil
+  return p.SessionID != nil
 }
 
 func (p *AuthResponse) Read(iprot thrift.Protocol) error {
@@ -1734,15 +1646,6 @@ func (p *AuthResponse) String() string {
   if p == nil {
     return "<nil>"
   }
-
-  errorCodeVal := fmt.Sprintf("%v", p.ErrorCode)
-  errorMsgVal := fmt.Sprintf("%v", p.ErrorMsg)
-  var sessionIDVal string
-  if p.SessionID == nil {
-    sessionIDVal = "<nil>"
-  } else {
-    sessionIDVal = fmt.Sprintf("%v", *p.SessionID)
-  }
-  return fmt.Sprintf("AuthResponse({ErrorCode:%s ErrorMsg:%s SessionID:%s})", errorCodeVal, errorMsgVal, sessionIDVal)
+  return fmt.Sprintf("AuthResponse(%+v)", *p)
 }
 

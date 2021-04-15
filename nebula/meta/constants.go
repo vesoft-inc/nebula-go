@@ -6,7 +6,6 @@ package meta
 
 import (
 	"bytes"
-	"context"
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -19,10 +18,8 @@ var _ = thrift.ZERO
 var _ = fmt.Printf
 var _ = sync.Mutex{}
 var _ = bytes.Equal
-var _ = context.Background
 
 var _ = nebula0.GoUnusedProtection__
-var const_lit_vid_type_type_length int16 = 8
 
 func init() {
 }
