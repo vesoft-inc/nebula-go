@@ -249,7 +249,7 @@ func TestDataIO(t *testing.T) {
 	// Method used to check execution response
 	checkResultSet := func(prefix string, res *ResultSet) {
 		if !res.IsSucceed() {
-			fmt.Printf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, res.GetErrorCode(), res.GetErrorMsg())
+			t.Fatalf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, res.GetErrorCode(), res.GetErrorMsg())
 		}
 	}
 	// Do some data read/write
