@@ -6,6 +6,7 @@ package storage
 
 import (
 	"bytes"
+	"context"
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -19,570 +20,314 @@ var _ = thrift.ZERO
 var _ = fmt.Printf
 var _ = sync.Mutex{}
 var _ = bytes.Equal
+var _ = context.Background
 
 var _ = nebula0.GoUnusedProtection__
 var _ = meta1.GoUnusedProtection__
 type GeneralStorageService interface {
   // Parameters:
   //  - Req
-  Get(req *KVGetRequest) (r *KVGetResponse, err error)
+  Get(ctx context.Context, req *KVGetRequest) (_r *KVGetResponse, err error)
   // Parameters:
   //  - Req
-  Put(req *KVPutRequest) (r *ExecResponse, err error)
+  Put(ctx context.Context, req *KVPutRequest) (_r *ExecResponse, err error)
   // Parameters:
   //  - Req
-  Remove(req *KVRemoveRequest) (r *ExecResponse, err error)
+  Remove(ctx context.Context, req *KVRemoveRequest) (_r *ExecResponse, err error)
+}
+
+type GeneralStorageServiceClientInterface interface {
+  thrift.ClientInterface
+  // Parameters:
+  //  - Req
+  Get(req *KVGetRequest) (_r *KVGetResponse, err error)
+  // Parameters:
+  //  - Req
+  Put(req *KVPutRequest) (_r *ExecResponse, err error)
+  // Parameters:
+  //  - Req
+  Remove(req *KVRemoveRequest) (_r *ExecResponse, err error)
 }
 
 type GeneralStorageServiceClient struct {
-  Transport thrift.Transport
-  ProtocolFactory thrift.ProtocolFactory
-  InputProtocol thrift.Protocol
-  OutputProtocol thrift.Protocol
-  SeqId int32
+  GeneralStorageServiceClientInterface
+  CC thrift.ClientConn
 }
 
-func (client *GeneralStorageServiceClient) Close() error {
-  return client.Transport.Close()
+func(client *GeneralStorageServiceClient) Open() error {
+  return client.CC.Open()
+}
+
+func(client *GeneralStorageServiceClient) Close() error {
+  return client.CC.Close()
+}
+
+func(client *GeneralStorageServiceClient) IsOpen() bool {
+  return client.CC.IsOpen()
 }
 
 func NewGeneralStorageServiceClientFactory(t thrift.Transport, f thrift.ProtocolFactory) *GeneralStorageServiceClient {
-  return &GeneralStorageServiceClient{Transport: t,
-    ProtocolFactory: f,
-    InputProtocol: f.GetProtocol(t),
-    OutputProtocol: f.GetProtocol(t),
-    SeqId: 0,
-  }
+  return &GeneralStorageServiceClient{ CC: thrift.NewClientConn(t, f) }
 }
 
 func NewGeneralStorageServiceClient(t thrift.Transport, iprot thrift.Protocol, oprot thrift.Protocol) *GeneralStorageServiceClient {
-  return &GeneralStorageServiceClient{Transport: t,
-    ProtocolFactory: nil,
-    InputProtocol: iprot,
-    OutputProtocol: oprot,
-    SeqId: 0,
-  }
+  return &GeneralStorageServiceClient{ CC: thrift.NewClientConnWithProtocols(t, iprot, oprot) }
+}
+
+func NewGeneralStorageServiceClientProtocol(prot thrift.Protocol) *GeneralStorageServiceClient {
+  return NewGeneralStorageServiceClient(prot.Transport(), prot, prot)
 }
 
 // Parameters:
 //  - Req
-func (p *GeneralStorageServiceClient) Get(req *KVGetRequest) (r *KVGetResponse, err error) {
-  if err = p.sendGet(req); err != nil { return }
-  return p.recvGet()
-}
-
-func (p *GeneralStorageServiceClient) sendGet(req *KVGetRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("get", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *GeneralStorageServiceClient) Get(req *KVGetRequest) (_r *KVGetResponse, err error) {
   args := GeneralStorageServiceGetArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("get", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGet()
 }
 
 
 func (p *GeneralStorageServiceClient) recvGet() (value *KVGetResponse, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "get" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "get failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "get failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error365 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error366 error
-    error366, err = error365.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error366
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "get failed: invalid message type")
-    return
-  }
-  result := GeneralStorageServiceGetResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result GeneralStorageServiceGetResult
+  err = p.CC.RecvMsg("get", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *GeneralStorageServiceClient) Put(req *KVPutRequest) (r *ExecResponse, err error) {
-  if err = p.sendPut(req); err != nil { return }
-  return p.recvPut()
-}
-
-func (p *GeneralStorageServiceClient) sendPut(req *KVPutRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("put", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *GeneralStorageServiceClient) Put(req *KVPutRequest) (_r *ExecResponse, err error) {
   args := GeneralStorageServicePutArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("put", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvPut()
 }
 
 
 func (p *GeneralStorageServiceClient) recvPut() (value *ExecResponse, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "put" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "put failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "put failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error367 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error368 error
-    error368, err = error367.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error368
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "put failed: invalid message type")
-    return
-  }
-  result := GeneralStorageServicePutResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result GeneralStorageServicePutResult
+  err = p.CC.RecvMsg("put", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *GeneralStorageServiceClient) Remove(req *KVRemoveRequest) (r *ExecResponse, err error) {
-  if err = p.sendRemove(req); err != nil { return }
-  return p.recvRemove()
-}
-
-func (p *GeneralStorageServiceClient) sendRemove(req *KVRemoveRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("remove", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *GeneralStorageServiceClient) Remove(req *KVRemoveRequest) (_r *ExecResponse, err error) {
   args := GeneralStorageServiceRemoveArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("remove", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemove()
 }
 
 
 func (p *GeneralStorageServiceClient) recvRemove() (value *ExecResponse, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "remove" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "remove failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "remove failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error369 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error370 error
-    error370, err = error369.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error370
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "remove failed: invalid message type")
-    return
-  }
-  result := GeneralStorageServiceRemoveResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result GeneralStorageServiceRemoveResult
+  err = p.CC.RecvMsg("remove", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 
 type GeneralStorageServiceThreadsafeClient struct {
-  Transport thrift.Transport
-  ProtocolFactory thrift.ProtocolFactory
-  InputProtocol thrift.Protocol
-  OutputProtocol thrift.Protocol
-  SeqId int32
+  GeneralStorageServiceClientInterface
+  CC thrift.ClientConn
   Mu sync.Mutex
 }
 
+func(client *GeneralStorageServiceThreadsafeClient) Open() error {
+  client.Mu.Lock()
+  defer client.Mu.Unlock()
+  return client.CC.Open()
+}
+
+func(client *GeneralStorageServiceThreadsafeClient) Close() error {
+  client.Mu.Lock()
+  defer client.Mu.Unlock()
+  return client.CC.Close()
+}
+
+func(client *GeneralStorageServiceThreadsafeClient) IsOpen() bool {
+  client.Mu.Lock()
+  defer client.Mu.Unlock()
+  return client.CC.IsOpen()
+}
+
 func NewGeneralStorageServiceThreadsafeClientFactory(t thrift.Transport, f thrift.ProtocolFactory) *GeneralStorageServiceThreadsafeClient {
-  return &GeneralStorageServiceThreadsafeClient{Transport: t,
-    ProtocolFactory: f,
-    InputProtocol: f.GetProtocol(t),
-    OutputProtocol: f.GetProtocol(t),
-    SeqId: 0,
-  }
+  return &GeneralStorageServiceThreadsafeClient{ CC: thrift.NewClientConn(t, f) }
 }
 
 func NewGeneralStorageServiceThreadsafeClient(t thrift.Transport, iprot thrift.Protocol, oprot thrift.Protocol) *GeneralStorageServiceThreadsafeClient {
-  return &GeneralStorageServiceThreadsafeClient{Transport: t,
-    ProtocolFactory: nil,
-    InputProtocol: iprot,
-    OutputProtocol: oprot,
-    SeqId: 0,
-  }
+  return &GeneralStorageServiceThreadsafeClient{ CC: thrift.NewClientConnWithProtocols(t, iprot, oprot) }
 }
 
-func (p *GeneralStorageServiceThreadsafeClient) Threadsafe() {}
+func NewGeneralStorageServiceThreadsafeClientProtocol(prot thrift.Protocol) *GeneralStorageServiceThreadsafeClient {
+  return NewGeneralStorageServiceThreadsafeClient(prot.Transport(), prot, prot)
+}
 
 // Parameters:
 //  - Req
-func (p *GeneralStorageServiceThreadsafeClient) Get(req *KVGetRequest) (r *KVGetResponse, err error) {
+func (p *GeneralStorageServiceThreadsafeClient) Get(req *KVGetRequest) (_r *KVGetResponse, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGet(req); err != nil { return }
-  return p.recvGet()
-}
-
-func (p *GeneralStorageServiceThreadsafeClient) sendGet(req *KVGetRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("get", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := GeneralStorageServiceGetArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("get", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGet()
 }
 
 
 func (p *GeneralStorageServiceThreadsafeClient) recvGet() (value *KVGetResponse, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "get" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "get failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "get failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error371 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error372 error
-    error372, err = error371.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error372
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "get failed: invalid message type")
-    return
-  }
-  result := GeneralStorageServiceGetResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result GeneralStorageServiceGetResult
+  err = p.CC.RecvMsg("get", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *GeneralStorageServiceThreadsafeClient) Put(req *KVPutRequest) (r *ExecResponse, err error) {
+func (p *GeneralStorageServiceThreadsafeClient) Put(req *KVPutRequest) (_r *ExecResponse, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendPut(req); err != nil { return }
-  return p.recvPut()
-}
-
-func (p *GeneralStorageServiceThreadsafeClient) sendPut(req *KVPutRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("put", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := GeneralStorageServicePutArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("put", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvPut()
 }
 
 
 func (p *GeneralStorageServiceThreadsafeClient) recvPut() (value *ExecResponse, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "put" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "put failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "put failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error373 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error374 error
-    error374, err = error373.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error374
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "put failed: invalid message type")
-    return
-  }
-  result := GeneralStorageServicePutResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result GeneralStorageServicePutResult
+  err = p.CC.RecvMsg("put", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *GeneralStorageServiceThreadsafeClient) Remove(req *KVRemoveRequest) (r *ExecResponse, err error) {
+func (p *GeneralStorageServiceThreadsafeClient) Remove(req *KVRemoveRequest) (_r *ExecResponse, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRemove(req); err != nil { return }
-  return p.recvRemove()
-}
-
-func (p *GeneralStorageServiceThreadsafeClient) sendRemove(req *KVRemoveRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("remove", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := GeneralStorageServiceRemoveArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("remove", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemove()
 }
 
 
 func (p *GeneralStorageServiceThreadsafeClient) recvRemove() (value *ExecResponse, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
+  var result GeneralStorageServiceRemoveResult
+  err = p.CC.RecvMsg("remove", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+
+type GeneralStorageServiceChannelClient struct {
+  RequestChannel thrift.RequestChannel
+}
+
+func (c *GeneralStorageServiceChannelClient) Close() error {
+  return c.RequestChannel.Close()
+}
+
+func (c *GeneralStorageServiceChannelClient) IsOpen() bool {
+  return c.RequestChannel.IsOpen()
+}
+
+func (c *GeneralStorageServiceChannelClient) Open() error {
+  return c.RequestChannel.Open()
+}
+
+func NewGeneralStorageServiceChannelClient(channel thrift.RequestChannel) *GeneralStorageServiceChannelClient {
+  return &GeneralStorageServiceChannelClient{RequestChannel: channel}
+}
+
+// Parameters:
+//  - Req
+func (p *GeneralStorageServiceChannelClient) Get(ctx context.Context, req *KVGetRequest) (_r *KVGetResponse, err error) {
+  args := GeneralStorageServiceGetArgs{
+    Req : req,
   }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
+  var result GeneralStorageServiceGetResult
+  err = p.RequestChannel.Call(ctx, "get", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GeneralStorageServiceChannelClient) Put(ctx context.Context, req *KVPutRequest) (_r *ExecResponse, err error) {
+  args := GeneralStorageServicePutArgs{
+    Req : req,
   }
-  if method != "remove" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "remove failed: wrong method name")
-    return
+  var result GeneralStorageServicePutResult
+  err = p.RequestChannel.Call(ctx, "put", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GeneralStorageServiceChannelClient) Remove(ctx context.Context, req *KVRemoveRequest) (_r *ExecResponse, err error) {
+  args := GeneralStorageServiceRemoveArgs{
+    Req : req,
   }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "remove failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error375 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error376 error
-    error376, err = error375.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error376
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "remove failed: invalid message type")
-    return
-  }
-  result := GeneralStorageServiceRemoveResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result GeneralStorageServiceRemoveResult
+  err = p.RequestChannel.Call(ctx, "remove", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 
 type GeneralStorageServiceProcessor struct {
-  processorMap map[string]thrift.ProcessorFunction
+  processorMap map[string]thrift.ProcessorFunctionContext
   handler GeneralStorageService
 }
 
-func (p *GeneralStorageServiceProcessor) AddToProcessorMap(key string, processor thrift.ProcessorFunction) {
+func (p *GeneralStorageServiceProcessor) AddToProcessorMap(key string, processor thrift.ProcessorFunctionContext) {
   p.processorMap[key] = processor
 }
 
-func (p *GeneralStorageServiceProcessor) GetProcessorFunction(key string) (processor thrift.ProcessorFunction, err error) {
+func (p *GeneralStorageServiceProcessor) GetProcessorFunctionContext(key string) (processor thrift.ProcessorFunctionContext, err error) {
   if processor, ok := p.processorMap[key]; ok {
     return processor, nil
   }
   return nil, nil // generic error message will be sent
 }
 
-func (p *GeneralStorageServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunction {
+func (p *GeneralStorageServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunctionContext {
   return p.processorMap
 }
 
 func NewGeneralStorageServiceProcessor(handler GeneralStorageService) *GeneralStorageServiceProcessor {
-  self377 := &GeneralStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
-  self377.processorMap["get"] = &generalStorageServiceProcessorGet{handler:handler}
-  self377.processorMap["put"] = &generalStorageServiceProcessorPut{handler:handler}
-  self377.processorMap["remove"] = &generalStorageServiceProcessorRemove{handler:handler}
-  return self377
+  self249 := &GeneralStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self249.processorMap["get"] = &generalStorageServiceProcessorGet{handler:handler}
+  self249.processorMap["put"] = &generalStorageServiceProcessorPut{handler:handler}
+  self249.processorMap["remove"] = &generalStorageServiceProcessorRemove{handler:handler}
+  return self249
 }
 
 type generalStorageServiceProcessorGet struct {
@@ -620,10 +365,10 @@ func (p *generalStorageServiceProcessorGet) Write(seqId int32, result thrift.Wri
   return err
 }
 
-func (p *generalStorageServiceProcessorGet) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *generalStorageServiceProcessorGet) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*GeneralStorageServiceGetArgs)
   var result GeneralStorageServiceGetResult
-  if retval, err := p.handler.Get(args.Req); err != nil {
+  if retval, err := p.handler.Get(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing get: " + err.Error())
@@ -670,10 +415,10 @@ func (p *generalStorageServiceProcessorPut) Write(seqId int32, result thrift.Wri
   return err
 }
 
-func (p *generalStorageServiceProcessorPut) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *generalStorageServiceProcessorPut) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*GeneralStorageServicePutArgs)
   var result GeneralStorageServicePutResult
-  if retval, err := p.handler.Put(args.Req); err != nil {
+  if retval, err := p.handler.Put(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing put: " + err.Error())
@@ -720,10 +465,10 @@ func (p *generalStorageServiceProcessorRemove) Write(seqId int32, result thrift.
   return err
 }
 
-func (p *generalStorageServiceProcessorRemove) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *generalStorageServiceProcessorRemove) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*GeneralStorageServiceRemoveArgs)
   var result GeneralStorageServiceRemoveResult
-  if retval, err := p.handler.Remove(args.Req); err != nil {
+  if retval, err := p.handler.Remove(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing remove: " + err.Error())
@@ -741,11 +486,14 @@ func (p *generalStorageServiceProcessorRemove) Run(argStruct thrift.Struct) (thr
 // Attributes:
 //  - Req
 type GeneralStorageServiceGetArgs struct {
+  thrift.IRequest
   Req *KVGetRequest `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewGeneralStorageServiceGetArgs() *GeneralStorageServiceGetArgs {
-  return &GeneralStorageServiceGetArgs{}
+  return &GeneralStorageServiceGetArgs{
+    Req: NewKVGetRequest(),
+  }
 }
 
 var GeneralStorageServiceGetArgs_Req_DEFAULT *KVGetRequest
@@ -756,7 +504,7 @@ func (p *GeneralStorageServiceGetArgs) GetReq() *KVGetRequest {
 return p.Req
 }
 func (p *GeneralStorageServiceGetArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *GeneralStorageServiceGetArgs) Read(iprot thrift.Protocol) error {
@@ -825,12 +573,20 @@ func (p *GeneralStorageServiceGetArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GeneralStorageServiceGetArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("GeneralStorageServiceGetArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type GeneralStorageServiceGetResult struct {
+  thrift.IResponse
   Success *KVGetResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -846,7 +602,7 @@ func (p *GeneralStorageServiceGetResult) GetSuccess() *KVGetResponse {
 return p.Success
 }
 func (p *GeneralStorageServiceGetResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *GeneralStorageServiceGetResult) Read(iprot thrift.Protocol) error {
@@ -917,17 +673,27 @@ func (p *GeneralStorageServiceGetResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GeneralStorageServiceGetResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GeneralStorageServiceGetResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type GeneralStorageServicePutArgs struct {
+  thrift.IRequest
   Req *KVPutRequest `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewGeneralStorageServicePutArgs() *GeneralStorageServicePutArgs {
-  return &GeneralStorageServicePutArgs{}
+  return &GeneralStorageServicePutArgs{
+    Req: NewKVPutRequest(),
+  }
 }
 
 var GeneralStorageServicePutArgs_Req_DEFAULT *KVPutRequest
@@ -938,7 +704,7 @@ func (p *GeneralStorageServicePutArgs) GetReq() *KVPutRequest {
 return p.Req
 }
 func (p *GeneralStorageServicePutArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *GeneralStorageServicePutArgs) Read(iprot thrift.Protocol) error {
@@ -1007,12 +773,20 @@ func (p *GeneralStorageServicePutArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GeneralStorageServicePutArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("GeneralStorageServicePutArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type GeneralStorageServicePutResult struct {
+  thrift.IResponse
   Success *ExecResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -1028,7 +802,7 @@ func (p *GeneralStorageServicePutResult) GetSuccess() *ExecResponse {
 return p.Success
 }
 func (p *GeneralStorageServicePutResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *GeneralStorageServicePutResult) Read(iprot thrift.Protocol) error {
@@ -1099,17 +873,27 @@ func (p *GeneralStorageServicePutResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GeneralStorageServicePutResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GeneralStorageServicePutResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type GeneralStorageServiceRemoveArgs struct {
+  thrift.IRequest
   Req *KVRemoveRequest `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewGeneralStorageServiceRemoveArgs() *GeneralStorageServiceRemoveArgs {
-  return &GeneralStorageServiceRemoveArgs{}
+  return &GeneralStorageServiceRemoveArgs{
+    Req: NewKVRemoveRequest(),
+  }
 }
 
 var GeneralStorageServiceRemoveArgs_Req_DEFAULT *KVRemoveRequest
@@ -1120,7 +904,7 @@ func (p *GeneralStorageServiceRemoveArgs) GetReq() *KVRemoveRequest {
 return p.Req
 }
 func (p *GeneralStorageServiceRemoveArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *GeneralStorageServiceRemoveArgs) Read(iprot thrift.Protocol) error {
@@ -1189,12 +973,20 @@ func (p *GeneralStorageServiceRemoveArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GeneralStorageServiceRemoveArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("GeneralStorageServiceRemoveArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type GeneralStorageServiceRemoveResult struct {
+  thrift.IResponse
   Success *ExecResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -1210,7 +1002,7 @@ func (p *GeneralStorageServiceRemoveResult) GetSuccess() *ExecResponse {
 return p.Success
 }
 func (p *GeneralStorageServiceRemoveResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *GeneralStorageServiceRemoveResult) Read(iprot thrift.Protocol) error {
@@ -1281,7 +1073,14 @@ func (p *GeneralStorageServiceRemoveResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GeneralStorageServiceRemoveResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GeneralStorageServiceRemoveResult({Success:%s})", successVal)
 }
 
 

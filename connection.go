@@ -37,14 +37,15 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error
 	if err != nil {
 		return fmt.Errorf("Failed to create a net.Conn-backed Transport,: %s", err.Error())
 	}
-
-	transport := thrift.NewBufferedTransport(sock, bufferSize)
+	// Set transport buffer
+	bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
+	transport := thrift.NewFramedTransport(bufferedTranFactory.GetTransport(sock))
 	pf := thrift.NewBinaryProtocolFactoryDefault()
 	cn.graph = graph.NewGraphServiceClientFactory(transport, pf)
-	if err = cn.graph.Transport.Open(); err != nil {
+	if err = cn.graph.Open(); err != nil {
 		return fmt.Errorf("Failed to open transport, error: %s", err.Error())
 	}
-	if !cn.graph.Transport.IsOpen() {
+	if !cn.graph.IsOpen() {
 		return fmt.Errorf("Transport is off")
 	}
 	return nil

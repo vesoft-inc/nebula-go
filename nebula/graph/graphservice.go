@@ -6,6 +6,7 @@ package graph
 
 import (
 	"bytes"
+	"context"
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -18,427 +19,211 @@ var _ = thrift.ZERO
 var _ = fmt.Printf
 var _ = sync.Mutex{}
 var _ = bytes.Equal
+var _ = context.Background
 
 var _ = nebula0.GoUnusedProtection__
 type GraphService interface {
   // Parameters:
   //  - Username
   //  - Password
-  Authenticate(username []byte, password []byte) (r *AuthResponse, err error)
+  Authenticate(ctx context.Context, username []byte, password []byte) (_r *AuthResponse, err error)
+  // Parameters:
+  //  - SessionId
+  Signout(ctx context.Context, sessionId int64) (err error)
+  // Parameters:
+  //  - SessionId
+  //  - Stmt
+  Execute(ctx context.Context, sessionId int64, stmt []byte) (_r *ExecutionResponse, err error)
+  // Parameters:
+  //  - SessionId
+  //  - Stmt
+  ExecuteJson(ctx context.Context, sessionId int64, stmt []byte) (_r []byte, err error)
+}
+
+type GraphServiceClientInterface interface {
+  thrift.ClientInterface
+  // Parameters:
+  //  - Username
+  //  - Password
+  Authenticate(username []byte, password []byte) (_r *AuthResponse, err error)
   // Parameters:
   //  - SessionId
   Signout(sessionId int64) (err error)
   // Parameters:
   //  - SessionId
   //  - Stmt
-  Execute(sessionId int64, stmt []byte) (r *ExecutionResponse, err error)
+  Execute(sessionId int64, stmt []byte) (_r *ExecutionResponse, err error)
   // Parameters:
   //  - SessionId
   //  - Stmt
-  ExecuteJson(sessionId int64, stmt []byte) (r []byte, err error)
+  ExecuteJson(sessionId int64, stmt []byte) (_r []byte, err error)
 }
 
 type GraphServiceClient struct {
-  Transport thrift.Transport
-  ProtocolFactory thrift.ProtocolFactory
-  InputProtocol thrift.Protocol
-  OutputProtocol thrift.Protocol
-  SeqId int32
+  GraphServiceClientInterface
+  CC thrift.ClientConn
 }
 
-func (client *GraphServiceClient) Close() error {
-  return client.Transport.Close()
+func(client *GraphServiceClient) Open() error {
+  return client.CC.Open()
+}
+
+func(client *GraphServiceClient) Close() error {
+  return client.CC.Close()
+}
+
+func(client *GraphServiceClient) IsOpen() bool {
+  return client.CC.IsOpen()
 }
 
 func NewGraphServiceClientFactory(t thrift.Transport, f thrift.ProtocolFactory) *GraphServiceClient {
-  return &GraphServiceClient{Transport: t,
-    ProtocolFactory: f,
-    InputProtocol: f.GetProtocol(t),
-    OutputProtocol: f.GetProtocol(t),
-    SeqId: 0,
-  }
+  return &GraphServiceClient{ CC: thrift.NewClientConn(t, f) }
 }
 
 func NewGraphServiceClient(t thrift.Transport, iprot thrift.Protocol, oprot thrift.Protocol) *GraphServiceClient {
-  return &GraphServiceClient{Transport: t,
-    ProtocolFactory: nil,
-    InputProtocol: iprot,
-    OutputProtocol: oprot,
-    SeqId: 0,
-  }
+  return &GraphServiceClient{ CC: thrift.NewClientConnWithProtocols(t, iprot, oprot) }
+}
+
+func NewGraphServiceClientProtocol(prot thrift.Protocol) *GraphServiceClient {
+  return NewGraphServiceClient(prot.Transport(), prot, prot)
 }
 
 // Parameters:
 //  - Username
 //  - Password
-func (p *GraphServiceClient) Authenticate(username []byte, password []byte) (r *AuthResponse, err error) {
-  if err = p.sendAuthenticate(username, password); err != nil { return }
-  return p.recvAuthenticate()
-}
-
-func (p *GraphServiceClient) sendAuthenticate(username []byte, password []byte)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("authenticate", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *GraphServiceClient) Authenticate(username []byte, password []byte) (_r *AuthResponse, err error) {
   args := GraphServiceAuthenticateArgs{
-  Username : username,
-  Password : password,
+    Username : username,
+    Password : password,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("authenticate", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAuthenticate()
 }
 
 
 func (p *GraphServiceClient) recvAuthenticate() (value *AuthResponse, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "authenticate" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "authenticate failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "authenticate failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error9 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error10 error
-    error10, err = error9.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error10
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "authenticate failed: invalid message type")
-    return
-  }
-  result := GraphServiceAuthenticateResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result GraphServiceAuthenticateResult
+  err = p.CC.RecvMsg("authenticate", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - SessionId
 func (p *GraphServiceClient) Signout(sessionId int64) (err error) {
-  if err = p.sendSignout(sessionId); err != nil { return }
-  return
-}
-
-func (p *GraphServiceClient) sendSignout(sessionId int64)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("signout", thrift.ONEWAY, p.SeqId); err != nil {
-      return
-  }
   args := GraphServiceSignoutArgs{
-  SessionId : sessionId,
+    SessionId : sessionId,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("signout", &args, thrift.ONEWAY)
+  if err != nil { return }
+  return
 }
 
 // Parameters:
 //  - SessionId
 //  - Stmt
-func (p *GraphServiceClient) Execute(sessionId int64, stmt []byte) (r *ExecutionResponse, err error) {
-  if err = p.sendExecute(sessionId, stmt); err != nil { return }
-  return p.recvExecute()
-}
-
-func (p *GraphServiceClient) sendExecute(sessionId int64, stmt []byte)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("execute", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *GraphServiceClient) Execute(sessionId int64, stmt []byte) (_r *ExecutionResponse, err error) {
   args := GraphServiceExecuteArgs{
-  SessionId : sessionId,
-  Stmt : stmt,
+    SessionId : sessionId,
+    Stmt : stmt,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("execute", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvExecute()
 }
 
 
 func (p *GraphServiceClient) recvExecute() (value *ExecutionResponse, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "execute" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "execute failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "execute failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error11 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error12 error
-    error12, err = error11.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error12
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "execute failed: invalid message type")
-    return
-  }
-  result := GraphServiceExecuteResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result GraphServiceExecuteResult
+  err = p.CC.RecvMsg("execute", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - SessionId
 //  - Stmt
-func (p *GraphServiceClient) ExecuteJson(sessionId int64, stmt []byte) (r []byte, err error) {
-  if err = p.sendExecuteJson(sessionId, stmt); err != nil { return }
-  return p.recvExecuteJson()
-}
-
-func (p *GraphServiceClient) sendExecuteJson(sessionId int64, stmt []byte)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("executeJson", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *GraphServiceClient) ExecuteJson(sessionId int64, stmt []byte) (_r []byte, err error) {
   args := GraphServiceExecuteJsonArgs{
-  SessionId : sessionId,
-  Stmt : stmt,
+    SessionId : sessionId,
+    Stmt : stmt,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("executeJson", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvExecuteJson()
 }
 
 
 func (p *GraphServiceClient) recvExecuteJson() (value []byte, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "executeJson" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "executeJson failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "executeJson failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error13 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error14 error
-    error14, err = error13.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error14
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "executeJson failed: invalid message type")
-    return
-  }
-  result := GraphServiceExecuteJsonResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result GraphServiceExecuteJsonResult
+  err = p.CC.RecvMsg("executeJson", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 
 type GraphServiceThreadsafeClient struct {
-  Transport thrift.Transport
-  ProtocolFactory thrift.ProtocolFactory
-  InputProtocol thrift.Protocol
-  OutputProtocol thrift.Protocol
-  SeqId int32
+  GraphServiceClientInterface
+  CC thrift.ClientConn
   Mu sync.Mutex
 }
 
+func(client *GraphServiceThreadsafeClient) Open() error {
+  client.Mu.Lock()
+  defer client.Mu.Unlock()
+  return client.CC.Open()
+}
+
+func(client *GraphServiceThreadsafeClient) Close() error {
+  client.Mu.Lock()
+  defer client.Mu.Unlock()
+  return client.CC.Close()
+}
+
+func(client *GraphServiceThreadsafeClient) IsOpen() bool {
+  client.Mu.Lock()
+  defer client.Mu.Unlock()
+  return client.CC.IsOpen()
+}
+
 func NewGraphServiceThreadsafeClientFactory(t thrift.Transport, f thrift.ProtocolFactory) *GraphServiceThreadsafeClient {
-  return &GraphServiceThreadsafeClient{Transport: t,
-    ProtocolFactory: f,
-    InputProtocol: f.GetProtocol(t),
-    OutputProtocol: f.GetProtocol(t),
-    SeqId: 0,
-  }
+  return &GraphServiceThreadsafeClient{ CC: thrift.NewClientConn(t, f) }
 }
 
 func NewGraphServiceThreadsafeClient(t thrift.Transport, iprot thrift.Protocol, oprot thrift.Protocol) *GraphServiceThreadsafeClient {
-  return &GraphServiceThreadsafeClient{Transport: t,
-    ProtocolFactory: nil,
-    InputProtocol: iprot,
-    OutputProtocol: oprot,
-    SeqId: 0,
-  }
+  return &GraphServiceThreadsafeClient{ CC: thrift.NewClientConnWithProtocols(t, iprot, oprot) }
 }
 
-func (p *GraphServiceThreadsafeClient) Threadsafe() {}
+func NewGraphServiceThreadsafeClientProtocol(prot thrift.Protocol) *GraphServiceThreadsafeClient {
+  return NewGraphServiceThreadsafeClient(prot.Transport(), prot, prot)
+}
 
 // Parameters:
 //  - Username
 //  - Password
-func (p *GraphServiceThreadsafeClient) Authenticate(username []byte, password []byte) (r *AuthResponse, err error) {
+func (p *GraphServiceThreadsafeClient) Authenticate(username []byte, password []byte) (_r *AuthResponse, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendAuthenticate(username, password); err != nil { return }
-  return p.recvAuthenticate()
-}
-
-func (p *GraphServiceThreadsafeClient) sendAuthenticate(username []byte, password []byte)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("authenticate", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := GraphServiceAuthenticateArgs{
-  Username : username,
-  Password : password,
+    Username : username,
+    Password : password,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("authenticate", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAuthenticate()
 }
 
 
 func (p *GraphServiceThreadsafeClient) recvAuthenticate() (value *AuthResponse, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "authenticate" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "authenticate failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "authenticate failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error15 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error16 error
-    error16, err = error15.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error16
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "authenticate failed: invalid message type")
-    return
-  }
-  result := GraphServiceAuthenticateResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result GraphServiceAuthenticateResult
+  err = p.CC.RecvMsg("authenticate", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
@@ -446,220 +231,168 @@ func (p *GraphServiceThreadsafeClient) recvAuthenticate() (value *AuthResponse, 
 func (p *GraphServiceThreadsafeClient) Signout(sessionId int64) (err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendSignout(sessionId); err != nil { return }
-  return
-}
-
-func (p *GraphServiceThreadsafeClient) sendSignout(sessionId int64)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("signout", thrift.ONEWAY, p.SeqId); err != nil {
-      return
-  }
   args := GraphServiceSignoutArgs{
-  SessionId : sessionId,
+    SessionId : sessionId,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("signout", &args, thrift.ONEWAY)
+  if err != nil { return }
+  return
 }
 
 // Parameters:
 //  - SessionId
 //  - Stmt
-func (p *GraphServiceThreadsafeClient) Execute(sessionId int64, stmt []byte) (r *ExecutionResponse, err error) {
+func (p *GraphServiceThreadsafeClient) Execute(sessionId int64, stmt []byte) (_r *ExecutionResponse, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendExecute(sessionId, stmt); err != nil { return }
-  return p.recvExecute()
-}
-
-func (p *GraphServiceThreadsafeClient) sendExecute(sessionId int64, stmt []byte)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("execute", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := GraphServiceExecuteArgs{
-  SessionId : sessionId,
-  Stmt : stmt,
+    SessionId : sessionId,
+    Stmt : stmt,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("execute", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvExecute()
 }
 
 
 func (p *GraphServiceThreadsafeClient) recvExecute() (value *ExecutionResponse, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "execute" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "execute failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "execute failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error17 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error18 error
-    error18, err = error17.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error18
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "execute failed: invalid message type")
-    return
-  }
-  result := GraphServiceExecuteResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result GraphServiceExecuteResult
+  err = p.CC.RecvMsg("execute", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - SessionId
 //  - Stmt
-func (p *GraphServiceThreadsafeClient) ExecuteJson(sessionId int64, stmt []byte) (r []byte, err error) {
+func (p *GraphServiceThreadsafeClient) ExecuteJson(sessionId int64, stmt []byte) (_r []byte, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendExecuteJson(sessionId, stmt); err != nil { return }
-  return p.recvExecuteJson()
-}
-
-func (p *GraphServiceThreadsafeClient) sendExecuteJson(sessionId int64, stmt []byte)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("executeJson", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := GraphServiceExecuteJsonArgs{
-  SessionId : sessionId,
-  Stmt : stmt,
+    SessionId : sessionId,
+    Stmt : stmt,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("executeJson", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvExecuteJson()
 }
 
 
 func (p *GraphServiceThreadsafeClient) recvExecuteJson() (value []byte, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
+  var result GraphServiceExecuteJsonResult
+  err = p.CC.RecvMsg("executeJson", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+
+type GraphServiceChannelClient struct {
+  RequestChannel thrift.RequestChannel
+}
+
+func (c *GraphServiceChannelClient) Close() error {
+  return c.RequestChannel.Close()
+}
+
+func (c *GraphServiceChannelClient) IsOpen() bool {
+  return c.RequestChannel.IsOpen()
+}
+
+func (c *GraphServiceChannelClient) Open() error {
+  return c.RequestChannel.Open()
+}
+
+func NewGraphServiceChannelClient(channel thrift.RequestChannel) *GraphServiceChannelClient {
+  return &GraphServiceChannelClient{RequestChannel: channel}
+}
+
+// Parameters:
+//  - Username
+//  - Password
+func (p *GraphServiceChannelClient) Authenticate(ctx context.Context, username []byte, password []byte) (_r *AuthResponse, err error) {
+  args := GraphServiceAuthenticateArgs{
+    Username : username,
+    Password : password,
   }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
+  var result GraphServiceAuthenticateResult
+  err = p.RequestChannel.Call(ctx, "authenticate", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - SessionId
+func (p *GraphServiceChannelClient) Signout(ctx context.Context, sessionId int64) (err error) {
+  args := GraphServiceSignoutArgs{
+    SessionId : sessionId,
   }
-  if method != "executeJson" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "executeJson failed: wrong method name")
-    return
+  err = p.RequestChannel.Oneway(ctx, "signout", &args)
+  if err != nil { return }
+
+  return nil
+}
+
+// Parameters:
+//  - SessionId
+//  - Stmt
+func (p *GraphServiceChannelClient) Execute(ctx context.Context, sessionId int64, stmt []byte) (_r *ExecutionResponse, err error) {
+  args := GraphServiceExecuteArgs{
+    SessionId : sessionId,
+    Stmt : stmt,
   }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "executeJson failed: out of sequence response")
-    return
+  var result GraphServiceExecuteResult
+  err = p.RequestChannel.Call(ctx, "execute", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - SessionId
+//  - Stmt
+func (p *GraphServiceChannelClient) ExecuteJson(ctx context.Context, sessionId int64, stmt []byte) (_r []byte, err error) {
+  args := GraphServiceExecuteJsonArgs{
+    SessionId : sessionId,
+    Stmt : stmt,
   }
-  if mTypeId == thrift.EXCEPTION {
-    error19 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error20 error
-    error20, err = error19.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error20
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "executeJson failed: invalid message type")
-    return
-  }
-  result := GraphServiceExecuteJsonResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result GraphServiceExecuteJsonResult
+  err = p.RequestChannel.Call(ctx, "executeJson", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 
 type GraphServiceProcessor struct {
-  processorMap map[string]thrift.ProcessorFunction
+  processorMap map[string]thrift.ProcessorFunctionContext
   handler GraphService
 }
 
-func (p *GraphServiceProcessor) AddToProcessorMap(key string, processor thrift.ProcessorFunction) {
+func (p *GraphServiceProcessor) AddToProcessorMap(key string, processor thrift.ProcessorFunctionContext) {
   p.processorMap[key] = processor
 }
 
-func (p *GraphServiceProcessor) GetProcessorFunction(key string) (processor thrift.ProcessorFunction, err error) {
+func (p *GraphServiceProcessor) GetProcessorFunctionContext(key string) (processor thrift.ProcessorFunctionContext, err error) {
   if processor, ok := p.processorMap[key]; ok {
     return processor, nil
   }
   return nil, nil // generic error message will be sent
 }
 
-func (p *GraphServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunction {
+func (p *GraphServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunctionContext {
   return p.processorMap
 }
 
 func NewGraphServiceProcessor(handler GraphService) *GraphServiceProcessor {
-  self21 := &GraphServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
-  self21.processorMap["authenticate"] = &graphServiceProcessorAuthenticate{handler:handler}
-  self21.processorMap["signout"] = &graphServiceProcessorSignout{handler:handler}
-  self21.processorMap["execute"] = &graphServiceProcessorExecute{handler:handler}
-  self21.processorMap["executeJson"] = &graphServiceProcessorExecuteJson{handler:handler}
-  return self21
+  self9 := &GraphServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self9.processorMap["authenticate"] = &graphServiceProcessorAuthenticate{handler:handler}
+  self9.processorMap["signout"] = &graphServiceProcessorSignout{handler:handler}
+  self9.processorMap["execute"] = &graphServiceProcessorExecute{handler:handler}
+  self9.processorMap["executeJson"] = &graphServiceProcessorExecuteJson{handler:handler}
+  return self9
 }
 
 type graphServiceProcessorAuthenticate struct {
@@ -697,10 +430,10 @@ func (p *graphServiceProcessorAuthenticate) Write(seqId int32, result thrift.Wri
   return err
 }
 
-func (p *graphServiceProcessorAuthenticate) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *graphServiceProcessorAuthenticate) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*GraphServiceAuthenticateArgs)
   var result GraphServiceAuthenticateResult
-  if retval, err := p.handler.Authenticate(args.Username, args.Password); err != nil {
+  if retval, err := p.handler.Authenticate(ctx, args.Username, args.Password); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing authenticate: " + err.Error())
@@ -747,9 +480,9 @@ func (p *graphServiceProcessorSignout) Write(seqId int32, result thrift.Writable
   return err
 }
 
-func (p *graphServiceProcessorSignout) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *graphServiceProcessorSignout) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*GraphServiceSignoutArgs)
-  if err := p.handler.Signout(args.SessionId); err != nil {
+  if err := p.handler.Signout(ctx, args.SessionId); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing signout: " + err.Error())
@@ -794,10 +527,10 @@ func (p *graphServiceProcessorExecute) Write(seqId int32, result thrift.Writable
   return err
 }
 
-func (p *graphServiceProcessorExecute) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *graphServiceProcessorExecute) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*GraphServiceExecuteArgs)
   var result GraphServiceExecuteResult
-  if retval, err := p.handler.Execute(args.SessionId, args.Stmt); err != nil {
+  if retval, err := p.handler.Execute(ctx, args.SessionId, args.Stmt); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing execute: " + err.Error())
@@ -844,10 +577,10 @@ func (p *graphServiceProcessorExecuteJson) Write(seqId int32, result thrift.Writ
   return err
 }
 
-func (p *graphServiceProcessorExecuteJson) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *graphServiceProcessorExecuteJson) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*GraphServiceExecuteJsonArgs)
   var result GraphServiceExecuteJsonResult
-  if retval, err := p.handler.ExecuteJson(args.SessionId, args.Stmt); err != nil {
+  if retval, err := p.handler.ExecuteJson(ctx, args.SessionId, args.Stmt); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing executeJson: " + err.Error())
@@ -866,6 +599,7 @@ func (p *graphServiceProcessorExecuteJson) Run(argStruct thrift.Struct) (thrift.
 //  - Username
 //  - Password
 type GraphServiceAuthenticateArgs struct {
+  thrift.IRequest
   Username []byte `thrift:"username,1" db:"username" json:"username"`
   Password []byte `thrift:"password,2" db:"password" json:"password"`
 }
@@ -972,12 +706,16 @@ func (p *GraphServiceAuthenticateArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GraphServiceAuthenticateArgs(%+v)", *p)
+
+  usernameVal := fmt.Sprintf("%v", p.Username)
+  passwordVal := fmt.Sprintf("%v", p.Password)
+  return fmt.Sprintf("GraphServiceAuthenticateArgs({Username:%s Password:%s})", usernameVal, passwordVal)
 }
 
 // Attributes:
 //  - Success
 type GraphServiceAuthenticateResult struct {
+  thrift.IResponse
   Success *AuthResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -993,7 +731,7 @@ func (p *GraphServiceAuthenticateResult) GetSuccess() *AuthResponse {
 return p.Success
 }
 func (p *GraphServiceAuthenticateResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *GraphServiceAuthenticateResult) Read(iprot thrift.Protocol) error {
@@ -1064,12 +802,20 @@ func (p *GraphServiceAuthenticateResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GraphServiceAuthenticateResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GraphServiceAuthenticateResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - SessionId
 type GraphServiceSignoutArgs struct {
+  thrift.IRequest
   SessionId int64 `thrift:"sessionId,1" db:"sessionId" json:"sessionId"`
 }
 
@@ -1147,13 +893,16 @@ func (p *GraphServiceSignoutArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GraphServiceSignoutArgs(%+v)", *p)
+
+  sessionIdVal := fmt.Sprintf("%v", p.SessionId)
+  return fmt.Sprintf("GraphServiceSignoutArgs({SessionId:%s})", sessionIdVal)
 }
 
 // Attributes:
 //  - SessionId
 //  - Stmt
 type GraphServiceExecuteArgs struct {
+  thrift.IRequest
   SessionId int64 `thrift:"sessionId,1" db:"sessionId" json:"sessionId"`
   Stmt []byte `thrift:"stmt,2" db:"stmt" json:"stmt"`
 }
@@ -1260,12 +1009,16 @@ func (p *GraphServiceExecuteArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GraphServiceExecuteArgs(%+v)", *p)
+
+  sessionIdVal := fmt.Sprintf("%v", p.SessionId)
+  stmtVal := fmt.Sprintf("%v", p.Stmt)
+  return fmt.Sprintf("GraphServiceExecuteArgs({SessionId:%s Stmt:%s})", sessionIdVal, stmtVal)
 }
 
 // Attributes:
 //  - Success
 type GraphServiceExecuteResult struct {
+  thrift.IResponse
   Success *ExecutionResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -1281,7 +1034,7 @@ func (p *GraphServiceExecuteResult) GetSuccess() *ExecutionResponse {
 return p.Success
 }
 func (p *GraphServiceExecuteResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *GraphServiceExecuteResult) Read(iprot thrift.Protocol) error {
@@ -1352,13 +1105,21 @@ func (p *GraphServiceExecuteResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GraphServiceExecuteResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GraphServiceExecuteResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - SessionId
 //  - Stmt
 type GraphServiceExecuteJsonArgs struct {
+  thrift.IRequest
   SessionId int64 `thrift:"sessionId,1" db:"sessionId" json:"sessionId"`
   Stmt []byte `thrift:"stmt,2" db:"stmt" json:"stmt"`
 }
@@ -1465,12 +1226,16 @@ func (p *GraphServiceExecuteJsonArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GraphServiceExecuteJsonArgs(%+v)", *p)
+
+  sessionIdVal := fmt.Sprintf("%v", p.SessionId)
+  stmtVal := fmt.Sprintf("%v", p.Stmt)
+  return fmt.Sprintf("GraphServiceExecuteJsonArgs({SessionId:%s Stmt:%s})", sessionIdVal, stmtVal)
 }
 
 // Attributes:
 //  - Success
 type GraphServiceExecuteJsonResult struct {
+  thrift.IResponse
   Success []byte `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -1484,7 +1249,7 @@ func (p *GraphServiceExecuteJsonResult) GetSuccess() []byte {
   return p.Success
 }
 func (p *GraphServiceExecuteJsonResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *GraphServiceExecuteJsonResult) Read(iprot thrift.Protocol) error {
@@ -1555,7 +1320,9 @@ func (p *GraphServiceExecuteJsonResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("GraphServiceExecuteJsonResult(%+v)", *p)
+
+  successVal := fmt.Sprintf("%v", p.Success)
+  return fmt.Sprintf("GraphServiceExecuteJsonResult({Success:%s})", successVal)
 }
 
 
