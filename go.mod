@@ -1,4 +1,4 @@
-module github.com/vesoft-inc/nebula-go
+module github.com/vesoft-inc/nebula-go/v2
 
 go 1.13
 

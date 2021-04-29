@@ -10,8 +10,8 @@ import (
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
-	nebula0 "github.com/vesoft-inc/nebula-go/nebula"
-	meta1 "github.com/vesoft-inc/nebula-go/nebula/meta"
+	nebula0 "github.com/vesoft-inc/nebula-go/v2/nebula"
+	meta1 "github.com/vesoft-inc/nebula-go/v2/nebula/meta"
 
 )
 
@@ -70,7 +70,8 @@ const (
   ErrorCode_E_PARTIAL_RESULT ErrorCode = -71
   ErrorCode_E_FILTER_OUT ErrorCode = -81
   ErrorCode_E_INVALID_DATA ErrorCode = -82
-  ErrorCode_E_MUTATE_EDGE_CONFLICT ErrorCode = -85
+  ErrorCode_E_MUTATE_EDGE_CONFLICT ErrorCode = -83
+  ErrorCode_E_MUTATE_TAG_CONFLICT ErrorCode = -84
   ErrorCode_E_OUTDATED_LOCK ErrorCode = -86
   ErrorCode_E_INVALID_TASK_PARA ErrorCode = -90
   ErrorCode_E_USER_CANCEL ErrorCode = -99
@@ -121,6 +122,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_FILTER_OUT: "E_FILTER_OUT",
   ErrorCode_E_INVALID_DATA: "E_INVALID_DATA",
   ErrorCode_E_MUTATE_EDGE_CONFLICT: "E_MUTATE_EDGE_CONFLICT",
+  ErrorCode_E_MUTATE_TAG_CONFLICT: "E_MUTATE_TAG_CONFLICT",
   ErrorCode_E_OUTDATED_LOCK: "E_OUTDATED_LOCK",
   ErrorCode_E_INVALID_TASK_PARA: "E_INVALID_TASK_PARA",
   ErrorCode_E_USER_CANCEL: "E_USER_CANCEL",
@@ -171,6 +173,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_FILTER_OUT": ErrorCode_E_FILTER_OUT,
   "E_INVALID_DATA": ErrorCode_E_INVALID_DATA,
   "E_MUTATE_EDGE_CONFLICT": ErrorCode_E_MUTATE_EDGE_CONFLICT,
+  "E_MUTATE_TAG_CONFLICT": ErrorCode_E_MUTATE_TAG_CONFLICT,
   "E_OUTDATED_LOCK": ErrorCode_E_OUTDATED_LOCK,
   "E_INVALID_TASK_PARA": ErrorCode_E_INVALID_TASK_PARA,
   "E_USER_CANCEL": ErrorCode_E_USER_CANCEL,
@@ -221,6 +224,7 @@ var ErrorCodeNames = []string {
   "E_FILTER_OUT",
   "E_INVALID_DATA",
   "E_MUTATE_EDGE_CONFLICT",
+  "E_MUTATE_TAG_CONFLICT",
   "E_OUTDATED_LOCK",
   "E_INVALID_TASK_PARA",
   "E_USER_CANCEL",
@@ -271,6 +275,7 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_FILTER_OUT,
   ErrorCode_E_INVALID_DATA,
   ErrorCode_E_MUTATE_EDGE_CONFLICT,
+  ErrorCode_E_MUTATE_TAG_CONFLICT,
   ErrorCode_E_OUTDATED_LOCK,
   ErrorCode_E_INVALID_TASK_PARA,
   ErrorCode_E_USER_CANCEL,
@@ -3904,18 +3909,16 @@ func (p *NewEdge_) String() string {
 //  - SpaceID
 //  - Parts
 //  - PropNames
-//  - Overwritable
+//  - IfNotExists
 type AddVerticesRequest struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
   Parts map[nebula0.PartitionID][]*NewVertex_ `thrift:"parts,2" db:"parts" json:"parts"`
   PropNames map[nebula0.TagID][][]byte `thrift:"prop_names,3" db:"prop_names" json:"prop_names"`
-  Overwritable bool `thrift:"overwritable,4" db:"overwritable" json:"overwritable"`
+  IfNotExists bool `thrift:"if_not_exists,4" db:"if_not_exists" json:"if_not_exists"`
 }
 
 func NewAddVerticesRequest() *AddVerticesRequest {
-  return &AddVerticesRequest{
-    Overwritable: true,
-  }
+  return &AddVerticesRequest{}
 }
 
 
@@ -3931,8 +3934,8 @@ func (p *AddVerticesRequest) GetPropNames() map[nebula0.TagID][][]byte {
   return p.PropNames
 }
 
-func (p *AddVerticesRequest) GetOverwritable() bool {
-  return p.Overwritable
+func (p *AddVerticesRequest) GetIfNotExists() bool {
+  return p.IfNotExists
 }
 func (p *AddVerticesRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
@@ -4072,7 +4075,7 @@ func (p *AddVerticesRequest)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
   return thrift.PrependError("error reading field 4: ", err)
 } else {
-  p.Overwritable = v
+  p.IfNotExists = v
 }
   return nil
 }
@@ -4159,12 +4162,12 @@ func (p *AddVerticesRequest) writeField3(oprot thrift.Protocol) (err error) {
 }
 
 func (p *AddVerticesRequest) writeField4(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("overwritable", thrift.BOOL, 4); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:overwritable: ", p), err) }
-  if err := oprot.WriteBool(bool(p.Overwritable)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.overwritable (4) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("if_not_exists", thrift.BOOL, 4); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:if_not_exists: ", p), err) }
+  if err := oprot.WriteBool(bool(p.IfNotExists)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.if_not_exists (4) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:overwritable: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:if_not_exists: ", p), err) }
   return err
 }
 
@@ -4176,26 +4179,24 @@ func (p *AddVerticesRequest) String() string {
   spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
   partsVal := fmt.Sprintf("%v", p.Parts)
   propNamesVal := fmt.Sprintf("%v", p.PropNames)
-  overwritableVal := fmt.Sprintf("%v", p.Overwritable)
-  return fmt.Sprintf("AddVerticesRequest({SpaceID:%s Parts:%s PropNames:%s Overwritable:%s})", spaceIDVal, partsVal, propNamesVal, overwritableVal)
+  ifNotExistsVal := fmt.Sprintf("%v", p.IfNotExists)
+  return fmt.Sprintf("AddVerticesRequest({SpaceID:%s Parts:%s PropNames:%s IfNotExists:%s})", spaceIDVal, partsVal, propNamesVal, ifNotExistsVal)
 }
 
 // Attributes:
 //  - SpaceID
 //  - Parts
 //  - PropNames
-//  - Overwritable
+//  - IfNotExists
 type AddEdgesRequest struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
   Parts map[nebula0.PartitionID][]*NewEdge_ `thrift:"parts,2" db:"parts" json:"parts"`
   PropNames [][]byte `thrift:"prop_names,3" db:"prop_names" json:"prop_names"`
-  Overwritable bool `thrift:"overwritable,4" db:"overwritable" json:"overwritable"`
+  IfNotExists bool `thrift:"if_not_exists,4" db:"if_not_exists" json:"if_not_exists"`
 }
 
 func NewAddEdgesRequest() *AddEdgesRequest {
-  return &AddEdgesRequest{
-    Overwritable: true,
-  }
+  return &AddEdgesRequest{}
 }
 
 
@@ -4211,8 +4212,8 @@ func (p *AddEdgesRequest) GetPropNames() [][]byte {
   return p.PropNames
 }
 
-func (p *AddEdgesRequest) GetOverwritable() bool {
-  return p.Overwritable
+func (p *AddEdgesRequest) GetIfNotExists() bool {
+  return p.IfNotExists
 }
 func (p *AddEdgesRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
@@ -4333,7 +4334,7 @@ func (p *AddEdgesRequest)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
   return thrift.PrependError("error reading field 4: ", err)
 } else {
-  p.Overwritable = v
+  p.IfNotExists = v
 }
   return nil
 }
@@ -4410,12 +4411,12 @@ func (p *AddEdgesRequest) writeField3(oprot thrift.Protocol) (err error) {
 }
 
 func (p *AddEdgesRequest) writeField4(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("overwritable", thrift.BOOL, 4); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:overwritable: ", p), err) }
-  if err := oprot.WriteBool(bool(p.Overwritable)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.overwritable (4) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("if_not_exists", thrift.BOOL, 4); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:if_not_exists: ", p), err) }
+  if err := oprot.WriteBool(bool(p.IfNotExists)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.if_not_exists (4) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:overwritable: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:if_not_exists: ", p), err) }
   return err
 }
 
@@ -4427,8 +4428,8 @@ func (p *AddEdgesRequest) String() string {
   spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
   partsVal := fmt.Sprintf("%v", p.Parts)
   propNamesVal := fmt.Sprintf("%v", p.PropNames)
-  overwritableVal := fmt.Sprintf("%v", p.Overwritable)
-  return fmt.Sprintf("AddEdgesRequest({SpaceID:%s Parts:%s PropNames:%s Overwritable:%s})", spaceIDVal, partsVal, propNamesVal, overwritableVal)
+  ifNotExistsVal := fmt.Sprintf("%v", p.IfNotExists)
+  return fmt.Sprintf("AddEdgesRequest({SpaceID:%s Parts:%s PropNames:%s IfNotExists:%s})", spaceIDVal, partsVal, propNamesVal, ifNotExistsVal)
 }
 
 // Attributes:
