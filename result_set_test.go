@@ -479,23 +479,6 @@ func TestResultSet(t *testing.T) {
 		resultSet.MakeDotGraph())
 }
 
-func TestMarshalJson(t *testing.T) {
-	resp := &graph.ExecutionResponse{
-		graph.ErrorCode_SUCCEEDED,
-		1000,
-		getDateset(),
-		[]byte("test_space"),
-		[]byte("test"),
-		graph.NewPlanDescription(),
-		[]byte("test_comment")}
-	resultSet := genResultSet(resp)
-
-	_, err := resultSet.MarshalJSON()
-	if err != nil {
-		t.Error(err.Error())
-	}
-}
-
 func TestAsStringTable(t *testing.T) {
 	resp := &graph.ExecutionResponse{
 		graph.ErrorCode_SUCCEEDED,
