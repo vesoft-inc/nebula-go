@@ -215,15 +215,6 @@ func genPathWrapper(path *nebula.Path) (*PathWrapper, error) {
 	}, nil
 }
 
-// Returns ExecutionResponse as a JSON []byte.
-// To get the string value in the nested JSON struct, decode with base64
-func (res ResultSet) MarshalJSON() ([]byte, error) {
-	if res.resp.Data == nil {
-		return nil, fmt.Errorf("Failed to generate JSON, DataSet is empty")
-	}
-	return json.Marshal(res.resp.Data)
-}
-
 // Returns a 2D array of strings representing the query result
 // If resultSet.resp.data is nil, returns an empty 2D array
 func (res ResultSet) AsStringTable() [][]string {
