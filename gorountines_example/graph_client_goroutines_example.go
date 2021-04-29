@@ -58,8 +58,8 @@ func main() {
 			}
 		}
 		{
-			createSchema := "CREATE SPACE IF NOT EXISTS test; " +
-				"USE test;" +
+			createSchema := "CREATE SPACE IF NOT EXISTS example_space; " +
+				"USE example_space;" +
 				"CREATE TAG IF NOT EXISTS person(name string, age int);" +
 				"CREATE EDGE IF NOT EXISTS like(likeness double)"
 
@@ -88,7 +88,6 @@ func main() {
 			}
 			checkResultSet(insertVertexes, resultSet)
 		}
-
 		{
 			// Insert multiple edges
 			insertEdges := "INSERT EDGE like(likeness) VALUES " +
@@ -105,7 +104,7 @@ func main() {
 			}
 			checkResultSet(insertEdges, resultSet)
 		}
-
+		// Extract data from the resultSet
 		{
 			query := "GO FROM 'Bob' OVER like YIELD $^.person.name, $^.person.age, like.likeness"
 			// Send query

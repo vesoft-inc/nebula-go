@@ -6,6 +6,7 @@ package storage
 
 import (
 	"bytes"
+	"context"
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -19,2466 +20,1058 @@ var _ = thrift.ZERO
 var _ = fmt.Printf
 var _ = sync.Mutex{}
 var _ = bytes.Equal
+var _ = context.Background
 
 var _ = nebula0.GoUnusedProtection__
 var _ = meta1.GoUnusedProtection__
 type StorageAdminService interface {
   // Parameters:
   //  - Req
-  TransLeader(req *TransLeaderReq) (r *AdminExecResp, err error)
+  TransLeader(ctx context.Context, req *TransLeaderReq) (_r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  AddPart(req *AddPartReq) (r *AdminExecResp, err error)
+  AddPart(ctx context.Context, req *AddPartReq) (_r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  AddLearner(req *AddLearnerReq) (r *AdminExecResp, err error)
+  AddLearner(ctx context.Context, req *AddLearnerReq) (_r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  RemovePart(req *RemovePartReq) (r *AdminExecResp, err error)
+  RemovePart(ctx context.Context, req *RemovePartReq) (_r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  MemberChange(req *MemberChangeReq) (r *AdminExecResp, err error)
+  MemberChange(ctx context.Context, req *MemberChangeReq) (_r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  WaitingForCatchUpData(req *CatchUpDataReq) (r *AdminExecResp, err error)
+  WaitingForCatchUpData(ctx context.Context, req *CatchUpDataReq) (_r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  CreateCheckpoint(req *CreateCPRequest) (r *CreateCPResp, err error)
+  CreateCheckpoint(ctx context.Context, req *CreateCPRequest) (_r *CreateCPResp, err error)
   // Parameters:
   //  - Req
-  DropCheckpoint(req *DropCPRequest) (r *AdminExecResp, err error)
+  DropCheckpoint(ctx context.Context, req *DropCPRequest) (_r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  BlockingWrites(req *BlockingSignRequest) (r *AdminExecResp, err error)
+  BlockingWrites(ctx context.Context, req *BlockingSignRequest) (_r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  RebuildTagIndex(req *RebuildIndexRequest) (r *AdminExecResp, err error)
+  RebuildTagIndex(ctx context.Context, req *RebuildIndexRequest) (_r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  RebuildEdgeIndex(req *RebuildIndexRequest) (r *AdminExecResp, err error)
+  RebuildEdgeIndex(ctx context.Context, req *RebuildIndexRequest) (_r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  GetLeaderParts(req *GetLeaderReq) (r *GetLeaderPartsResp, err error)
+  GetLeaderParts(ctx context.Context, req *GetLeaderReq) (_r *GetLeaderPartsResp, err error)
   // Parameters:
   //  - Req
-  CheckPeers(req *CheckPeersReq) (r *AdminExecResp, err error)
+  CheckPeers(ctx context.Context, req *CheckPeersReq) (_r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  AddAdminTask(req *AddAdminTaskRequest) (r *AdminExecResp, err error)
+  AddAdminTask(ctx context.Context, req *AddAdminTaskRequest) (_r *AdminExecResp, err error)
   // Parameters:
   //  - Req
-  StopAdminTask(req *StopAdminTaskRequest) (r *AdminExecResp, err error)
+  StopAdminTask(ctx context.Context, req *StopAdminTaskRequest) (_r *AdminExecResp, err error)
+}
+
+type StorageAdminServiceClientInterface interface {
+  thrift.ClientInterface
+  // Parameters:
+  //  - Req
+  TransLeader(req *TransLeaderReq) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  AddPart(req *AddPartReq) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  AddLearner(req *AddLearnerReq) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  RemovePart(req *RemovePartReq) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  MemberChange(req *MemberChangeReq) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  WaitingForCatchUpData(req *CatchUpDataReq) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  CreateCheckpoint(req *CreateCPRequest) (_r *CreateCPResp, err error)
+  // Parameters:
+  //  - Req
+  DropCheckpoint(req *DropCPRequest) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  BlockingWrites(req *BlockingSignRequest) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  RebuildTagIndex(req *RebuildIndexRequest) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  RebuildEdgeIndex(req *RebuildIndexRequest) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  GetLeaderParts(req *GetLeaderReq) (_r *GetLeaderPartsResp, err error)
+  // Parameters:
+  //  - Req
+  CheckPeers(req *CheckPeersReq) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  AddAdminTask(req *AddAdminTaskRequest) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  StopAdminTask(req *StopAdminTaskRequest) (_r *AdminExecResp, err error)
 }
 
 type StorageAdminServiceClient struct {
-  Transport thrift.Transport
-  ProtocolFactory thrift.ProtocolFactory
-  InputProtocol thrift.Protocol
-  OutputProtocol thrift.Protocol
-  SeqId int32
+  StorageAdminServiceClientInterface
+  CC thrift.ClientConn
 }
 
-func (client *StorageAdminServiceClient) Close() error {
-  return client.Transport.Close()
+func(client *StorageAdminServiceClient) Open() error {
+  return client.CC.Open()
+}
+
+func(client *StorageAdminServiceClient) Close() error {
+  return client.CC.Close()
+}
+
+func(client *StorageAdminServiceClient) IsOpen() bool {
+  return client.CC.IsOpen()
 }
 
 func NewStorageAdminServiceClientFactory(t thrift.Transport, f thrift.ProtocolFactory) *StorageAdminServiceClient {
-  return &StorageAdminServiceClient{Transport: t,
-    ProtocolFactory: f,
-    InputProtocol: f.GetProtocol(t),
-    OutputProtocol: f.GetProtocol(t),
-    SeqId: 0,
-  }
+  return &StorageAdminServiceClient{ CC: thrift.NewClientConn(t, f) }
 }
 
 func NewStorageAdminServiceClient(t thrift.Transport, iprot thrift.Protocol, oprot thrift.Protocol) *StorageAdminServiceClient {
-  return &StorageAdminServiceClient{Transport: t,
-    ProtocolFactory: nil,
-    InputProtocol: iprot,
-    OutputProtocol: oprot,
-    SeqId: 0,
-  }
+  return &StorageAdminServiceClient{ CC: thrift.NewClientConnWithProtocols(t, iprot, oprot) }
+}
+
+func NewStorageAdminServiceClientProtocol(prot thrift.Protocol) *StorageAdminServiceClient {
+  return NewStorageAdminServiceClient(prot.Transport(), prot, prot)
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) TransLeader(req *TransLeaderReq) (r *AdminExecResp, err error) {
-  if err = p.sendTransLeader(req); err != nil { return }
-  return p.recvTransLeader()
-}
-
-func (p *StorageAdminServiceClient) sendTransLeader(req *TransLeaderReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("transLeader", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) TransLeader(req *TransLeaderReq) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceTransLeaderArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("transLeader", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvTransLeader()
 }
 
 
 func (p *StorageAdminServiceClient) recvTransLeader() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "transLeader" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "transLeader failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "transLeader failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error213 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error214 error
-    error214, err = error213.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error214
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "transLeader failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceTransLeaderResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceTransLeaderResult
+  err = p.CC.RecvMsg("transLeader", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) AddPart(req *AddPartReq) (r *AdminExecResp, err error) {
-  if err = p.sendAddPart(req); err != nil { return }
-  return p.recvAddPart()
-}
-
-func (p *StorageAdminServiceClient) sendAddPart(req *AddPartReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addPart", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) AddPart(req *AddPartReq) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceAddPartArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addPart", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddPart()
 }
 
 
 func (p *StorageAdminServiceClient) recvAddPart() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addPart" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addPart failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addPart failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error215 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error216 error
-    error216, err = error215.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error216
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addPart failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceAddPartResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceAddPartResult
+  err = p.CC.RecvMsg("addPart", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) AddLearner(req *AddLearnerReq) (r *AdminExecResp, err error) {
-  if err = p.sendAddLearner(req); err != nil { return }
-  return p.recvAddLearner()
-}
-
-func (p *StorageAdminServiceClient) sendAddLearner(req *AddLearnerReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addLearner", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) AddLearner(req *AddLearnerReq) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceAddLearnerArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addLearner", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddLearner()
 }
 
 
 func (p *StorageAdminServiceClient) recvAddLearner() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addLearner" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addLearner failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addLearner failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error217 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error218 error
-    error218, err = error217.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error218
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addLearner failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceAddLearnerResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceAddLearnerResult
+  err = p.CC.RecvMsg("addLearner", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) RemovePart(req *RemovePartReq) (r *AdminExecResp, err error) {
-  if err = p.sendRemovePart(req); err != nil { return }
-  return p.recvRemovePart()
-}
-
-func (p *StorageAdminServiceClient) sendRemovePart(req *RemovePartReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("removePart", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) RemovePart(req *RemovePartReq) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceRemovePartArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("removePart", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemovePart()
 }
 
 
 func (p *StorageAdminServiceClient) recvRemovePart() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "removePart" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "removePart failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "removePart failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error219 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error220 error
-    error220, err = error219.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error220
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "removePart failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceRemovePartResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceRemovePartResult
+  err = p.CC.RecvMsg("removePart", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) MemberChange(req *MemberChangeReq) (r *AdminExecResp, err error) {
-  if err = p.sendMemberChange(req); err != nil { return }
-  return p.recvMemberChange()
-}
-
-func (p *StorageAdminServiceClient) sendMemberChange(req *MemberChangeReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("memberChange", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) MemberChange(req *MemberChangeReq) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceMemberChangeArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("memberChange", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvMemberChange()
 }
 
 
 func (p *StorageAdminServiceClient) recvMemberChange() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "memberChange" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "memberChange failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "memberChange failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error221 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error222 error
-    error222, err = error221.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error222
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "memberChange failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceMemberChangeResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceMemberChangeResult
+  err = p.CC.RecvMsg("memberChange", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) WaitingForCatchUpData(req *CatchUpDataReq) (r *AdminExecResp, err error) {
-  if err = p.sendWaitingForCatchUpData(req); err != nil { return }
-  return p.recvWaitingForCatchUpData()
-}
-
-func (p *StorageAdminServiceClient) sendWaitingForCatchUpData(req *CatchUpDataReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("waitingForCatchUpData", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) WaitingForCatchUpData(req *CatchUpDataReq) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceWaitingForCatchUpDataArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("waitingForCatchUpData", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvWaitingForCatchUpData()
 }
 
 
 func (p *StorageAdminServiceClient) recvWaitingForCatchUpData() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "waitingForCatchUpData" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "waitingForCatchUpData failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "waitingForCatchUpData failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error223 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error224 error
-    error224, err = error223.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error224
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "waitingForCatchUpData failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceWaitingForCatchUpDataResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceWaitingForCatchUpDataResult
+  err = p.CC.RecvMsg("waitingForCatchUpData", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) CreateCheckpoint(req *CreateCPRequest) (r *CreateCPResp, err error) {
-  if err = p.sendCreateCheckpoint(req); err != nil { return }
-  return p.recvCreateCheckpoint()
-}
-
-func (p *StorageAdminServiceClient) sendCreateCheckpoint(req *CreateCPRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createCheckpoint", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) CreateCheckpoint(req *CreateCPRequest) (_r *CreateCPResp, err error) {
   args := StorageAdminServiceCreateCheckpointArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createCheckpoint", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateCheckpoint()
 }
 
 
 func (p *StorageAdminServiceClient) recvCreateCheckpoint() (value *CreateCPResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createCheckpoint" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createCheckpoint failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createCheckpoint failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error225 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error226 error
-    error226, err = error225.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error226
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createCheckpoint failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceCreateCheckpointResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceCreateCheckpointResult
+  err = p.CC.RecvMsg("createCheckpoint", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) DropCheckpoint(req *DropCPRequest) (r *AdminExecResp, err error) {
-  if err = p.sendDropCheckpoint(req); err != nil { return }
-  return p.recvDropCheckpoint()
-}
-
-func (p *StorageAdminServiceClient) sendDropCheckpoint(req *DropCPRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropCheckpoint", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) DropCheckpoint(req *DropCPRequest) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceDropCheckpointArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropCheckpoint", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropCheckpoint()
 }
 
 
 func (p *StorageAdminServiceClient) recvDropCheckpoint() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropCheckpoint" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropCheckpoint failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropCheckpoint failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error227 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error228 error
-    error228, err = error227.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error228
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropCheckpoint failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceDropCheckpointResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceDropCheckpointResult
+  err = p.CC.RecvMsg("dropCheckpoint", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) BlockingWrites(req *BlockingSignRequest) (r *AdminExecResp, err error) {
-  if err = p.sendBlockingWrites(req); err != nil { return }
-  return p.recvBlockingWrites()
-}
-
-func (p *StorageAdminServiceClient) sendBlockingWrites(req *BlockingSignRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("blockingWrites", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) BlockingWrites(req *BlockingSignRequest) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceBlockingWritesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("blockingWrites", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvBlockingWrites()
 }
 
 
 func (p *StorageAdminServiceClient) recvBlockingWrites() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "blockingWrites" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "blockingWrites failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "blockingWrites failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error229 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error230 error
-    error230, err = error229.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error230
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "blockingWrites failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceBlockingWritesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceBlockingWritesResult
+  err = p.CC.RecvMsg("blockingWrites", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) RebuildTagIndex(req *RebuildIndexRequest) (r *AdminExecResp, err error) {
-  if err = p.sendRebuildTagIndex(req); err != nil { return }
-  return p.recvRebuildTagIndex()
-}
-
-func (p *StorageAdminServiceClient) sendRebuildTagIndex(req *RebuildIndexRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("rebuildTagIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) RebuildTagIndex(req *RebuildIndexRequest) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceRebuildTagIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("rebuildTagIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRebuildTagIndex()
 }
 
 
 func (p *StorageAdminServiceClient) recvRebuildTagIndex() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "rebuildTagIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "rebuildTagIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "rebuildTagIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error231 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error232 error
-    error232, err = error231.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error232
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "rebuildTagIndex failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceRebuildTagIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceRebuildTagIndexResult
+  err = p.CC.RecvMsg("rebuildTagIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) RebuildEdgeIndex(req *RebuildIndexRequest) (r *AdminExecResp, err error) {
-  if err = p.sendRebuildEdgeIndex(req); err != nil { return }
-  return p.recvRebuildEdgeIndex()
-}
-
-func (p *StorageAdminServiceClient) sendRebuildEdgeIndex(req *RebuildIndexRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("rebuildEdgeIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) RebuildEdgeIndex(req *RebuildIndexRequest) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceRebuildEdgeIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("rebuildEdgeIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRebuildEdgeIndex()
 }
 
 
 func (p *StorageAdminServiceClient) recvRebuildEdgeIndex() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "rebuildEdgeIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "rebuildEdgeIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "rebuildEdgeIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error233 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error234 error
-    error234, err = error233.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error234
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "rebuildEdgeIndex failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceRebuildEdgeIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceRebuildEdgeIndexResult
+  err = p.CC.RecvMsg("rebuildEdgeIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) GetLeaderParts(req *GetLeaderReq) (r *GetLeaderPartsResp, err error) {
-  if err = p.sendGetLeaderParts(req); err != nil { return }
-  return p.recvGetLeaderParts()
-}
-
-func (p *StorageAdminServiceClient) sendGetLeaderParts(req *GetLeaderReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getLeaderParts", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) GetLeaderParts(req *GetLeaderReq) (_r *GetLeaderPartsResp, err error) {
   args := StorageAdminServiceGetLeaderPartsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getLeaderParts", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetLeaderParts()
 }
 
 
 func (p *StorageAdminServiceClient) recvGetLeaderParts() (value *GetLeaderPartsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getLeaderParts" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getLeaderParts failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getLeaderParts failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error235 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error236 error
-    error236, err = error235.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error236
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getLeaderParts failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceGetLeaderPartsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceGetLeaderPartsResult
+  err = p.CC.RecvMsg("getLeaderParts", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) CheckPeers(req *CheckPeersReq) (r *AdminExecResp, err error) {
-  if err = p.sendCheckPeers(req); err != nil { return }
-  return p.recvCheckPeers()
-}
-
-func (p *StorageAdminServiceClient) sendCheckPeers(req *CheckPeersReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("checkPeers", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) CheckPeers(req *CheckPeersReq) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceCheckPeersArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("checkPeers", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCheckPeers()
 }
 
 
 func (p *StorageAdminServiceClient) recvCheckPeers() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "checkPeers" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "checkPeers failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "checkPeers failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error237 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error238 error
-    error238, err = error237.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error238
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "checkPeers failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceCheckPeersResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceCheckPeersResult
+  err = p.CC.RecvMsg("checkPeers", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) AddAdminTask(req *AddAdminTaskRequest) (r *AdminExecResp, err error) {
-  if err = p.sendAddAdminTask(req); err != nil { return }
-  return p.recvAddAdminTask()
-}
-
-func (p *StorageAdminServiceClient) sendAddAdminTask(req *AddAdminTaskRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addAdminTask", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) AddAdminTask(req *AddAdminTaskRequest) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceAddAdminTaskArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addAdminTask", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddAdminTask()
 }
 
 
 func (p *StorageAdminServiceClient) recvAddAdminTask() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addAdminTask" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addAdminTask failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addAdminTask failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error239 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error240 error
-    error240, err = error239.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error240
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addAdminTask failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceAddAdminTaskResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceAddAdminTaskResult
+  err = p.CC.RecvMsg("addAdminTask", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceClient) StopAdminTask(req *StopAdminTaskRequest) (r *AdminExecResp, err error) {
-  if err = p.sendStopAdminTask(req); err != nil { return }
-  return p.recvStopAdminTask()
-}
-
-func (p *StorageAdminServiceClient) sendStopAdminTask(req *StopAdminTaskRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("stopAdminTask", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
+func (p *StorageAdminServiceClient) StopAdminTask(req *StopAdminTaskRequest) (_r *AdminExecResp, err error) {
   args := StorageAdminServiceStopAdminTaskArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("stopAdminTask", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvStopAdminTask()
 }
 
 
 func (p *StorageAdminServiceClient) recvStopAdminTask() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "stopAdminTask" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "stopAdminTask failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "stopAdminTask failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error241 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error242 error
-    error242, err = error241.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error242
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "stopAdminTask failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceStopAdminTaskResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceStopAdminTaskResult
+  err = p.CC.RecvMsg("stopAdminTask", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 
 type StorageAdminServiceThreadsafeClient struct {
-  Transport thrift.Transport
-  ProtocolFactory thrift.ProtocolFactory
-  InputProtocol thrift.Protocol
-  OutputProtocol thrift.Protocol
-  SeqId int32
+  StorageAdminServiceClientInterface
+  CC thrift.ClientConn
   Mu sync.Mutex
 }
 
+func(client *StorageAdminServiceThreadsafeClient) Open() error {
+  client.Mu.Lock()
+  defer client.Mu.Unlock()
+  return client.CC.Open()
+}
+
+func(client *StorageAdminServiceThreadsafeClient) Close() error {
+  client.Mu.Lock()
+  defer client.Mu.Unlock()
+  return client.CC.Close()
+}
+
+func(client *StorageAdminServiceThreadsafeClient) IsOpen() bool {
+  client.Mu.Lock()
+  defer client.Mu.Unlock()
+  return client.CC.IsOpen()
+}
+
 func NewStorageAdminServiceThreadsafeClientFactory(t thrift.Transport, f thrift.ProtocolFactory) *StorageAdminServiceThreadsafeClient {
-  return &StorageAdminServiceThreadsafeClient{Transport: t,
-    ProtocolFactory: f,
-    InputProtocol: f.GetProtocol(t),
-    OutputProtocol: f.GetProtocol(t),
-    SeqId: 0,
-  }
+  return &StorageAdminServiceThreadsafeClient{ CC: thrift.NewClientConn(t, f) }
 }
 
 func NewStorageAdminServiceThreadsafeClient(t thrift.Transport, iprot thrift.Protocol, oprot thrift.Protocol) *StorageAdminServiceThreadsafeClient {
-  return &StorageAdminServiceThreadsafeClient{Transport: t,
-    ProtocolFactory: nil,
-    InputProtocol: iprot,
-    OutputProtocol: oprot,
-    SeqId: 0,
-  }
+  return &StorageAdminServiceThreadsafeClient{ CC: thrift.NewClientConnWithProtocols(t, iprot, oprot) }
 }
 
-func (p *StorageAdminServiceThreadsafeClient) Threadsafe() {}
+func NewStorageAdminServiceThreadsafeClientProtocol(prot thrift.Protocol) *StorageAdminServiceThreadsafeClient {
+  return NewStorageAdminServiceThreadsafeClient(prot.Transport(), prot, prot)
+}
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) TransLeader(req *TransLeaderReq) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) TransLeader(req *TransLeaderReq) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendTransLeader(req); err != nil { return }
-  return p.recvTransLeader()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendTransLeader(req *TransLeaderReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("transLeader", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceTransLeaderArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("transLeader", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvTransLeader()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvTransLeader() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "transLeader" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "transLeader failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "transLeader failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error243 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error244 error
-    error244, err = error243.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error244
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "transLeader failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceTransLeaderResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceTransLeaderResult
+  err = p.CC.RecvMsg("transLeader", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) AddPart(req *AddPartReq) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) AddPart(req *AddPartReq) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendAddPart(req); err != nil { return }
-  return p.recvAddPart()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendAddPart(req *AddPartReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addPart", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceAddPartArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addPart", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddPart()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvAddPart() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addPart" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addPart failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addPart failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error245 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error246 error
-    error246, err = error245.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error246
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addPart failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceAddPartResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceAddPartResult
+  err = p.CC.RecvMsg("addPart", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) AddLearner(req *AddLearnerReq) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) AddLearner(req *AddLearnerReq) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendAddLearner(req); err != nil { return }
-  return p.recvAddLearner()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendAddLearner(req *AddLearnerReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addLearner", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceAddLearnerArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addLearner", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddLearner()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvAddLearner() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addLearner" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addLearner failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addLearner failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error247 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error248 error
-    error248, err = error247.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error248
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addLearner failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceAddLearnerResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceAddLearnerResult
+  err = p.CC.RecvMsg("addLearner", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) RemovePart(req *RemovePartReq) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) RemovePart(req *RemovePartReq) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRemovePart(req); err != nil { return }
-  return p.recvRemovePart()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendRemovePart(req *RemovePartReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("removePart", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceRemovePartArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("removePart", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemovePart()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvRemovePart() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "removePart" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "removePart failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "removePart failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error249 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error250 error
-    error250, err = error249.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error250
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "removePart failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceRemovePartResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceRemovePartResult
+  err = p.CC.RecvMsg("removePart", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) MemberChange(req *MemberChangeReq) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) MemberChange(req *MemberChangeReq) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendMemberChange(req); err != nil { return }
-  return p.recvMemberChange()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendMemberChange(req *MemberChangeReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("memberChange", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceMemberChangeArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("memberChange", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvMemberChange()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvMemberChange() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "memberChange" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "memberChange failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "memberChange failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error251 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error252 error
-    error252, err = error251.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error252
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "memberChange failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceMemberChangeResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceMemberChangeResult
+  err = p.CC.RecvMsg("memberChange", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) WaitingForCatchUpData(req *CatchUpDataReq) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) WaitingForCatchUpData(req *CatchUpDataReq) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendWaitingForCatchUpData(req); err != nil { return }
-  return p.recvWaitingForCatchUpData()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendWaitingForCatchUpData(req *CatchUpDataReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("waitingForCatchUpData", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceWaitingForCatchUpDataArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("waitingForCatchUpData", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvWaitingForCatchUpData()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvWaitingForCatchUpData() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "waitingForCatchUpData" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "waitingForCatchUpData failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "waitingForCatchUpData failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error253 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error254 error
-    error254, err = error253.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error254
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "waitingForCatchUpData failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceWaitingForCatchUpDataResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceWaitingForCatchUpDataResult
+  err = p.CC.RecvMsg("waitingForCatchUpData", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) CreateCheckpoint(req *CreateCPRequest) (r *CreateCPResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) CreateCheckpoint(req *CreateCPRequest) (_r *CreateCPResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendCreateCheckpoint(req); err != nil { return }
-  return p.recvCreateCheckpoint()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendCreateCheckpoint(req *CreateCPRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("createCheckpoint", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceCreateCheckpointArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("createCheckpoint", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateCheckpoint()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvCreateCheckpoint() (value *CreateCPResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "createCheckpoint" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "createCheckpoint failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "createCheckpoint failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error255 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error256 error
-    error256, err = error255.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error256
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "createCheckpoint failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceCreateCheckpointResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceCreateCheckpointResult
+  err = p.CC.RecvMsg("createCheckpoint", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) DropCheckpoint(req *DropCPRequest) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) DropCheckpoint(req *DropCPRequest) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendDropCheckpoint(req); err != nil { return }
-  return p.recvDropCheckpoint()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendDropCheckpoint(req *DropCPRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("dropCheckpoint", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceDropCheckpointArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("dropCheckpoint", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropCheckpoint()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvDropCheckpoint() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "dropCheckpoint" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "dropCheckpoint failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "dropCheckpoint failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error257 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error258 error
-    error258, err = error257.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error258
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "dropCheckpoint failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceDropCheckpointResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceDropCheckpointResult
+  err = p.CC.RecvMsg("dropCheckpoint", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) BlockingWrites(req *BlockingSignRequest) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) BlockingWrites(req *BlockingSignRequest) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendBlockingWrites(req); err != nil { return }
-  return p.recvBlockingWrites()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendBlockingWrites(req *BlockingSignRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("blockingWrites", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceBlockingWritesArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("blockingWrites", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvBlockingWrites()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvBlockingWrites() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "blockingWrites" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "blockingWrites failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "blockingWrites failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error259 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error260 error
-    error260, err = error259.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error260
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "blockingWrites failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceBlockingWritesResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceBlockingWritesResult
+  err = p.CC.RecvMsg("blockingWrites", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) RebuildTagIndex(req *RebuildIndexRequest) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) RebuildTagIndex(req *RebuildIndexRequest) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRebuildTagIndex(req); err != nil { return }
-  return p.recvRebuildTagIndex()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendRebuildTagIndex(req *RebuildIndexRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("rebuildTagIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceRebuildTagIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("rebuildTagIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRebuildTagIndex()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvRebuildTagIndex() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "rebuildTagIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "rebuildTagIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "rebuildTagIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error261 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error262 error
-    error262, err = error261.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error262
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "rebuildTagIndex failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceRebuildTagIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceRebuildTagIndexResult
+  err = p.CC.RecvMsg("rebuildTagIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) RebuildEdgeIndex(req *RebuildIndexRequest) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) RebuildEdgeIndex(req *RebuildIndexRequest) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendRebuildEdgeIndex(req); err != nil { return }
-  return p.recvRebuildEdgeIndex()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendRebuildEdgeIndex(req *RebuildIndexRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("rebuildEdgeIndex", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceRebuildEdgeIndexArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("rebuildEdgeIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRebuildEdgeIndex()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvRebuildEdgeIndex() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "rebuildEdgeIndex" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "rebuildEdgeIndex failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "rebuildEdgeIndex failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error263 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error264 error
-    error264, err = error263.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error264
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "rebuildEdgeIndex failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceRebuildEdgeIndexResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceRebuildEdgeIndexResult
+  err = p.CC.RecvMsg("rebuildEdgeIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) GetLeaderParts(req *GetLeaderReq) (r *GetLeaderPartsResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) GetLeaderParts(req *GetLeaderReq) (_r *GetLeaderPartsResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendGetLeaderParts(req); err != nil { return }
-  return p.recvGetLeaderParts()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendGetLeaderParts(req *GetLeaderReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("getLeaderParts", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceGetLeaderPartsArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("getLeaderParts", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetLeaderParts()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvGetLeaderParts() (value *GetLeaderPartsResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "getLeaderParts" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "getLeaderParts failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "getLeaderParts failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error265 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error266 error
-    error266, err = error265.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error266
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getLeaderParts failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceGetLeaderPartsResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceGetLeaderPartsResult
+  err = p.CC.RecvMsg("getLeaderParts", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) CheckPeers(req *CheckPeersReq) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) CheckPeers(req *CheckPeersReq) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendCheckPeers(req); err != nil { return }
-  return p.recvCheckPeers()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendCheckPeers(req *CheckPeersReq)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("checkPeers", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceCheckPeersArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("checkPeers", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCheckPeers()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvCheckPeers() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "checkPeers" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "checkPeers failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "checkPeers failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error267 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error268 error
-    error268, err = error267.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error268
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "checkPeers failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceCheckPeersResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceCheckPeersResult
+  err = p.CC.RecvMsg("checkPeers", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) AddAdminTask(req *AddAdminTaskRequest) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) AddAdminTask(req *AddAdminTaskRequest) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendAddAdminTask(req); err != nil { return }
-  return p.recvAddAdminTask()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendAddAdminTask(req *AddAdminTaskRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("addAdminTask", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceAddAdminTaskArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("addAdminTask", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddAdminTask()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvAddAdminTask() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if method != "addAdminTask" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "addAdminTask failed: wrong method name")
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "addAdminTask failed: out of sequence response")
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error269 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error270 error
-    error270, err = error269.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error270
-    return
-  }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "addAdminTask failed: invalid message type")
-    return
-  }
-  result := StorageAdminServiceAddAdminTaskResult{}
-  if err = result.Read(iprot); err != nil {
-    return
-  }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
-  }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceAddAdminTaskResult
+  err = p.CC.RecvMsg("addAdminTask", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 // Parameters:
 //  - Req
-func (p *StorageAdminServiceThreadsafeClient) StopAdminTask(req *StopAdminTaskRequest) (r *AdminExecResp, err error) {
+func (p *StorageAdminServiceThreadsafeClient) StopAdminTask(req *StopAdminTaskRequest) (_r *AdminExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  if err = p.sendStopAdminTask(req); err != nil { return }
-  return p.recvStopAdminTask()
-}
-
-func (p *StorageAdminServiceThreadsafeClient) sendStopAdminTask(req *StopAdminTaskRequest)(err error) {
-  oprot := p.OutputProtocol
-  if oprot == nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  if err = oprot.WriteMessageBegin("stopAdminTask", thrift.CALL, p.SeqId); err != nil {
-      return
-  }
   args := StorageAdminServiceStopAdminTaskArgs{
-  Req : req,
+    Req : req,
   }
-  if err = args.Write(oprot); err != nil {
-      return
-  }
-  if err = oprot.WriteMessageEnd(); err != nil {
-      return
-  }
-  return oprot.Flush()
+  err = p.CC.SendMsg("stopAdminTask", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvStopAdminTask()
 }
 
 
 func (p *StorageAdminServiceThreadsafeClient) recvStopAdminTask() (value *AdminExecResp, err error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
+  var result StorageAdminServiceStopAdminTaskResult
+  err = p.CC.RecvMsg("stopAdminTask", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+
+type StorageAdminServiceChannelClient struct {
+  RequestChannel thrift.RequestChannel
+}
+
+func (c *StorageAdminServiceChannelClient) Close() error {
+  return c.RequestChannel.Close()
+}
+
+func (c *StorageAdminServiceChannelClient) IsOpen() bool {
+  return c.RequestChannel.IsOpen()
+}
+
+func (c *StorageAdminServiceChannelClient) Open() error {
+  return c.RequestChannel.Open()
+}
+
+func NewStorageAdminServiceChannelClient(channel thrift.RequestChannel) *StorageAdminServiceChannelClient {
+  return &StorageAdminServiceChannelClient{RequestChannel: channel}
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) TransLeader(ctx context.Context, req *TransLeaderReq) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceTransLeaderArgs{
+    Req : req,
   }
-  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
+  var result StorageAdminServiceTransLeaderResult
+  err = p.RequestChannel.Call(ctx, "transLeader", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) AddPart(ctx context.Context, req *AddPartReq) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceAddPartArgs{
+    Req : req,
   }
-  if method != "stopAdminTask" {
-    err = thrift.NewApplicationException(thrift.WRONG_METHOD_NAME, "stopAdminTask failed: wrong method name")
-    return
+  var result StorageAdminServiceAddPartResult
+  err = p.RequestChannel.Call(ctx, "addPart", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) AddLearner(ctx context.Context, req *AddLearnerReq) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceAddLearnerArgs{
+    Req : req,
   }
-  if p.SeqId != seqId {
-    err = thrift.NewApplicationException(thrift.BAD_SEQUENCE_ID, "stopAdminTask failed: out of sequence response")
-    return
+  var result StorageAdminServiceAddLearnerResult
+  err = p.RequestChannel.Call(ctx, "addLearner", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) RemovePart(ctx context.Context, req *RemovePartReq) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceRemovePartArgs{
+    Req : req,
   }
-  if mTypeId == thrift.EXCEPTION {
-    error271 := thrift.NewApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-    var error272 error
-    error272, err = error271.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error272
-    return
+  var result StorageAdminServiceRemovePartResult
+  err = p.RequestChannel.Call(ctx, "removePart", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) MemberChange(ctx context.Context, req *MemberChangeReq) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceMemberChangeArgs{
+    Req : req,
   }
-  if mTypeId != thrift.REPLY {
-    err = thrift.NewApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "stopAdminTask failed: invalid message type")
-    return
+  var result StorageAdminServiceMemberChangeResult
+  err = p.RequestChannel.Call(ctx, "memberChange", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) WaitingForCatchUpData(ctx context.Context, req *CatchUpDataReq) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceWaitingForCatchUpDataArgs{
+    Req : req,
   }
-  result := StorageAdminServiceStopAdminTaskResult{}
-  if err = result.Read(iprot); err != nil {
-    return
+  var result StorageAdminServiceWaitingForCatchUpDataResult
+  err = p.RequestChannel.Call(ctx, "waitingForCatchUpData", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) CreateCheckpoint(ctx context.Context, req *CreateCPRequest) (_r *CreateCPResp, err error) {
+  args := StorageAdminServiceCreateCheckpointArgs{
+    Req : req,
   }
-  if err = iprot.ReadMessageEnd(); err != nil {
-    return
+  var result StorageAdminServiceCreateCheckpointResult
+  err = p.RequestChannel.Call(ctx, "createCheckpoint", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) DropCheckpoint(ctx context.Context, req *DropCPRequest) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceDropCheckpointArgs{
+    Req : req,
   }
-  value = result.GetSuccess()
-  return
+  var result StorageAdminServiceDropCheckpointResult
+  err = p.RequestChannel.Call(ctx, "dropCheckpoint", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) BlockingWrites(ctx context.Context, req *BlockingSignRequest) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceBlockingWritesArgs{
+    Req : req,
+  }
+  var result StorageAdminServiceBlockingWritesResult
+  err = p.RequestChannel.Call(ctx, "blockingWrites", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) RebuildTagIndex(ctx context.Context, req *RebuildIndexRequest) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceRebuildTagIndexArgs{
+    Req : req,
+  }
+  var result StorageAdminServiceRebuildTagIndexResult
+  err = p.RequestChannel.Call(ctx, "rebuildTagIndex", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) RebuildEdgeIndex(ctx context.Context, req *RebuildIndexRequest) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceRebuildEdgeIndexArgs{
+    Req : req,
+  }
+  var result StorageAdminServiceRebuildEdgeIndexResult
+  err = p.RequestChannel.Call(ctx, "rebuildEdgeIndex", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) GetLeaderParts(ctx context.Context, req *GetLeaderReq) (_r *GetLeaderPartsResp, err error) {
+  args := StorageAdminServiceGetLeaderPartsArgs{
+    Req : req,
+  }
+  var result StorageAdminServiceGetLeaderPartsResult
+  err = p.RequestChannel.Call(ctx, "getLeaderParts", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) CheckPeers(ctx context.Context, req *CheckPeersReq) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceCheckPeersArgs{
+    Req : req,
+  }
+  var result StorageAdminServiceCheckPeersResult
+  err = p.RequestChannel.Call(ctx, "checkPeers", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) AddAdminTask(ctx context.Context, req *AddAdminTaskRequest) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceAddAdminTaskArgs{
+    Req : req,
+  }
+  var result StorageAdminServiceAddAdminTaskResult
+  err = p.RequestChannel.Call(ctx, "addAdminTask", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) StopAdminTask(ctx context.Context, req *StopAdminTaskRequest) (_r *AdminExecResp, err error) {
+  args := StorageAdminServiceStopAdminTaskArgs{
+    Req : req,
+  }
+  var result StorageAdminServiceStopAdminTaskResult
+  err = p.RequestChannel.Call(ctx, "stopAdminTask", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
 }
 
 
 type StorageAdminServiceProcessor struct {
-  processorMap map[string]thrift.ProcessorFunction
+  processorMap map[string]thrift.ProcessorFunctionContext
   handler StorageAdminService
 }
 
-func (p *StorageAdminServiceProcessor) AddToProcessorMap(key string, processor thrift.ProcessorFunction) {
+func (p *StorageAdminServiceProcessor) AddToProcessorMap(key string, processor thrift.ProcessorFunctionContext) {
   p.processorMap[key] = processor
 }
 
-func (p *StorageAdminServiceProcessor) GetProcessorFunction(key string) (processor thrift.ProcessorFunction, err error) {
+func (p *StorageAdminServiceProcessor) GetProcessorFunctionContext(key string) (processor thrift.ProcessorFunctionContext, err error) {
   if processor, ok := p.processorMap[key]; ok {
     return processor, nil
   }
   return nil, nil // generic error message will be sent
 }
 
-func (p *StorageAdminServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunction {
+func (p *StorageAdminServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunctionContext {
   return p.processorMap
 }
 
 func NewStorageAdminServiceProcessor(handler StorageAdminService) *StorageAdminServiceProcessor {
-  self273 := &StorageAdminServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunction)}
-  self273.processorMap["transLeader"] = &storageAdminServiceProcessorTransLeader{handler:handler}
-  self273.processorMap["addPart"] = &storageAdminServiceProcessorAddPart{handler:handler}
-  self273.processorMap["addLearner"] = &storageAdminServiceProcessorAddLearner{handler:handler}
-  self273.processorMap["removePart"] = &storageAdminServiceProcessorRemovePart{handler:handler}
-  self273.processorMap["memberChange"] = &storageAdminServiceProcessorMemberChange{handler:handler}
-  self273.processorMap["waitingForCatchUpData"] = &storageAdminServiceProcessorWaitingForCatchUpData{handler:handler}
-  self273.processorMap["createCheckpoint"] = &storageAdminServiceProcessorCreateCheckpoint{handler:handler}
-  self273.processorMap["dropCheckpoint"] = &storageAdminServiceProcessorDropCheckpoint{handler:handler}
-  self273.processorMap["blockingWrites"] = &storageAdminServiceProcessorBlockingWrites{handler:handler}
-  self273.processorMap["rebuildTagIndex"] = &storageAdminServiceProcessorRebuildTagIndex{handler:handler}
-  self273.processorMap["rebuildEdgeIndex"] = &storageAdminServiceProcessorRebuildEdgeIndex{handler:handler}
-  self273.processorMap["getLeaderParts"] = &storageAdminServiceProcessorGetLeaderParts{handler:handler}
-  self273.processorMap["checkPeers"] = &storageAdminServiceProcessorCheckPeers{handler:handler}
-  self273.processorMap["addAdminTask"] = &storageAdminServiceProcessorAddAdminTask{handler:handler}
-  self273.processorMap["stopAdminTask"] = &storageAdminServiceProcessorStopAdminTask{handler:handler}
-  return self273
+  self157 := &StorageAdminServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self157.processorMap["transLeader"] = &storageAdminServiceProcessorTransLeader{handler:handler}
+  self157.processorMap["addPart"] = &storageAdminServiceProcessorAddPart{handler:handler}
+  self157.processorMap["addLearner"] = &storageAdminServiceProcessorAddLearner{handler:handler}
+  self157.processorMap["removePart"] = &storageAdminServiceProcessorRemovePart{handler:handler}
+  self157.processorMap["memberChange"] = &storageAdminServiceProcessorMemberChange{handler:handler}
+  self157.processorMap["waitingForCatchUpData"] = &storageAdminServiceProcessorWaitingForCatchUpData{handler:handler}
+  self157.processorMap["createCheckpoint"] = &storageAdminServiceProcessorCreateCheckpoint{handler:handler}
+  self157.processorMap["dropCheckpoint"] = &storageAdminServiceProcessorDropCheckpoint{handler:handler}
+  self157.processorMap["blockingWrites"] = &storageAdminServiceProcessorBlockingWrites{handler:handler}
+  self157.processorMap["rebuildTagIndex"] = &storageAdminServiceProcessorRebuildTagIndex{handler:handler}
+  self157.processorMap["rebuildEdgeIndex"] = &storageAdminServiceProcessorRebuildEdgeIndex{handler:handler}
+  self157.processorMap["getLeaderParts"] = &storageAdminServiceProcessorGetLeaderParts{handler:handler}
+  self157.processorMap["checkPeers"] = &storageAdminServiceProcessorCheckPeers{handler:handler}
+  self157.processorMap["addAdminTask"] = &storageAdminServiceProcessorAddAdminTask{handler:handler}
+  self157.processorMap["stopAdminTask"] = &storageAdminServiceProcessorStopAdminTask{handler:handler}
+  return self157
 }
 
 type storageAdminServiceProcessorTransLeader struct {
@@ -2516,10 +1109,10 @@ func (p *storageAdminServiceProcessorTransLeader) Write(seqId int32, result thri
   return err
 }
 
-func (p *storageAdminServiceProcessorTransLeader) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorTransLeader) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceTransLeaderArgs)
   var result StorageAdminServiceTransLeaderResult
-  if retval, err := p.handler.TransLeader(args.Req); err != nil {
+  if retval, err := p.handler.TransLeader(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing transLeader: " + err.Error())
@@ -2566,10 +1159,10 @@ func (p *storageAdminServiceProcessorAddPart) Write(seqId int32, result thrift.W
   return err
 }
 
-func (p *storageAdminServiceProcessorAddPart) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorAddPart) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceAddPartArgs)
   var result StorageAdminServiceAddPartResult
-  if retval, err := p.handler.AddPart(args.Req); err != nil {
+  if retval, err := p.handler.AddPart(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing addPart: " + err.Error())
@@ -2616,10 +1209,10 @@ func (p *storageAdminServiceProcessorAddLearner) Write(seqId int32, result thrif
   return err
 }
 
-func (p *storageAdminServiceProcessorAddLearner) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorAddLearner) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceAddLearnerArgs)
   var result StorageAdminServiceAddLearnerResult
-  if retval, err := p.handler.AddLearner(args.Req); err != nil {
+  if retval, err := p.handler.AddLearner(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing addLearner: " + err.Error())
@@ -2666,10 +1259,10 @@ func (p *storageAdminServiceProcessorRemovePart) Write(seqId int32, result thrif
   return err
 }
 
-func (p *storageAdminServiceProcessorRemovePart) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorRemovePart) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceRemovePartArgs)
   var result StorageAdminServiceRemovePartResult
-  if retval, err := p.handler.RemovePart(args.Req); err != nil {
+  if retval, err := p.handler.RemovePart(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing removePart: " + err.Error())
@@ -2716,10 +1309,10 @@ func (p *storageAdminServiceProcessorMemberChange) Write(seqId int32, result thr
   return err
 }
 
-func (p *storageAdminServiceProcessorMemberChange) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorMemberChange) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceMemberChangeArgs)
   var result StorageAdminServiceMemberChangeResult
-  if retval, err := p.handler.MemberChange(args.Req); err != nil {
+  if retval, err := p.handler.MemberChange(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing memberChange: " + err.Error())
@@ -2766,10 +1359,10 @@ func (p *storageAdminServiceProcessorWaitingForCatchUpData) Write(seqId int32, r
   return err
 }
 
-func (p *storageAdminServiceProcessorWaitingForCatchUpData) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorWaitingForCatchUpData) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceWaitingForCatchUpDataArgs)
   var result StorageAdminServiceWaitingForCatchUpDataResult
-  if retval, err := p.handler.WaitingForCatchUpData(args.Req); err != nil {
+  if retval, err := p.handler.WaitingForCatchUpData(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing waitingForCatchUpData: " + err.Error())
@@ -2816,10 +1409,10 @@ func (p *storageAdminServiceProcessorCreateCheckpoint) Write(seqId int32, result
   return err
 }
 
-func (p *storageAdminServiceProcessorCreateCheckpoint) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorCreateCheckpoint) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceCreateCheckpointArgs)
   var result StorageAdminServiceCreateCheckpointResult
-  if retval, err := p.handler.CreateCheckpoint(args.Req); err != nil {
+  if retval, err := p.handler.CreateCheckpoint(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createCheckpoint: " + err.Error())
@@ -2866,10 +1459,10 @@ func (p *storageAdminServiceProcessorDropCheckpoint) Write(seqId int32, result t
   return err
 }
 
-func (p *storageAdminServiceProcessorDropCheckpoint) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorDropCheckpoint) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceDropCheckpointArgs)
   var result StorageAdminServiceDropCheckpointResult
-  if retval, err := p.handler.DropCheckpoint(args.Req); err != nil {
+  if retval, err := p.handler.DropCheckpoint(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropCheckpoint: " + err.Error())
@@ -2916,10 +1509,10 @@ func (p *storageAdminServiceProcessorBlockingWrites) Write(seqId int32, result t
   return err
 }
 
-func (p *storageAdminServiceProcessorBlockingWrites) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorBlockingWrites) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceBlockingWritesArgs)
   var result StorageAdminServiceBlockingWritesResult
-  if retval, err := p.handler.BlockingWrites(args.Req); err != nil {
+  if retval, err := p.handler.BlockingWrites(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing blockingWrites: " + err.Error())
@@ -2966,10 +1559,10 @@ func (p *storageAdminServiceProcessorRebuildTagIndex) Write(seqId int32, result 
   return err
 }
 
-func (p *storageAdminServiceProcessorRebuildTagIndex) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorRebuildTagIndex) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceRebuildTagIndexArgs)
   var result StorageAdminServiceRebuildTagIndexResult
-  if retval, err := p.handler.RebuildTagIndex(args.Req); err != nil {
+  if retval, err := p.handler.RebuildTagIndex(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing rebuildTagIndex: " + err.Error())
@@ -3016,10 +1609,10 @@ func (p *storageAdminServiceProcessorRebuildEdgeIndex) Write(seqId int32, result
   return err
 }
 
-func (p *storageAdminServiceProcessorRebuildEdgeIndex) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorRebuildEdgeIndex) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceRebuildEdgeIndexArgs)
   var result StorageAdminServiceRebuildEdgeIndexResult
-  if retval, err := p.handler.RebuildEdgeIndex(args.Req); err != nil {
+  if retval, err := p.handler.RebuildEdgeIndex(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing rebuildEdgeIndex: " + err.Error())
@@ -3066,10 +1659,10 @@ func (p *storageAdminServiceProcessorGetLeaderParts) Write(seqId int32, result t
   return err
 }
 
-func (p *storageAdminServiceProcessorGetLeaderParts) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorGetLeaderParts) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceGetLeaderPartsArgs)
   var result StorageAdminServiceGetLeaderPartsResult
-  if retval, err := p.handler.GetLeaderParts(args.Req); err != nil {
+  if retval, err := p.handler.GetLeaderParts(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getLeaderParts: " + err.Error())
@@ -3116,10 +1709,10 @@ func (p *storageAdminServiceProcessorCheckPeers) Write(seqId int32, result thrif
   return err
 }
 
-func (p *storageAdminServiceProcessorCheckPeers) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorCheckPeers) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceCheckPeersArgs)
   var result StorageAdminServiceCheckPeersResult
-  if retval, err := p.handler.CheckPeers(args.Req); err != nil {
+  if retval, err := p.handler.CheckPeers(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing checkPeers: " + err.Error())
@@ -3166,10 +1759,10 @@ func (p *storageAdminServiceProcessorAddAdminTask) Write(seqId int32, result thr
   return err
 }
 
-func (p *storageAdminServiceProcessorAddAdminTask) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorAddAdminTask) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceAddAdminTaskArgs)
   var result StorageAdminServiceAddAdminTaskResult
-  if retval, err := p.handler.AddAdminTask(args.Req); err != nil {
+  if retval, err := p.handler.AddAdminTask(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing addAdminTask: " + err.Error())
@@ -3216,10 +1809,10 @@ func (p *storageAdminServiceProcessorStopAdminTask) Write(seqId int32, result th
   return err
 }
 
-func (p *storageAdminServiceProcessorStopAdminTask) Run(argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+func (p *storageAdminServiceProcessorStopAdminTask) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
   args := argStruct.(*StorageAdminServiceStopAdminTaskArgs)
   var result StorageAdminServiceStopAdminTaskResult
-  if retval, err := p.handler.StopAdminTask(args.Req); err != nil {
+  if retval, err := p.handler.StopAdminTask(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stopAdminTask: " + err.Error())
@@ -3237,11 +1830,14 @@ func (p *storageAdminServiceProcessorStopAdminTask) Run(argStruct thrift.Struct)
 // Attributes:
 //  - Req
 type StorageAdminServiceTransLeaderArgs struct {
+  thrift.IRequest
   Req *TransLeaderReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceTransLeaderArgs() *StorageAdminServiceTransLeaderArgs {
-  return &StorageAdminServiceTransLeaderArgs{}
+  return &StorageAdminServiceTransLeaderArgs{
+    Req: NewTransLeaderReq(),
+  }
 }
 
 var StorageAdminServiceTransLeaderArgs_Req_DEFAULT *TransLeaderReq
@@ -3252,7 +1848,7 @@ func (p *StorageAdminServiceTransLeaderArgs) GetReq() *TransLeaderReq {
 return p.Req
 }
 func (p *StorageAdminServiceTransLeaderArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceTransLeaderArgs) Read(iprot thrift.Protocol) error {
@@ -3321,12 +1917,20 @@ func (p *StorageAdminServiceTransLeaderArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceTransLeaderArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceTransLeaderArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceTransLeaderResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -3342,7 +1946,7 @@ func (p *StorageAdminServiceTransLeaderResult) GetSuccess() *AdminExecResp {
 return p.Success
 }
 func (p *StorageAdminServiceTransLeaderResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceTransLeaderResult) Read(iprot thrift.Protocol) error {
@@ -3413,17 +2017,27 @@ func (p *StorageAdminServiceTransLeaderResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceTransLeaderResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceTransLeaderResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceAddPartArgs struct {
+  thrift.IRequest
   Req *AddPartReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceAddPartArgs() *StorageAdminServiceAddPartArgs {
-  return &StorageAdminServiceAddPartArgs{}
+  return &StorageAdminServiceAddPartArgs{
+    Req: NewAddPartReq(),
+  }
 }
 
 var StorageAdminServiceAddPartArgs_Req_DEFAULT *AddPartReq
@@ -3434,7 +2048,7 @@ func (p *StorageAdminServiceAddPartArgs) GetReq() *AddPartReq {
 return p.Req
 }
 func (p *StorageAdminServiceAddPartArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceAddPartArgs) Read(iprot thrift.Protocol) error {
@@ -3503,12 +2117,20 @@ func (p *StorageAdminServiceAddPartArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceAddPartArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceAddPartArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceAddPartResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -3524,7 +2146,7 @@ func (p *StorageAdminServiceAddPartResult) GetSuccess() *AdminExecResp {
 return p.Success
 }
 func (p *StorageAdminServiceAddPartResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceAddPartResult) Read(iprot thrift.Protocol) error {
@@ -3595,17 +2217,27 @@ func (p *StorageAdminServiceAddPartResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceAddPartResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceAddPartResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceAddLearnerArgs struct {
+  thrift.IRequest
   Req *AddLearnerReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceAddLearnerArgs() *StorageAdminServiceAddLearnerArgs {
-  return &StorageAdminServiceAddLearnerArgs{}
+  return &StorageAdminServiceAddLearnerArgs{
+    Req: NewAddLearnerReq(),
+  }
 }
 
 var StorageAdminServiceAddLearnerArgs_Req_DEFAULT *AddLearnerReq
@@ -3616,7 +2248,7 @@ func (p *StorageAdminServiceAddLearnerArgs) GetReq() *AddLearnerReq {
 return p.Req
 }
 func (p *StorageAdminServiceAddLearnerArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceAddLearnerArgs) Read(iprot thrift.Protocol) error {
@@ -3685,12 +2317,20 @@ func (p *StorageAdminServiceAddLearnerArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceAddLearnerArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceAddLearnerArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceAddLearnerResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -3706,7 +2346,7 @@ func (p *StorageAdminServiceAddLearnerResult) GetSuccess() *AdminExecResp {
 return p.Success
 }
 func (p *StorageAdminServiceAddLearnerResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceAddLearnerResult) Read(iprot thrift.Protocol) error {
@@ -3777,17 +2417,27 @@ func (p *StorageAdminServiceAddLearnerResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceAddLearnerResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceAddLearnerResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceRemovePartArgs struct {
+  thrift.IRequest
   Req *RemovePartReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceRemovePartArgs() *StorageAdminServiceRemovePartArgs {
-  return &StorageAdminServiceRemovePartArgs{}
+  return &StorageAdminServiceRemovePartArgs{
+    Req: NewRemovePartReq(),
+  }
 }
 
 var StorageAdminServiceRemovePartArgs_Req_DEFAULT *RemovePartReq
@@ -3798,7 +2448,7 @@ func (p *StorageAdminServiceRemovePartArgs) GetReq() *RemovePartReq {
 return p.Req
 }
 func (p *StorageAdminServiceRemovePartArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceRemovePartArgs) Read(iprot thrift.Protocol) error {
@@ -3867,12 +2517,20 @@ func (p *StorageAdminServiceRemovePartArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceRemovePartArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceRemovePartArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceRemovePartResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -3888,7 +2546,7 @@ func (p *StorageAdminServiceRemovePartResult) GetSuccess() *AdminExecResp {
 return p.Success
 }
 func (p *StorageAdminServiceRemovePartResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceRemovePartResult) Read(iprot thrift.Protocol) error {
@@ -3959,17 +2617,27 @@ func (p *StorageAdminServiceRemovePartResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceRemovePartResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceRemovePartResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceMemberChangeArgs struct {
+  thrift.IRequest
   Req *MemberChangeReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceMemberChangeArgs() *StorageAdminServiceMemberChangeArgs {
-  return &StorageAdminServiceMemberChangeArgs{}
+  return &StorageAdminServiceMemberChangeArgs{
+    Req: NewMemberChangeReq(),
+  }
 }
 
 var StorageAdminServiceMemberChangeArgs_Req_DEFAULT *MemberChangeReq
@@ -3980,7 +2648,7 @@ func (p *StorageAdminServiceMemberChangeArgs) GetReq() *MemberChangeReq {
 return p.Req
 }
 func (p *StorageAdminServiceMemberChangeArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceMemberChangeArgs) Read(iprot thrift.Protocol) error {
@@ -4049,12 +2717,20 @@ func (p *StorageAdminServiceMemberChangeArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceMemberChangeArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceMemberChangeArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceMemberChangeResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -4070,7 +2746,7 @@ func (p *StorageAdminServiceMemberChangeResult) GetSuccess() *AdminExecResp {
 return p.Success
 }
 func (p *StorageAdminServiceMemberChangeResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceMemberChangeResult) Read(iprot thrift.Protocol) error {
@@ -4141,17 +2817,27 @@ func (p *StorageAdminServiceMemberChangeResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceMemberChangeResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceMemberChangeResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceWaitingForCatchUpDataArgs struct {
+  thrift.IRequest
   Req *CatchUpDataReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceWaitingForCatchUpDataArgs() *StorageAdminServiceWaitingForCatchUpDataArgs {
-  return &StorageAdminServiceWaitingForCatchUpDataArgs{}
+  return &StorageAdminServiceWaitingForCatchUpDataArgs{
+    Req: NewCatchUpDataReq(),
+  }
 }
 
 var StorageAdminServiceWaitingForCatchUpDataArgs_Req_DEFAULT *CatchUpDataReq
@@ -4162,7 +2848,7 @@ func (p *StorageAdminServiceWaitingForCatchUpDataArgs) GetReq() *CatchUpDataReq 
 return p.Req
 }
 func (p *StorageAdminServiceWaitingForCatchUpDataArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceWaitingForCatchUpDataArgs) Read(iprot thrift.Protocol) error {
@@ -4231,12 +2917,20 @@ func (p *StorageAdminServiceWaitingForCatchUpDataArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceWaitingForCatchUpDataArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceWaitingForCatchUpDataArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceWaitingForCatchUpDataResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -4252,7 +2946,7 @@ func (p *StorageAdminServiceWaitingForCatchUpDataResult) GetSuccess() *AdminExec
 return p.Success
 }
 func (p *StorageAdminServiceWaitingForCatchUpDataResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceWaitingForCatchUpDataResult) Read(iprot thrift.Protocol) error {
@@ -4323,17 +3017,27 @@ func (p *StorageAdminServiceWaitingForCatchUpDataResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceWaitingForCatchUpDataResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceWaitingForCatchUpDataResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceCreateCheckpointArgs struct {
+  thrift.IRequest
   Req *CreateCPRequest `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceCreateCheckpointArgs() *StorageAdminServiceCreateCheckpointArgs {
-  return &StorageAdminServiceCreateCheckpointArgs{}
+  return &StorageAdminServiceCreateCheckpointArgs{
+    Req: NewCreateCPRequest(),
+  }
 }
 
 var StorageAdminServiceCreateCheckpointArgs_Req_DEFAULT *CreateCPRequest
@@ -4344,7 +3048,7 @@ func (p *StorageAdminServiceCreateCheckpointArgs) GetReq() *CreateCPRequest {
 return p.Req
 }
 func (p *StorageAdminServiceCreateCheckpointArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceCreateCheckpointArgs) Read(iprot thrift.Protocol) error {
@@ -4413,12 +3117,20 @@ func (p *StorageAdminServiceCreateCheckpointArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceCreateCheckpointArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceCreateCheckpointArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceCreateCheckpointResult struct {
+  thrift.IResponse
   Success *CreateCPResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -4434,7 +3146,7 @@ func (p *StorageAdminServiceCreateCheckpointResult) GetSuccess() *CreateCPResp {
 return p.Success
 }
 func (p *StorageAdminServiceCreateCheckpointResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceCreateCheckpointResult) Read(iprot thrift.Protocol) error {
@@ -4505,17 +3217,27 @@ func (p *StorageAdminServiceCreateCheckpointResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceCreateCheckpointResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceCreateCheckpointResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceDropCheckpointArgs struct {
+  thrift.IRequest
   Req *DropCPRequest `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceDropCheckpointArgs() *StorageAdminServiceDropCheckpointArgs {
-  return &StorageAdminServiceDropCheckpointArgs{}
+  return &StorageAdminServiceDropCheckpointArgs{
+    Req: NewDropCPRequest(),
+  }
 }
 
 var StorageAdminServiceDropCheckpointArgs_Req_DEFAULT *DropCPRequest
@@ -4526,7 +3248,7 @@ func (p *StorageAdminServiceDropCheckpointArgs) GetReq() *DropCPRequest {
 return p.Req
 }
 func (p *StorageAdminServiceDropCheckpointArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceDropCheckpointArgs) Read(iprot thrift.Protocol) error {
@@ -4595,12 +3317,20 @@ func (p *StorageAdminServiceDropCheckpointArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceDropCheckpointArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceDropCheckpointArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceDropCheckpointResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -4616,7 +3346,7 @@ func (p *StorageAdminServiceDropCheckpointResult) GetSuccess() *AdminExecResp {
 return p.Success
 }
 func (p *StorageAdminServiceDropCheckpointResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceDropCheckpointResult) Read(iprot thrift.Protocol) error {
@@ -4687,17 +3417,27 @@ func (p *StorageAdminServiceDropCheckpointResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceDropCheckpointResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceDropCheckpointResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceBlockingWritesArgs struct {
+  thrift.IRequest
   Req *BlockingSignRequest `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceBlockingWritesArgs() *StorageAdminServiceBlockingWritesArgs {
-  return &StorageAdminServiceBlockingWritesArgs{}
+  return &StorageAdminServiceBlockingWritesArgs{
+    Req: NewBlockingSignRequest(),
+  }
 }
 
 var StorageAdminServiceBlockingWritesArgs_Req_DEFAULT *BlockingSignRequest
@@ -4708,7 +3448,7 @@ func (p *StorageAdminServiceBlockingWritesArgs) GetReq() *BlockingSignRequest {
 return p.Req
 }
 func (p *StorageAdminServiceBlockingWritesArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceBlockingWritesArgs) Read(iprot thrift.Protocol) error {
@@ -4777,12 +3517,20 @@ func (p *StorageAdminServiceBlockingWritesArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceBlockingWritesArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceBlockingWritesArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceBlockingWritesResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -4798,7 +3546,7 @@ func (p *StorageAdminServiceBlockingWritesResult) GetSuccess() *AdminExecResp {
 return p.Success
 }
 func (p *StorageAdminServiceBlockingWritesResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceBlockingWritesResult) Read(iprot thrift.Protocol) error {
@@ -4869,17 +3617,27 @@ func (p *StorageAdminServiceBlockingWritesResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceBlockingWritesResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceBlockingWritesResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceRebuildTagIndexArgs struct {
+  thrift.IRequest
   Req *RebuildIndexRequest `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceRebuildTagIndexArgs() *StorageAdminServiceRebuildTagIndexArgs {
-  return &StorageAdminServiceRebuildTagIndexArgs{}
+  return &StorageAdminServiceRebuildTagIndexArgs{
+    Req: NewRebuildIndexRequest(),
+  }
 }
 
 var StorageAdminServiceRebuildTagIndexArgs_Req_DEFAULT *RebuildIndexRequest
@@ -4890,7 +3648,7 @@ func (p *StorageAdminServiceRebuildTagIndexArgs) GetReq() *RebuildIndexRequest {
 return p.Req
 }
 func (p *StorageAdminServiceRebuildTagIndexArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceRebuildTagIndexArgs) Read(iprot thrift.Protocol) error {
@@ -4959,12 +3717,20 @@ func (p *StorageAdminServiceRebuildTagIndexArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceRebuildTagIndexArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceRebuildTagIndexArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceRebuildTagIndexResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -4980,7 +3746,7 @@ func (p *StorageAdminServiceRebuildTagIndexResult) GetSuccess() *AdminExecResp {
 return p.Success
 }
 func (p *StorageAdminServiceRebuildTagIndexResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceRebuildTagIndexResult) Read(iprot thrift.Protocol) error {
@@ -5051,17 +3817,27 @@ func (p *StorageAdminServiceRebuildTagIndexResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceRebuildTagIndexResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceRebuildTagIndexResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceRebuildEdgeIndexArgs struct {
+  thrift.IRequest
   Req *RebuildIndexRequest `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceRebuildEdgeIndexArgs() *StorageAdminServiceRebuildEdgeIndexArgs {
-  return &StorageAdminServiceRebuildEdgeIndexArgs{}
+  return &StorageAdminServiceRebuildEdgeIndexArgs{
+    Req: NewRebuildIndexRequest(),
+  }
 }
 
 var StorageAdminServiceRebuildEdgeIndexArgs_Req_DEFAULT *RebuildIndexRequest
@@ -5072,7 +3848,7 @@ func (p *StorageAdminServiceRebuildEdgeIndexArgs) GetReq() *RebuildIndexRequest 
 return p.Req
 }
 func (p *StorageAdminServiceRebuildEdgeIndexArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceRebuildEdgeIndexArgs) Read(iprot thrift.Protocol) error {
@@ -5141,12 +3917,20 @@ func (p *StorageAdminServiceRebuildEdgeIndexArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceRebuildEdgeIndexArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceRebuildEdgeIndexArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceRebuildEdgeIndexResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -5162,7 +3946,7 @@ func (p *StorageAdminServiceRebuildEdgeIndexResult) GetSuccess() *AdminExecResp 
 return p.Success
 }
 func (p *StorageAdminServiceRebuildEdgeIndexResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceRebuildEdgeIndexResult) Read(iprot thrift.Protocol) error {
@@ -5233,17 +4017,27 @@ func (p *StorageAdminServiceRebuildEdgeIndexResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceRebuildEdgeIndexResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceRebuildEdgeIndexResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceGetLeaderPartsArgs struct {
+  thrift.IRequest
   Req *GetLeaderReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceGetLeaderPartsArgs() *StorageAdminServiceGetLeaderPartsArgs {
-  return &StorageAdminServiceGetLeaderPartsArgs{}
+  return &StorageAdminServiceGetLeaderPartsArgs{
+    Req: NewGetLeaderReq(),
+  }
 }
 
 var StorageAdminServiceGetLeaderPartsArgs_Req_DEFAULT *GetLeaderReq
@@ -5254,7 +4048,7 @@ func (p *StorageAdminServiceGetLeaderPartsArgs) GetReq() *GetLeaderReq {
 return p.Req
 }
 func (p *StorageAdminServiceGetLeaderPartsArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceGetLeaderPartsArgs) Read(iprot thrift.Protocol) error {
@@ -5323,12 +4117,20 @@ func (p *StorageAdminServiceGetLeaderPartsArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceGetLeaderPartsArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceGetLeaderPartsArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceGetLeaderPartsResult struct {
+  thrift.IResponse
   Success *GetLeaderPartsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -5344,7 +4146,7 @@ func (p *StorageAdminServiceGetLeaderPartsResult) GetSuccess() *GetLeaderPartsRe
 return p.Success
 }
 func (p *StorageAdminServiceGetLeaderPartsResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceGetLeaderPartsResult) Read(iprot thrift.Protocol) error {
@@ -5415,17 +4217,27 @@ func (p *StorageAdminServiceGetLeaderPartsResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceGetLeaderPartsResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceGetLeaderPartsResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceCheckPeersArgs struct {
+  thrift.IRequest
   Req *CheckPeersReq `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceCheckPeersArgs() *StorageAdminServiceCheckPeersArgs {
-  return &StorageAdminServiceCheckPeersArgs{}
+  return &StorageAdminServiceCheckPeersArgs{
+    Req: NewCheckPeersReq(),
+  }
 }
 
 var StorageAdminServiceCheckPeersArgs_Req_DEFAULT *CheckPeersReq
@@ -5436,7 +4248,7 @@ func (p *StorageAdminServiceCheckPeersArgs) GetReq() *CheckPeersReq {
 return p.Req
 }
 func (p *StorageAdminServiceCheckPeersArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceCheckPeersArgs) Read(iprot thrift.Protocol) error {
@@ -5505,12 +4317,20 @@ func (p *StorageAdminServiceCheckPeersArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceCheckPeersArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceCheckPeersArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceCheckPeersResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -5526,7 +4346,7 @@ func (p *StorageAdminServiceCheckPeersResult) GetSuccess() *AdminExecResp {
 return p.Success
 }
 func (p *StorageAdminServiceCheckPeersResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceCheckPeersResult) Read(iprot thrift.Protocol) error {
@@ -5597,17 +4417,27 @@ func (p *StorageAdminServiceCheckPeersResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceCheckPeersResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceCheckPeersResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceAddAdminTaskArgs struct {
+  thrift.IRequest
   Req *AddAdminTaskRequest `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceAddAdminTaskArgs() *StorageAdminServiceAddAdminTaskArgs {
-  return &StorageAdminServiceAddAdminTaskArgs{}
+  return &StorageAdminServiceAddAdminTaskArgs{
+    Req: NewAddAdminTaskRequest(),
+  }
 }
 
 var StorageAdminServiceAddAdminTaskArgs_Req_DEFAULT *AddAdminTaskRequest
@@ -5618,7 +4448,7 @@ func (p *StorageAdminServiceAddAdminTaskArgs) GetReq() *AddAdminTaskRequest {
 return p.Req
 }
 func (p *StorageAdminServiceAddAdminTaskArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceAddAdminTaskArgs) Read(iprot thrift.Protocol) error {
@@ -5687,12 +4517,20 @@ func (p *StorageAdminServiceAddAdminTaskArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceAddAdminTaskArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceAddAdminTaskArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceAddAdminTaskResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -5708,7 +4546,7 @@ func (p *StorageAdminServiceAddAdminTaskResult) GetSuccess() *AdminExecResp {
 return p.Success
 }
 func (p *StorageAdminServiceAddAdminTaskResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceAddAdminTaskResult) Read(iprot thrift.Protocol) error {
@@ -5779,17 +4617,27 @@ func (p *StorageAdminServiceAddAdminTaskResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceAddAdminTaskResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceAddAdminTaskResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
 type StorageAdminServiceStopAdminTaskArgs struct {
+  thrift.IRequest
   Req *StopAdminTaskRequest `thrift:"req,1" db:"req" json:"req"`
 }
 
 func NewStorageAdminServiceStopAdminTaskArgs() *StorageAdminServiceStopAdminTaskArgs {
-  return &StorageAdminServiceStopAdminTaskArgs{}
+  return &StorageAdminServiceStopAdminTaskArgs{
+    Req: NewStopAdminTaskRequest(),
+  }
 }
 
 var StorageAdminServiceStopAdminTaskArgs_Req_DEFAULT *StopAdminTaskRequest
@@ -5800,7 +4648,7 @@ func (p *StorageAdminServiceStopAdminTaskArgs) GetReq() *StopAdminTaskRequest {
 return p.Req
 }
 func (p *StorageAdminServiceStopAdminTaskArgs) IsSetReq() bool {
-  return p.Req != nil
+  return p != nil && p.Req != nil
 }
 
 func (p *StorageAdminServiceStopAdminTaskArgs) Read(iprot thrift.Protocol) error {
@@ -5869,12 +4717,20 @@ func (p *StorageAdminServiceStopAdminTaskArgs) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceStopAdminTaskArgs(%+v)", *p)
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceStopAdminTaskArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
 type StorageAdminServiceStopAdminTaskResult struct {
+  thrift.IResponse
   Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
@@ -5890,7 +4746,7 @@ func (p *StorageAdminServiceStopAdminTaskResult) GetSuccess() *AdminExecResp {
 return p.Success
 }
 func (p *StorageAdminServiceStopAdminTaskResult) IsSetSuccess() bool {
-  return p.Success != nil
+  return p != nil && p.Success != nil
 }
 
 func (p *StorageAdminServiceStopAdminTaskResult) Read(iprot thrift.Protocol) error {
@@ -5961,7 +4817,14 @@ func (p *StorageAdminServiceStopAdminTaskResult) String() string {
   if p == nil {
     return "<nil>"
   }
-  return fmt.Sprintf("StorageAdminServiceStopAdminTaskResult(%+v)", *p)
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceStopAdminTaskResult({Success:%s})", successVal)
 }
 
 
