@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	graph "github.com/vesoft-inc/nebula-go/nebula/graph"
+	graph "github.com/vesoft-inc/nebula-go/v2/nebula/graph"
 )
 
 type ConnectionPool struct {

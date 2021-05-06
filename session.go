@@ -10,7 +10,7 @@ import (
 	"fmt"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
-	graph "github.com/vesoft-inc/nebula-go/nebula/graph"
+	graph "github.com/vesoft-inc/nebula-go/v2/nebula/graph"
 )
 
 type Session struct {

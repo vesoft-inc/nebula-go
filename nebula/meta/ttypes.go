@@ -10,7 +10,7 @@ import (
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
-	nebula0 "github.com/vesoft-inc/nebula-go/nebula"
+	nebula0 "github.com/vesoft-inc/nebula-go/v2/nebula"
 
 )
 
@@ -67,6 +67,7 @@ const (
   ErrorCode_E_BALANCER_FAILURE ErrorCode = -58
   ErrorCode_E_JOB_NOT_FINISHED ErrorCode = -59
   ErrorCode_E_TASK_REPORT_OUT_DATE ErrorCode = -60
+  ErrorCode_E_INVALID_JOB ErrorCode = -61
   ErrorCode_E_BACKUP_FAILURE ErrorCode = -70
   ErrorCode_E_BACKUP_BUILDING_INDEX ErrorCode = -71
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND ErrorCode = -72
@@ -116,6 +117,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_BALANCER_FAILURE: "E_BALANCER_FAILURE",
   ErrorCode_E_JOB_NOT_FINISHED: "E_JOB_NOT_FINISHED",
   ErrorCode_E_TASK_REPORT_OUT_DATE: "E_TASK_REPORT_OUT_DATE",
+  ErrorCode_E_INVALID_JOB: "E_INVALID_JOB",
   ErrorCode_E_BACKUP_FAILURE: "E_BACKUP_FAILURE",
   ErrorCode_E_BACKUP_BUILDING_INDEX: "E_BACKUP_BUILDING_INDEX",
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND: "E_BACKUP_SPACE_NOT_FOUND",
@@ -165,6 +167,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_BALANCER_FAILURE": ErrorCode_E_BALANCER_FAILURE,
   "E_JOB_NOT_FINISHED": ErrorCode_E_JOB_NOT_FINISHED,
   "E_TASK_REPORT_OUT_DATE": ErrorCode_E_TASK_REPORT_OUT_DATE,
+  "E_INVALID_JOB": ErrorCode_E_INVALID_JOB,
   "E_BACKUP_FAILURE": ErrorCode_E_BACKUP_FAILURE,
   "E_BACKUP_BUILDING_INDEX": ErrorCode_E_BACKUP_BUILDING_INDEX,
   "E_BACKUP_SPACE_NOT_FOUND": ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
@@ -214,6 +217,7 @@ var ErrorCodeNames = []string {
   "E_BALANCER_FAILURE",
   "E_JOB_NOT_FINISHED",
   "E_TASK_REPORT_OUT_DATE",
+  "E_INVALID_JOB",
   "E_BACKUP_FAILURE",
   "E_BACKUP_BUILDING_INDEX",
   "E_BACKUP_SPACE_NOT_FOUND",
@@ -263,6 +267,7 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_BALANCER_FAILURE,
   ErrorCode_E_JOB_NOT_FINISHED,
   ErrorCode_E_TASK_REPORT_OUT_DATE,
+  ErrorCode_E_INVALID_JOB,
   ErrorCode_E_BACKUP_FAILURE,
   ErrorCode_E_BACKUP_BUILDING_INDEX,
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
@@ -1628,11 +1633,13 @@ func (p *ColumnTypeDef) String() string {
 //  - Type
 //  - DefaultValue
 //  - Nullable
+//  - Comment
 type ColumnDef struct {
   Name []byte `thrift:"name,1,required" db:"name" json:"name"`
   Type *ColumnTypeDef `thrift:"type,2,required" db:"type" json:"type"`
   DefaultValue []byte `thrift:"default_value,3" db:"default_value" json:"default_value,omitempty"`
   Nullable bool `thrift:"nullable,4" db:"nullable" json:"nullable,omitempty"`
+  Comment []byte `thrift:"comment,5" db:"comment" json:"comment,omitempty"`
 }
 
 func NewColumnDef() *ColumnDef {
@@ -1662,6 +1669,11 @@ var ColumnDef_Nullable_DEFAULT bool = false
 func (p *ColumnDef) GetNullable() bool {
   return p.Nullable
 }
+var ColumnDef_Comment_DEFAULT []byte
+
+func (p *ColumnDef) GetComment() []byte {
+  return p.Comment
+}
 func (p *ColumnDef) IsSetType() bool {
   return p != nil && p.Type != nil
 }
@@ -1672,6 +1684,10 @@ func (p *ColumnDef) IsSetDefaultValue() bool {
 
 func (p *ColumnDef) IsSetNullable() bool {
   return p != nil && p.Nullable != ColumnDef_Nullable_DEFAULT
+}
+
+func (p *ColumnDef) IsSetComment() bool {
+  return p != nil && p.Comment != nil
 }
 
 func (p *ColumnDef) Read(iprot thrift.Protocol) error {
@@ -1705,6 +1721,10 @@ func (p *ColumnDef) Read(iprot thrift.Protocol) error {
       }
     case 4:
       if err := p.ReadField4(iprot); err != nil {
+        return err
+      }
+    case 5:
+      if err := p.ReadField5(iprot); err != nil {
         return err
       }
     default:
@@ -1763,6 +1783,15 @@ func (p *ColumnDef)  ReadField4(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *ColumnDef)  ReadField5(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 5: ", err)
+} else {
+  p.Comment = v
+}
+  return nil
+}
+
 func (p *ColumnDef) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("ColumnDef"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
@@ -1770,6 +1799,7 @@ func (p *ColumnDef) Write(oprot thrift.Protocol) error {
   if err := p.writeField2(oprot); err != nil { return err }
   if err := p.writeField3(oprot); err != nil { return err }
   if err := p.writeField4(oprot); err != nil { return err }
+  if err := p.writeField5(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -1822,6 +1852,18 @@ func (p *ColumnDef) writeField4(oprot thrift.Protocol) (err error) {
   return err
 }
 
+func (p *ColumnDef) writeField5(oprot thrift.Protocol) (err error) {
+  if p.IsSetComment() {
+    if err := oprot.WriteFieldBegin("comment", thrift.STRING, 5); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:comment: ", p), err) }
+    if err := oprot.WriteBinary(p.Comment); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.comment (5) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 5:comment: ", p), err) }
+  }
+  return err
+}
+
 func (p *ColumnDef) String() string {
   if p == nil {
     return "<nil>"
@@ -1836,15 +1878,18 @@ func (p *ColumnDef) String() string {
   }
   defaultValueVal := fmt.Sprintf("%v", p.DefaultValue)
   nullableVal := fmt.Sprintf("%v", p.Nullable)
-  return fmt.Sprintf("ColumnDef({Name:%s Type:%s DefaultValue:%s Nullable:%s})", nameVal, typeVal, defaultValueVal, nullableVal)
+  commentVal := fmt.Sprintf("%v", p.Comment)
+  return fmt.Sprintf("ColumnDef({Name:%s Type:%s DefaultValue:%s Nullable:%s Comment:%s})", nameVal, typeVal, defaultValueVal, nullableVal, commentVal)
 }
 
 // Attributes:
 //  - TtlDuration
 //  - TtlCol
+//  - Comment
 type SchemaProp struct {
   TtlDuration *int64 `thrift:"ttl_duration,1" db:"ttl_duration" json:"ttl_duration,omitempty"`
   TtlCol []byte `thrift:"ttl_col,2" db:"ttl_col" json:"ttl_col,omitempty"`
+  Comment []byte `thrift:"comment,3" db:"comment" json:"comment,omitempty"`
 }
 
 func NewSchemaProp() *SchemaProp {
@@ -1863,12 +1908,21 @@ var SchemaProp_TtlCol_DEFAULT []byte
 func (p *SchemaProp) GetTtlCol() []byte {
   return p.TtlCol
 }
+var SchemaProp_Comment_DEFAULT []byte
+
+func (p *SchemaProp) GetComment() []byte {
+  return p.Comment
+}
 func (p *SchemaProp) IsSetTtlDuration() bool {
   return p != nil && p.TtlDuration != nil
 }
 
 func (p *SchemaProp) IsSetTtlCol() bool {
   return p != nil && p.TtlCol != nil
+}
+
+func (p *SchemaProp) IsSetComment() bool {
+  return p != nil && p.Comment != nil
 }
 
 func (p *SchemaProp) Read(iprot thrift.Protocol) error {
@@ -1890,6 +1944,10 @@ func (p *SchemaProp) Read(iprot thrift.Protocol) error {
       }
     case 2:
       if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
         return err
       }
     default:
@@ -1925,11 +1983,21 @@ func (p *SchemaProp)  ReadField2(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *SchemaProp)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  p.Comment = v
+}
+  return nil
+}
+
 func (p *SchemaProp) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("SchemaProp"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -1961,6 +2029,18 @@ func (p *SchemaProp) writeField2(oprot thrift.Protocol) (err error) {
   return err
 }
 
+func (p *SchemaProp) writeField3(oprot thrift.Protocol) (err error) {
+  if p.IsSetComment() {
+    if err := oprot.WriteFieldBegin("comment", thrift.STRING, 3); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:comment: ", p), err) }
+    if err := oprot.WriteBinary(p.Comment); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.comment (3) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 3:comment: ", p), err) }
+  }
+  return err
+}
+
 func (p *SchemaProp) String() string {
   if p == nil {
     return "<nil>"
@@ -1973,7 +2053,8 @@ func (p *SchemaProp) String() string {
     ttlDurationVal = fmt.Sprintf("%v", *p.TtlDuration)
   }
   ttlColVal := fmt.Sprintf("%v", p.TtlCol)
-  return fmt.Sprintf("SchemaProp({TtlDuration:%s TtlCol:%s})", ttlDurationVal, ttlColVal)
+  commentVal := fmt.Sprintf("%v", p.Comment)
+  return fmt.Sprintf("SchemaProp({TtlDuration:%s TtlCol:%s Comment:%s})", ttlDurationVal, ttlColVal, commentVal)
 }
 
 // Attributes:
@@ -2263,6 +2344,7 @@ func (p *IdName) String() string {
 //  - VidType
 //  - GroupName
 //  - IsolationLevel
+//  - Comment
 type SpaceDesc struct {
   SpaceName []byte `thrift:"space_name,1" db:"space_name" json:"space_name"`
   PartitionNum int32 `thrift:"partition_num,2" db:"partition_num" json:"partition_num"`
@@ -2272,6 +2354,7 @@ type SpaceDesc struct {
   VidType *ColumnTypeDef `thrift:"vid_type,6" db:"vid_type" json:"vid_type"`
   GroupName []byte `thrift:"group_name,7" db:"group_name" json:"group_name,omitempty"`
   IsolationLevel *IsolationLevel `thrift:"isolation_level,8" db:"isolation_level" json:"isolation_level,omitempty"`
+  Comment []byte `thrift:"comment,9" db:"comment" json:"comment,omitempty"`
 }
 
 func NewSpaceDesc() *SpaceDesc {
@@ -2322,6 +2405,11 @@ func (p *SpaceDesc) GetIsolationLevel() IsolationLevel {
   }
 return *p.IsolationLevel
 }
+var SpaceDesc_Comment_DEFAULT []byte
+
+func (p *SpaceDesc) GetComment() []byte {
+  return p.Comment
+}
 func (p *SpaceDesc) IsSetVidType() bool {
   return p != nil && p.VidType != nil
 }
@@ -2332,6 +2420,10 @@ func (p *SpaceDesc) IsSetGroupName() bool {
 
 func (p *SpaceDesc) IsSetIsolationLevel() bool {
   return p != nil && p.IsolationLevel != nil
+}
+
+func (p *SpaceDesc) IsSetComment() bool {
+  return p != nil && p.Comment != nil
 }
 
 func (p *SpaceDesc) Read(iprot thrift.Protocol) error {
@@ -2377,6 +2469,10 @@ func (p *SpaceDesc) Read(iprot thrift.Protocol) error {
       }
     case 8:
       if err := p.ReadField8(iprot); err != nil {
+        return err
+      }
+    case 9:
+      if err := p.ReadField9(iprot); err != nil {
         return err
       }
     default:
@@ -2466,6 +2562,15 @@ func (p *SpaceDesc)  ReadField8(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *SpaceDesc)  ReadField9(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 9: ", err)
+} else {
+  p.Comment = v
+}
+  return nil
+}
+
 func (p *SpaceDesc) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("SpaceDesc"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
@@ -2477,6 +2582,7 @@ func (p *SpaceDesc) Write(oprot thrift.Protocol) error {
   if err := p.writeField6(oprot); err != nil { return err }
   if err := p.writeField7(oprot); err != nil { return err }
   if err := p.writeField8(oprot); err != nil { return err }
+  if err := p.writeField9(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -2569,6 +2675,18 @@ func (p *SpaceDesc) writeField8(oprot thrift.Protocol) (err error) {
   return err
 }
 
+func (p *SpaceDesc) writeField9(oprot thrift.Protocol) (err error) {
+  if p.IsSetComment() {
+    if err := oprot.WriteFieldBegin("comment", thrift.STRING, 9); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 9:comment: ", p), err) }
+    if err := oprot.WriteBinary(p.Comment); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.comment (9) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 9:comment: ", p), err) }
+  }
+  return err
+}
+
 func (p *SpaceDesc) String() string {
   if p == nil {
     return "<nil>"
@@ -2592,7 +2710,8 @@ func (p *SpaceDesc) String() string {
   } else {
     isolationLevelVal = fmt.Sprintf("%v", *p.IsolationLevel)
   }
-  return fmt.Sprintf("SpaceDesc({SpaceName:%s PartitionNum:%s ReplicaFactor:%s CharsetName:%s CollateName:%s VidType:%s GroupName:%s IsolationLevel:%s})", spaceNameVal, partitionNumVal, replicaFactorVal, charsetNameVal, collateNameVal, vidTypeVal, groupNameVal, isolationLevelVal)
+  commentVal := fmt.Sprintf("%v", p.Comment)
+  return fmt.Sprintf("SpaceDesc({SpaceName:%s PartitionNum:%s ReplicaFactor:%s CharsetName:%s CollateName:%s VidType:%s GroupName:%s IsolationLevel:%s Comment:%s})", spaceNameVal, partitionNumVal, replicaFactorVal, charsetNameVal, collateNameVal, vidTypeVal, groupNameVal, isolationLevelVal, commentVal)
 }
 
 // Attributes:
@@ -3412,12 +3531,14 @@ func (p *SchemaID) String() string {
 //  - SchemaID
 //  - SchemaName
 //  - Fields
+//  - Comment
 type IndexItem struct {
   IndexID nebula0.IndexID `thrift:"index_id,1" db:"index_id" json:"index_id"`
   IndexName []byte `thrift:"index_name,2" db:"index_name" json:"index_name"`
   SchemaID *SchemaID `thrift:"schema_id,3" db:"schema_id" json:"schema_id"`
   SchemaName []byte `thrift:"schema_name,4" db:"schema_name" json:"schema_name"`
   Fields []*ColumnDef `thrift:"fields,5" db:"fields" json:"fields"`
+  Comment []byte `thrift:"comment,6" db:"comment" json:"comment,omitempty"`
 }
 
 func NewIndexItem() *IndexItem {
@@ -3447,8 +3568,17 @@ func (p *IndexItem) GetSchemaName() []byte {
 func (p *IndexItem) GetFields() []*ColumnDef {
   return p.Fields
 }
+var IndexItem_Comment_DEFAULT []byte
+
+func (p *IndexItem) GetComment() []byte {
+  return p.Comment
+}
 func (p *IndexItem) IsSetSchemaID() bool {
   return p != nil && p.SchemaID != nil
+}
+
+func (p *IndexItem) IsSetComment() bool {
+  return p != nil && p.Comment != nil
 }
 
 func (p *IndexItem) Read(iprot thrift.Protocol) error {
@@ -3482,6 +3612,10 @@ func (p *IndexItem) Read(iprot thrift.Protocol) error {
       }
     case 5:
       if err := p.ReadField5(iprot); err != nil {
+        return err
+      }
+    case 6:
+      if err := p.ReadField6(iprot); err != nil {
         return err
       }
     default:
@@ -3555,6 +3689,15 @@ func (p *IndexItem)  ReadField5(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *IndexItem)  ReadField6(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 6: ", err)
+} else {
+  p.Comment = v
+}
+  return nil
+}
+
 func (p *IndexItem) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("IndexItem"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
@@ -3563,6 +3706,7 @@ func (p *IndexItem) Write(oprot thrift.Protocol) error {
   if err := p.writeField3(oprot); err != nil { return err }
   if err := p.writeField4(oprot); err != nil { return err }
   if err := p.writeField5(oprot); err != nil { return err }
+  if err := p.writeField6(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -3630,6 +3774,18 @@ func (p *IndexItem) writeField5(oprot thrift.Protocol) (err error) {
   return err
 }
 
+func (p *IndexItem) writeField6(oprot thrift.Protocol) (err error) {
+  if p.IsSetComment() {
+    if err := oprot.WriteFieldBegin("comment", thrift.STRING, 6); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 6:comment: ", p), err) }
+    if err := oprot.WriteBinary(p.Comment); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.comment (6) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 6:comment: ", p), err) }
+  }
+  return err
+}
+
 func (p *IndexItem) String() string {
   if p == nil {
     return "<nil>"
@@ -3645,7 +3801,8 @@ func (p *IndexItem) String() string {
   }
   schemaNameVal := fmt.Sprintf("%v", p.SchemaName)
   fieldsVal := fmt.Sprintf("%v", p.Fields)
-  return fmt.Sprintf("IndexItem({IndexID:%s IndexName:%s SchemaID:%s SchemaName:%s Fields:%s})", indexIDVal, indexNameVal, schemaIDVal, schemaNameVal, fieldsVal)
+  commentVal := fmt.Sprintf("%v", p.Comment)
+  return fmt.Sprintf("IndexItem({IndexID:%s IndexName:%s SchemaID:%s SchemaName:%s Fields:%s Comment:%s})", indexIDVal, indexNameVal, schemaIDVal, schemaNameVal, fieldsVal, commentVal)
 }
 
 // Attributes:
@@ -11959,6 +12116,123 @@ func (p *HBResp) String() string {
 }
 
 // Attributes:
+//  - PartID
+//  - Term
+type LeaderInfo struct {
+  PartID nebula0.PartitionID `thrift:"part_id,1" db:"part_id" json:"part_id"`
+  Term int64 `thrift:"term,2" db:"term" json:"term"`
+}
+
+func NewLeaderInfo() *LeaderInfo {
+  return &LeaderInfo{}
+}
+
+
+func (p *LeaderInfo) GetPartID() nebula0.PartitionID {
+  return p.PartID
+}
+
+func (p *LeaderInfo) GetTerm() int64 {
+  return p.Term
+}
+func (p *LeaderInfo) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *LeaderInfo)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  temp := nebula0.PartitionID(v)
+  p.PartID = temp
+}
+  return nil
+}
+
+func (p *LeaderInfo)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Term = v
+}
+  return nil
+}
+
+func (p *LeaderInfo) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("LeaderInfo"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *LeaderInfo) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("part_id", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:part_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.PartID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.part_id (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:part_id: ", p), err) }
+  return err
+}
+
+func (p *LeaderInfo) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("term", thrift.I64, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:term: ", p), err) }
+  if err := oprot.WriteI64(int64(p.Term)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.term (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:term: ", p), err) }
+  return err
+}
+
+func (p *LeaderInfo) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  partIDVal := fmt.Sprintf("%v", p.PartID)
+  termVal := fmt.Sprintf("%v", p.Term)
+  return fmt.Sprintf("LeaderInfo({PartID:%s Term:%s})", partIDVal, termVal)
+}
+
+// Attributes:
 //  - Role
 //  - Host
 //  - ClusterID
@@ -11968,7 +12242,7 @@ type HBReq struct {
   Role HostRole `thrift:"role,1" db:"role" json:"role"`
   Host *nebula0.HostAddr `thrift:"host,2" db:"host" json:"host"`
   ClusterID ClusterID `thrift:"cluster_id,3" db:"cluster_id" json:"cluster_id"`
-  LeaderPartIds map[nebula0.GraphSpaceID][]nebula0.PartitionID `thrift:"leader_partIds,4" db:"leader_partIds" json:"leader_partIds,omitempty"`
+  LeaderPartIds map[nebula0.GraphSpaceID][]*LeaderInfo `thrift:"leader_partIds,4" db:"leader_partIds" json:"leader_partIds,omitempty"`
   GitInfoSha []byte `thrift:"git_info_sha,5" db:"git_info_sha" json:"git_info_sha"`
 }
 
@@ -11993,9 +12267,9 @@ return p.Host
 func (p *HBReq) GetClusterID() ClusterID {
   return p.ClusterID
 }
-var HBReq_LeaderPartIds_DEFAULT map[nebula0.GraphSpaceID][]nebula0.PartitionID
+var HBReq_LeaderPartIds_DEFAULT map[nebula0.GraphSpaceID][]*LeaderInfo
 
-func (p *HBReq) GetLeaderPartIds() map[nebula0.GraphSpaceID][]nebula0.PartitionID {
+func (p *HBReq) GetLeaderPartIds() map[nebula0.GraphSpaceID][]*LeaderInfo {
   return p.LeaderPartIds
 }
 
@@ -12091,7 +12365,7 @@ func (p *HBReq)  ReadField4(iprot thrift.Protocol) error {
   if err != nil {
     return thrift.PrependError("error reading map begin: ", err)
   }
-  tMap := make(map[nebula0.GraphSpaceID][]nebula0.PartitionID, size)
+  tMap := make(map[nebula0.GraphSpaceID][]*LeaderInfo, size)
   p.LeaderPartIds =  tMap
   for i := 0; i < size; i ++ {
 var _key40 nebula0.GraphSpaceID
@@ -12105,16 +12379,13 @@ var _key40 nebula0.GraphSpaceID
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
     }
-    tSlice := make([]nebula0.PartitionID, 0, size)
+    tSlice := make([]*LeaderInfo, 0, size)
     _val41 :=  tSlice
     for i := 0; i < size; i ++ {
-var _elem42 nebula0.PartitionID
-      if v, err := iprot.ReadI32(); err != nil {
-      return thrift.PrependError("error reading field 0: ", err)
-} else {
-      temp := nebula0.PartitionID(v)
-      _elem42 = temp
-}
+      _elem42 := NewLeaderInfo()
+      if err := _elem42.Read(iprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem42), err)
+      }
       _val41 = append(_val41, _elem42)
     }
     if err := iprot.ReadListEnd(); err != nil {
@@ -12193,12 +12464,13 @@ func (p *HBReq) writeField4(oprot thrift.Protocol) (err error) {
     for k, v := range p.LeaderPartIds {
       if err := oprot.WriteI32(int32(k)); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
-      if err := oprot.WriteListBegin(thrift.I32, len(v)); err != nil {
+      if err := oprot.WriteListBegin(thrift.STRUCT, len(v)); err != nil {
         return thrift.PrependError("error writing list begin: ", err)
       }
       for _, v := range v {
-        if err := oprot.WriteI32(int32(v)); err != nil {
-        return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+        if err := v.Write(oprot); err != nil {
+          return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+        }
       }
       if err := oprot.WriteListEnd(); err != nil {
         return thrift.PrependError("error writing list end: ", err)
@@ -12382,12 +12654,14 @@ func (p *IndexFieldDef) String() string {
 //  - TagName
 //  - Fields
 //  - IfNotExists
+//  - Comment
 type CreateTagIndexReq struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
   IndexName []byte `thrift:"index_name,2" db:"index_name" json:"index_name"`
   TagName []byte `thrift:"tag_name,3" db:"tag_name" json:"tag_name"`
   Fields []*IndexFieldDef `thrift:"fields,4" db:"fields" json:"fields"`
   IfNotExists bool `thrift:"if_not_exists,5" db:"if_not_exists" json:"if_not_exists"`
+  Comment []byte `thrift:"comment,6" db:"comment" json:"comment,omitempty"`
 }
 
 func NewCreateTagIndexReq() *CreateTagIndexReq {
@@ -12414,6 +12688,15 @@ func (p *CreateTagIndexReq) GetFields() []*IndexFieldDef {
 func (p *CreateTagIndexReq) GetIfNotExists() bool {
   return p.IfNotExists
 }
+var CreateTagIndexReq_Comment_DEFAULT []byte
+
+func (p *CreateTagIndexReq) GetComment() []byte {
+  return p.Comment
+}
+func (p *CreateTagIndexReq) IsSetComment() bool {
+  return p != nil && p.Comment != nil
+}
+
 func (p *CreateTagIndexReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -12445,6 +12728,10 @@ func (p *CreateTagIndexReq) Read(iprot thrift.Protocol) error {
       }
     case 5:
       if err := p.ReadField5(iprot); err != nil {
+        return err
+      }
+    case 6:
+      if err := p.ReadField6(iprot); err != nil {
         return err
       }
     default:
@@ -12519,6 +12806,15 @@ func (p *CreateTagIndexReq)  ReadField5(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *CreateTagIndexReq)  ReadField6(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 6: ", err)
+} else {
+  p.Comment = v
+}
+  return nil
+}
+
 func (p *CreateTagIndexReq) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("CreateTagIndexReq"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
@@ -12527,6 +12823,7 @@ func (p *CreateTagIndexReq) Write(oprot thrift.Protocol) error {
   if err := p.writeField3(oprot); err != nil { return err }
   if err := p.writeField4(oprot); err != nil { return err }
   if err := p.writeField5(oprot); err != nil { return err }
+  if err := p.writeField6(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -12593,6 +12890,18 @@ func (p *CreateTagIndexReq) writeField5(oprot thrift.Protocol) (err error) {
   return err
 }
 
+func (p *CreateTagIndexReq) writeField6(oprot thrift.Protocol) (err error) {
+  if p.IsSetComment() {
+    if err := oprot.WriteFieldBegin("comment", thrift.STRING, 6); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 6:comment: ", p), err) }
+    if err := oprot.WriteBinary(p.Comment); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.comment (6) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 6:comment: ", p), err) }
+  }
+  return err
+}
+
 func (p *CreateTagIndexReq) String() string {
   if p == nil {
     return "<nil>"
@@ -12603,7 +12912,8 @@ func (p *CreateTagIndexReq) String() string {
   tagNameVal := fmt.Sprintf("%v", p.TagName)
   fieldsVal := fmt.Sprintf("%v", p.Fields)
   ifNotExistsVal := fmt.Sprintf("%v", p.IfNotExists)
-  return fmt.Sprintf("CreateTagIndexReq({SpaceID:%s IndexName:%s TagName:%s Fields:%s IfNotExists:%s})", spaceIDVal, indexNameVal, tagNameVal, fieldsVal, ifNotExistsVal)
+  commentVal := fmt.Sprintf("%v", p.Comment)
+  return fmt.Sprintf("CreateTagIndexReq({SpaceID:%s IndexName:%s TagName:%s Fields:%s IfNotExists:%s Comment:%s})", spaceIDVal, indexNameVal, tagNameVal, fieldsVal, ifNotExistsVal, commentVal)
 }
 
 // Attributes:
@@ -13320,12 +13630,14 @@ func (p *ListTagIndexesResp) String() string {
 //  - EdgeName
 //  - Fields
 //  - IfNotExists
+//  - Comment
 type CreateEdgeIndexReq struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
   IndexName []byte `thrift:"index_name,2" db:"index_name" json:"index_name"`
   EdgeName []byte `thrift:"edge_name,3" db:"edge_name" json:"edge_name"`
   Fields []*IndexFieldDef `thrift:"fields,4" db:"fields" json:"fields"`
   IfNotExists bool `thrift:"if_not_exists,5" db:"if_not_exists" json:"if_not_exists"`
+  Comment []byte `thrift:"comment,6" db:"comment" json:"comment,omitempty"`
 }
 
 func NewCreateEdgeIndexReq() *CreateEdgeIndexReq {
@@ -13352,6 +13664,15 @@ func (p *CreateEdgeIndexReq) GetFields() []*IndexFieldDef {
 func (p *CreateEdgeIndexReq) GetIfNotExists() bool {
   return p.IfNotExists
 }
+var CreateEdgeIndexReq_Comment_DEFAULT []byte
+
+func (p *CreateEdgeIndexReq) GetComment() []byte {
+  return p.Comment
+}
+func (p *CreateEdgeIndexReq) IsSetComment() bool {
+  return p != nil && p.Comment != nil
+}
+
 func (p *CreateEdgeIndexReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -13383,6 +13704,10 @@ func (p *CreateEdgeIndexReq) Read(iprot thrift.Protocol) error {
       }
     case 5:
       if err := p.ReadField5(iprot); err != nil {
+        return err
+      }
+    case 6:
+      if err := p.ReadField6(iprot); err != nil {
         return err
       }
     default:
@@ -13457,6 +13782,15 @@ func (p *CreateEdgeIndexReq)  ReadField5(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *CreateEdgeIndexReq)  ReadField6(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 6: ", err)
+} else {
+  p.Comment = v
+}
+  return nil
+}
+
 func (p *CreateEdgeIndexReq) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("CreateEdgeIndexReq"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
@@ -13465,6 +13799,7 @@ func (p *CreateEdgeIndexReq) Write(oprot thrift.Protocol) error {
   if err := p.writeField3(oprot); err != nil { return err }
   if err := p.writeField4(oprot); err != nil { return err }
   if err := p.writeField5(oprot); err != nil { return err }
+  if err := p.writeField6(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -13531,6 +13866,18 @@ func (p *CreateEdgeIndexReq) writeField5(oprot thrift.Protocol) (err error) {
   return err
 }
 
+func (p *CreateEdgeIndexReq) writeField6(oprot thrift.Protocol) (err error) {
+  if p.IsSetComment() {
+    if err := oprot.WriteFieldBegin("comment", thrift.STRING, 6); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 6:comment: ", p), err) }
+    if err := oprot.WriteBinary(p.Comment); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.comment (6) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 6:comment: ", p), err) }
+  }
+  return err
+}
+
 func (p *CreateEdgeIndexReq) String() string {
   if p == nil {
     return "<nil>"
@@ -13541,7 +13888,8 @@ func (p *CreateEdgeIndexReq) String() string {
   edgeNameVal := fmt.Sprintf("%v", p.EdgeName)
   fieldsVal := fmt.Sprintf("%v", p.Fields)
   ifNotExistsVal := fmt.Sprintf("%v", p.IfNotExists)
-  return fmt.Sprintf("CreateEdgeIndexReq({SpaceID:%s IndexName:%s EdgeName:%s Fields:%s IfNotExists:%s})", spaceIDVal, indexNameVal, edgeNameVal, fieldsVal, ifNotExistsVal)
+  commentVal := fmt.Sprintf("%v", p.Comment)
+  return fmt.Sprintf("CreateEdgeIndexReq({SpaceID:%s IndexName:%s EdgeName:%s Fields:%s IfNotExists:%s Comment:%s})", spaceIDVal, indexNameVal, edgeNameVal, fieldsVal, ifNotExistsVal, commentVal)
 }
 
 // Attributes:
