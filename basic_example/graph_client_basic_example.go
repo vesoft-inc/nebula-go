@@ -9,7 +9,7 @@ package main
 import (
 	"fmt"
 
-	nebula "github.com/vesoft-inc/nebula-go"
+	nebula "github.com/vesoft-inc/nebula-go/v2"
 )
 
 const (
