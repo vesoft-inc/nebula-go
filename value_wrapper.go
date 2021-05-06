@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/vesoft-inc/nebula-go/nebula"
+	"github.com/vesoft-inc/nebula-go/v2/nebula"
 )
 
 type ValueWrapper struct {
