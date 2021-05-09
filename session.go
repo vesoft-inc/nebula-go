@@ -28,7 +28,7 @@ type Session struct {
 // Execute() returns the result of given query as a ResultSet
 func (session *Session) Execute(stmt string) (*ResultSet, error) {
 	if session.connection == nil {
-		return nil, fmt.Errorf("Faied to execute: Session has been released")
+		return nil, fmt.Errorf("Failed to execute: Session has been released")
 	}
 	resp, err := session.connection.execute(session.sessionID, stmt)
 	if err == nil {
