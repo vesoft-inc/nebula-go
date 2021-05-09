@@ -107,28 +107,28 @@ func TestConfigs(t *testing.T) {
 
 	var configList = []PoolConfig{
 		// default
-		PoolConfig{
+		{
 			TimeOut:         0 * time.Millisecond,
 			IdleTime:        0 * time.Millisecond,
 			MaxConnPoolSize: 10,
 			MinConnPoolSize: 1,
 		},
 		// timeout < 0
-		PoolConfig{
+		{
 			TimeOut:         -1 * time.Millisecond,
 			IdleTime:        0 * time.Millisecond,
 			MaxConnPoolSize: 10,
 			MinConnPoolSize: 1,
 		},
 		// MaxConnPoolSize < 0
-		PoolConfig{
+		{
 			TimeOut:         0 * time.Millisecond,
 			IdleTime:        0 * time.Millisecond,
 			MaxConnPoolSize: -1,
 			MinConnPoolSize: 1,
 		},
 		// MinConnPoolSize < 0
-		PoolConfig{
+		{
 			TimeOut:         0 * time.Millisecond,
 			IdleTime:        0 * time.Millisecond,
 			MaxConnPoolSize: 1,
