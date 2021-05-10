@@ -107,28 +107,28 @@ func TestConfigs(t *testing.T) {
 
 	var configList = []PoolConfig{
 		// default
-		PoolConfig{
+		{
 			TimeOut:         0 * time.Millisecond,
 			IdleTime:        0 * time.Millisecond,
 			MaxConnPoolSize: 10,
 			MinConnPoolSize: 1,
 		},
 		// timeout < 0
-		PoolConfig{
+		{
 			TimeOut:         -1 * time.Millisecond,
 			IdleTime:        0 * time.Millisecond,
 			MaxConnPoolSize: 10,
 			MinConnPoolSize: 1,
 		},
 		// MaxConnPoolSize < 0
-		PoolConfig{
+		{
 			TimeOut:         0 * time.Millisecond,
 			IdleTime:        0 * time.Millisecond,
 			MaxConnPoolSize: -1,
 			MinConnPoolSize: 1,
 		},
 		// MinConnPoolSize < 0
-		PoolConfig{
+		{
 			TimeOut:         0 * time.Millisecond,
 			IdleTime:        0 * time.Millisecond,
 			MaxConnPoolSize: 1,
@@ -199,8 +199,8 @@ func TestAuthentication(t *testing.T) {
 
 func TestInvalidHostTimeout(t *testing.T) {
 	hostList := []HostAddress{
-		HostAddress{Host: "192.168.10.105", Port: 3699}, // Invalid host
-		HostAddress{Host: "127.0.0.1", Port: 3699},
+		{Host: "192.168.10.105", Port: 3699}, // Invalid host
+		{Host: "127.0.0.1", Port: 3699},
 	}
 
 	// Initialize connectin pool
