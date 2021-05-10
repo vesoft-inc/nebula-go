@@ -26,15 +26,15 @@ const (
 )
 
 var poolAddress = []HostAddress{
-	HostAddress{
+	{
 		Host: "127.0.0.1",
 		Port: 3699,
 	},
-	HostAddress{
+	{
 		Host: "127.0.0.1",
 		Port: 3700,
 	},
-	HostAddress{
+	{
 		Host: "127.0.0.1",
 		Port: 3701,
 	},
@@ -105,7 +105,7 @@ func TestConfigs(t *testing.T) {
 	hostList := []HostAddress{}
 	hostList = append(hostList, hostAdress)
 
-	var configList = []PoolConfig{
+	configList := []PoolConfig{
 		// default
 		{
 			TimeOut:         0 * time.Millisecond,
@@ -199,8 +199,8 @@ func TestAuthentication(t *testing.T) {
 
 func TestInvalidHostTimeout(t *testing.T) {
 	hostList := []HostAddress{
-		HostAddress{Host: "192.168.10.105", Port: 3699}, // Invalid host
-		HostAddress{Host: "127.0.0.1", Port: 3699},
+		{Host: "192.168.10.105", Port: 3699}, // Invalid host
+		{Host: "127.0.0.1", Port: 3699},
 	}
 
 	// Initialize connectin pool
@@ -466,7 +466,6 @@ func TestMultiThreads(t *testing.T) {
 			}
 			sessCh <- session
 		}(sessCh, &wg)
-
 	}
 	go func(sessCh <-chan *Session) {
 		for session := range sessCh {
@@ -492,7 +491,7 @@ func TestMultiThreads(t *testing.T) {
 
 func TestLoadbalancer(t *testing.T) {
 	hostList := poolAddress
-	var loadPerHost = make(map[HostAddress]int)
+	loadPerHost := make(map[HostAddress]int)
 	testPoolConfig := PoolConfig{
 		TimeOut:         0 * time.Millisecond,
 		IdleTime:        0 * time.Millisecond,
@@ -606,6 +605,7 @@ func checkResSetResp(t *testing.T, prefix string, err *ResultSet) {
 		t.Errorf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, err.GetErrorCode(), err.GetErrorMsg())
 	}
 }
+
 func checkConResp(t *testing.T, prefix string, err *graph.ExecutionResponse) {
 	if IsError(err) {
 		t.Errorf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, err.ErrorCode, err.ErrorMsg)

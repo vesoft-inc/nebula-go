@@ -73,7 +73,7 @@ const (
 
 func genResultSet(resp *graph.ExecutionResponse) *ResultSet {
 	var colNames []string
-	var colNameIndexMap = make(map[string]int)
+	colNameIndexMap := make(map[string]int)
 
 	if resp.Data == nil { // if resp.Data != nil then resp.Data.row and resp.Data.colNames wont be nil
 		return &ResultSet{
@@ -449,7 +449,7 @@ func (node Node) Keys(tagName string) ([]string, error) {
 	}
 	var propNameList []string
 	index := node.tagNameIndexMap[tagName]
-	for k, _ := range node.vertex.Tags[index].Props {
+	for k := range node.vertex.Tags[index].Props {
 		propNameList = append(propNameList, k)
 	}
 	return propNameList, nil
@@ -478,7 +478,7 @@ func (node Node) String() string {
 	for _, tag := range vertex.GetTags() {
 		kvs := tag.GetProps()
 		tagName := tag.GetName()
-		for k, _ := range kvs {
+		for k := range kvs {
 			keyList = append(keyList, k)
 		}
 		sort.Strings(keyList)
@@ -552,7 +552,7 @@ func (relationship Relationship) Properties() map[string]*ValueWrapper {
 // Returns a list of keys
 func (relationship Relationship) Keys() []string {
 	var keys []string
-	for key, _ := range relationship.edge.GetProps() {
+	for key := range relationship.edge.GetProps() {
 		keys = append(keys, key)
 	}
 	return keys
@@ -574,7 +574,7 @@ func (relationship Relationship) String() string {
 	var kvStr []string
 	var src string
 	var dst string
-	for k, _ := range edge.Props {
+	for k := range edge.Props {
 		keyList = append(keyList, k)
 	}
 	sort.Strings(keyList)
@@ -665,7 +665,7 @@ func (pathWrap *PathWrapper) String() string {
 	for _, step := range steps {
 		var keyList []string
 		var kvStr []string
-		for k, _ := range step.Props {
+		for k := range step.Props {
 			keyList = append(keyList, k)
 		}
 		sort.Strings(keyList)
@@ -775,7 +775,7 @@ func condEdgeLabel(condNode *graph.PlanNodeDescription, doBranch bool) string {
 }
 
 func nodeString(planNodeDesc *graph.PlanNodeDescription, planNodeName string) string {
-	var outputVar = graphvizString(string(planNodeDesc.GetOutputVar()))
+	outputVar := graphvizString(string(planNodeDesc.GetOutputVar()))
 	var inputVar string
 	if planNodeDesc.IsSetDescription() {
 		desc := planNodeDesc.GetDescription()
