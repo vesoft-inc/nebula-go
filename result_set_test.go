@@ -81,10 +81,10 @@ func TestAsString(t *testing.T) {
 }
 
 func TestAsList(t *testing.T) {
-	var valList = []*nebula.Value{
-		&nebula.Value{SVal: []byte("elem1")},
-		&nebula.Value{SVal: []byte("elem2")},
-		&nebula.Value{SVal: []byte("elem3")},
+	valList := []*nebula.Value{
+		{SVal: []byte("elem1")},
+		{SVal: []byte("elem2")},
+		{SVal: []byte("elem3")},
 	}
 	value := nebula.Value{
 		LVal: &nebula.NList{Values: valList},
@@ -104,10 +104,10 @@ func TestAsList(t *testing.T) {
 }
 
 func TestAsDedupList(t *testing.T) {
-	var valList = []*nebula.Value{
-		&nebula.Value{SVal: []byte("elem1")},
-		&nebula.Value{SVal: []byte("elem2")},
-		&nebula.Value{SVal: []byte("elem3")},
+	valList := []*nebula.Value{
+		{SVal: []byte("elem1")},
+		{SVal: []byte("elem2")},
+		{SVal: []byte("elem3")},
 	}
 	value := nebula.Value{
 		UVal: &nebula.NSet{Values: valList},
@@ -371,7 +371,8 @@ func TestResultSet(t *testing.T) {
 		nil,
 		nil,
 		nil,
-		nil}
+		nil,
+	}
 	resultSetWithNil := genResultSet(respWithNil)
 	assert.Equal(t, ErrorCode_E_STATEMENT_EMPTY, resultSetWithNil.GetErrorCode())
 	assert.Equal(t, int32(1000), resultSetWithNil.GetLatency())
@@ -382,22 +383,24 @@ func TestResultSet(t *testing.T) {
 
 	planDesc := graph.PlanDescription{
 		[]*graph.PlanNodeDescription{
-			&graph.PlanNodeDescription{
+			{
 				[]byte("Project"),
 				0,
 				[]byte("__Project_0"),
 				[]*graph.Pair{},
 				[]*graph.ProfilingStats{},
 				nil,
-				[]int64{2}},
-			&graph.PlanNodeDescription{
+				[]int64{2},
+			},
+			{
 				[]byte("Start"),
 				2,
 				[]byte("__Start_2"),
 				[]*graph.Pair{},
 				[]*graph.ProfilingStats{},
 				nil,
-				[]int64{}},
+				[]int64{},
+			},
 		},
 		map[int64]int64{0: 0, 2: 1},
 		[]byte("dot"),
@@ -411,7 +414,8 @@ func TestResultSet(t *testing.T) {
 		[]byte("test_space"),
 		[]byte("test_err_msg"),
 		&planDesc,
-		[]byte("test_comment")}
+		[]byte("test_comment"),
+	}
 	resultSet := genResultSet(resp)
 
 	assert.Equal(t, ErrorCode_SUCCEEDED, resultSet.GetErrorCode())
@@ -487,7 +491,8 @@ func TestAsStringTable(t *testing.T) {
 		[]byte("test_space"),
 		[]byte("test"),
 		graph.NewPlanDescription(),
-		[]byte("test_comment")}
+		[]byte("test_comment"),
+	}
 	resultSet := genResultSet(resp)
 
 	table := resultSet.AsStringTable()
@@ -552,7 +557,7 @@ func TestIntVid(t *testing.T) {
 
 func getVertex(vid string, tagNum int, propNum int) *nebula.Vertex {
 	var tags []*nebula.Tag
-	var vidVal = nebula.NewValue()
+	vidVal := nebula.NewValue()
 	vidVal.SVal = []byte(vid)
 
 	for i := 0; i < tagNum; i++ {
@@ -576,7 +581,7 @@ func getVertex(vid string, tagNum int, propNum int) *nebula.Vertex {
 
 func getVertexInt(vid int, tagNum int, propNum int) *nebula.Vertex {
 	var tags []*nebula.Tag
-	var vidVal = nebula.NewValue()
+	vidVal := nebula.NewValue()
 	newNum := new(int64)
 	*newNum = int64(vid)
 	vidVal.IVal = newNum
@@ -601,8 +606,8 @@ func getVertexInt(vid int, tagNum int, propNum int) *nebula.Vertex {
 }
 
 func getEdge(srcID string, dstID string, propNum int) *nebula.Edge {
-	var srcVidVal = nebula.NewValue()
-	var dstVidVal = nebula.NewValue()
+	srcVidVal := nebula.NewValue()
+	dstVidVal := nebula.NewValue()
 	srcVidVal.SVal = []byte(srcID)
 	dstVidVal.SVal = []byte(dstID)
 
@@ -659,17 +664,17 @@ func getDateset() *nebula.DataSet {
 		[]byte("col3_edge"),
 		[]byte("col4_path"),
 	}
-	var v1 = nebula.NewValue()
+	v1 := nebula.NewValue()
 	newNum := new(int64)
 	*newNum = int64(1)
 	v1.IVal = newNum
-	var v2 = nebula.NewValue()
+	v2 := nebula.NewValue()
 	v2.SVal = []byte("value1")
-	var v3 = nebula.NewValue()
+	v3 := nebula.NewValue()
 	v3.VVal = getVertex("Tom", 3, 5)
-	var v4 = nebula.NewValue()
+	v4 := nebula.NewValue()
 	v4.EVal = getEdge("Tom", "Lily", 5)
-	var v5 = nebula.NewValue()
+	v5 := nebula.NewValue()
 	v5.PVal = getPath("Tom", 3)
 
 	var valueList []*nebula.Value
@@ -686,7 +691,7 @@ func getDateset() *nebula.DataSet {
 }
 
 func setIVal(ival int) *nebula.Value {
-	var value = nebula.NewValue()
+	value := nebula.NewValue()
 	newNum := new(int64)
 	*newNum = int64(ival)
 	value.IVal = newNum
