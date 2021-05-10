@@ -306,7 +306,7 @@ func (res ResultSet) GetColNames() []string {
 // -11  ErrorCode_E_BAD_PERMISSION
 // -12  ErrorCode_E_SEMANTIC_ERROR
 func (res ResultSet) GetErrorCode() ErrorCode {
-	return ErrorCode(int64(res.resp.ErrorCode))
+	return ErrorCode(res.resp.ErrorCode)
 }
 
 func (res ResultSet) GetLatency() int32 {
