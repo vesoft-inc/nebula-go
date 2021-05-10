@@ -82,9 +82,9 @@ func TestAsString(t *testing.T) {
 
 func TestAsList(t *testing.T) {
 	var valList = []*nebula.Value{
-		&nebula.Value{SVal: []byte("elem1")},
-		&nebula.Value{SVal: []byte("elem2")},
-		&nebula.Value{SVal: []byte("elem3")},
+		{SVal: []byte("elem1")},
+		{SVal: []byte("elem2")},
+		{SVal: []byte("elem3")},
 	}
 	value := nebula.Value{
 		LVal: &nebula.NList{Values: valList},
@@ -382,7 +382,7 @@ func TestResultSet(t *testing.T) {
 
 	planDesc := graph.PlanDescription{
 		[]*graph.PlanNodeDescription{
-			&graph.PlanNodeDescription{
+			{
 				[]byte("Project"),
 				0,
 				[]byte("__Project_0"),
@@ -390,7 +390,7 @@ func TestResultSet(t *testing.T) {
 				[]*graph.ProfilingStats{},
 				nil,
 				[]int64{2}},
-			&graph.PlanNodeDescription{
+			{
 				[]byte("Start"),
 				2,
 				[]byte("__Start_2"),
