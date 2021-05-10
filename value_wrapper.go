@@ -263,7 +263,7 @@ func (valWarp ValueWrapper) String() string {
 		}
 		return fStr
 	} else if value.IsSetSVal() {
-		return fmt.Sprintf("%#v", string(value.GetSVal()))
+		return `"` + string(value.GetSVal()) + `"`
 	} else if value.IsSetDVal() { // Date yyyy-mm-dd
 		date := value.GetDVal()
 		return fmt.Sprintf("%d-%02d-%02d", date.Year, date.Month, date.Day)
