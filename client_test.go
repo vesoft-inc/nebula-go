@@ -199,8 +199,8 @@ func TestAuthentication(t *testing.T) {
 
 func TestInvalidHostTimeout(t *testing.T) {
 	hostList := []HostAddress{
-		HostAddress{Host: "192.168.10.105", Port: 3699}, // Invalid host
-		HostAddress{Host: "127.0.0.1", Port: 3699},
+		{Host: "192.168.10.105", Port: 3699}, // Invalid host
+		{Host: "127.0.0.1", Port: 3699},
 	}
 
 	// Initialize connectin pool

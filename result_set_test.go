@@ -105,9 +105,9 @@ func TestAsList(t *testing.T) {
 
 func TestAsDedupList(t *testing.T) {
 	var valList = []*nebula.Value{
-		&nebula.Value{SVal: []byte("elem1")},
-		&nebula.Value{SVal: []byte("elem2")},
-		&nebula.Value{SVal: []byte("elem3")},
+		{SVal: []byte("elem1")},
+		{SVal: []byte("elem2")},
+		{SVal: []byte("elem3")},
 	}
 	value := nebula.Value{
 		UVal: &nebula.NSet{Values: valList},
