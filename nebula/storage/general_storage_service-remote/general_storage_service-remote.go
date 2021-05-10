@@ -5,198 +5,200 @@
 package main
 
 import (
-        "flag"
-        "fmt"
-        "math"
-        "net"
-        "net/url"
-        "os"
-        "strconv"
-        "strings"
-        thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
-        "../../github.com/vesoft-inc/nebula-go/v2/nebula/storage"
+	"flag"
+	"fmt"
+	"math"
+	"net"
+	"net/url"
+	"os"
+	"strconv"
+	"strings"
+
+	"../../github.com/vesoft-inc/nebula-go/v2/nebula/storage"
+
+	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
 )
 
 func Usage() {
-  fmt.Fprintln(os.Stderr, "Usage of ", os.Args[0], " [-h host:port] [-u url] [-f[ramed]] function [arg1 [arg2...]]:")
-  flag.PrintDefaults()
-  fmt.Fprintln(os.Stderr, "\nFunctions:")
-  fmt.Fprintln(os.Stderr, "  KVGetResponse get(KVGetRequest req)")
-  fmt.Fprintln(os.Stderr, "  ExecResponse put(KVPutRequest req)")
-  fmt.Fprintln(os.Stderr, "  ExecResponse remove(KVRemoveRequest req)")
-  fmt.Fprintln(os.Stderr)
-  os.Exit(0)
+	fmt.Fprintln(os.Stderr, "Usage of ", os.Args[0], " [-h host:port] [-u url] [-f[ramed]] function [arg1 [arg2...]]:")
+	flag.PrintDefaults()
+	fmt.Fprintln(os.Stderr, "\nFunctions:")
+	fmt.Fprintln(os.Stderr, "  KVGetResponse get(KVGetRequest req)")
+	fmt.Fprintln(os.Stderr, "  ExecResponse put(KVPutRequest req)")
+	fmt.Fprintln(os.Stderr, "  ExecResponse remove(KVRemoveRequest req)")
+	fmt.Fprintln(os.Stderr)
+	os.Exit(0)
 }
 
 func main() {
-  flag.Usage = Usage
-  var host string
-  var port int
-  var protocol string
-  var urlString string
-  var framed bool
-  var useHttp bool
-  var parsedUrl url.URL
-  var trans thrift.Transport
-  _ = strconv.Atoi
-  _ = math.Abs
-  flag.Usage = Usage
-  flag.StringVar(&host, "h", "localhost", "Specify host")
-  flag.IntVar(&port, "p", 9090, "Specify port")
-  flag.StringVar(&protocol, "P", "binary", "Specify the protocol (binary, compact, simplejson, json)")
-  flag.StringVar(&urlString, "u", "", "Specify the url")
-  flag.BoolVar(&framed, "framed", false, "Use framed transport")
-  flag.BoolVar(&useHttp, "http", false, "Use http")
-  flag.Parse()
-  
-  if len(urlString) > 0 {
-    parsedUrl, err := url.Parse(urlString)
-    if err != nil {
-      fmt.Fprintln(os.Stderr, "Error parsing URL: ", err)
-      flag.Usage()
-    }
-    host = parsedUrl.Host
-    useHttp = len(parsedUrl.Scheme) <= 0 || parsedUrl.Scheme == "http"
-  } else if useHttp {
-    _, err := url.Parse(fmt.Sprint("http://", host, ":", port))
-    if err != nil {
-      fmt.Fprintln(os.Stderr, "Error parsing URL: ", err)
-      flag.Usage()
-    }
-  }
-  
-  cmd := flag.Arg(0)
-  var err error
-  if useHttp {
-    trans, err = thrift.NewHTTPPostClient(parsedUrl.String())
-  } else {
-    portStr := fmt.Sprint(port)
-    if strings.Contains(host, ":") {
-           host, portStr, err = net.SplitHostPort(host)
-           if err != nil {
-                   fmt.Fprintln(os.Stderr, "error with host:", err)
-                   os.Exit(1)
-           }
-    }
-    trans, err = thrift.NewSocket(thrift.SocketAddr(net.JoinHostPort(host, portStr)))
-    if err != nil {
-      fmt.Fprintln(os.Stderr, "error resolving address:", err)
-      os.Exit(1)
-    }
-    if framed {
-      trans = thrift.NewFramedTransport(trans)
-    }
-  }
-  if err != nil {
-    fmt.Fprintln(os.Stderr, "Error creating transport", err)
-    os.Exit(1)
-  }
-  defer trans.Close()
-  var protocolFactory thrift.ProtocolFactory
-  switch protocol {
-  case "compact":
-    protocolFactory = thrift.NewCompactProtocolFactory()
-    break
-  case "simplejson":
-    protocolFactory = thrift.NewSimpleJSONProtocolFactory()
-    break
-  case "json":
-    protocolFactory = thrift.NewJSONProtocolFactory()
-    break
-  case "binary", "":
-    protocolFactory = thrift.NewBinaryProtocolFactoryDefault()
-    break
-  default:
-    fmt.Fprintln(os.Stderr, "Invalid protocol specified: ", protocol)
-    Usage()
-    os.Exit(1)
-  }
-  client := storage.NewGeneralStorageServiceClientFactory(trans, protocolFactory)
-  if err := trans.Open(); err != nil {
-    fmt.Fprintln(os.Stderr, "Error opening socket to ", host, ":", port, " ", err)
-    os.Exit(1)
-  }
-  
-  switch cmd {
-  case "get":
-    if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Get requires 1 args")
-      flag.Usage()
-    }
-    arg251 := flag.Arg(1)
-    mbTrans252 := thrift.NewMemoryBufferLen(len(arg251))
-    defer mbTrans252.Close()
-    _, err253 := mbTrans252.WriteString(arg251)
-    if err253 != nil {
-      Usage()
-      return
-    }
-    factory254 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt255 := factory254.GetProtocol(mbTrans252)
-    argvalue0 := storage.NewKVGetRequest()
-    err256 := argvalue0.Read(jsProt255)
-    if err256 != nil {
-      Usage()
-      return
-    }
-    value0 := argvalue0
-    fmt.Print(client.Get(value0))
-    fmt.Print("\n")
-    break
-  case "put":
-    if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Put requires 1 args")
-      flag.Usage()
-    }
-    arg257 := flag.Arg(1)
-    mbTrans258 := thrift.NewMemoryBufferLen(len(arg257))
-    defer mbTrans258.Close()
-    _, err259 := mbTrans258.WriteString(arg257)
-    if err259 != nil {
-      Usage()
-      return
-    }
-    factory260 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt261 := factory260.GetProtocol(mbTrans258)
-    argvalue0 := storage.NewKVPutRequest()
-    err262 := argvalue0.Read(jsProt261)
-    if err262 != nil {
-      Usage()
-      return
-    }
-    value0 := argvalue0
-    fmt.Print(client.Put(value0))
-    fmt.Print("\n")
-    break
-  case "remove":
-    if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Remove requires 1 args")
-      flag.Usage()
-    }
-    arg263 := flag.Arg(1)
-    mbTrans264 := thrift.NewMemoryBufferLen(len(arg263))
-    defer mbTrans264.Close()
-    _, err265 := mbTrans264.WriteString(arg263)
-    if err265 != nil {
-      Usage()
-      return
-    }
-    factory266 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt267 := factory266.GetProtocol(mbTrans264)
-    argvalue0 := storage.NewKVRemoveRequest()
-    err268 := argvalue0.Read(jsProt267)
-    if err268 != nil {
-      Usage()
-      return
-    }
-    value0 := argvalue0
-    fmt.Print(client.Remove(value0))
-    fmt.Print("\n")
-    break
-  case "":
-    Usage()
-    break
-  default:
-    fmt.Fprintln(os.Stderr, "Invalid function ", cmd)
-  }
+	flag.Usage = Usage
+	var host string
+	var port int
+	var protocol string
+	var urlString string
+	var framed bool
+	var useHttp bool
+	var parsedUrl url.URL
+	var trans thrift.Transport
+	_ = strconv.Atoi
+	_ = math.Abs
+	flag.Usage = Usage
+	flag.StringVar(&host, "h", "localhost", "Specify host")
+	flag.IntVar(&port, "p", 9090, "Specify port")
+	flag.StringVar(&protocol, "P", "binary", "Specify the protocol (binary, compact, simplejson, json)")
+	flag.StringVar(&urlString, "u", "", "Specify the url")
+	flag.BoolVar(&framed, "framed", false, "Use framed transport")
+	flag.BoolVar(&useHttp, "http", false, "Use http")
+	flag.Parse()
+
+	if len(urlString) > 0 {
+		parsedUrl, err := url.Parse(urlString)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error parsing URL: ", err)
+			flag.Usage()
+		}
+		host = parsedUrl.Host
+		useHttp = len(parsedUrl.Scheme) <= 0 || parsedUrl.Scheme == "http"
+	} else if useHttp {
+		_, err := url.Parse(fmt.Sprint("http://", host, ":", port))
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error parsing URL: ", err)
+			flag.Usage()
+		}
+	}
+
+	cmd := flag.Arg(0)
+	var err error
+	if useHttp {
+		trans, err = thrift.NewHTTPPostClient(parsedUrl.String())
+	} else {
+		portStr := fmt.Sprint(port)
+		if strings.Contains(host, ":") {
+			host, portStr, err = net.SplitHostPort(host)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "error with host:", err)
+				os.Exit(1)
+			}
+		}
+		trans, err = thrift.NewSocket(thrift.SocketAddr(net.JoinHostPort(host, portStr)))
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error resolving address:", err)
+			os.Exit(1)
+		}
+		if framed {
+			trans = thrift.NewFramedTransport(trans)
+		}
+	}
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error creating transport", err)
+		os.Exit(1)
+	}
+	defer trans.Close()
+	var protocolFactory thrift.ProtocolFactory
+	switch protocol {
+	case "compact":
+		protocolFactory = thrift.NewCompactProtocolFactory()
+		break
+	case "simplejson":
+		protocolFactory = thrift.NewSimpleJSONProtocolFactory()
+		break
+	case "json":
+		protocolFactory = thrift.NewJSONProtocolFactory()
+		break
+	case "binary", "":
+		protocolFactory = thrift.NewBinaryProtocolFactoryDefault()
+		break
+	default:
+		fmt.Fprintln(os.Stderr, "Invalid protocol specified: ", protocol)
+		Usage()
+		os.Exit(1)
+	}
+	client := storage.NewGeneralStorageServiceClientFactory(trans, protocolFactory)
+	if err := trans.Open(); err != nil {
+		fmt.Fprintln(os.Stderr, "Error opening socket to ", host, ":", port, " ", err)
+		os.Exit(1)
+	}
+
+	switch cmd {
+	case "get":
+		if flag.NArg()-1 != 1 {
+			fmt.Fprintln(os.Stderr, "Get requires 1 args")
+			flag.Usage()
+		}
+		arg251 := flag.Arg(1)
+		mbTrans252 := thrift.NewMemoryBufferLen(len(arg251))
+		defer mbTrans252.Close()
+		_, err253 := mbTrans252.WriteString(arg251)
+		if err253 != nil {
+			Usage()
+			return
+		}
+		factory254 := thrift.NewSimpleJSONProtocolFactory()
+		jsProt255 := factory254.GetProtocol(mbTrans252)
+		argvalue0 := storage.NewKVGetRequest()
+		err256 := argvalue0.Read(jsProt255)
+		if err256 != nil {
+			Usage()
+			return
+		}
+		value0 := argvalue0
+		fmt.Print(client.Get(value0))
+		fmt.Print("\n")
+		break
+	case "put":
+		if flag.NArg()-1 != 1 {
+			fmt.Fprintln(os.Stderr, "Put requires 1 args")
+			flag.Usage()
+		}
+		arg257 := flag.Arg(1)
+		mbTrans258 := thrift.NewMemoryBufferLen(len(arg257))
+		defer mbTrans258.Close()
+		_, err259 := mbTrans258.WriteString(arg257)
+		if err259 != nil {
+			Usage()
+			return
+		}
+		factory260 := thrift.NewSimpleJSONProtocolFactory()
+		jsProt261 := factory260.GetProtocol(mbTrans258)
+		argvalue0 := storage.NewKVPutRequest()
+		err262 := argvalue0.Read(jsProt261)
+		if err262 != nil {
+			Usage()
+			return
+		}
+		value0 := argvalue0
+		fmt.Print(client.Put(value0))
+		fmt.Print("\n")
+		break
+	case "remove":
+		if flag.NArg()-1 != 1 {
+			fmt.Fprintln(os.Stderr, "Remove requires 1 args")
+			flag.Usage()
+		}
+		arg263 := flag.Arg(1)
+		mbTrans264 := thrift.NewMemoryBufferLen(len(arg263))
+		defer mbTrans264.Close()
+		_, err265 := mbTrans264.WriteString(arg263)
+		if err265 != nil {
+			Usage()
+			return
+		}
+		factory266 := thrift.NewSimpleJSONProtocolFactory()
+		jsProt267 := factory266.GetProtocol(mbTrans264)
+		argvalue0 := storage.NewKVRemoveRequest()
+		err268 := argvalue0.Read(jsProt267)
+		if err268 != nil {
+			Usage()
+			return
+		}
+		value0 := argvalue0
+		fmt.Print(client.Remove(value0))
+		fmt.Print("\n")
+		break
+	case "":
+		Usage()
+		break
+	default:
+		fmt.Fprintln(os.Stderr, "Invalid function ", cmd)
+	}
 }
