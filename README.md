@@ -11,7 +11,7 @@ To Use the console with a stable release of Nebula Graph, please check the branc
 | Client version | Nebula Service Version|
 |:--------------:|:-------------------:|
 |   **[v1.0.0](https://github.com/vesoft-inc/nebula-go/tree/v1.0)**              |       1.x.x         |
-|   **[v2.0.0-ga](https://github.com/vesoft-inc/nebula-go/tree/v2.0.0-ga)**      |       2.0.0-ga      |
+|   **[v2.0.0-ga](https://github.com/vesoft-inc/nebula-go/tree/v2.0.0-ga)**      |       2.0.0-ga, 2.0.1    |
 |   **[v2.0.0-master](https://github.com/vesoft-inc/nebula-go/tree/master)**     |       2.0.0-nightly |
 
 
