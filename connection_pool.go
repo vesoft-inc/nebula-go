@@ -257,7 +257,7 @@ func (pool *ConnectionPool) startCleaner() {
 }
 
 func (pool *ConnectionPool) connectionCleaner() {
-	const minInterval = time.Second
+	const minInterval = time.Minute
 
 	d := pool.conf.IdleTime
 
