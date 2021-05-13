@@ -26,15 +26,15 @@ const (
 )
 
 var poolAddress = []HostAddress{
-	HostAddress{
+	{
 		Host: "127.0.0.1",
 		Port: 3699,
 	},
-	HostAddress{
+	{
 		Host: "127.0.0.1",
 		Port: 3700,
 	},
-	HostAddress{
+	{
 		Host: "127.0.0.1",
 		Port: 3701,
 	},
