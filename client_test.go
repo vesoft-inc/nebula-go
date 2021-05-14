@@ -267,7 +267,7 @@ func TestDataIO(t *testing.T) {
 		}
 		checkResultSet(createSchema, resultSet)
 	}
-	time.Sleep(8 * time.Second)
+	time.Sleep(10 * time.Second)
 	{
 		insertVertexes := "INSERT VERTEX person(name, age) VALUES " +
 			"'Bob':('Bob', 10), " +
