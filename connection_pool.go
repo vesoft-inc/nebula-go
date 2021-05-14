@@ -23,6 +23,8 @@ type ConnectionPool struct {
 	hostIndex             int
 	log                   Logger
 	rwLock                sync.RWMutex
+	cleanerChan           chan struct{} //notify when pool is close
+	closed                bool
 }
 
 func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*ConnectionPool, error) {
@@ -49,6 +51,7 @@ func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*C
 	if err = newPool.initPool(); err != nil {
 		return nil, err
 	}
+	newPool.startCleaner()
 	return newPool, nil
 }
 
@@ -149,6 +152,7 @@ func (pool *ConnectionPool) release(conn *connection) {
 	defer pool.rwLock.Unlock()
 	// Remove connection from active queue and add into idle queue
 	removeFromList(&pool.activeConnectionQueue, conn)
+	conn.release()
 	pool.idleConnectionQueue.PushBack(conn)
 }
 
@@ -177,6 +181,11 @@ func (pool *ConnectionPool) Close() {
 	for i := 0; i < activeLen; i++ {
 		pool.activeConnectionQueue.Front().Value.(*connection).close()
 		pool.activeConnectionQueue.Remove(pool.activeConnectionQueue.Front())
+	}
+
+	pool.closed = true
+	if pool.cleanerChan != nil {
+		close(pool.cleanerChan)
 	}
 }
 
@@ -237,4 +246,73 @@ func (pool *ConnectionPool) createConnection() (*connection, error) {
 	}
 	// TODO: update workload
 	return newConn, nil
+}
+
+// startCleaner starts connectionCleaner if idleTime > 0.
+func (pool *ConnectionPool) startCleaner() {
+	if pool.conf.IdleTime > 0 && pool.cleanerChan == nil {
+		pool.cleanerChan = make(chan struct{}, 1)
+		go pool.connectionCleaner()
+	}
+}
+
+func (pool *ConnectionPool) connectionCleaner() {
+	const minInterval = time.Minute
+
+	d := pool.conf.IdleTime
+
+	if d < minInterval {
+		d = minInterval
+	}
+	t := time.NewTimer(d)
+
+	for {
+		select {
+		case <-t.C:
+		case <-pool.cleanerChan: // pool was closed.
+		}
+
+		pool.rwLock.Lock()
+
+		if pool.closed {
+			pool.cleanerChan = nil
+			pool.rwLock.Unlock()
+			return
+		}
+
+		closing := pool.timeoutConnectionList()
+		pool.rwLock.Unlock()
+		for _, c := range closing {
+			c.close()
+		}
+
+		t.Reset(d)
+	}
+}
+
+func (pool *ConnectionPool) timeoutConnectionList() (closing []*connection) {
+
+	if pool.conf.IdleTime > 0 {
+		expiredSince := time.Now().Add(-pool.conf.IdleTime)
+		var newEle *list.Element = nil
+
+		maxCleanSize := pool.idleConnectionQueue.Len() + pool.activeConnectionQueue.Len() - pool.conf.MinConnPoolSize
+
+		for ele := pool.idleConnectionQueue.Front(); ele != nil; {
+			if maxCleanSize == 0 {
+				return
+			}
+
+			newEle = ele.Next()
+			// Check connection is expired
+			if !ele.Value.(*connection).returnedAt.Before(expiredSince) {
+				return
+			}
+			closing = append(closing, ele.Value.(*connection))
+			pool.idleConnectionQueue.Remove(ele)
+			ele = newEle
+			maxCleanSize--
+		}
+	}
+	return
 }
