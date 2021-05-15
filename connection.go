@@ -17,12 +17,14 @@ import (
 
 type connection struct {
 	severAddress HostAddress
+	returnedAt   time.Time // the connection was created or returned.
 	graph        *graph.GraphServiceClient
 }
 
 func newConnection(severAddress HostAddress) *connection {
 	return &connection{
 		severAddress: severAddress,
+		returnedAt:   time.Now(),
 		graph:        nil,
 	}
 }
@@ -88,6 +90,11 @@ func (cn *connection) ping() bool {
 func (cn *connection) signOut(sessionID int64) error {
 	// Release session ID to graphd
 	return cn.graph.Signout(sessionID)
+}
+
+// Update returnedAt for cleaner
+func (cn *connection) release() {
+	cn.returnedAt = time.Now()
 }
 
 // Close transport

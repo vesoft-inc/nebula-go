@@ -26,15 +26,15 @@ const (
 )
 
 var poolAddress = []HostAddress{
-	HostAddress{
+	{
 		Host: "127.0.0.1",
 		Port: 3699,
 	},
-	HostAddress{
+	{
 		Host: "127.0.0.1",
 		Port: 3700,
 	},
-	HostAddress{
+	{
 		Host: "127.0.0.1",
 		Port: 3701,
 	},
@@ -526,6 +526,53 @@ func TestLoadbalancer(t *testing.T) {
 	for i := 0; i < len(sessionList); i++ {
 		sessionList[i].Release()
 	}
+}
+
+func TestIdleTimeoutCleaner(t *testing.T) {
+	hostList := poolAddress
+
+	idleTimeoutConfig := PoolConfig{
+		TimeOut:         0 * time.Millisecond,
+		IdleTime:        2 * time.Second,
+		MaxConnPoolSize: 30,
+		MinConnPoolSize: 6,
+	}
+
+	// Initialize connection pool
+	pool, err := NewConnectionPool(hostList, idleTimeoutConfig, nebulaLog)
+	if err != nil {
+		t.Fatalf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+	}
+	defer pool.Close()
+
+	var sessionList []*Session
+
+	// Create session
+	for i := 0; i < idleTimeoutConfig.MaxConnPoolSize; i++ {
+		session, err := pool.GetSession(username, password)
+		if err != nil {
+			t.Errorf("Fail to create a new session from connection pool, %s", err.Error())
+		}
+		sessionList = append(sessionList, session)
+	}
+
+	for i := range sessionList {
+		_, err := sessionList[i].Execute("SHOW HOSTS;")
+		if err != nil {
+			t.Errorf("Error info: %s", err.Error())
+			return
+		}
+		sessionList[i].Release()
+	}
+
+	time.Sleep(idleTimeoutConfig.IdleTime)
+	pool.cleanerChan <- struct{}{} // The minimum interval for cleanup is 1 minute, so in CI we need to trigger cleanup manually
+	time.Sleep(idleTimeoutConfig.IdleTime)
+
+	pool.rwLock.RLock()
+	assert.Equal(t, idleTimeoutConfig.MinConnPoolSize, pool.idleConnectionQueue.Len())
+	assert.Equal(t, 0, pool.activeConnectionQueue.Len())
+	pool.rwLock.RUnlock()
 }
 
 func TestReconnect(t *testing.T) {
