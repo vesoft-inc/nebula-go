@@ -24,113 +24,6 @@ var _ = context.Background
 var _ = nebula0.GoUnusedProtection__
 var GoUnusedProtection__ int;
 
-type ErrorCode int64
-const (
-  ErrorCode_SUCCEEDED ErrorCode = 0
-  ErrorCode_E_DISCONNECTED ErrorCode = -1
-  ErrorCode_E_FAIL_TO_CONNECT ErrorCode = -2
-  ErrorCode_E_RPC_FAILURE ErrorCode = -3
-  ErrorCode_E_BAD_USERNAME_PASSWORD ErrorCode = -4
-  ErrorCode_E_SESSION_INVALID ErrorCode = -5
-  ErrorCode_E_SESSION_TIMEOUT ErrorCode = -6
-  ErrorCode_E_SYNTAX_ERROR ErrorCode = -7
-  ErrorCode_E_EXECUTION_ERROR ErrorCode = -8
-  ErrorCode_E_STATEMENT_EMPTY ErrorCode = -9
-  ErrorCode_E_USER_NOT_FOUND ErrorCode = -10
-  ErrorCode_E_BAD_PERMISSION ErrorCode = -11
-  ErrorCode_E_SEMANTIC_ERROR ErrorCode = -12
-  ErrorCode_E_TOO_MANY_CONNECTIONS ErrorCode = -13
-  ErrorCode_E_PARTIAL_SUCCEEDED ErrorCode = -14
-)
-
-var ErrorCodeToName = map[ErrorCode]string {
-  ErrorCode_SUCCEEDED: "SUCCEEDED",
-  ErrorCode_E_DISCONNECTED: "E_DISCONNECTED",
-  ErrorCode_E_FAIL_TO_CONNECT: "E_FAIL_TO_CONNECT",
-  ErrorCode_E_RPC_FAILURE: "E_RPC_FAILURE",
-  ErrorCode_E_BAD_USERNAME_PASSWORD: "E_BAD_USERNAME_PASSWORD",
-  ErrorCode_E_SESSION_INVALID: "E_SESSION_INVALID",
-  ErrorCode_E_SESSION_TIMEOUT: "E_SESSION_TIMEOUT",
-  ErrorCode_E_SYNTAX_ERROR: "E_SYNTAX_ERROR",
-  ErrorCode_E_EXECUTION_ERROR: "E_EXECUTION_ERROR",
-  ErrorCode_E_STATEMENT_EMPTY: "E_STATEMENT_EMPTY",
-  ErrorCode_E_USER_NOT_FOUND: "E_USER_NOT_FOUND",
-  ErrorCode_E_BAD_PERMISSION: "E_BAD_PERMISSION",
-  ErrorCode_E_SEMANTIC_ERROR: "E_SEMANTIC_ERROR",
-  ErrorCode_E_TOO_MANY_CONNECTIONS: "E_TOO_MANY_CONNECTIONS",
-  ErrorCode_E_PARTIAL_SUCCEEDED: "E_PARTIAL_SUCCEEDED",
-}
-
-var ErrorCodeToValue = map[string]ErrorCode {
-  "SUCCEEDED": ErrorCode_SUCCEEDED,
-  "E_DISCONNECTED": ErrorCode_E_DISCONNECTED,
-  "E_FAIL_TO_CONNECT": ErrorCode_E_FAIL_TO_CONNECT,
-  "E_RPC_FAILURE": ErrorCode_E_RPC_FAILURE,
-  "E_BAD_USERNAME_PASSWORD": ErrorCode_E_BAD_USERNAME_PASSWORD,
-  "E_SESSION_INVALID": ErrorCode_E_SESSION_INVALID,
-  "E_SESSION_TIMEOUT": ErrorCode_E_SESSION_TIMEOUT,
-  "E_SYNTAX_ERROR": ErrorCode_E_SYNTAX_ERROR,
-  "E_EXECUTION_ERROR": ErrorCode_E_EXECUTION_ERROR,
-  "E_STATEMENT_EMPTY": ErrorCode_E_STATEMENT_EMPTY,
-  "E_USER_NOT_FOUND": ErrorCode_E_USER_NOT_FOUND,
-  "E_BAD_PERMISSION": ErrorCode_E_BAD_PERMISSION,
-  "E_SEMANTIC_ERROR": ErrorCode_E_SEMANTIC_ERROR,
-  "E_TOO_MANY_CONNECTIONS": ErrorCode_E_TOO_MANY_CONNECTIONS,
-  "E_PARTIAL_SUCCEEDED": ErrorCode_E_PARTIAL_SUCCEEDED,
-}
-
-var ErrorCodeNames = []string {
-  "SUCCEEDED",
-  "E_DISCONNECTED",
-  "E_FAIL_TO_CONNECT",
-  "E_RPC_FAILURE",
-  "E_BAD_USERNAME_PASSWORD",
-  "E_SESSION_INVALID",
-  "E_SESSION_TIMEOUT",
-  "E_SYNTAX_ERROR",
-  "E_EXECUTION_ERROR",
-  "E_STATEMENT_EMPTY",
-  "E_USER_NOT_FOUND",
-  "E_BAD_PERMISSION",
-  "E_SEMANTIC_ERROR",
-  "E_TOO_MANY_CONNECTIONS",
-  "E_PARTIAL_SUCCEEDED",
-}
-
-var ErrorCodeValues = []ErrorCode {
-  ErrorCode_SUCCEEDED,
-  ErrorCode_E_DISCONNECTED,
-  ErrorCode_E_FAIL_TO_CONNECT,
-  ErrorCode_E_RPC_FAILURE,
-  ErrorCode_E_BAD_USERNAME_PASSWORD,
-  ErrorCode_E_SESSION_INVALID,
-  ErrorCode_E_SESSION_TIMEOUT,
-  ErrorCode_E_SYNTAX_ERROR,
-  ErrorCode_E_EXECUTION_ERROR,
-  ErrorCode_E_STATEMENT_EMPTY,
-  ErrorCode_E_USER_NOT_FOUND,
-  ErrorCode_E_BAD_PERMISSION,
-  ErrorCode_E_SEMANTIC_ERROR,
-  ErrorCode_E_TOO_MANY_CONNECTIONS,
-  ErrorCode_E_PARTIAL_SUCCEEDED,
-}
-
-func (p ErrorCode) String() string {
-  if v, ok := ErrorCodeToName[p]; ok {
-    return v
-  }
-  return "<UNSET>"
-}
-
-func ErrorCodeFromString(s string) (ErrorCode, error) {
-  if v, ok := ErrorCodeToValue[s]; ok {
-    return v, nil
-  }
-  return ErrorCode(0), fmt.Errorf("not a valid ErrorCode string")
-}
-
-func ErrorCodePtr(v ErrorCode) *ErrorCode { return &v }
-
 // Attributes:
 //  - Rows
 //  - ExecDurationInUs
@@ -1250,7 +1143,7 @@ func (p *PlanDescription) String() string {
 //  - PlanDesc
 //  - Comment
 type ExecutionResponse struct {
-  ErrorCode ErrorCode `thrift:"error_code,1,required" db:"error_code" json:"error_code"`
+  ErrorCode nebula0.ErrorCode `thrift:"error_code,1,required" db:"error_code" json:"error_code"`
   LatencyInUs int32 `thrift:"latency_in_us,2,required" db:"latency_in_us" json:"latency_in_us"`
   Data *nebula0.DataSet `thrift:"data,3" db:"data" json:"data,omitempty"`
   SpaceName []byte `thrift:"space_name,4" db:"space_name" json:"space_name,omitempty"`
@@ -1264,7 +1157,7 @@ func NewExecutionResponse() *ExecutionResponse {
 }
 
 
-func (p *ExecutionResponse) GetErrorCode() ErrorCode {
+func (p *ExecutionResponse) GetErrorCode() nebula0.ErrorCode {
   return p.ErrorCode
 }
 
@@ -1390,7 +1283,7 @@ func (p *ExecutionResponse)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.ErrorCode = temp
 }
   return nil
@@ -1577,7 +1470,7 @@ func (p *ExecutionResponse) String() string {
 //  - ErrorMsg
 //  - SessionID
 type AuthResponse struct {
-  ErrorCode ErrorCode `thrift:"error_code,1,required" db:"error_code" json:"error_code"`
+  ErrorCode nebula0.ErrorCode `thrift:"error_code,1,required" db:"error_code" json:"error_code"`
   ErrorMsg []byte `thrift:"error_msg,2" db:"error_msg" json:"error_msg,omitempty"`
   SessionID *int64 `thrift:"session_id,3" db:"session_id" json:"session_id,omitempty"`
 }
@@ -1587,7 +1480,7 @@ func NewAuthResponse() *AuthResponse {
 }
 
 
-func (p *AuthResponse) GetErrorCode() ErrorCode {
+func (p *AuthResponse) GetErrorCode() nebula0.ErrorCode {
   return p.ErrorCode
 }
 var AuthResponse_ErrorMsg_DEFAULT []byte
@@ -1659,7 +1552,7 @@ func (p *AuthResponse)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.ErrorCode = temp
 }
   return nil

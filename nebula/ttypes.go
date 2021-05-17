@@ -93,6 +93,588 @@ func NullTypeFromString(s string) (NullType, error) {
 
 func NullTypePtr(v NullType) *NullType { return &v }
 
+type ErrorCode int64
+const (
+  ErrorCode_SUCCEEDED ErrorCode = 0
+  ErrorCode_E_DISCONNECTED ErrorCode = -1
+  ErrorCode_E_FAIL_TO_CONNECT ErrorCode = -2
+  ErrorCode_E_RPC_FAILURE ErrorCode = -3
+  ErrorCode_E_LEADER_CHANGED ErrorCode = -4
+  ErrorCode_E_SPACE_NOT_FOUND ErrorCode = -5
+  ErrorCode_E_TAG_NOT_FOUND ErrorCode = -6
+  ErrorCode_E_EDGE_NOT_FOUND ErrorCode = -7
+  ErrorCode_E_INDEX_NOT_FOUND ErrorCode = -8
+  ErrorCode_E_EDGE_PROP_NOT_FOUND ErrorCode = -9
+  ErrorCode_E_TAG_PROP_NOT_FOUND ErrorCode = -10
+  ErrorCode_E_ROLE_NOT_FOUND ErrorCode = -11
+  ErrorCode_E_CONFIG_NOT_FOUND ErrorCode = -12
+  ErrorCode_E_GROUP_NOT_FOUND ErrorCode = -13
+  ErrorCode_E_ZONE_NOT_FOUND ErrorCode = -14
+  ErrorCode_E_LISTENER_NOT_FOUND ErrorCode = -15
+  ErrorCode_E_PART_NOT_FOUND ErrorCode = -16
+  ErrorCode_E_KEY_NOT_FOUND ErrorCode = -17
+  ErrorCode_E_USER_NOT_FOUND ErrorCode = -18
+  ErrorCode_E_BACKUP_FAILED ErrorCode = -24
+  ErrorCode_E_BACKUP_EMPTY_TABLE ErrorCode = -25
+  ErrorCode_E_BACKUP_TABLE_FAILED ErrorCode = -26
+  ErrorCode_E_PARTIAL_RESULT ErrorCode = -27
+  ErrorCode_E_REBUILD_INDEX_FAILED ErrorCode = -28
+  ErrorCode_E_INVALID_PASSWORD ErrorCode = -29
+  ErrorCode_E_FAILED_GET_ABS_PATH ErrorCode = -30
+  ErrorCode_E_BAD_USERNAME_PASSWORD ErrorCode = -1001
+  ErrorCode_E_SESSION_INVALID ErrorCode = -1002
+  ErrorCode_E_SESSION_TIMEOUT ErrorCode = -1003
+  ErrorCode_E_SYNTAX_ERROR ErrorCode = -1004
+  ErrorCode_E_EXECUTION_ERROR ErrorCode = -1005
+  ErrorCode_E_STATEMENT_EMPTY ErrorCode = -1006
+  ErrorCode_E_BAD_PERMISSION ErrorCode = -1008
+  ErrorCode_E_SEMANTIC_ERROR ErrorCode = -1009
+  ErrorCode_E_TOO_MANY_CONNECTIONS ErrorCode = -1010
+  ErrorCode_E_PARTIAL_SUCCEEDED ErrorCode = -1011
+  ErrorCode_E_NO_HOSTS ErrorCode = -2001
+  ErrorCode_E_EXISTED ErrorCode = -2002
+  ErrorCode_E_INVALID_HOST ErrorCode = -2003
+  ErrorCode_E_UNSUPPORTED ErrorCode = -2004
+  ErrorCode_E_NOT_DROP ErrorCode = -2005
+  ErrorCode_E_BALANCER_RUNNING ErrorCode = -2006
+  ErrorCode_E_CONFIG_IMMUTABLE ErrorCode = -2007
+  ErrorCode_E_CONFLICT ErrorCode = -2008
+  ErrorCode_E_INVALID_PARM ErrorCode = -2009
+  ErrorCode_E_WRONGCLUSTER ErrorCode = -2010
+  ErrorCode_E_STORE_FAILURE ErrorCode = -2021
+  ErrorCode_E_STORE_SEGMENT_ILLEGAL ErrorCode = -2022
+  ErrorCode_E_BAD_BALANCE_PLAN ErrorCode = -2023
+  ErrorCode_E_BALANCED ErrorCode = -2024
+  ErrorCode_E_NO_RUNNING_BALANCE_PLAN ErrorCode = -2025
+  ErrorCode_E_NO_VALID_HOST ErrorCode = -2026
+  ErrorCode_E_CORRUPTTED_BALANCE_PLAN ErrorCode = -2027
+  ErrorCode_E_NO_INVALID_BALANCE_PLAN ErrorCode = -2028
+  ErrorCode_E_IMPROPER_ROLE ErrorCode = -2030
+  ErrorCode_E_INVALID_PARTITION_NUM ErrorCode = -2031
+  ErrorCode_E_INVALID_REPLICA_FACTOR ErrorCode = -2032
+  ErrorCode_E_INVALID_CHARSET ErrorCode = -2033
+  ErrorCode_E_INVALID_COLLATE ErrorCode = -2034
+  ErrorCode_E_CHARSET_COLLATE_NOT_MATCH ErrorCode = -2035
+  ErrorCode_E_SNAPSHOT_FAILURE ErrorCode = -2040
+  ErrorCode_E_BLOCK_WRITE_FAILURE ErrorCode = -2041
+  ErrorCode_E_REBUILD_INDEX_FAILURE ErrorCode = -2042
+  ErrorCode_E_INDEX_WITH_TTL ErrorCode = -2043
+  ErrorCode_E_ADD_JOB_FAILURE ErrorCode = -2044
+  ErrorCode_E_STOP_JOB_FAILURE ErrorCode = -2045
+  ErrorCode_E_SAVE_JOB_FAILURE ErrorCode = -2046
+  ErrorCode_E_BALANCER_FAILURE ErrorCode = -2047
+  ErrorCode_E_JOB_NOT_FINISHED ErrorCode = -2048
+  ErrorCode_E_TASK_REPORT_OUT_DATE ErrorCode = -2049
+  ErrorCode_E_INVALID_JOB ErrorCode = -2065
+  ErrorCode_E_BACKUP_BUILDING_INDEX ErrorCode = -2066
+  ErrorCode_E_BACKUP_SPACE_NOT_FOUND ErrorCode = -2067
+  ErrorCode_E_RESTORE_FAILURE ErrorCode = -2068
+  ErrorCode_E_SESSION_NOT_FOUND ErrorCode = -2069
+  ErrorCode_E_LIST_CLUSTER_FAILURE ErrorCode = -2070
+  ErrorCode_E_LIST_CLUSTER_GET_ABS_PATH_FAILURE ErrorCode = -2071
+  ErrorCode_E_GET_META_DIR_FAILURE ErrorCode = -2072
+  ErrorCode_E_CONSENSUS_ERROR ErrorCode = -3001
+  ErrorCode_E_KEY_HAS_EXISTS ErrorCode = -3002
+  ErrorCode_E_DATA_TYPE_MISMATCH ErrorCode = -3003
+  ErrorCode_E_INVALID_FIELD_VALUE ErrorCode = -3004
+  ErrorCode_E_INVALID_OPERATION ErrorCode = -3005
+  ErrorCode_E_NOT_NULLABLE ErrorCode = -3006
+  ErrorCode_E_FIELD_UNSET ErrorCode = -3007
+  ErrorCode_E_OUT_OF_RANGE ErrorCode = -3008
+  ErrorCode_E_ATOMIC_OP_FAILED ErrorCode = -3009
+  ErrorCode_E_DATA_CONFLICT_ERROR ErrorCode = -3010
+  ErrorCode_E_IMPROPER_DATA_TYPE ErrorCode = -3021
+  ErrorCode_E_INVALID_SPACEVIDLEN ErrorCode = -3022
+  ErrorCode_E_INVALID_FILTER ErrorCode = -3031
+  ErrorCode_E_INVALID_UPDATER ErrorCode = -3032
+  ErrorCode_E_INVALID_STORE ErrorCode = -3033
+  ErrorCode_E_INVALID_PEER ErrorCode = -3034
+  ErrorCode_E_RETRY_EXHAUSTED ErrorCode = -3035
+  ErrorCode_E_TRANSFER_LEADER_FAILED ErrorCode = -3036
+  ErrorCode_E_INVALID_STAT_TYPE ErrorCode = -3037
+  ErrorCode_E_INVALID_VID ErrorCode = -3038
+  ErrorCode_E_NO_TRANSFORMED ErrorCode = -3039
+  ErrorCode_E_LOAD_META_FAILED ErrorCode = -3040
+  ErrorCode_E_FAILED_TO_CHECKPOINT ErrorCode = -3041
+  ErrorCode_E_CHECKPOINT_BLOCKED ErrorCode = -3042
+  ErrorCode_E_FILTER_OUT ErrorCode = -3043
+  ErrorCode_E_INVALID_DATA ErrorCode = -3044
+  ErrorCode_E_MUTATE_EDGE_CONFLICT ErrorCode = -3045
+  ErrorCode_E_MUTATE_TAG_CONFLICT ErrorCode = -3046
+  ErrorCode_E_OUTDATED_LOCK ErrorCode = -3047
+  ErrorCode_E_INVALID_TASK_PARA ErrorCode = -3051
+  ErrorCode_E_USER_CANCEL ErrorCode = -3052
+  ErrorCode_E_UNKNOWN ErrorCode = -8000
+)
+
+var ErrorCodeToName = map[ErrorCode]string {
+  ErrorCode_SUCCEEDED: "SUCCEEDED",
+  ErrorCode_E_DISCONNECTED: "E_DISCONNECTED",
+  ErrorCode_E_FAIL_TO_CONNECT: "E_FAIL_TO_CONNECT",
+  ErrorCode_E_RPC_FAILURE: "E_RPC_FAILURE",
+  ErrorCode_E_LEADER_CHANGED: "E_LEADER_CHANGED",
+  ErrorCode_E_SPACE_NOT_FOUND: "E_SPACE_NOT_FOUND",
+  ErrorCode_E_TAG_NOT_FOUND: "E_TAG_NOT_FOUND",
+  ErrorCode_E_EDGE_NOT_FOUND: "E_EDGE_NOT_FOUND",
+  ErrorCode_E_INDEX_NOT_FOUND: "E_INDEX_NOT_FOUND",
+  ErrorCode_E_EDGE_PROP_NOT_FOUND: "E_EDGE_PROP_NOT_FOUND",
+  ErrorCode_E_TAG_PROP_NOT_FOUND: "E_TAG_PROP_NOT_FOUND",
+  ErrorCode_E_ROLE_NOT_FOUND: "E_ROLE_NOT_FOUND",
+  ErrorCode_E_CONFIG_NOT_FOUND: "E_CONFIG_NOT_FOUND",
+  ErrorCode_E_GROUP_NOT_FOUND: "E_GROUP_NOT_FOUND",
+  ErrorCode_E_ZONE_NOT_FOUND: "E_ZONE_NOT_FOUND",
+  ErrorCode_E_LISTENER_NOT_FOUND: "E_LISTENER_NOT_FOUND",
+  ErrorCode_E_PART_NOT_FOUND: "E_PART_NOT_FOUND",
+  ErrorCode_E_KEY_NOT_FOUND: "E_KEY_NOT_FOUND",
+  ErrorCode_E_USER_NOT_FOUND: "E_USER_NOT_FOUND",
+  ErrorCode_E_BACKUP_FAILED: "E_BACKUP_FAILED",
+  ErrorCode_E_BACKUP_EMPTY_TABLE: "E_BACKUP_EMPTY_TABLE",
+  ErrorCode_E_BACKUP_TABLE_FAILED: "E_BACKUP_TABLE_FAILED",
+  ErrorCode_E_PARTIAL_RESULT: "E_PARTIAL_RESULT",
+  ErrorCode_E_REBUILD_INDEX_FAILED: "E_REBUILD_INDEX_FAILED",
+  ErrorCode_E_INVALID_PASSWORD: "E_INVALID_PASSWORD",
+  ErrorCode_E_FAILED_GET_ABS_PATH: "E_FAILED_GET_ABS_PATH",
+  ErrorCode_E_BAD_USERNAME_PASSWORD: "E_BAD_USERNAME_PASSWORD",
+  ErrorCode_E_SESSION_INVALID: "E_SESSION_INVALID",
+  ErrorCode_E_SESSION_TIMEOUT: "E_SESSION_TIMEOUT",
+  ErrorCode_E_SYNTAX_ERROR: "E_SYNTAX_ERROR",
+  ErrorCode_E_EXECUTION_ERROR: "E_EXECUTION_ERROR",
+  ErrorCode_E_STATEMENT_EMPTY: "E_STATEMENT_EMPTY",
+  ErrorCode_E_BAD_PERMISSION: "E_BAD_PERMISSION",
+  ErrorCode_E_SEMANTIC_ERROR: "E_SEMANTIC_ERROR",
+  ErrorCode_E_TOO_MANY_CONNECTIONS: "E_TOO_MANY_CONNECTIONS",
+  ErrorCode_E_PARTIAL_SUCCEEDED: "E_PARTIAL_SUCCEEDED",
+  ErrorCode_E_NO_HOSTS: "E_NO_HOSTS",
+  ErrorCode_E_EXISTED: "E_EXISTED",
+  ErrorCode_E_INVALID_HOST: "E_INVALID_HOST",
+  ErrorCode_E_UNSUPPORTED: "E_UNSUPPORTED",
+  ErrorCode_E_NOT_DROP: "E_NOT_DROP",
+  ErrorCode_E_BALANCER_RUNNING: "E_BALANCER_RUNNING",
+  ErrorCode_E_CONFIG_IMMUTABLE: "E_CONFIG_IMMUTABLE",
+  ErrorCode_E_CONFLICT: "E_CONFLICT",
+  ErrorCode_E_INVALID_PARM: "E_INVALID_PARM",
+  ErrorCode_E_WRONGCLUSTER: "E_WRONGCLUSTER",
+  ErrorCode_E_STORE_FAILURE: "E_STORE_FAILURE",
+  ErrorCode_E_STORE_SEGMENT_ILLEGAL: "E_STORE_SEGMENT_ILLEGAL",
+  ErrorCode_E_BAD_BALANCE_PLAN: "E_BAD_BALANCE_PLAN",
+  ErrorCode_E_BALANCED: "E_BALANCED",
+  ErrorCode_E_NO_RUNNING_BALANCE_PLAN: "E_NO_RUNNING_BALANCE_PLAN",
+  ErrorCode_E_NO_VALID_HOST: "E_NO_VALID_HOST",
+  ErrorCode_E_CORRUPTTED_BALANCE_PLAN: "E_CORRUPTTED_BALANCE_PLAN",
+  ErrorCode_E_NO_INVALID_BALANCE_PLAN: "E_NO_INVALID_BALANCE_PLAN",
+  ErrorCode_E_IMPROPER_ROLE: "E_IMPROPER_ROLE",
+  ErrorCode_E_INVALID_PARTITION_NUM: "E_INVALID_PARTITION_NUM",
+  ErrorCode_E_INVALID_REPLICA_FACTOR: "E_INVALID_REPLICA_FACTOR",
+  ErrorCode_E_INVALID_CHARSET: "E_INVALID_CHARSET",
+  ErrorCode_E_INVALID_COLLATE: "E_INVALID_COLLATE",
+  ErrorCode_E_CHARSET_COLLATE_NOT_MATCH: "E_CHARSET_COLLATE_NOT_MATCH",
+  ErrorCode_E_SNAPSHOT_FAILURE: "E_SNAPSHOT_FAILURE",
+  ErrorCode_E_BLOCK_WRITE_FAILURE: "E_BLOCK_WRITE_FAILURE",
+  ErrorCode_E_REBUILD_INDEX_FAILURE: "E_REBUILD_INDEX_FAILURE",
+  ErrorCode_E_INDEX_WITH_TTL: "E_INDEX_WITH_TTL",
+  ErrorCode_E_ADD_JOB_FAILURE: "E_ADD_JOB_FAILURE",
+  ErrorCode_E_STOP_JOB_FAILURE: "E_STOP_JOB_FAILURE",
+  ErrorCode_E_SAVE_JOB_FAILURE: "E_SAVE_JOB_FAILURE",
+  ErrorCode_E_BALANCER_FAILURE: "E_BALANCER_FAILURE",
+  ErrorCode_E_JOB_NOT_FINISHED: "E_JOB_NOT_FINISHED",
+  ErrorCode_E_TASK_REPORT_OUT_DATE: "E_TASK_REPORT_OUT_DATE",
+  ErrorCode_E_INVALID_JOB: "E_INVALID_JOB",
+  ErrorCode_E_BACKUP_BUILDING_INDEX: "E_BACKUP_BUILDING_INDEX",
+  ErrorCode_E_BACKUP_SPACE_NOT_FOUND: "E_BACKUP_SPACE_NOT_FOUND",
+  ErrorCode_E_RESTORE_FAILURE: "E_RESTORE_FAILURE",
+  ErrorCode_E_SESSION_NOT_FOUND: "E_SESSION_NOT_FOUND",
+  ErrorCode_E_LIST_CLUSTER_FAILURE: "E_LIST_CLUSTER_FAILURE",
+  ErrorCode_E_LIST_CLUSTER_GET_ABS_PATH_FAILURE: "E_LIST_CLUSTER_GET_ABS_PATH_FAILURE",
+  ErrorCode_E_GET_META_DIR_FAILURE: "E_GET_META_DIR_FAILURE",
+  ErrorCode_E_CONSENSUS_ERROR: "E_CONSENSUS_ERROR",
+  ErrorCode_E_KEY_HAS_EXISTS: "E_KEY_HAS_EXISTS",
+  ErrorCode_E_DATA_TYPE_MISMATCH: "E_DATA_TYPE_MISMATCH",
+  ErrorCode_E_INVALID_FIELD_VALUE: "E_INVALID_FIELD_VALUE",
+  ErrorCode_E_INVALID_OPERATION: "E_INVALID_OPERATION",
+  ErrorCode_E_NOT_NULLABLE: "E_NOT_NULLABLE",
+  ErrorCode_E_FIELD_UNSET: "E_FIELD_UNSET",
+  ErrorCode_E_OUT_OF_RANGE: "E_OUT_OF_RANGE",
+  ErrorCode_E_ATOMIC_OP_FAILED: "E_ATOMIC_OP_FAILED",
+  ErrorCode_E_DATA_CONFLICT_ERROR: "E_DATA_CONFLICT_ERROR",
+  ErrorCode_E_IMPROPER_DATA_TYPE: "E_IMPROPER_DATA_TYPE",
+  ErrorCode_E_INVALID_SPACEVIDLEN: "E_INVALID_SPACEVIDLEN",
+  ErrorCode_E_INVALID_FILTER: "E_INVALID_FILTER",
+  ErrorCode_E_INVALID_UPDATER: "E_INVALID_UPDATER",
+  ErrorCode_E_INVALID_STORE: "E_INVALID_STORE",
+  ErrorCode_E_INVALID_PEER: "E_INVALID_PEER",
+  ErrorCode_E_RETRY_EXHAUSTED: "E_RETRY_EXHAUSTED",
+  ErrorCode_E_TRANSFER_LEADER_FAILED: "E_TRANSFER_LEADER_FAILED",
+  ErrorCode_E_INVALID_STAT_TYPE: "E_INVALID_STAT_TYPE",
+  ErrorCode_E_INVALID_VID: "E_INVALID_VID",
+  ErrorCode_E_NO_TRANSFORMED: "E_NO_TRANSFORMED",
+  ErrorCode_E_LOAD_META_FAILED: "E_LOAD_META_FAILED",
+  ErrorCode_E_FAILED_TO_CHECKPOINT: "E_FAILED_TO_CHECKPOINT",
+  ErrorCode_E_CHECKPOINT_BLOCKED: "E_CHECKPOINT_BLOCKED",
+  ErrorCode_E_FILTER_OUT: "E_FILTER_OUT",
+  ErrorCode_E_INVALID_DATA: "E_INVALID_DATA",
+  ErrorCode_E_MUTATE_EDGE_CONFLICT: "E_MUTATE_EDGE_CONFLICT",
+  ErrorCode_E_MUTATE_TAG_CONFLICT: "E_MUTATE_TAG_CONFLICT",
+  ErrorCode_E_OUTDATED_LOCK: "E_OUTDATED_LOCK",
+  ErrorCode_E_INVALID_TASK_PARA: "E_INVALID_TASK_PARA",
+  ErrorCode_E_USER_CANCEL: "E_USER_CANCEL",
+  ErrorCode_E_UNKNOWN: "E_UNKNOWN",
+}
+
+var ErrorCodeToValue = map[string]ErrorCode {
+  "SUCCEEDED": ErrorCode_SUCCEEDED,
+  "E_DISCONNECTED": ErrorCode_E_DISCONNECTED,
+  "E_FAIL_TO_CONNECT": ErrorCode_E_FAIL_TO_CONNECT,
+  "E_RPC_FAILURE": ErrorCode_E_RPC_FAILURE,
+  "E_LEADER_CHANGED": ErrorCode_E_LEADER_CHANGED,
+  "E_SPACE_NOT_FOUND": ErrorCode_E_SPACE_NOT_FOUND,
+  "E_TAG_NOT_FOUND": ErrorCode_E_TAG_NOT_FOUND,
+  "E_EDGE_NOT_FOUND": ErrorCode_E_EDGE_NOT_FOUND,
+  "E_INDEX_NOT_FOUND": ErrorCode_E_INDEX_NOT_FOUND,
+  "E_EDGE_PROP_NOT_FOUND": ErrorCode_E_EDGE_PROP_NOT_FOUND,
+  "E_TAG_PROP_NOT_FOUND": ErrorCode_E_TAG_PROP_NOT_FOUND,
+  "E_ROLE_NOT_FOUND": ErrorCode_E_ROLE_NOT_FOUND,
+  "E_CONFIG_NOT_FOUND": ErrorCode_E_CONFIG_NOT_FOUND,
+  "E_GROUP_NOT_FOUND": ErrorCode_E_GROUP_NOT_FOUND,
+  "E_ZONE_NOT_FOUND": ErrorCode_E_ZONE_NOT_FOUND,
+  "E_LISTENER_NOT_FOUND": ErrorCode_E_LISTENER_NOT_FOUND,
+  "E_PART_NOT_FOUND": ErrorCode_E_PART_NOT_FOUND,
+  "E_KEY_NOT_FOUND": ErrorCode_E_KEY_NOT_FOUND,
+  "E_USER_NOT_FOUND": ErrorCode_E_USER_NOT_FOUND,
+  "E_BACKUP_FAILED": ErrorCode_E_BACKUP_FAILED,
+  "E_BACKUP_EMPTY_TABLE": ErrorCode_E_BACKUP_EMPTY_TABLE,
+  "E_BACKUP_TABLE_FAILED": ErrorCode_E_BACKUP_TABLE_FAILED,
+  "E_PARTIAL_RESULT": ErrorCode_E_PARTIAL_RESULT,
+  "E_REBUILD_INDEX_FAILED": ErrorCode_E_REBUILD_INDEX_FAILED,
+  "E_INVALID_PASSWORD": ErrorCode_E_INVALID_PASSWORD,
+  "E_FAILED_GET_ABS_PATH": ErrorCode_E_FAILED_GET_ABS_PATH,
+  "E_BAD_USERNAME_PASSWORD": ErrorCode_E_BAD_USERNAME_PASSWORD,
+  "E_SESSION_INVALID": ErrorCode_E_SESSION_INVALID,
+  "E_SESSION_TIMEOUT": ErrorCode_E_SESSION_TIMEOUT,
+  "E_SYNTAX_ERROR": ErrorCode_E_SYNTAX_ERROR,
+  "E_EXECUTION_ERROR": ErrorCode_E_EXECUTION_ERROR,
+  "E_STATEMENT_EMPTY": ErrorCode_E_STATEMENT_EMPTY,
+  "E_BAD_PERMISSION": ErrorCode_E_BAD_PERMISSION,
+  "E_SEMANTIC_ERROR": ErrorCode_E_SEMANTIC_ERROR,
+  "E_TOO_MANY_CONNECTIONS": ErrorCode_E_TOO_MANY_CONNECTIONS,
+  "E_PARTIAL_SUCCEEDED": ErrorCode_E_PARTIAL_SUCCEEDED,
+  "E_NO_HOSTS": ErrorCode_E_NO_HOSTS,
+  "E_EXISTED": ErrorCode_E_EXISTED,
+  "E_INVALID_HOST": ErrorCode_E_INVALID_HOST,
+  "E_UNSUPPORTED": ErrorCode_E_UNSUPPORTED,
+  "E_NOT_DROP": ErrorCode_E_NOT_DROP,
+  "E_BALANCER_RUNNING": ErrorCode_E_BALANCER_RUNNING,
+  "E_CONFIG_IMMUTABLE": ErrorCode_E_CONFIG_IMMUTABLE,
+  "E_CONFLICT": ErrorCode_E_CONFLICT,
+  "E_INVALID_PARM": ErrorCode_E_INVALID_PARM,
+  "E_WRONGCLUSTER": ErrorCode_E_WRONGCLUSTER,
+  "E_STORE_FAILURE": ErrorCode_E_STORE_FAILURE,
+  "E_STORE_SEGMENT_ILLEGAL": ErrorCode_E_STORE_SEGMENT_ILLEGAL,
+  "E_BAD_BALANCE_PLAN": ErrorCode_E_BAD_BALANCE_PLAN,
+  "E_BALANCED": ErrorCode_E_BALANCED,
+  "E_NO_RUNNING_BALANCE_PLAN": ErrorCode_E_NO_RUNNING_BALANCE_PLAN,
+  "E_NO_VALID_HOST": ErrorCode_E_NO_VALID_HOST,
+  "E_CORRUPTTED_BALANCE_PLAN": ErrorCode_E_CORRUPTTED_BALANCE_PLAN,
+  "E_NO_INVALID_BALANCE_PLAN": ErrorCode_E_NO_INVALID_BALANCE_PLAN,
+  "E_IMPROPER_ROLE": ErrorCode_E_IMPROPER_ROLE,
+  "E_INVALID_PARTITION_NUM": ErrorCode_E_INVALID_PARTITION_NUM,
+  "E_INVALID_REPLICA_FACTOR": ErrorCode_E_INVALID_REPLICA_FACTOR,
+  "E_INVALID_CHARSET": ErrorCode_E_INVALID_CHARSET,
+  "E_INVALID_COLLATE": ErrorCode_E_INVALID_COLLATE,
+  "E_CHARSET_COLLATE_NOT_MATCH": ErrorCode_E_CHARSET_COLLATE_NOT_MATCH,
+  "E_SNAPSHOT_FAILURE": ErrorCode_E_SNAPSHOT_FAILURE,
+  "E_BLOCK_WRITE_FAILURE": ErrorCode_E_BLOCK_WRITE_FAILURE,
+  "E_REBUILD_INDEX_FAILURE": ErrorCode_E_REBUILD_INDEX_FAILURE,
+  "E_INDEX_WITH_TTL": ErrorCode_E_INDEX_WITH_TTL,
+  "E_ADD_JOB_FAILURE": ErrorCode_E_ADD_JOB_FAILURE,
+  "E_STOP_JOB_FAILURE": ErrorCode_E_STOP_JOB_FAILURE,
+  "E_SAVE_JOB_FAILURE": ErrorCode_E_SAVE_JOB_FAILURE,
+  "E_BALANCER_FAILURE": ErrorCode_E_BALANCER_FAILURE,
+  "E_JOB_NOT_FINISHED": ErrorCode_E_JOB_NOT_FINISHED,
+  "E_TASK_REPORT_OUT_DATE": ErrorCode_E_TASK_REPORT_OUT_DATE,
+  "E_INVALID_JOB": ErrorCode_E_INVALID_JOB,
+  "E_BACKUP_BUILDING_INDEX": ErrorCode_E_BACKUP_BUILDING_INDEX,
+  "E_BACKUP_SPACE_NOT_FOUND": ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
+  "E_RESTORE_FAILURE": ErrorCode_E_RESTORE_FAILURE,
+  "E_SESSION_NOT_FOUND": ErrorCode_E_SESSION_NOT_FOUND,
+  "E_LIST_CLUSTER_FAILURE": ErrorCode_E_LIST_CLUSTER_FAILURE,
+  "E_LIST_CLUSTER_GET_ABS_PATH_FAILURE": ErrorCode_E_LIST_CLUSTER_GET_ABS_PATH_FAILURE,
+  "E_GET_META_DIR_FAILURE": ErrorCode_E_GET_META_DIR_FAILURE,
+  "E_CONSENSUS_ERROR": ErrorCode_E_CONSENSUS_ERROR,
+  "E_KEY_HAS_EXISTS": ErrorCode_E_KEY_HAS_EXISTS,
+  "E_DATA_TYPE_MISMATCH": ErrorCode_E_DATA_TYPE_MISMATCH,
+  "E_INVALID_FIELD_VALUE": ErrorCode_E_INVALID_FIELD_VALUE,
+  "E_INVALID_OPERATION": ErrorCode_E_INVALID_OPERATION,
+  "E_NOT_NULLABLE": ErrorCode_E_NOT_NULLABLE,
+  "E_FIELD_UNSET": ErrorCode_E_FIELD_UNSET,
+  "E_OUT_OF_RANGE": ErrorCode_E_OUT_OF_RANGE,
+  "E_ATOMIC_OP_FAILED": ErrorCode_E_ATOMIC_OP_FAILED,
+  "E_DATA_CONFLICT_ERROR": ErrorCode_E_DATA_CONFLICT_ERROR,
+  "E_IMPROPER_DATA_TYPE": ErrorCode_E_IMPROPER_DATA_TYPE,
+  "E_INVALID_SPACEVIDLEN": ErrorCode_E_INVALID_SPACEVIDLEN,
+  "E_INVALID_FILTER": ErrorCode_E_INVALID_FILTER,
+  "E_INVALID_UPDATER": ErrorCode_E_INVALID_UPDATER,
+  "E_INVALID_STORE": ErrorCode_E_INVALID_STORE,
+  "E_INVALID_PEER": ErrorCode_E_INVALID_PEER,
+  "E_RETRY_EXHAUSTED": ErrorCode_E_RETRY_EXHAUSTED,
+  "E_TRANSFER_LEADER_FAILED": ErrorCode_E_TRANSFER_LEADER_FAILED,
+  "E_INVALID_STAT_TYPE": ErrorCode_E_INVALID_STAT_TYPE,
+  "E_INVALID_VID": ErrorCode_E_INVALID_VID,
+  "E_NO_TRANSFORMED": ErrorCode_E_NO_TRANSFORMED,
+  "E_LOAD_META_FAILED": ErrorCode_E_LOAD_META_FAILED,
+  "E_FAILED_TO_CHECKPOINT": ErrorCode_E_FAILED_TO_CHECKPOINT,
+  "E_CHECKPOINT_BLOCKED": ErrorCode_E_CHECKPOINT_BLOCKED,
+  "E_FILTER_OUT": ErrorCode_E_FILTER_OUT,
+  "E_INVALID_DATA": ErrorCode_E_INVALID_DATA,
+  "E_MUTATE_EDGE_CONFLICT": ErrorCode_E_MUTATE_EDGE_CONFLICT,
+  "E_MUTATE_TAG_CONFLICT": ErrorCode_E_MUTATE_TAG_CONFLICT,
+  "E_OUTDATED_LOCK": ErrorCode_E_OUTDATED_LOCK,
+  "E_INVALID_TASK_PARA": ErrorCode_E_INVALID_TASK_PARA,
+  "E_USER_CANCEL": ErrorCode_E_USER_CANCEL,
+  "E_UNKNOWN": ErrorCode_E_UNKNOWN,
+}
+
+var ErrorCodeNames = []string {
+  "SUCCEEDED",
+  "E_DISCONNECTED",
+  "E_FAIL_TO_CONNECT",
+  "E_RPC_FAILURE",
+  "E_LEADER_CHANGED",
+  "E_SPACE_NOT_FOUND",
+  "E_TAG_NOT_FOUND",
+  "E_EDGE_NOT_FOUND",
+  "E_INDEX_NOT_FOUND",
+  "E_EDGE_PROP_NOT_FOUND",
+  "E_TAG_PROP_NOT_FOUND",
+  "E_ROLE_NOT_FOUND",
+  "E_CONFIG_NOT_FOUND",
+  "E_GROUP_NOT_FOUND",
+  "E_ZONE_NOT_FOUND",
+  "E_LISTENER_NOT_FOUND",
+  "E_PART_NOT_FOUND",
+  "E_KEY_NOT_FOUND",
+  "E_USER_NOT_FOUND",
+  "E_BACKUP_FAILED",
+  "E_BACKUP_EMPTY_TABLE",
+  "E_BACKUP_TABLE_FAILED",
+  "E_PARTIAL_RESULT",
+  "E_REBUILD_INDEX_FAILED",
+  "E_INVALID_PASSWORD",
+  "E_FAILED_GET_ABS_PATH",
+  "E_BAD_USERNAME_PASSWORD",
+  "E_SESSION_INVALID",
+  "E_SESSION_TIMEOUT",
+  "E_SYNTAX_ERROR",
+  "E_EXECUTION_ERROR",
+  "E_STATEMENT_EMPTY",
+  "E_BAD_PERMISSION",
+  "E_SEMANTIC_ERROR",
+  "E_TOO_MANY_CONNECTIONS",
+  "E_PARTIAL_SUCCEEDED",
+  "E_NO_HOSTS",
+  "E_EXISTED",
+  "E_INVALID_HOST",
+  "E_UNSUPPORTED",
+  "E_NOT_DROP",
+  "E_BALANCER_RUNNING",
+  "E_CONFIG_IMMUTABLE",
+  "E_CONFLICT",
+  "E_INVALID_PARM",
+  "E_WRONGCLUSTER",
+  "E_STORE_FAILURE",
+  "E_STORE_SEGMENT_ILLEGAL",
+  "E_BAD_BALANCE_PLAN",
+  "E_BALANCED",
+  "E_NO_RUNNING_BALANCE_PLAN",
+  "E_NO_VALID_HOST",
+  "E_CORRUPTTED_BALANCE_PLAN",
+  "E_NO_INVALID_BALANCE_PLAN",
+  "E_IMPROPER_ROLE",
+  "E_INVALID_PARTITION_NUM",
+  "E_INVALID_REPLICA_FACTOR",
+  "E_INVALID_CHARSET",
+  "E_INVALID_COLLATE",
+  "E_CHARSET_COLLATE_NOT_MATCH",
+  "E_SNAPSHOT_FAILURE",
+  "E_BLOCK_WRITE_FAILURE",
+  "E_REBUILD_INDEX_FAILURE",
+  "E_INDEX_WITH_TTL",
+  "E_ADD_JOB_FAILURE",
+  "E_STOP_JOB_FAILURE",
+  "E_SAVE_JOB_FAILURE",
+  "E_BALANCER_FAILURE",
+  "E_JOB_NOT_FINISHED",
+  "E_TASK_REPORT_OUT_DATE",
+  "E_INVALID_JOB",
+  "E_BACKUP_BUILDING_INDEX",
+  "E_BACKUP_SPACE_NOT_FOUND",
+  "E_RESTORE_FAILURE",
+  "E_SESSION_NOT_FOUND",
+  "E_LIST_CLUSTER_FAILURE",
+  "E_LIST_CLUSTER_GET_ABS_PATH_FAILURE",
+  "E_GET_META_DIR_FAILURE",
+  "E_CONSENSUS_ERROR",
+  "E_KEY_HAS_EXISTS",
+  "E_DATA_TYPE_MISMATCH",
+  "E_INVALID_FIELD_VALUE",
+  "E_INVALID_OPERATION",
+  "E_NOT_NULLABLE",
+  "E_FIELD_UNSET",
+  "E_OUT_OF_RANGE",
+  "E_ATOMIC_OP_FAILED",
+  "E_DATA_CONFLICT_ERROR",
+  "E_IMPROPER_DATA_TYPE",
+  "E_INVALID_SPACEVIDLEN",
+  "E_INVALID_FILTER",
+  "E_INVALID_UPDATER",
+  "E_INVALID_STORE",
+  "E_INVALID_PEER",
+  "E_RETRY_EXHAUSTED",
+  "E_TRANSFER_LEADER_FAILED",
+  "E_INVALID_STAT_TYPE",
+  "E_INVALID_VID",
+  "E_NO_TRANSFORMED",
+  "E_LOAD_META_FAILED",
+  "E_FAILED_TO_CHECKPOINT",
+  "E_CHECKPOINT_BLOCKED",
+  "E_FILTER_OUT",
+  "E_INVALID_DATA",
+  "E_MUTATE_EDGE_CONFLICT",
+  "E_MUTATE_TAG_CONFLICT",
+  "E_OUTDATED_LOCK",
+  "E_INVALID_TASK_PARA",
+  "E_USER_CANCEL",
+  "E_UNKNOWN",
+}
+
+var ErrorCodeValues = []ErrorCode {
+  ErrorCode_SUCCEEDED,
+  ErrorCode_E_DISCONNECTED,
+  ErrorCode_E_FAIL_TO_CONNECT,
+  ErrorCode_E_RPC_FAILURE,
+  ErrorCode_E_LEADER_CHANGED,
+  ErrorCode_E_SPACE_NOT_FOUND,
+  ErrorCode_E_TAG_NOT_FOUND,
+  ErrorCode_E_EDGE_NOT_FOUND,
+  ErrorCode_E_INDEX_NOT_FOUND,
+  ErrorCode_E_EDGE_PROP_NOT_FOUND,
+  ErrorCode_E_TAG_PROP_NOT_FOUND,
+  ErrorCode_E_ROLE_NOT_FOUND,
+  ErrorCode_E_CONFIG_NOT_FOUND,
+  ErrorCode_E_GROUP_NOT_FOUND,
+  ErrorCode_E_ZONE_NOT_FOUND,
+  ErrorCode_E_LISTENER_NOT_FOUND,
+  ErrorCode_E_PART_NOT_FOUND,
+  ErrorCode_E_KEY_NOT_FOUND,
+  ErrorCode_E_USER_NOT_FOUND,
+  ErrorCode_E_BACKUP_FAILED,
+  ErrorCode_E_BACKUP_EMPTY_TABLE,
+  ErrorCode_E_BACKUP_TABLE_FAILED,
+  ErrorCode_E_PARTIAL_RESULT,
+  ErrorCode_E_REBUILD_INDEX_FAILED,
+  ErrorCode_E_INVALID_PASSWORD,
+  ErrorCode_E_FAILED_GET_ABS_PATH,
+  ErrorCode_E_BAD_USERNAME_PASSWORD,
+  ErrorCode_E_SESSION_INVALID,
+  ErrorCode_E_SESSION_TIMEOUT,
+  ErrorCode_E_SYNTAX_ERROR,
+  ErrorCode_E_EXECUTION_ERROR,
+  ErrorCode_E_STATEMENT_EMPTY,
+  ErrorCode_E_BAD_PERMISSION,
+  ErrorCode_E_SEMANTIC_ERROR,
+  ErrorCode_E_TOO_MANY_CONNECTIONS,
+  ErrorCode_E_PARTIAL_SUCCEEDED,
+  ErrorCode_E_NO_HOSTS,
+  ErrorCode_E_EXISTED,
+  ErrorCode_E_INVALID_HOST,
+  ErrorCode_E_UNSUPPORTED,
+  ErrorCode_E_NOT_DROP,
+  ErrorCode_E_BALANCER_RUNNING,
+  ErrorCode_E_CONFIG_IMMUTABLE,
+  ErrorCode_E_CONFLICT,
+  ErrorCode_E_INVALID_PARM,
+  ErrorCode_E_WRONGCLUSTER,
+  ErrorCode_E_STORE_FAILURE,
+  ErrorCode_E_STORE_SEGMENT_ILLEGAL,
+  ErrorCode_E_BAD_BALANCE_PLAN,
+  ErrorCode_E_BALANCED,
+  ErrorCode_E_NO_RUNNING_BALANCE_PLAN,
+  ErrorCode_E_NO_VALID_HOST,
+  ErrorCode_E_CORRUPTTED_BALANCE_PLAN,
+  ErrorCode_E_NO_INVALID_BALANCE_PLAN,
+  ErrorCode_E_IMPROPER_ROLE,
+  ErrorCode_E_INVALID_PARTITION_NUM,
+  ErrorCode_E_INVALID_REPLICA_FACTOR,
+  ErrorCode_E_INVALID_CHARSET,
+  ErrorCode_E_INVALID_COLLATE,
+  ErrorCode_E_CHARSET_COLLATE_NOT_MATCH,
+  ErrorCode_E_SNAPSHOT_FAILURE,
+  ErrorCode_E_BLOCK_WRITE_FAILURE,
+  ErrorCode_E_REBUILD_INDEX_FAILURE,
+  ErrorCode_E_INDEX_WITH_TTL,
+  ErrorCode_E_ADD_JOB_FAILURE,
+  ErrorCode_E_STOP_JOB_FAILURE,
+  ErrorCode_E_SAVE_JOB_FAILURE,
+  ErrorCode_E_BALANCER_FAILURE,
+  ErrorCode_E_JOB_NOT_FINISHED,
+  ErrorCode_E_TASK_REPORT_OUT_DATE,
+  ErrorCode_E_INVALID_JOB,
+  ErrorCode_E_BACKUP_BUILDING_INDEX,
+  ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
+  ErrorCode_E_RESTORE_FAILURE,
+  ErrorCode_E_SESSION_NOT_FOUND,
+  ErrorCode_E_LIST_CLUSTER_FAILURE,
+  ErrorCode_E_LIST_CLUSTER_GET_ABS_PATH_FAILURE,
+  ErrorCode_E_GET_META_DIR_FAILURE,
+  ErrorCode_E_CONSENSUS_ERROR,
+  ErrorCode_E_KEY_HAS_EXISTS,
+  ErrorCode_E_DATA_TYPE_MISMATCH,
+  ErrorCode_E_INVALID_FIELD_VALUE,
+  ErrorCode_E_INVALID_OPERATION,
+  ErrorCode_E_NOT_NULLABLE,
+  ErrorCode_E_FIELD_UNSET,
+  ErrorCode_E_OUT_OF_RANGE,
+  ErrorCode_E_ATOMIC_OP_FAILED,
+  ErrorCode_E_DATA_CONFLICT_ERROR,
+  ErrorCode_E_IMPROPER_DATA_TYPE,
+  ErrorCode_E_INVALID_SPACEVIDLEN,
+  ErrorCode_E_INVALID_FILTER,
+  ErrorCode_E_INVALID_UPDATER,
+  ErrorCode_E_INVALID_STORE,
+  ErrorCode_E_INVALID_PEER,
+  ErrorCode_E_RETRY_EXHAUSTED,
+  ErrorCode_E_TRANSFER_LEADER_FAILED,
+  ErrorCode_E_INVALID_STAT_TYPE,
+  ErrorCode_E_INVALID_VID,
+  ErrorCode_E_NO_TRANSFORMED,
+  ErrorCode_E_LOAD_META_FAILED,
+  ErrorCode_E_FAILED_TO_CHECKPOINT,
+  ErrorCode_E_CHECKPOINT_BLOCKED,
+  ErrorCode_E_FILTER_OUT,
+  ErrorCode_E_INVALID_DATA,
+  ErrorCode_E_MUTATE_EDGE_CONFLICT,
+  ErrorCode_E_MUTATE_TAG_CONFLICT,
+  ErrorCode_E_OUTDATED_LOCK,
+  ErrorCode_E_INVALID_TASK_PARA,
+  ErrorCode_E_USER_CANCEL,
+  ErrorCode_E_UNKNOWN,
+}
+
+func (p ErrorCode) String() string {
+  if v, ok := ErrorCodeToName[p]; ok {
+    return v
+  }
+  return "<UNSET>"
+}
+
+func ErrorCodeFromString(s string) (ErrorCode, error) {
+  if v, ok := ErrorCodeToValue[s]; ok {
+    return v, nil
+  }
+  return ErrorCode(0), fmt.Errorf("not a valid ErrorCode string")
+}
+
+func ErrorCodePtr(v ErrorCode) *ErrorCode { return &v }
+
 type GraphSpaceID = int32
 
 func GraphSpaceIDPtr(v GraphSpaceID) *GraphSpaceID { return &v }
@@ -3844,5 +4426,135 @@ func (p *PartitionBackupInfo) String() string {
 
   infoVal := fmt.Sprintf("%v", p.Info)
   return fmt.Sprintf("PartitionBackupInfo({Info:%s})", infoVal)
+}
+
+// Attributes:
+//  - PartitionInfo
+//  - Path
+type CheckpointInfo struct {
+  PartitionInfo *PartitionBackupInfo `thrift:"partition_info,1" db:"partition_info" json:"partition_info"`
+  Path []byte `thrift:"path,2" db:"path" json:"path"`
+}
+
+func NewCheckpointInfo() *CheckpointInfo {
+  return &CheckpointInfo{
+    PartitionInfo: NewPartitionBackupInfo(),
+  }
+}
+
+var CheckpointInfo_PartitionInfo_DEFAULT *PartitionBackupInfo
+func (p *CheckpointInfo) GetPartitionInfo() *PartitionBackupInfo {
+  if !p.IsSetPartitionInfo() {
+    return CheckpointInfo_PartitionInfo_DEFAULT
+  }
+return p.PartitionInfo
+}
+
+func (p *CheckpointInfo) GetPath() []byte {
+  return p.Path
+}
+func (p *CheckpointInfo) IsSetPartitionInfo() bool {
+  return p != nil && p.PartitionInfo != nil
+}
+
+func (p *CheckpointInfo) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CheckpointInfo)  ReadField1(iprot thrift.Protocol) error {
+  p.PartitionInfo = NewPartitionBackupInfo()
+  if err := p.PartitionInfo.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.PartitionInfo), err)
+  }
+  return nil
+}
+
+func (p *CheckpointInfo)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Path = v
+}
+  return nil
+}
+
+func (p *CheckpointInfo) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("CheckpointInfo"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CheckpointInfo) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("partition_info", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:partition_info: ", p), err) }
+  if err := p.PartitionInfo.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.PartitionInfo), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:partition_info: ", p), err) }
+  return err
+}
+
+func (p *CheckpointInfo) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("path", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:path: ", p), err) }
+  if err := oprot.WriteBinary(p.Path); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.path (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:path: ", p), err) }
+  return err
+}
+
+func (p *CheckpointInfo) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var partitionInfoVal string
+  if p.PartitionInfo == nil {
+    partitionInfoVal = "<nil>"
+  } else {
+    partitionInfoVal = fmt.Sprintf("%v", p.PartitionInfo)
+  }
+  pathVal := fmt.Sprintf("%v", p.Path)
+  return fmt.Sprintf("CheckpointInfo({PartitionInfo:%s Path:%s})", partitionInfoVal, pathVal)
 }
 

@@ -26,278 +26,6 @@ var _ = nebula0.GoUnusedProtection__
 var _ = meta1.GoUnusedProtection__
 var GoUnusedProtection__ int;
 
-type ErrorCode int64
-const (
-  ErrorCode_SUCCEEDED ErrorCode = 0
-  ErrorCode_E_DISCONNECTED ErrorCode = -1
-  ErrorCode_E_FAILED_TO_CONNECT ErrorCode = -2
-  ErrorCode_E_RPC_FAILURE ErrorCode = -3
-  ErrorCode_E_LEADER_CHANGED ErrorCode = -11
-  ErrorCode_E_KEY_HAS_EXISTS ErrorCode = -12
-  ErrorCode_E_SPACE_NOT_FOUND ErrorCode = -13
-  ErrorCode_E_PART_NOT_FOUND ErrorCode = -14
-  ErrorCode_E_KEY_NOT_FOUND ErrorCode = -15
-  ErrorCode_E_CONSENSUS_ERROR ErrorCode = -16
-  ErrorCode_E_DATA_TYPE_MISMATCH ErrorCode = -17
-  ErrorCode_E_INVALID_FIELD_VALUE ErrorCode = -18
-  ErrorCode_E_REBUILD_INDEX_FAILED ErrorCode = -19
-  ErrorCode_E_INVALID_OPERATION ErrorCode = -20
-  ErrorCode_E_NOT_NULLABLE ErrorCode = -21
-  ErrorCode_E_FIELD_UNSET ErrorCode = -22
-  ErrorCode_E_OUT_OF_RANGE ErrorCode = -23
-  ErrorCode_E_ATOMIC_OP_FAILED ErrorCode = -24
-  ErrorCode_E_DATA_CONFLICT_ERROR ErrorCode = -25
-  ErrorCode_E_EDGE_PROP_NOT_FOUND ErrorCode = -31
-  ErrorCode_E_TAG_PROP_NOT_FOUND ErrorCode = -32
-  ErrorCode_E_IMPROPER_DATA_TYPE ErrorCode = -33
-  ErrorCode_E_EDGE_NOT_FOUND ErrorCode = -34
-  ErrorCode_E_TAG_NOT_FOUND ErrorCode = -35
-  ErrorCode_E_INVALID_SPACEVIDLEN ErrorCode = -36
-  ErrorCode_E_INDEX_NOT_FOUND ErrorCode = -37
-  ErrorCode_E_INVALID_FILTER ErrorCode = -41
-  ErrorCode_E_INVALID_UPDATER ErrorCode = -42
-  ErrorCode_E_INVALID_STORE ErrorCode = -43
-  ErrorCode_E_INVALID_PEER ErrorCode = -44
-  ErrorCode_E_RETRY_EXHAUSTED ErrorCode = -45
-  ErrorCode_E_TRANSFER_LEADER_FAILED ErrorCode = -46
-  ErrorCode_E_INVALID_STAT_TYPE ErrorCode = -47
-  ErrorCode_E_INVALID_VID ErrorCode = -48
-  ErrorCode_E_NO_TRANSFORMED ErrorCode = -49
-  ErrorCode_E_LOAD_META_FAILED ErrorCode = -51
-  ErrorCode_E_FAILED_GET_ABS_PATH ErrorCode = -55
-  ErrorCode_E_FAILED_TO_CHECKPOINT ErrorCode = -60
-  ErrorCode_E_CHECKPOINT_BLOCKED ErrorCode = -61
-  ErrorCode_E_BACKUP_FAILED ErrorCode = -65
-  ErrorCode_E_PARTIAL_RESULT ErrorCode = -71
-  ErrorCode_E_FILTER_OUT ErrorCode = -81
-  ErrorCode_E_INVALID_DATA ErrorCode = -82
-  ErrorCode_E_MUTATE_EDGE_CONFLICT ErrorCode = -85
-  ErrorCode_E_OUTDATED_LOCK ErrorCode = -86
-  ErrorCode_E_INVALID_TASK_PARA ErrorCode = -90
-  ErrorCode_E_USER_CANCEL ErrorCode = -99
-  ErrorCode_E_UNKNOWN ErrorCode = -100
-)
-
-var ErrorCodeToName = map[ErrorCode]string {
-  ErrorCode_SUCCEEDED: "SUCCEEDED",
-  ErrorCode_E_DISCONNECTED: "E_DISCONNECTED",
-  ErrorCode_E_FAILED_TO_CONNECT: "E_FAILED_TO_CONNECT",
-  ErrorCode_E_RPC_FAILURE: "E_RPC_FAILURE",
-  ErrorCode_E_LEADER_CHANGED: "E_LEADER_CHANGED",
-  ErrorCode_E_KEY_HAS_EXISTS: "E_KEY_HAS_EXISTS",
-  ErrorCode_E_SPACE_NOT_FOUND: "E_SPACE_NOT_FOUND",
-  ErrorCode_E_PART_NOT_FOUND: "E_PART_NOT_FOUND",
-  ErrorCode_E_KEY_NOT_FOUND: "E_KEY_NOT_FOUND",
-  ErrorCode_E_CONSENSUS_ERROR: "E_CONSENSUS_ERROR",
-  ErrorCode_E_DATA_TYPE_MISMATCH: "E_DATA_TYPE_MISMATCH",
-  ErrorCode_E_INVALID_FIELD_VALUE: "E_INVALID_FIELD_VALUE",
-  ErrorCode_E_REBUILD_INDEX_FAILED: "E_REBUILD_INDEX_FAILED",
-  ErrorCode_E_INVALID_OPERATION: "E_INVALID_OPERATION",
-  ErrorCode_E_NOT_NULLABLE: "E_NOT_NULLABLE",
-  ErrorCode_E_FIELD_UNSET: "E_FIELD_UNSET",
-  ErrorCode_E_OUT_OF_RANGE: "E_OUT_OF_RANGE",
-  ErrorCode_E_ATOMIC_OP_FAILED: "E_ATOMIC_OP_FAILED",
-  ErrorCode_E_DATA_CONFLICT_ERROR: "E_DATA_CONFLICT_ERROR",
-  ErrorCode_E_EDGE_PROP_NOT_FOUND: "E_EDGE_PROP_NOT_FOUND",
-  ErrorCode_E_TAG_PROP_NOT_FOUND: "E_TAG_PROP_NOT_FOUND",
-  ErrorCode_E_IMPROPER_DATA_TYPE: "E_IMPROPER_DATA_TYPE",
-  ErrorCode_E_EDGE_NOT_FOUND: "E_EDGE_NOT_FOUND",
-  ErrorCode_E_TAG_NOT_FOUND: "E_TAG_NOT_FOUND",
-  ErrorCode_E_INVALID_SPACEVIDLEN: "E_INVALID_SPACEVIDLEN",
-  ErrorCode_E_INDEX_NOT_FOUND: "E_INDEX_NOT_FOUND",
-  ErrorCode_E_INVALID_FILTER: "E_INVALID_FILTER",
-  ErrorCode_E_INVALID_UPDATER: "E_INVALID_UPDATER",
-  ErrorCode_E_INVALID_STORE: "E_INVALID_STORE",
-  ErrorCode_E_INVALID_PEER: "E_INVALID_PEER",
-  ErrorCode_E_RETRY_EXHAUSTED: "E_RETRY_EXHAUSTED",
-  ErrorCode_E_TRANSFER_LEADER_FAILED: "E_TRANSFER_LEADER_FAILED",
-  ErrorCode_E_INVALID_STAT_TYPE: "E_INVALID_STAT_TYPE",
-  ErrorCode_E_INVALID_VID: "E_INVALID_VID",
-  ErrorCode_E_NO_TRANSFORMED: "E_NO_TRANSFORMED",
-  ErrorCode_E_LOAD_META_FAILED: "E_LOAD_META_FAILED",
-  ErrorCode_E_FAILED_GET_ABS_PATH: "E_FAILED_GET_ABS_PATH",
-  ErrorCode_E_FAILED_TO_CHECKPOINT: "E_FAILED_TO_CHECKPOINT",
-  ErrorCode_E_CHECKPOINT_BLOCKED: "E_CHECKPOINT_BLOCKED",
-  ErrorCode_E_BACKUP_FAILED: "E_BACKUP_FAILED",
-  ErrorCode_E_PARTIAL_RESULT: "E_PARTIAL_RESULT",
-  ErrorCode_E_FILTER_OUT: "E_FILTER_OUT",
-  ErrorCode_E_INVALID_DATA: "E_INVALID_DATA",
-  ErrorCode_E_MUTATE_EDGE_CONFLICT: "E_MUTATE_EDGE_CONFLICT",
-  ErrorCode_E_OUTDATED_LOCK: "E_OUTDATED_LOCK",
-  ErrorCode_E_INVALID_TASK_PARA: "E_INVALID_TASK_PARA",
-  ErrorCode_E_USER_CANCEL: "E_USER_CANCEL",
-  ErrorCode_E_UNKNOWN: "E_UNKNOWN",
-}
-
-var ErrorCodeToValue = map[string]ErrorCode {
-  "SUCCEEDED": ErrorCode_SUCCEEDED,
-  "E_DISCONNECTED": ErrorCode_E_DISCONNECTED,
-  "E_FAILED_TO_CONNECT": ErrorCode_E_FAILED_TO_CONNECT,
-  "E_RPC_FAILURE": ErrorCode_E_RPC_FAILURE,
-  "E_LEADER_CHANGED": ErrorCode_E_LEADER_CHANGED,
-  "E_KEY_HAS_EXISTS": ErrorCode_E_KEY_HAS_EXISTS,
-  "E_SPACE_NOT_FOUND": ErrorCode_E_SPACE_NOT_FOUND,
-  "E_PART_NOT_FOUND": ErrorCode_E_PART_NOT_FOUND,
-  "E_KEY_NOT_FOUND": ErrorCode_E_KEY_NOT_FOUND,
-  "E_CONSENSUS_ERROR": ErrorCode_E_CONSENSUS_ERROR,
-  "E_DATA_TYPE_MISMATCH": ErrorCode_E_DATA_TYPE_MISMATCH,
-  "E_INVALID_FIELD_VALUE": ErrorCode_E_INVALID_FIELD_VALUE,
-  "E_REBUILD_INDEX_FAILED": ErrorCode_E_REBUILD_INDEX_FAILED,
-  "E_INVALID_OPERATION": ErrorCode_E_INVALID_OPERATION,
-  "E_NOT_NULLABLE": ErrorCode_E_NOT_NULLABLE,
-  "E_FIELD_UNSET": ErrorCode_E_FIELD_UNSET,
-  "E_OUT_OF_RANGE": ErrorCode_E_OUT_OF_RANGE,
-  "E_ATOMIC_OP_FAILED": ErrorCode_E_ATOMIC_OP_FAILED,
-  "E_DATA_CONFLICT_ERROR": ErrorCode_E_DATA_CONFLICT_ERROR,
-  "E_EDGE_PROP_NOT_FOUND": ErrorCode_E_EDGE_PROP_NOT_FOUND,
-  "E_TAG_PROP_NOT_FOUND": ErrorCode_E_TAG_PROP_NOT_FOUND,
-  "E_IMPROPER_DATA_TYPE": ErrorCode_E_IMPROPER_DATA_TYPE,
-  "E_EDGE_NOT_FOUND": ErrorCode_E_EDGE_NOT_FOUND,
-  "E_TAG_NOT_FOUND": ErrorCode_E_TAG_NOT_FOUND,
-  "E_INVALID_SPACEVIDLEN": ErrorCode_E_INVALID_SPACEVIDLEN,
-  "E_INDEX_NOT_FOUND": ErrorCode_E_INDEX_NOT_FOUND,
-  "E_INVALID_FILTER": ErrorCode_E_INVALID_FILTER,
-  "E_INVALID_UPDATER": ErrorCode_E_INVALID_UPDATER,
-  "E_INVALID_STORE": ErrorCode_E_INVALID_STORE,
-  "E_INVALID_PEER": ErrorCode_E_INVALID_PEER,
-  "E_RETRY_EXHAUSTED": ErrorCode_E_RETRY_EXHAUSTED,
-  "E_TRANSFER_LEADER_FAILED": ErrorCode_E_TRANSFER_LEADER_FAILED,
-  "E_INVALID_STAT_TYPE": ErrorCode_E_INVALID_STAT_TYPE,
-  "E_INVALID_VID": ErrorCode_E_INVALID_VID,
-  "E_NO_TRANSFORMED": ErrorCode_E_NO_TRANSFORMED,
-  "E_LOAD_META_FAILED": ErrorCode_E_LOAD_META_FAILED,
-  "E_FAILED_GET_ABS_PATH": ErrorCode_E_FAILED_GET_ABS_PATH,
-  "E_FAILED_TO_CHECKPOINT": ErrorCode_E_FAILED_TO_CHECKPOINT,
-  "E_CHECKPOINT_BLOCKED": ErrorCode_E_CHECKPOINT_BLOCKED,
-  "E_BACKUP_FAILED": ErrorCode_E_BACKUP_FAILED,
-  "E_PARTIAL_RESULT": ErrorCode_E_PARTIAL_RESULT,
-  "E_FILTER_OUT": ErrorCode_E_FILTER_OUT,
-  "E_INVALID_DATA": ErrorCode_E_INVALID_DATA,
-  "E_MUTATE_EDGE_CONFLICT": ErrorCode_E_MUTATE_EDGE_CONFLICT,
-  "E_OUTDATED_LOCK": ErrorCode_E_OUTDATED_LOCK,
-  "E_INVALID_TASK_PARA": ErrorCode_E_INVALID_TASK_PARA,
-  "E_USER_CANCEL": ErrorCode_E_USER_CANCEL,
-  "E_UNKNOWN": ErrorCode_E_UNKNOWN,
-}
-
-var ErrorCodeNames = []string {
-  "SUCCEEDED",
-  "E_DISCONNECTED",
-  "E_FAILED_TO_CONNECT",
-  "E_RPC_FAILURE",
-  "E_LEADER_CHANGED",
-  "E_KEY_HAS_EXISTS",
-  "E_SPACE_NOT_FOUND",
-  "E_PART_NOT_FOUND",
-  "E_KEY_NOT_FOUND",
-  "E_CONSENSUS_ERROR",
-  "E_DATA_TYPE_MISMATCH",
-  "E_INVALID_FIELD_VALUE",
-  "E_REBUILD_INDEX_FAILED",
-  "E_INVALID_OPERATION",
-  "E_NOT_NULLABLE",
-  "E_FIELD_UNSET",
-  "E_OUT_OF_RANGE",
-  "E_ATOMIC_OP_FAILED",
-  "E_DATA_CONFLICT_ERROR",
-  "E_EDGE_PROP_NOT_FOUND",
-  "E_TAG_PROP_NOT_FOUND",
-  "E_IMPROPER_DATA_TYPE",
-  "E_EDGE_NOT_FOUND",
-  "E_TAG_NOT_FOUND",
-  "E_INVALID_SPACEVIDLEN",
-  "E_INDEX_NOT_FOUND",
-  "E_INVALID_FILTER",
-  "E_INVALID_UPDATER",
-  "E_INVALID_STORE",
-  "E_INVALID_PEER",
-  "E_RETRY_EXHAUSTED",
-  "E_TRANSFER_LEADER_FAILED",
-  "E_INVALID_STAT_TYPE",
-  "E_INVALID_VID",
-  "E_NO_TRANSFORMED",
-  "E_LOAD_META_FAILED",
-  "E_FAILED_GET_ABS_PATH",
-  "E_FAILED_TO_CHECKPOINT",
-  "E_CHECKPOINT_BLOCKED",
-  "E_BACKUP_FAILED",
-  "E_PARTIAL_RESULT",
-  "E_FILTER_OUT",
-  "E_INVALID_DATA",
-  "E_MUTATE_EDGE_CONFLICT",
-  "E_OUTDATED_LOCK",
-  "E_INVALID_TASK_PARA",
-  "E_USER_CANCEL",
-  "E_UNKNOWN",
-}
-
-var ErrorCodeValues = []ErrorCode {
-  ErrorCode_SUCCEEDED,
-  ErrorCode_E_DISCONNECTED,
-  ErrorCode_E_FAILED_TO_CONNECT,
-  ErrorCode_E_RPC_FAILURE,
-  ErrorCode_E_LEADER_CHANGED,
-  ErrorCode_E_KEY_HAS_EXISTS,
-  ErrorCode_E_SPACE_NOT_FOUND,
-  ErrorCode_E_PART_NOT_FOUND,
-  ErrorCode_E_KEY_NOT_FOUND,
-  ErrorCode_E_CONSENSUS_ERROR,
-  ErrorCode_E_DATA_TYPE_MISMATCH,
-  ErrorCode_E_INVALID_FIELD_VALUE,
-  ErrorCode_E_REBUILD_INDEX_FAILED,
-  ErrorCode_E_INVALID_OPERATION,
-  ErrorCode_E_NOT_NULLABLE,
-  ErrorCode_E_FIELD_UNSET,
-  ErrorCode_E_OUT_OF_RANGE,
-  ErrorCode_E_ATOMIC_OP_FAILED,
-  ErrorCode_E_DATA_CONFLICT_ERROR,
-  ErrorCode_E_EDGE_PROP_NOT_FOUND,
-  ErrorCode_E_TAG_PROP_NOT_FOUND,
-  ErrorCode_E_IMPROPER_DATA_TYPE,
-  ErrorCode_E_EDGE_NOT_FOUND,
-  ErrorCode_E_TAG_NOT_FOUND,
-  ErrorCode_E_INVALID_SPACEVIDLEN,
-  ErrorCode_E_INDEX_NOT_FOUND,
-  ErrorCode_E_INVALID_FILTER,
-  ErrorCode_E_INVALID_UPDATER,
-  ErrorCode_E_INVALID_STORE,
-  ErrorCode_E_INVALID_PEER,
-  ErrorCode_E_RETRY_EXHAUSTED,
-  ErrorCode_E_TRANSFER_LEADER_FAILED,
-  ErrorCode_E_INVALID_STAT_TYPE,
-  ErrorCode_E_INVALID_VID,
-  ErrorCode_E_NO_TRANSFORMED,
-  ErrorCode_E_LOAD_META_FAILED,
-  ErrorCode_E_FAILED_GET_ABS_PATH,
-  ErrorCode_E_FAILED_TO_CHECKPOINT,
-  ErrorCode_E_CHECKPOINT_BLOCKED,
-  ErrorCode_E_BACKUP_FAILED,
-  ErrorCode_E_PARTIAL_RESULT,
-  ErrorCode_E_FILTER_OUT,
-  ErrorCode_E_INVALID_DATA,
-  ErrorCode_E_MUTATE_EDGE_CONFLICT,
-  ErrorCode_E_OUTDATED_LOCK,
-  ErrorCode_E_INVALID_TASK_PARA,
-  ErrorCode_E_USER_CANCEL,
-  ErrorCode_E_UNKNOWN,
-}
-
-func (p ErrorCode) String() string {
-  if v, ok := ErrorCodeToName[p]; ok {
-    return v
-  }
-  return "<UNSET>"
-}
-
-func ErrorCodeFromString(s string) (ErrorCode, error) {
-  if v, ok := ErrorCodeToValue[s]; ok {
-    return v, nil
-  }
-  return ErrorCode(0), fmt.Errorf("not a valid ErrorCode string")
-}
-
-func ErrorCodePtr(v ErrorCode) *ErrorCode { return &v }
-
 type StatType int64
 const (
   StatType_SUM StatType = 1
@@ -533,7 +261,7 @@ func EngineSignTypePtr(v EngineSignType) *EngineSignType { return &v }
 //  - PartID
 //  - Leader
 type PartitionResult_ struct {
-  Code ErrorCode `thrift:"code,1,required" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1,required" db:"code" json:"code"`
   PartID nebula0.PartitionID `thrift:"part_id,2,required" db:"part_id" json:"part_id"`
   Leader *nebula0.HostAddr `thrift:"leader,3" db:"leader" json:"leader,omitempty"`
 }
@@ -543,7 +271,7 @@ func NewPartitionResult_() *PartitionResult_ {
 }
 
 
-func (p *PartitionResult_) GetCode() ErrorCode {
+func (p *PartitionResult_) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 
@@ -615,7 +343,7 @@ func (p *PartitionResult_)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -11185,10 +10913,10 @@ func (p *RebuildIndexRequest) String() string {
 
 // Attributes:
 //  - Result_
-//  - Path
+//  - Info
 type CreateCPResp struct {
   Result_ *ResponseCommon `thrift:"result,1,required" db:"result" json:"result"`
-  Path []byte `thrift:"path,2" db:"path" json:"path"`
+  Info []*nebula0.CheckpointInfo `thrift:"info,2" db:"info" json:"info"`
 }
 
 func NewCreateCPResp() *CreateCPResp {
@@ -11205,8 +10933,8 @@ func (p *CreateCPResp) GetResult_() *ResponseCommon {
 return p.Result_
 }
 
-func (p *CreateCPResp) GetPath() []byte {
-  return p.Path
+func (p *CreateCPResp) GetInfo() []*nebula0.CheckpointInfo {
+  return p.Info
 }
 func (p *CreateCPResp) IsSetResult_() bool {
   return p != nil && p.Result_ != nil
@@ -11262,11 +10990,22 @@ func (p *CreateCPResp)  ReadField1(iprot thrift.Protocol) error {
 }
 
 func (p *CreateCPResp)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Path = v
-}
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]*nebula0.CheckpointInfo, 0, size)
+  p.Info =  tSlice
+  for i := 0; i < size; i ++ {
+    _elem58 := nebula0.NewCheckpointInfo()
+    if err := _elem58.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem58), err)
+    }
+    p.Info = append(p.Info, _elem58)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
   return nil
 }
 
@@ -11294,12 +11033,21 @@ func (p *CreateCPResp) writeField1(oprot thrift.Protocol) (err error) {
 }
 
 func (p *CreateCPResp) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("path", thrift.STRING, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:path: ", p), err) }
-  if err := oprot.WriteBinary(p.Path); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.path (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("info", thrift.LIST, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:info: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Info)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.Info {
+    if err := v.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+    }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:path: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:info: ", p), err) }
   return err
 }
 
@@ -11314,304 +11062,8 @@ func (p *CreateCPResp) String() string {
   } else {
     resultVal = fmt.Sprintf("%v", p.Result_)
   }
-  pathVal := fmt.Sprintf("%v", p.Path)
-  return fmt.Sprintf("CreateCPResp({Result_:%s Path:%s})", resultVal, pathVal)
-}
-
-// Attributes:
-//  - Result_
-//  - BackupName
-//  - PartitionInfo
-type PartitionInfoResp struct {
-  Result_ *ResponseCommon `thrift:"result,1,required" db:"result" json:"result"`
-  BackupName []byte `thrift:"backup_name,2" db:"backup_name" json:"backup_name"`
-  PartitionInfo *nebula0.PartitionBackupInfo `thrift:"partition_info,3" db:"partition_info" json:"partition_info"`
-}
-
-func NewPartitionInfoResp() *PartitionInfoResp {
-  return &PartitionInfoResp{
-    Result_: NewResponseCommon(),
-    PartitionInfo: nebula0.NewPartitionBackupInfo(),
-  }
-}
-
-var PartitionInfoResp_Result__DEFAULT *ResponseCommon
-func (p *PartitionInfoResp) GetResult_() *ResponseCommon {
-  if !p.IsSetResult_() {
-    return PartitionInfoResp_Result__DEFAULT
-  }
-return p.Result_
-}
-
-func (p *PartitionInfoResp) GetBackupName() []byte {
-  return p.BackupName
-}
-var PartitionInfoResp_PartitionInfo_DEFAULT *nebula0.PartitionBackupInfo
-func (p *PartitionInfoResp) GetPartitionInfo() *nebula0.PartitionBackupInfo {
-  if !p.IsSetPartitionInfo() {
-    return PartitionInfoResp_PartitionInfo_DEFAULT
-  }
-return p.PartitionInfo
-}
-func (p *PartitionInfoResp) IsSetResult_() bool {
-  return p != nil && p.Result_ != nil
-}
-
-func (p *PartitionInfoResp) IsSetPartitionInfo() bool {
-  return p != nil && p.PartitionInfo != nil
-}
-
-func (p *PartitionInfoResp) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-  var issetResult_ bool = false;
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-      issetResult_ = true
-    case 2:
-      if err := p.ReadField2(iprot); err != nil {
-        return err
-      }
-    case 3:
-      if err := p.ReadField3(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  if !issetResult_{
-    return thrift.NewProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field Result_ is not set"));
-  }
-  return nil
-}
-
-func (p *PartitionInfoResp)  ReadField1(iprot thrift.Protocol) error {
-  p.Result_ = NewResponseCommon()
-  if err := p.Result_.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Result_), err)
-  }
-  return nil
-}
-
-func (p *PartitionInfoResp)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.BackupName = v
-}
-  return nil
-}
-
-func (p *PartitionInfoResp)  ReadField3(iprot thrift.Protocol) error {
-  p.PartitionInfo = nebula0.NewPartitionBackupInfo()
-  if err := p.PartitionInfo.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.PartitionInfo), err)
-  }
-  return nil
-}
-
-func (p *PartitionInfoResp) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("PartitionInfoResp"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := p.writeField2(oprot); err != nil { return err }
-  if err := p.writeField3(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *PartitionInfoResp) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("result", thrift.STRUCT, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:result: ", p), err) }
-  if err := p.Result_.Write(oprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Result_), err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:result: ", p), err) }
-  return err
-}
-
-func (p *PartitionInfoResp) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("backup_name", thrift.STRING, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:backup_name: ", p), err) }
-  if err := oprot.WriteBinary(p.BackupName); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.backup_name (2) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:backup_name: ", p), err) }
-  return err
-}
-
-func (p *PartitionInfoResp) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("partition_info", thrift.STRUCT, 3); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:partition_info: ", p), err) }
-  if err := p.PartitionInfo.Write(oprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.PartitionInfo), err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:partition_info: ", p), err) }
-  return err
-}
-
-func (p *PartitionInfoResp) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var resultVal string
-  if p.Result_ == nil {
-    resultVal = "<nil>"
-  } else {
-    resultVal = fmt.Sprintf("%v", p.Result_)
-  }
-  backupNameVal := fmt.Sprintf("%v", p.BackupName)
-  var partitionInfoVal string
-  if p.PartitionInfo == nil {
-    partitionInfoVal = "<nil>"
-  } else {
-    partitionInfoVal = fmt.Sprintf("%v", p.PartitionInfo)
-  }
-  return fmt.Sprintf("PartitionInfoResp({Result_:%s BackupName:%s PartitionInfo:%s})", resultVal, backupNameVal, partitionInfoVal)
-}
-
-// Attributes:
-//  - SpaceID
-//  - BackupName
-type PartitionInfoRequest struct {
-  SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
-  BackupName []byte `thrift:"backup_name,2" db:"backup_name" json:"backup_name"`
-}
-
-func NewPartitionInfoRequest() *PartitionInfoRequest {
-  return &PartitionInfoRequest{}
-}
-
-
-func (p *PartitionInfoRequest) GetSpaceID() nebula0.GraphSpaceID {
-  return p.SpaceID
-}
-
-func (p *PartitionInfoRequest) GetBackupName() []byte {
-  return p.BackupName
-}
-func (p *PartitionInfoRequest) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    case 2:
-      if err := p.ReadField2(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *PartitionInfoRequest)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
-  return nil
-}
-
-func (p *PartitionInfoRequest)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.BackupName = v
-}
-  return nil
-}
-
-func (p *PartitionInfoRequest) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("PartitionInfoRequest"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := p.writeField2(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *PartitionInfoRequest) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("space_id", thrift.I32, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_id: ", p), err) }
-  if err := oprot.WriteI32(int32(p.SpaceID)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.space_id (1) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space_id: ", p), err) }
-  return err
-}
-
-func (p *PartitionInfoRequest) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("backup_name", thrift.STRING, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:backup_name: ", p), err) }
-  if err := oprot.WriteBinary(p.BackupName); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.backup_name (2) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:backup_name: ", p), err) }
-  return err
-}
-
-func (p *PartitionInfoRequest) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
-  backupNameVal := fmt.Sprintf("%v", p.BackupName)
-  return fmt.Sprintf("PartitionInfoRequest({SpaceID:%s BackupName:%s})", spaceIDVal, backupNameVal)
+  infoVal := fmt.Sprintf("%v", p.Info)
+  return fmt.Sprintf("CreateCPResp({Result_:%s Info:%s})", resultVal, infoVal)
 }
 
 // Attributes:
@@ -11896,32 +11348,32 @@ func (p *KVGetRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][][]byte, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key58 nebula0.PartitionID
+var _key59 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 0: ", err)
 } else {
     temp := nebula0.PartitionID(v)
-    _key58 = temp
+    _key59 = temp
 }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
     }
     tSlice := make([][]byte, 0, size)
-    _val59 :=  tSlice
+    _val60 :=  tSlice
     for i := 0; i < size; i ++ {
-var _elem60 []byte
+var _elem61 []byte
       if v, err := iprot.ReadBinary(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
 } else {
-      _elem60 = v
+      _elem61 = v
 }
-      _val59 = append(_val59, _elem60)
+      _val60 = append(_val60, _elem61)
     }
     if err := iprot.ReadListEnd(); err != nil {
       return thrift.PrependError("error reading list end: ", err)
     }
-    p.Parts[_key58] = _val59
+    p.Parts[_key59] = _val60
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -12096,19 +11548,19 @@ func (p *KVGetResponse)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[string][]byte, size)
   p.KeyValues =  tMap
   for i := 0; i < size; i ++ {
-var _key61 string
+var _key62 string
     if v, err := iprot.ReadString(); err != nil {
     return thrift.PrependError("error reading field 0: ", err)
 } else {
-    _key61 = v
+    _key62 = v
 }
-var _val62 []byte
+var _val63 []byte
     if v, err := iprot.ReadBinary(); err != nil {
     return thrift.PrependError("error reading field 0: ", err)
 } else {
-    _val62 = v
+    _val63 = v
 }
-    p.KeyValues[_key61] = _val62
+    p.KeyValues[_key62] = _val63
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -12248,30 +11700,30 @@ func (p *KVPutRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][]*nebula0.KeyValue, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key63 nebula0.PartitionID
+var _key64 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 0: ", err)
 } else {
     temp := nebula0.PartitionID(v)
-    _key63 = temp
+    _key64 = temp
 }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
     }
     tSlice := make([]*nebula0.KeyValue, 0, size)
-    _val64 :=  tSlice
+    _val65 :=  tSlice
     for i := 0; i < size; i ++ {
-      _elem65 := nebula0.NewKeyValue()
-      if err := _elem65.Read(iprot); err != nil {
-        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem65), err)
+      _elem66 := nebula0.NewKeyValue()
+      if err := _elem66.Read(iprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem66), err)
       }
-      _val64 = append(_val64, _elem65)
+      _val65 = append(_val65, _elem66)
     }
     if err := iprot.ReadListEnd(); err != nil {
       return thrift.PrependError("error reading list end: ", err)
     }
-    p.Parts[_key63] = _val64
+    p.Parts[_key64] = _val65
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -12414,32 +11866,32 @@ func (p *KVRemoveRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][][]byte, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key66 nebula0.PartitionID
+var _key67 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 0: ", err)
 } else {
     temp := nebula0.PartitionID(v)
-    _key66 = temp
+    _key67 = temp
 }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
     }
     tSlice := make([][]byte, 0, size)
-    _val67 :=  tSlice
+    _val68 :=  tSlice
     for i := 0; i < size; i ++ {
-var _elem68 []byte
+var _elem69 []byte
       if v, err := iprot.ReadBinary(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
 } else {
-      _elem68 = v
+      _elem69 = v
 }
-      _val67 = append(_val67, _elem68)
+      _val68 = append(_val68, _elem69)
     }
     if err := iprot.ReadListEnd(); err != nil {
       return thrift.PrependError("error reading list end: ", err)
     }
-    p.Parts[_key66] = _val67
+    p.Parts[_key67] = _val68
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -12642,20 +12094,20 @@ func (p *InternalTxnRequest)  ReadField5(iprot thrift.Protocol) error {
       return thrift.PrependError("error reading list begin: ", err)
     }
     tSlice := make([][]byte, 0, size)
-    _elem69 :=  tSlice
+    _elem70 :=  tSlice
     for i := 0; i < size; i ++ {
-var _elem70 []byte
+var _elem71 []byte
       if v, err := iprot.ReadBinary(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
 } else {
-      _elem70 = v
+      _elem71 = v
 }
-      _elem69 = append(_elem69, _elem70)
+      _elem70 = append(_elem70, _elem71)
     }
     if err := iprot.ReadListEnd(); err != nil {
       return thrift.PrependError("error reading list end: ", err)
     }
-    p.Data = append(p.Data, _elem69)
+    p.Data = append(p.Data, _elem70)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
