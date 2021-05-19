@@ -8,6 +8,7 @@ package nebula_go
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -34,6 +35,7 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error
 	newAdd := fmt.Sprintf("%s:%d", ip, port)
 	timeoutOption := thrift.SocketTimeout(timeout)
 	bufferSize := 128 << 10
+	frameMaxLength := uint32(math.MaxUint32)
 	addressOption := thrift.SocketAddr(newAdd)
 	sock, err := thrift.NewSocket(timeoutOption, addressOption)
 	if err != nil {
@@ -41,7 +43,7 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error
 	}
 	// Set transport buffer
 	bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
-	transport := thrift.NewFramedTransport(bufferedTranFactory.GetTransport(sock))
+	transport := thrift.NewFramedTransportMaxLength(bufferedTranFactory.GetTransport(sock), frameMaxLength)
 	pf := thrift.NewBinaryProtocolFactoryDefault()
 	cn.graph = graph.NewGraphServiceClientFactory(transport, pf)
 	if err = cn.graph.Open(); err != nil {
