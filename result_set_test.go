@@ -365,7 +365,7 @@ func TestPathWrapper(t *testing.T) {
 
 func TestResultSet(t *testing.T) {
 	respWithNil := &graph.ExecutionResponse{
-		graph.ErrorCode_E_STATEMENT_EMPTY,
+		nebula.ErrorCode_E_STATEMENT_EMPTY,
 		1000,
 		nil,
 		nil,
@@ -405,7 +405,7 @@ func TestResultSet(t *testing.T) {
 	}
 
 	resp := &graph.ExecutionResponse{
-		graph.ErrorCode_SUCCEEDED,
+		nebula.ErrorCode_SUCCEEDED,
 		1000,
 		getDateset(),
 		[]byte("test_space"),
@@ -481,7 +481,7 @@ func TestResultSet(t *testing.T) {
 
 func TestAsStringTable(t *testing.T) {
 	resp := &graph.ExecutionResponse{
-		graph.ErrorCode_SUCCEEDED,
+		nebula.ErrorCode_SUCCEEDED,
 		1000,
 		getDateset(),
 		[]byte("test_space"),
