@@ -10,6 +10,7 @@ import (
 	"fmt"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
+	"github.com/vesoft-inc/nebula-go/v2/nebula"
 	graph "github.com/vesoft-inc/nebula-go/v2/nebula/graph"
 )
 
@@ -90,5 +91,5 @@ func (session *Session) Release() {
 }
 
 func IsError(resp *graph.ExecutionResponse) bool {
-	return resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED
+	return resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED
 }

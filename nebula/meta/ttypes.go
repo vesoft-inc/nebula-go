@@ -24,273 +24,6 @@ var _ = context.Background
 var _ = nebula0.GoUnusedProtection__
 var GoUnusedProtection__ int;
 
-type ErrorCode int64
-const (
-  ErrorCode_SUCCEEDED ErrorCode = 0
-  ErrorCode_E_DISCONNECTED ErrorCode = -1
-  ErrorCode_E_FAIL_TO_CONNECT ErrorCode = -2
-  ErrorCode_E_RPC_FAILURE ErrorCode = -3
-  ErrorCode_E_LEADER_CHANGED ErrorCode = -11
-  ErrorCode_E_NO_HOSTS ErrorCode = -21
-  ErrorCode_E_EXISTED ErrorCode = -22
-  ErrorCode_E_NOT_FOUND ErrorCode = -23
-  ErrorCode_E_INVALID_HOST ErrorCode = -24
-  ErrorCode_E_UNSUPPORTED ErrorCode = -25
-  ErrorCode_E_NOT_DROP ErrorCode = -26
-  ErrorCode_E_BALANCER_RUNNING ErrorCode = -27
-  ErrorCode_E_CONFIG_IMMUTABLE ErrorCode = -28
-  ErrorCode_E_CONFLICT ErrorCode = -29
-  ErrorCode_E_INVALID_PARM ErrorCode = -30
-  ErrorCode_E_WRONGCLUSTER ErrorCode = -31
-  ErrorCode_E_STORE_FAILURE ErrorCode = -32
-  ErrorCode_E_STORE_SEGMENT_ILLEGAL ErrorCode = -33
-  ErrorCode_E_BAD_BALANCE_PLAN ErrorCode = -34
-  ErrorCode_E_BALANCED ErrorCode = -35
-  ErrorCode_E_NO_RUNNING_BALANCE_PLAN ErrorCode = -36
-  ErrorCode_E_NO_VALID_HOST ErrorCode = -37
-  ErrorCode_E_CORRUPTTED_BALANCE_PLAN ErrorCode = -38
-  ErrorCode_E_NO_INVALID_BALANCE_PLAN ErrorCode = -39
-  ErrorCode_E_INVALID_PASSWORD ErrorCode = -41
-  ErrorCode_E_IMPROPER_ROLE ErrorCode = -42
-  ErrorCode_E_INVALID_PARTITION_NUM ErrorCode = -43
-  ErrorCode_E_INVALID_REPLICA_FACTOR ErrorCode = -44
-  ErrorCode_E_INVALID_CHARSET ErrorCode = -45
-  ErrorCode_E_INVALID_COLLATE ErrorCode = -46
-  ErrorCode_E_CHARSET_COLLATE_NOT_MATCH ErrorCode = -47
-  ErrorCode_E_SNAPSHOT_FAILURE ErrorCode = -51
-  ErrorCode_E_BLOCK_WRITE_FAILURE ErrorCode = -52
-  ErrorCode_E_REBUILD_INDEX_FAILURE ErrorCode = -53
-  ErrorCode_E_INDEX_WITH_TTL ErrorCode = -54
-  ErrorCode_E_ADD_JOB_FAILURE ErrorCode = -55
-  ErrorCode_E_STOP_JOB_FAILURE ErrorCode = -56
-  ErrorCode_E_SAVE_JOB_FAILURE ErrorCode = -57
-  ErrorCode_E_BALANCER_FAILURE ErrorCode = -58
-  ErrorCode_E_JOB_NOT_FINISHED ErrorCode = -59
-  ErrorCode_E_TASK_REPORT_OUT_DATE ErrorCode = -60
-  ErrorCode_E_INVALID_JOB ErrorCode = -61
-  ErrorCode_E_BACKUP_FAILURE ErrorCode = -70
-  ErrorCode_E_BACKUP_BUILDING_INDEX ErrorCode = -71
-  ErrorCode_E_BACKUP_SPACE_NOT_FOUND ErrorCode = -72
-  ErrorCode_E_RESTORE_FAILURE ErrorCode = -80
-  ErrorCode_E_UNKNOWN ErrorCode = -99
-)
-
-var ErrorCodeToName = map[ErrorCode]string {
-  ErrorCode_SUCCEEDED: "SUCCEEDED",
-  ErrorCode_E_DISCONNECTED: "E_DISCONNECTED",
-  ErrorCode_E_FAIL_TO_CONNECT: "E_FAIL_TO_CONNECT",
-  ErrorCode_E_RPC_FAILURE: "E_RPC_FAILURE",
-  ErrorCode_E_LEADER_CHANGED: "E_LEADER_CHANGED",
-  ErrorCode_E_NO_HOSTS: "E_NO_HOSTS",
-  ErrorCode_E_EXISTED: "E_EXISTED",
-  ErrorCode_E_NOT_FOUND: "E_NOT_FOUND",
-  ErrorCode_E_INVALID_HOST: "E_INVALID_HOST",
-  ErrorCode_E_UNSUPPORTED: "E_UNSUPPORTED",
-  ErrorCode_E_NOT_DROP: "E_NOT_DROP",
-  ErrorCode_E_BALANCER_RUNNING: "E_BALANCER_RUNNING",
-  ErrorCode_E_CONFIG_IMMUTABLE: "E_CONFIG_IMMUTABLE",
-  ErrorCode_E_CONFLICT: "E_CONFLICT",
-  ErrorCode_E_INVALID_PARM: "E_INVALID_PARM",
-  ErrorCode_E_WRONGCLUSTER: "E_WRONGCLUSTER",
-  ErrorCode_E_STORE_FAILURE: "E_STORE_FAILURE",
-  ErrorCode_E_STORE_SEGMENT_ILLEGAL: "E_STORE_SEGMENT_ILLEGAL",
-  ErrorCode_E_BAD_BALANCE_PLAN: "E_BAD_BALANCE_PLAN",
-  ErrorCode_E_BALANCED: "E_BALANCED",
-  ErrorCode_E_NO_RUNNING_BALANCE_PLAN: "E_NO_RUNNING_BALANCE_PLAN",
-  ErrorCode_E_NO_VALID_HOST: "E_NO_VALID_HOST",
-  ErrorCode_E_CORRUPTTED_BALANCE_PLAN: "E_CORRUPTTED_BALANCE_PLAN",
-  ErrorCode_E_NO_INVALID_BALANCE_PLAN: "E_NO_INVALID_BALANCE_PLAN",
-  ErrorCode_E_INVALID_PASSWORD: "E_INVALID_PASSWORD",
-  ErrorCode_E_IMPROPER_ROLE: "E_IMPROPER_ROLE",
-  ErrorCode_E_INVALID_PARTITION_NUM: "E_INVALID_PARTITION_NUM",
-  ErrorCode_E_INVALID_REPLICA_FACTOR: "E_INVALID_REPLICA_FACTOR",
-  ErrorCode_E_INVALID_CHARSET: "E_INVALID_CHARSET",
-  ErrorCode_E_INVALID_COLLATE: "E_INVALID_COLLATE",
-  ErrorCode_E_CHARSET_COLLATE_NOT_MATCH: "E_CHARSET_COLLATE_NOT_MATCH",
-  ErrorCode_E_SNAPSHOT_FAILURE: "E_SNAPSHOT_FAILURE",
-  ErrorCode_E_BLOCK_WRITE_FAILURE: "E_BLOCK_WRITE_FAILURE",
-  ErrorCode_E_REBUILD_INDEX_FAILURE: "E_REBUILD_INDEX_FAILURE",
-  ErrorCode_E_INDEX_WITH_TTL: "E_INDEX_WITH_TTL",
-  ErrorCode_E_ADD_JOB_FAILURE: "E_ADD_JOB_FAILURE",
-  ErrorCode_E_STOP_JOB_FAILURE: "E_STOP_JOB_FAILURE",
-  ErrorCode_E_SAVE_JOB_FAILURE: "E_SAVE_JOB_FAILURE",
-  ErrorCode_E_BALANCER_FAILURE: "E_BALANCER_FAILURE",
-  ErrorCode_E_JOB_NOT_FINISHED: "E_JOB_NOT_FINISHED",
-  ErrorCode_E_TASK_REPORT_OUT_DATE: "E_TASK_REPORT_OUT_DATE",
-  ErrorCode_E_INVALID_JOB: "E_INVALID_JOB",
-  ErrorCode_E_BACKUP_FAILURE: "E_BACKUP_FAILURE",
-  ErrorCode_E_BACKUP_BUILDING_INDEX: "E_BACKUP_BUILDING_INDEX",
-  ErrorCode_E_BACKUP_SPACE_NOT_FOUND: "E_BACKUP_SPACE_NOT_FOUND",
-  ErrorCode_E_RESTORE_FAILURE: "E_RESTORE_FAILURE",
-  ErrorCode_E_UNKNOWN: "E_UNKNOWN",
-}
-
-var ErrorCodeToValue = map[string]ErrorCode {
-  "SUCCEEDED": ErrorCode_SUCCEEDED,
-  "E_DISCONNECTED": ErrorCode_E_DISCONNECTED,
-  "E_FAIL_TO_CONNECT": ErrorCode_E_FAIL_TO_CONNECT,
-  "E_RPC_FAILURE": ErrorCode_E_RPC_FAILURE,
-  "E_LEADER_CHANGED": ErrorCode_E_LEADER_CHANGED,
-  "E_NO_HOSTS": ErrorCode_E_NO_HOSTS,
-  "E_EXISTED": ErrorCode_E_EXISTED,
-  "E_NOT_FOUND": ErrorCode_E_NOT_FOUND,
-  "E_INVALID_HOST": ErrorCode_E_INVALID_HOST,
-  "E_UNSUPPORTED": ErrorCode_E_UNSUPPORTED,
-  "E_NOT_DROP": ErrorCode_E_NOT_DROP,
-  "E_BALANCER_RUNNING": ErrorCode_E_BALANCER_RUNNING,
-  "E_CONFIG_IMMUTABLE": ErrorCode_E_CONFIG_IMMUTABLE,
-  "E_CONFLICT": ErrorCode_E_CONFLICT,
-  "E_INVALID_PARM": ErrorCode_E_INVALID_PARM,
-  "E_WRONGCLUSTER": ErrorCode_E_WRONGCLUSTER,
-  "E_STORE_FAILURE": ErrorCode_E_STORE_FAILURE,
-  "E_STORE_SEGMENT_ILLEGAL": ErrorCode_E_STORE_SEGMENT_ILLEGAL,
-  "E_BAD_BALANCE_PLAN": ErrorCode_E_BAD_BALANCE_PLAN,
-  "E_BALANCED": ErrorCode_E_BALANCED,
-  "E_NO_RUNNING_BALANCE_PLAN": ErrorCode_E_NO_RUNNING_BALANCE_PLAN,
-  "E_NO_VALID_HOST": ErrorCode_E_NO_VALID_HOST,
-  "E_CORRUPTTED_BALANCE_PLAN": ErrorCode_E_CORRUPTTED_BALANCE_PLAN,
-  "E_NO_INVALID_BALANCE_PLAN": ErrorCode_E_NO_INVALID_BALANCE_PLAN,
-  "E_INVALID_PASSWORD": ErrorCode_E_INVALID_PASSWORD,
-  "E_IMPROPER_ROLE": ErrorCode_E_IMPROPER_ROLE,
-  "E_INVALID_PARTITION_NUM": ErrorCode_E_INVALID_PARTITION_NUM,
-  "E_INVALID_REPLICA_FACTOR": ErrorCode_E_INVALID_REPLICA_FACTOR,
-  "E_INVALID_CHARSET": ErrorCode_E_INVALID_CHARSET,
-  "E_INVALID_COLLATE": ErrorCode_E_INVALID_COLLATE,
-  "E_CHARSET_COLLATE_NOT_MATCH": ErrorCode_E_CHARSET_COLLATE_NOT_MATCH,
-  "E_SNAPSHOT_FAILURE": ErrorCode_E_SNAPSHOT_FAILURE,
-  "E_BLOCK_WRITE_FAILURE": ErrorCode_E_BLOCK_WRITE_FAILURE,
-  "E_REBUILD_INDEX_FAILURE": ErrorCode_E_REBUILD_INDEX_FAILURE,
-  "E_INDEX_WITH_TTL": ErrorCode_E_INDEX_WITH_TTL,
-  "E_ADD_JOB_FAILURE": ErrorCode_E_ADD_JOB_FAILURE,
-  "E_STOP_JOB_FAILURE": ErrorCode_E_STOP_JOB_FAILURE,
-  "E_SAVE_JOB_FAILURE": ErrorCode_E_SAVE_JOB_FAILURE,
-  "E_BALANCER_FAILURE": ErrorCode_E_BALANCER_FAILURE,
-  "E_JOB_NOT_FINISHED": ErrorCode_E_JOB_NOT_FINISHED,
-  "E_TASK_REPORT_OUT_DATE": ErrorCode_E_TASK_REPORT_OUT_DATE,
-  "E_INVALID_JOB": ErrorCode_E_INVALID_JOB,
-  "E_BACKUP_FAILURE": ErrorCode_E_BACKUP_FAILURE,
-  "E_BACKUP_BUILDING_INDEX": ErrorCode_E_BACKUP_BUILDING_INDEX,
-  "E_BACKUP_SPACE_NOT_FOUND": ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
-  "E_RESTORE_FAILURE": ErrorCode_E_RESTORE_FAILURE,
-  "E_UNKNOWN": ErrorCode_E_UNKNOWN,
-}
-
-var ErrorCodeNames = []string {
-  "SUCCEEDED",
-  "E_DISCONNECTED",
-  "E_FAIL_TO_CONNECT",
-  "E_RPC_FAILURE",
-  "E_LEADER_CHANGED",
-  "E_NO_HOSTS",
-  "E_EXISTED",
-  "E_NOT_FOUND",
-  "E_INVALID_HOST",
-  "E_UNSUPPORTED",
-  "E_NOT_DROP",
-  "E_BALANCER_RUNNING",
-  "E_CONFIG_IMMUTABLE",
-  "E_CONFLICT",
-  "E_INVALID_PARM",
-  "E_WRONGCLUSTER",
-  "E_STORE_FAILURE",
-  "E_STORE_SEGMENT_ILLEGAL",
-  "E_BAD_BALANCE_PLAN",
-  "E_BALANCED",
-  "E_NO_RUNNING_BALANCE_PLAN",
-  "E_NO_VALID_HOST",
-  "E_CORRUPTTED_BALANCE_PLAN",
-  "E_NO_INVALID_BALANCE_PLAN",
-  "E_INVALID_PASSWORD",
-  "E_IMPROPER_ROLE",
-  "E_INVALID_PARTITION_NUM",
-  "E_INVALID_REPLICA_FACTOR",
-  "E_INVALID_CHARSET",
-  "E_INVALID_COLLATE",
-  "E_CHARSET_COLLATE_NOT_MATCH",
-  "E_SNAPSHOT_FAILURE",
-  "E_BLOCK_WRITE_FAILURE",
-  "E_REBUILD_INDEX_FAILURE",
-  "E_INDEX_WITH_TTL",
-  "E_ADD_JOB_FAILURE",
-  "E_STOP_JOB_FAILURE",
-  "E_SAVE_JOB_FAILURE",
-  "E_BALANCER_FAILURE",
-  "E_JOB_NOT_FINISHED",
-  "E_TASK_REPORT_OUT_DATE",
-  "E_INVALID_JOB",
-  "E_BACKUP_FAILURE",
-  "E_BACKUP_BUILDING_INDEX",
-  "E_BACKUP_SPACE_NOT_FOUND",
-  "E_RESTORE_FAILURE",
-  "E_UNKNOWN",
-}
-
-var ErrorCodeValues = []ErrorCode {
-  ErrorCode_SUCCEEDED,
-  ErrorCode_E_DISCONNECTED,
-  ErrorCode_E_FAIL_TO_CONNECT,
-  ErrorCode_E_RPC_FAILURE,
-  ErrorCode_E_LEADER_CHANGED,
-  ErrorCode_E_NO_HOSTS,
-  ErrorCode_E_EXISTED,
-  ErrorCode_E_NOT_FOUND,
-  ErrorCode_E_INVALID_HOST,
-  ErrorCode_E_UNSUPPORTED,
-  ErrorCode_E_NOT_DROP,
-  ErrorCode_E_BALANCER_RUNNING,
-  ErrorCode_E_CONFIG_IMMUTABLE,
-  ErrorCode_E_CONFLICT,
-  ErrorCode_E_INVALID_PARM,
-  ErrorCode_E_WRONGCLUSTER,
-  ErrorCode_E_STORE_FAILURE,
-  ErrorCode_E_STORE_SEGMENT_ILLEGAL,
-  ErrorCode_E_BAD_BALANCE_PLAN,
-  ErrorCode_E_BALANCED,
-  ErrorCode_E_NO_RUNNING_BALANCE_PLAN,
-  ErrorCode_E_NO_VALID_HOST,
-  ErrorCode_E_CORRUPTTED_BALANCE_PLAN,
-  ErrorCode_E_NO_INVALID_BALANCE_PLAN,
-  ErrorCode_E_INVALID_PASSWORD,
-  ErrorCode_E_IMPROPER_ROLE,
-  ErrorCode_E_INVALID_PARTITION_NUM,
-  ErrorCode_E_INVALID_REPLICA_FACTOR,
-  ErrorCode_E_INVALID_CHARSET,
-  ErrorCode_E_INVALID_COLLATE,
-  ErrorCode_E_CHARSET_COLLATE_NOT_MATCH,
-  ErrorCode_E_SNAPSHOT_FAILURE,
-  ErrorCode_E_BLOCK_WRITE_FAILURE,
-  ErrorCode_E_REBUILD_INDEX_FAILURE,
-  ErrorCode_E_INDEX_WITH_TTL,
-  ErrorCode_E_ADD_JOB_FAILURE,
-  ErrorCode_E_STOP_JOB_FAILURE,
-  ErrorCode_E_SAVE_JOB_FAILURE,
-  ErrorCode_E_BALANCER_FAILURE,
-  ErrorCode_E_JOB_NOT_FINISHED,
-  ErrorCode_E_TASK_REPORT_OUT_DATE,
-  ErrorCode_E_INVALID_JOB,
-  ErrorCode_E_BACKUP_FAILURE,
-  ErrorCode_E_BACKUP_BUILDING_INDEX,
-  ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
-  ErrorCode_E_RESTORE_FAILURE,
-  ErrorCode_E_UNKNOWN,
-}
-
-func (p ErrorCode) String() string {
-  if v, ok := ErrorCodeToName[p]; ok {
-    return v
-  }
-  return "<UNSET>"
-}
-
-func ErrorCodeFromString(s string) (ErrorCode, error) {
-  if v, ok := ErrorCodeToValue[s]; ok {
-    return v, nil
-  }
-  return ErrorCode(0), fmt.Errorf("not a valid ErrorCode string")
-}
-
-func ErrorCodePtr(v ErrorCode) *ErrorCode { return &v }
-
 type AlterSchemaOp int64
 const (
   AlterSchemaOp_ADD AlterSchemaOp = 1
@@ -703,7 +436,7 @@ const (
   AdminCmd_REBUILD_EDGE_INDEX AdminCmd = 3
   AdminCmd_STATS AdminCmd = 4
   AdminCmd_DATA_BALANCE AdminCmd = 5
-  AdminCmd_DOWELOAD AdminCmd = 6
+  AdminCmd_DOWNLOAD AdminCmd = 6
   AdminCmd_INGEST AdminCmd = 7
   AdminCmd_UNKNOWN AdminCmd = 99
 )
@@ -715,7 +448,7 @@ var AdminCmdToName = map[AdminCmd]string {
   AdminCmd_REBUILD_EDGE_INDEX: "REBUILD_EDGE_INDEX",
   AdminCmd_STATS: "STATS",
   AdminCmd_DATA_BALANCE: "DATA_BALANCE",
-  AdminCmd_DOWELOAD: "DOWELOAD",
+  AdminCmd_DOWNLOAD: "DOWNLOAD",
   AdminCmd_INGEST: "INGEST",
   AdminCmd_UNKNOWN: "UNKNOWN",
 }
@@ -727,7 +460,7 @@ var AdminCmdToValue = map[string]AdminCmd {
   "REBUILD_EDGE_INDEX": AdminCmd_REBUILD_EDGE_INDEX,
   "STATS": AdminCmd_STATS,
   "DATA_BALANCE": AdminCmd_DATA_BALANCE,
-  "DOWELOAD": AdminCmd_DOWELOAD,
+  "DOWNLOAD": AdminCmd_DOWNLOAD,
   "INGEST": AdminCmd_INGEST,
   "UNKNOWN": AdminCmd_UNKNOWN,
 }
@@ -739,7 +472,7 @@ var AdminCmdNames = []string {
   "REBUILD_EDGE_INDEX",
   "STATS",
   "DATA_BALANCE",
-  "DOWELOAD",
+  "DOWNLOAD",
   "INGEST",
   "UNKNOWN",
 }
@@ -751,7 +484,7 @@ var AdminCmdValues = []AdminCmd {
   AdminCmd_REBUILD_EDGE_INDEX,
   AdminCmd_STATS,
   AdminCmd_DATA_BALANCE,
-  AdminCmd_DOWELOAD,
+  AdminCmd_DOWNLOAD,
   AdminCmd_INGEST,
   AdminCmd_UNKNOWN,
 }
@@ -4593,7 +4326,7 @@ func (p *RoleItem) String() string {
 //  - Id
 //  - Leader
 type ExecResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Id *ID `thrift:"id,2" db:"id" json:"id"`
   Leader *nebula0.HostAddr `thrift:"leader,3" db:"leader" json:"leader"`
 }
@@ -4605,7 +4338,7 @@ func NewExecResp() *ExecResp {
 }
 
 
-func (p *ExecResp) GetCode() ErrorCode {
+func (p *ExecResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ExecResp_Id_DEFAULT *ID
@@ -4674,7 +4407,7 @@ func (p *ExecResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -5715,7 +5448,7 @@ func (p *AdminJobResult_) String() string {
 //  - Leader
 //  - Result_
 type AdminJobResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Result_ *AdminJobResult_ `thrift:"result,3" db:"result" json:"result"`
 }
@@ -5728,7 +5461,7 @@ func NewAdminJobResp() *AdminJobResp {
 }
 
 
-func (p *AdminJobResp) GetCode() ErrorCode {
+func (p *AdminJobResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var AdminJobResp_Leader_DEFAULT *nebula0.HostAddr
@@ -5797,7 +5530,7 @@ func (p *AdminJobResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -6731,7 +6464,7 @@ func (p *ListSpacesReq) String() string {
 //  - Leader
 //  - Spaces
 type ListSpacesResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Spaces []*IdName `thrift:"spaces,3" db:"spaces" json:"spaces"`
 }
@@ -6743,7 +6476,7 @@ func NewListSpacesResp() *ListSpacesResp {
 }
 
 
-func (p *ListSpacesResp) GetCode() ErrorCode {
+func (p *ListSpacesResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListSpacesResp_Leader_DEFAULT *nebula0.HostAddr
@@ -6805,7 +6538,7 @@ func (p *ListSpacesResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -6998,7 +6731,7 @@ func (p *GetSpaceReq) String() string {
 //  - Leader
 //  - Item
 type GetSpaceResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Item *SpaceItem `thrift:"item,3" db:"item" json:"item"`
 }
@@ -7011,7 +6744,7 @@ func NewGetSpaceResp() *GetSpaceResp {
 }
 
 
-func (p *GetSpaceResp) GetCode() ErrorCode {
+func (p *GetSpaceResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var GetSpaceResp_Leader_DEFAULT *nebula0.HostAddr
@@ -7080,7 +6813,7 @@ func (p *GetSpaceResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -7813,7 +7546,7 @@ func (p *ListTagsReq) String() string {
 //  - Leader
 //  - Tags
 type ListTagsResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Tags []*TagItem `thrift:"tags,3" db:"tags" json:"tags"`
 }
@@ -7825,7 +7558,7 @@ func NewListTagsResp() *ListTagsResp {
 }
 
 
-func (p *ListTagsResp) GetCode() ErrorCode {
+func (p *ListTagsResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListTagsResp_Leader_DEFAULT *nebula0.HostAddr
@@ -7887,7 +7620,7 @@ func (p *ListTagsResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -8144,7 +7877,7 @@ func (p *GetTagReq) String() string {
 //  - Leader
 //  - Schema
 type GetTagResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Schema *Schema `thrift:"schema,3" db:"schema" json:"schema"`
 }
@@ -8157,7 +7890,7 @@ func NewGetTagResp() *GetTagResp {
 }
 
 
-func (p *GetTagResp) GetCode() ErrorCode {
+func (p *GetTagResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var GetTagResp_Leader_DEFAULT *nebula0.HostAddr
@@ -8226,7 +7959,7 @@ func (p *GetTagResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -8874,7 +8607,7 @@ func (p *GetEdgeReq) String() string {
 //  - Leader
 //  - Schema
 type GetEdgeResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Schema *Schema `thrift:"schema,3" db:"schema" json:"schema"`
 }
@@ -8887,7 +8620,7 @@ func NewGetEdgeResp() *GetEdgeResp {
 }
 
 
-func (p *GetEdgeResp) GetCode() ErrorCode {
+func (p *GetEdgeResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var GetEdgeResp_Leader_DEFAULT *nebula0.HostAddr
@@ -8956,7 +8689,7 @@ func (p *GetEdgeResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -9283,7 +9016,7 @@ func (p *ListEdgesReq) String() string {
 //  - Leader
 //  - Edges
 type ListEdgesResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Edges []*EdgeItem `thrift:"edges,3" db:"edges" json:"edges"`
 }
@@ -9295,7 +9028,7 @@ func NewListEdgesResp() *ListEdgesResp {
 }
 
 
-func (p *ListEdgesResp) GetCode() ErrorCode {
+func (p *ListEdgesResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListEdgesResp_Leader_DEFAULT *nebula0.HostAddr
@@ -9357,7 +9090,7 @@ func (p *ListEdgesResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -9551,7 +9284,7 @@ func (p *ListHostsReq) String() string {
 //  - Leader
 //  - Hosts
 type ListHostsResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Hosts []*HostItem `thrift:"hosts,3" db:"hosts" json:"hosts"`
 }
@@ -9563,7 +9296,7 @@ func NewListHostsResp() *ListHostsResp {
 }
 
 
-func (p *ListHostsResp) GetCode() ErrorCode {
+func (p *ListHostsResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListHostsResp_Leader_DEFAULT *nebula0.HostAddr
@@ -9625,7 +9358,7 @@ func (p *ListHostsResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -10120,7 +9853,7 @@ func (p *ListPartsReq) String() string {
 //  - Leader
 //  - Parts
 type ListPartsResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Parts []*PartItem `thrift:"parts,3" db:"parts" json:"parts"`
 }
@@ -10132,7 +9865,7 @@ func NewListPartsResp() *ListPartsResp {
 }
 
 
-func (p *ListPartsResp) GetCode() ErrorCode {
+func (p *ListPartsResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListPartsResp_Leader_DEFAULT *nebula0.HostAddr
@@ -10194,7 +9927,7 @@ func (p *ListPartsResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -10388,7 +10121,7 @@ func (p *GetPartsAllocReq) String() string {
 //  - Leader
 //  - Parts
 type GetPartsAllocResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Parts map[nebula0.PartitionID][]*nebula0.HostAddr `thrift:"parts,3" db:"parts" json:"parts"`
 }
@@ -10400,7 +10133,7 @@ func NewGetPartsAllocResp() *GetPartsAllocResp {
 }
 
 
-func (p *GetPartsAllocResp) GetCode() ErrorCode {
+func (p *GetPartsAllocResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var GetPartsAllocResp_Leader_DEFAULT *nebula0.HostAddr
@@ -10462,7 +10195,7 @@ func (p *GetPartsAllocResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -10851,7 +10584,7 @@ func (p *GetReq) String() string {
 //  - Leader
 //  - Value
 type GetResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Value []byte `thrift:"value,3" db:"value" json:"value"`
 }
@@ -10863,7 +10596,7 @@ func NewGetResp() *GetResp {
 }
 
 
-func (p *GetResp) GetCode() ErrorCode {
+func (p *GetResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var GetResp_Leader_DEFAULT *nebula0.HostAddr
@@ -10925,7 +10658,7 @@ func (p *GetResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -11150,7 +10883,7 @@ func (p *MultiGetReq) String() string {
 //  - Leader
 //  - Values
 type MultiGetResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Values [][]byte `thrift:"values,3" db:"values" json:"values"`
 }
@@ -11162,7 +10895,7 @@ func NewMultiGetResp() *MultiGetResp {
 }
 
 
-func (p *MultiGetResp) GetCode() ErrorCode {
+func (p *MultiGetResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var MultiGetResp_Leader_DEFAULT *nebula0.HostAddr
@@ -11224,7 +10957,7 @@ func (p *MultiGetResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -11743,7 +11476,7 @@ func (p *ScanReq) String() string {
 //  - Leader
 //  - Values
 type ScanResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Values [][]byte `thrift:"values,3" db:"values" json:"values"`
 }
@@ -11755,7 +11488,7 @@ func NewScanResp() *ScanResp {
 }
 
 
-func (p *ScanResp) GetCode() ErrorCode {
+func (p *ScanResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ScanResp_Leader_DEFAULT *nebula0.HostAddr
@@ -11817,7 +11550,7 @@ func (p *ScanResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -11927,7 +11660,7 @@ func (p *ScanResp) String() string {
 //  - ClusterID
 //  - LastUpdateTimeInMs
 type HBResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   ClusterID ClusterID `thrift:"cluster_id,3" db:"cluster_id" json:"cluster_id"`
   LastUpdateTimeInMs int64 `thrift:"last_update_time_in_ms,4" db:"last_update_time_in_ms" json:"last_update_time_in_ms"`
@@ -11940,7 +11673,7 @@ func NewHBResp() *HBResp {
 }
 
 
-func (p *HBResp) GetCode() ErrorCode {
+func (p *HBResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var HBResp_Leader_DEFAULT *nebula0.HostAddr
@@ -12010,7 +11743,7 @@ func (p *HBResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -13186,7 +12919,7 @@ func (p *GetTagIndexReq) String() string {
 //  - Leader
 //  - Item
 type GetTagIndexResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Item *IndexItem `thrift:"item,3" db:"item" json:"item"`
 }
@@ -13199,7 +12932,7 @@ func NewGetTagIndexResp() *GetTagIndexResp {
 }
 
 
-func (p *GetTagIndexResp) GetCode() ErrorCode {
+func (p *GetTagIndexResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var GetTagIndexResp_Leader_DEFAULT *nebula0.HostAddr
@@ -13268,7 +13001,7 @@ func (p *GetTagIndexResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -13447,7 +13180,7 @@ func (p *ListTagIndexesReq) String() string {
 //  - Leader
 //  - Items
 type ListTagIndexesResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Items []*IndexItem `thrift:"items,3" db:"items" json:"items"`
 }
@@ -13459,7 +13192,7 @@ func NewListTagIndexesResp() *ListTagIndexesResp {
 }
 
 
-func (p *ListTagIndexesResp) GetCode() ErrorCode {
+func (p *ListTagIndexesResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListTagIndexesResp_Leader_DEFAULT *nebula0.HostAddr
@@ -13521,7 +13254,7 @@ func (p *ListTagIndexesResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -14162,7 +13895,7 @@ func (p *GetEdgeIndexReq) String() string {
 //  - Leader
 //  - Item
 type GetEdgeIndexResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Item *IndexItem `thrift:"item,3" db:"item" json:"item"`
 }
@@ -14175,7 +13908,7 @@ func NewGetEdgeIndexResp() *GetEdgeIndexResp {
 }
 
 
-func (p *GetEdgeIndexResp) GetCode() ErrorCode {
+func (p *GetEdgeIndexResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var GetEdgeIndexResp_Leader_DEFAULT *nebula0.HostAddr
@@ -14244,7 +13977,7 @@ func (p *GetEdgeIndexResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -14423,7 +14156,7 @@ func (p *ListEdgeIndexesReq) String() string {
 //  - Leader
 //  - Items
 type ListEdgeIndexesResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Items []*IndexItem `thrift:"items,3" db:"items" json:"items"`
 }
@@ -14435,7 +14168,7 @@ func NewListEdgeIndexesResp() *ListEdgeIndexesResp {
 }
 
 
-func (p *ListEdgeIndexesResp) GetCode() ErrorCode {
+func (p *ListEdgeIndexesResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListEdgeIndexesResp_Leader_DEFAULT *nebula0.HostAddr
@@ -14497,7 +14230,7 @@ func (p *ListEdgeIndexesResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -15349,7 +15082,7 @@ func (p *ListUsersReq) String() string {
 //  - Leader
 //  - Users
 type ListUsersResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Users map[string][]byte `thrift:"users,3" db:"users" json:"users"`
 }
@@ -15361,7 +15094,7 @@ func NewListUsersResp() *ListUsersResp {
 }
 
 
-func (p *ListUsersResp) GetCode() ErrorCode {
+func (p *ListUsersResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListUsersResp_Leader_DEFAULT *nebula0.HostAddr
@@ -15423,7 +15156,7 @@ func (p *ListUsersResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -15626,7 +15359,7 @@ func (p *ListRolesReq) String() string {
 //  - Leader
 //  - Roles
 type ListRolesResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Roles []*RoleItem `thrift:"roles,3" db:"roles" json:"roles"`
 }
@@ -15638,7 +15371,7 @@ func NewListRolesResp() *ListRolesResp {
 }
 
 
-func (p *ListRolesResp) GetCode() ErrorCode {
+func (p *ListRolesResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListRolesResp_Leader_DEFAULT *nebula0.HostAddr
@@ -15700,7 +15433,7 @@ func (p *ListRolesResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -16451,7 +16184,7 @@ func (p *BalanceTask) String() string {
 //  - Leader
 //  - Tasks
 type BalanceResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Id int64 `thrift:"id,2" db:"id" json:"id"`
   Leader *nebula0.HostAddr `thrift:"leader,3" db:"leader" json:"leader"`
   Tasks []*BalanceTask `thrift:"tasks,4" db:"tasks" json:"tasks"`
@@ -16464,7 +16197,7 @@ func NewBalanceResp() *BalanceResp {
 }
 
 
-func (p *BalanceResp) GetCode() ErrorCode {
+func (p *BalanceResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 
@@ -16534,7 +16267,7 @@ func (p *BalanceResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -17109,7 +16842,7 @@ func (p *GetConfigReq) String() string {
 //  - Leader
 //  - Items
 type GetConfigResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Items []*ConfigItem `thrift:"items,3" db:"items" json:"items"`
 }
@@ -17121,7 +16854,7 @@ func NewGetConfigResp() *GetConfigResp {
 }
 
 
-func (p *GetConfigResp) GetCode() ErrorCode {
+func (p *GetConfigResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var GetConfigResp_Leader_DEFAULT *nebula0.HostAddr
@@ -17183,7 +16916,7 @@ func (p *GetConfigResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -17507,7 +17240,7 @@ func (p *ListConfigsReq) String() string {
 //  - Leader
 //  - Items
 type ListConfigsResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Items []*ConfigItem `thrift:"items,3" db:"items" json:"items"`
 }
@@ -17519,7 +17252,7 @@ func NewListConfigsResp() *ListConfigsResp {
 }
 
 
-func (p *ListConfigsResp) GetCode() ErrorCode {
+func (p *ListConfigsResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListConfigsResp_Leader_DEFAULT *nebula0.HostAddr
@@ -17581,7 +17314,7 @@ func (p *ListConfigsResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -18022,7 +17755,7 @@ func (p *Snapshot) String() string {
 //  - Leader
 //  - Snapshots
 type ListSnapshotsResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Snapshots []*Snapshot `thrift:"snapshots,3" db:"snapshots" json:"snapshots"`
 }
@@ -18034,7 +17767,7 @@ func NewListSnapshotsResp() *ListSnapshotsResp {
 }
 
 
-func (p *ListSnapshotsResp) GetCode() ErrorCode {
+func (p *ListSnapshotsResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListSnapshotsResp_Leader_DEFAULT *nebula0.HostAddr
@@ -18096,7 +17829,7 @@ func (p *ListSnapshotsResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -18406,7 +18139,7 @@ func (p *IndexStatus) String() string {
 //  - Leader
 //  - Statuses
 type ListIndexStatusResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Statuses []*IndexStatus `thrift:"statuses,3" db:"statuses" json:"statuses"`
 }
@@ -18418,7 +18151,7 @@ func NewListIndexStatusResp() *ListIndexStatusResp {
 }
 
 
-func (p *ListIndexStatusResp) GetCode() ErrorCode {
+func (p *ListIndexStatusResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListIndexStatusResp_Leader_DEFAULT *nebula0.HostAddr
@@ -18480,7 +18213,7 @@ func (p *ListIndexStatusResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -19154,7 +18887,7 @@ func (p *GetZoneReq) String() string {
 //  - Leader
 //  - Hosts
 type GetZoneResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Hosts []*nebula0.HostAddr `thrift:"hosts,3" db:"hosts" json:"hosts"`
 }
@@ -19166,7 +18899,7 @@ func NewGetZoneResp() *GetZoneResp {
 }
 
 
-func (p *GetZoneResp) GetCode() ErrorCode {
+func (p *GetZoneResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var GetZoneResp_Leader_DEFAULT *nebula0.HostAddr
@@ -19228,7 +18961,7 @@ func (p *GetZoneResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -19522,7 +19255,7 @@ func (p *Zone) String() string {
 //  - Leader
 //  - Zones
 type ListZonesResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Zones []*Zone `thrift:"zones,3" db:"zones" json:"zones"`
 }
@@ -19534,7 +19267,7 @@ func NewListZonesResp() *ListZonesResp {
 }
 
 
-func (p *ListZonesResp) GetCode() ErrorCode {
+func (p *ListZonesResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListZonesResp_Leader_DEFAULT *nebula0.HostAddr
@@ -19596,7 +19329,7 @@ func (p *ListZonesResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -20243,7 +19976,7 @@ func (p *GetGroupReq) String() string {
 //  - Leader
 //  - ZoneNames
 type GetGroupResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   ZoneNames [][]byte `thrift:"zone_names,3" db:"zone_names" json:"zone_names"`
 }
@@ -20255,7 +19988,7 @@ func NewGetGroupResp() *GetGroupResp {
 }
 
 
-func (p *GetGroupResp) GetCode() ErrorCode {
+func (p *GetGroupResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var GetGroupResp_Leader_DEFAULT *nebula0.HostAddr
@@ -20317,7 +20050,7 @@ func (p *GetGroupResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -20613,7 +20346,7 @@ func (p *Group) String() string {
 //  - Leader
 //  - Groups
 type ListGroupsResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Groups []*Group `thrift:"groups,3" db:"groups" json:"groups"`
 }
@@ -20625,7 +20358,7 @@ func NewListGroupsResp() *ListGroupsResp {
 }
 
 
-func (p *ListGroupsResp) GetCode() ErrorCode {
+func (p *ListGroupsResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListGroupsResp_Leader_DEFAULT *nebula0.HostAddr
@@ -20687,7 +20420,7 @@ func (p *ListGroupsResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -21363,7 +21096,7 @@ func (p *ListenerInfo) String() string {
 //  - Leader
 //  - Listeners
 type ListListenerResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Listeners []*ListenerInfo `thrift:"listeners,3" db:"listeners" json:"listeners"`
 }
@@ -21375,7 +21108,7 @@ func NewListListenerResp() *ListListenerResp {
 }
 
 
-func (p *ListListenerResp) GetCode() ErrorCode {
+func (p *ListListenerResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListListenerResp_Leader_DEFAULT *nebula0.HostAddr
@@ -21437,7 +21170,7 @@ func (p *ListListenerResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -21631,7 +21364,7 @@ func (p *GetStatisReq) String() string {
 //  - Leader
 //  - Statis
 type GetStatisResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Statis *StatisItem `thrift:"statis,3" db:"statis" json:"statis"`
 }
@@ -21644,7 +21377,7 @@ func NewGetStatisResp() *GetStatisResp {
 }
 
 
-func (p *GetStatisResp) GetCode() ErrorCode {
+func (p *GetStatisResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var GetStatisResp_Leader_DEFAULT *nebula0.HostAddr
@@ -21713,7 +21446,7 @@ func (p *GetStatisResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -22440,7 +22173,7 @@ func (p *CreateBackupReq) String() string {
 //  - Leader
 //  - Meta
 type CreateBackupResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Meta *BackupMeta `thrift:"meta,3" db:"meta" json:"meta"`
 }
@@ -22453,7 +22186,7 @@ func NewCreateBackupResp() *CreateBackupResp {
 }
 
 
-func (p *CreateBackupResp) GetCode() ErrorCode {
+func (p *CreateBackupResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var CreateBackupResp_Leader_DEFAULT *nebula0.HostAddr
@@ -22522,7 +22255,7 @@ func (p *CreateBackupResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -23332,7 +23065,7 @@ func (p *ListFTClientsReq) String() string {
 //  - Leader
 //  - Clients
 type ListFTClientsResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Clients []*FTClient `thrift:"clients,3" db:"clients" json:"clients"`
 }
@@ -23344,7 +23077,7 @@ func NewListFTClientsResp() *ListFTClientsResp {
 }
 
 
-func (p *ListFTClientsResp) GetCode() ErrorCode {
+func (p *ListFTClientsResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListFTClientsResp_Leader_DEFAULT *nebula0.HostAddr
@@ -23406,7 +23139,7 @@ func (p *ListFTClientsResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -24053,7 +23786,7 @@ func (p *CreateSessionReq) String() string {
 //  - Leader
 //  - Session
 type CreateSessionResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Session *Session `thrift:"session,3" db:"session" json:"session"`
 }
@@ -24066,7 +23799,7 @@ func NewCreateSessionResp() *CreateSessionResp {
 }
 
 
-func (p *CreateSessionResp) GetCode() ErrorCode {
+func (p *CreateSessionResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var CreateSessionResp_Leader_DEFAULT *nebula0.HostAddr
@@ -24135,7 +23868,7 @@ func (p *CreateSessionResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -24383,7 +24116,7 @@ func (p *ListSessionsReq) String() string {
 //  - Leader
 //  - Sessions
 type ListSessionsResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Sessions []*Session `thrift:"sessions,3" db:"sessions" json:"sessions"`
 }
@@ -24395,7 +24128,7 @@ func NewListSessionsResp() *ListSessionsResp {
 }
 
 
-func (p *ListSessionsResp) GetCode() ErrorCode {
+func (p *ListSessionsResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var ListSessionsResp_Leader_DEFAULT *nebula0.HostAddr
@@ -24457,7 +24190,7 @@ func (p *ListSessionsResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -24651,7 +24384,7 @@ func (p *GetSessionReq) String() string {
 //  - Leader
 //  - Session
 type GetSessionResp struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
   Session *Session `thrift:"session,3" db:"session" json:"session"`
 }
@@ -24664,7 +24397,7 @@ func NewGetSessionResp() *GetSessionResp {
 }
 
 
-func (p *GetSessionResp) GetCode() ErrorCode {
+func (p *GetSessionResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 var GetSessionResp_Leader_DEFAULT *nebula0.HostAddr
@@ -24733,7 +24466,7 @@ func (p *GetSessionResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
@@ -24913,7 +24646,7 @@ func (p *RemoveSessionReq) String() string {
 //  - TaskID
 //  - Statis
 type ReportTaskReq struct {
-  Code ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   JobID int32 `thrift:"job_id,2" db:"job_id" json:"job_id"`
   TaskID int32 `thrift:"task_id,3" db:"task_id" json:"task_id"`
   Statis *StatisItem `thrift:"statis,4" db:"statis" json:"statis,omitempty"`
@@ -24924,7 +24657,7 @@ func NewReportTaskReq() *ReportTaskReq {
 }
 
 
-func (p *ReportTaskReq) GetCode() ErrorCode {
+func (p *ReportTaskReq) GetCode() nebula0.ErrorCode {
   return p.Code
 }
 
@@ -24994,7 +24727,7 @@ func (p *ReportTaskReq)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := ErrorCode(v)
+  temp := nebula0.ErrorCode(v)
   p.Code = temp
 }
   return nil
