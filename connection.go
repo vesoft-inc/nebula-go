@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
+	"github.com/vesoft-inc/nebula-go/v2/nebula"
 	"github.com/vesoft-inc/nebula-go/v2/nebula/graph"
 )
 
@@ -65,7 +66,7 @@ func (cn *connection) authenticate(username, password string) (*graph.AuthRespon
 		}
 		return nil, err
 	}
-	if resp.ErrorCode != graph.ErrorCode_SUCCEEDED {
+	if resp.ErrorCode != nebula.ErrorCode_SUCCEEDED {
 		return nil, fmt.Errorf("Fail to authenticate, error: %s", resp.ErrorMsg)
 	}
 	return resp, err

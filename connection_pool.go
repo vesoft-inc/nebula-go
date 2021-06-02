@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	graph "github.com/vesoft-inc/nebula-go/v2/nebula/graph"
+	"github.com/vesoft-inc/nebula-go/v2/nebula"
 )
 
 type ConnectionPool struct {
@@ -94,7 +94,7 @@ func (pool *ConnectionPool) GetSession(username, password string) (*Session, err
 	}
 	// Authenticate
 	resp, err := conn.authenticate(username, password)
-	if err != nil || resp.GetErrorCode() != graph.ErrorCode_SUCCEEDED {
+	if err != nil || resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
 		// if authentication failed, put connection back
 		pool.rwLock.Lock()
 		defer pool.rwLock.Unlock()
