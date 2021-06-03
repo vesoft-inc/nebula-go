@@ -123,19 +123,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "Get requires 1 args")
       flag.Usage()
     }
-    arg251 := flag.Arg(1)
-    mbTrans252 := thrift.NewMemoryBufferLen(len(arg251))
-    defer mbTrans252.Close()
-    _, err253 := mbTrans252.WriteString(arg251)
-    if err253 != nil {
+    arg258 := flag.Arg(1)
+    mbTrans259 := thrift.NewMemoryBufferLen(len(arg258))
+    defer mbTrans259.Close()
+    _, err260 := mbTrans259.WriteString(arg258)
+    if err260 != nil {
       Usage()
       return
     }
-    factory254 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt255 := factory254.GetProtocol(mbTrans252)
+    factory261 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt262 := factory261.GetProtocol(mbTrans259)
     argvalue0 := storage.NewKVGetRequest()
-    err256 := argvalue0.Read(jsProt255)
-    if err256 != nil {
+    err263 := argvalue0.Read(jsProt262)
+    if err263 != nil {
       Usage()
       return
     }
@@ -148,19 +148,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "Put requires 1 args")
       flag.Usage()
     }
-    arg257 := flag.Arg(1)
-    mbTrans258 := thrift.NewMemoryBufferLen(len(arg257))
-    defer mbTrans258.Close()
-    _, err259 := mbTrans258.WriteString(arg257)
-    if err259 != nil {
+    arg264 := flag.Arg(1)
+    mbTrans265 := thrift.NewMemoryBufferLen(len(arg264))
+    defer mbTrans265.Close()
+    _, err266 := mbTrans265.WriteString(arg264)
+    if err266 != nil {
       Usage()
       return
     }
-    factory260 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt261 := factory260.GetProtocol(mbTrans258)
+    factory267 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt268 := factory267.GetProtocol(mbTrans265)
     argvalue0 := storage.NewKVPutRequest()
-    err262 := argvalue0.Read(jsProt261)
-    if err262 != nil {
+    err269 := argvalue0.Read(jsProt268)
+    if err269 != nil {
       Usage()
       return
     }
@@ -173,19 +173,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "Remove requires 1 args")
       flag.Usage()
     }
-    arg263 := flag.Arg(1)
-    mbTrans264 := thrift.NewMemoryBufferLen(len(arg263))
-    defer mbTrans264.Close()
-    _, err265 := mbTrans264.WriteString(arg263)
-    if err265 != nil {
+    arg270 := flag.Arg(1)
+    mbTrans271 := thrift.NewMemoryBufferLen(len(arg270))
+    defer mbTrans271.Close()
+    _, err272 := mbTrans271.WriteString(arg270)
+    if err272 != nil {
       Usage()
       return
     }
-    factory266 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt267 := factory266.GetProtocol(mbTrans264)
+    factory273 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt274 := factory273.GetProtocol(mbTrans271)
     argvalue0 := storage.NewKVRemoveRequest()
-    err268 := argvalue0.Read(jsProt267)
-    if err268 != nil {
+    err275 := argvalue0.Read(jsProt274)
+    if err275 != nil {
       Usage()
       return
     }

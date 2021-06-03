@@ -323,11 +323,11 @@ func (p *GeneralStorageServiceProcessor) ProcessorMap() map[string]thrift.Proces
 }
 
 func NewGeneralStorageServiceProcessor(handler GeneralStorageService) *GeneralStorageServiceProcessor {
-  self249 := &GeneralStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self249.processorMap["get"] = &generalStorageServiceProcessorGet{handler:handler}
-  self249.processorMap["put"] = &generalStorageServiceProcessorPut{handler:handler}
-  self249.processorMap["remove"] = &generalStorageServiceProcessorRemove{handler:handler}
-  return self249
+  self256 := &GeneralStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self256.processorMap["get"] = &generalStorageServiceProcessorGet{handler:handler}
+  self256.processorMap["put"] = &generalStorageServiceProcessorPut{handler:handler}
+  self256.processorMap["remove"] = &generalStorageServiceProcessorRemove{handler:handler}
+  return self256
 }
 
 type generalStorageServiceProcessorGet struct {

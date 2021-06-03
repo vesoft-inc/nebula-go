@@ -994,22 +994,22 @@ func (p *GraphStorageServiceProcessor) ProcessorMap() map[string]thrift.Processo
 }
 
 func NewGraphStorageServiceProcessor(handler GraphStorageService) *GraphStorageServiceProcessor {
-  self71 := &GraphStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self71.processorMap["getNeighbors"] = &graphStorageServiceProcessorGetNeighbors{handler:handler}
-  self71.processorMap["getProps"] = &graphStorageServiceProcessorGetProps{handler:handler}
-  self71.processorMap["addVertices"] = &graphStorageServiceProcessorAddVertices{handler:handler}
-  self71.processorMap["addEdges"] = &graphStorageServiceProcessorAddEdges{handler:handler}
-  self71.processorMap["deleteEdges"] = &graphStorageServiceProcessorDeleteEdges{handler:handler}
-  self71.processorMap["deleteVertices"] = &graphStorageServiceProcessorDeleteVertices{handler:handler}
-  self71.processorMap["updateVertex"] = &graphStorageServiceProcessorUpdateVertex{handler:handler}
-  self71.processorMap["updateEdge"] = &graphStorageServiceProcessorUpdateEdge{handler:handler}
-  self71.processorMap["scanVertex"] = &graphStorageServiceProcessorScanVertex{handler:handler}
-  self71.processorMap["scanEdge"] = &graphStorageServiceProcessorScanEdge{handler:handler}
-  self71.processorMap["getUUID"] = &graphStorageServiceProcessorGetUUID{handler:handler}
-  self71.processorMap["lookupIndex"] = &graphStorageServiceProcessorLookupIndex{handler:handler}
-  self71.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
-  self71.processorMap["addEdgesAtomic"] = &graphStorageServiceProcessorAddEdgesAtomic{handler:handler}
-  return self71
+  self72 := &GraphStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self72.processorMap["getNeighbors"] = &graphStorageServiceProcessorGetNeighbors{handler:handler}
+  self72.processorMap["getProps"] = &graphStorageServiceProcessorGetProps{handler:handler}
+  self72.processorMap["addVertices"] = &graphStorageServiceProcessorAddVertices{handler:handler}
+  self72.processorMap["addEdges"] = &graphStorageServiceProcessorAddEdges{handler:handler}
+  self72.processorMap["deleteEdges"] = &graphStorageServiceProcessorDeleteEdges{handler:handler}
+  self72.processorMap["deleteVertices"] = &graphStorageServiceProcessorDeleteVertices{handler:handler}
+  self72.processorMap["updateVertex"] = &graphStorageServiceProcessorUpdateVertex{handler:handler}
+  self72.processorMap["updateEdge"] = &graphStorageServiceProcessorUpdateEdge{handler:handler}
+  self72.processorMap["scanVertex"] = &graphStorageServiceProcessorScanVertex{handler:handler}
+  self72.processorMap["scanEdge"] = &graphStorageServiceProcessorScanEdge{handler:handler}
+  self72.processorMap["getUUID"] = &graphStorageServiceProcessorGetUUID{handler:handler}
+  self72.processorMap["lookupIndex"] = &graphStorageServiceProcessorLookupIndex{handler:handler}
+  self72.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
+  self72.processorMap["addEdgesAtomic"] = &graphStorageServiceProcessorAddEdgesAtomic{handler:handler}
+  return self72
 }
 
 type graphStorageServiceProcessorGetNeighbors struct {

@@ -120,6 +120,7 @@ const (
   ErrorCode_E_PARTIAL_RESULT ErrorCode = -27
   ErrorCode_E_REBUILD_INDEX_FAILED ErrorCode = -28
   ErrorCode_E_INVALID_PASSWORD ErrorCode = -29
+  ErrorCode_E_FAILED_GET_ABS_PATH ErrorCode = -30
   ErrorCode_E_BAD_USERNAME_PASSWORD ErrorCode = -1001
   ErrorCode_E_SESSION_INVALID ErrorCode = -1002
   ErrorCode_E_SESSION_TIMEOUT ErrorCode = -1003
@@ -169,6 +170,9 @@ const (
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND ErrorCode = -2067
   ErrorCode_E_RESTORE_FAILURE ErrorCode = -2068
   ErrorCode_E_SESSION_NOT_FOUND ErrorCode = -2069
+  ErrorCode_E_LIST_CLUSTER_FAILURE ErrorCode = -2070
+  ErrorCode_E_LIST_CLUSTER_GET_ABS_PATH_FAILURE ErrorCode = -2071
+  ErrorCode_E_GET_META_DIR_FAILURE ErrorCode = -2072
   ErrorCode_E_CONSENSUS_ERROR ErrorCode = -3001
   ErrorCode_E_KEY_HAS_EXISTS ErrorCode = -3002
   ErrorCode_E_DATA_TYPE_MISMATCH ErrorCode = -3003
@@ -229,6 +233,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_PARTIAL_RESULT: "E_PARTIAL_RESULT",
   ErrorCode_E_REBUILD_INDEX_FAILED: "E_REBUILD_INDEX_FAILED",
   ErrorCode_E_INVALID_PASSWORD: "E_INVALID_PASSWORD",
+  ErrorCode_E_FAILED_GET_ABS_PATH: "E_FAILED_GET_ABS_PATH",
   ErrorCode_E_BAD_USERNAME_PASSWORD: "E_BAD_USERNAME_PASSWORD",
   ErrorCode_E_SESSION_INVALID: "E_SESSION_INVALID",
   ErrorCode_E_SESSION_TIMEOUT: "E_SESSION_TIMEOUT",
@@ -278,6 +283,9 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND: "E_BACKUP_SPACE_NOT_FOUND",
   ErrorCode_E_RESTORE_FAILURE: "E_RESTORE_FAILURE",
   ErrorCode_E_SESSION_NOT_FOUND: "E_SESSION_NOT_FOUND",
+  ErrorCode_E_LIST_CLUSTER_FAILURE: "E_LIST_CLUSTER_FAILURE",
+  ErrorCode_E_LIST_CLUSTER_GET_ABS_PATH_FAILURE: "E_LIST_CLUSTER_GET_ABS_PATH_FAILURE",
+  ErrorCode_E_GET_META_DIR_FAILURE: "E_GET_META_DIR_FAILURE",
   ErrorCode_E_CONSENSUS_ERROR: "E_CONSENSUS_ERROR",
   ErrorCode_E_KEY_HAS_EXISTS: "E_KEY_HAS_EXISTS",
   ErrorCode_E_DATA_TYPE_MISMATCH: "E_DATA_TYPE_MISMATCH",
@@ -338,6 +346,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_PARTIAL_RESULT": ErrorCode_E_PARTIAL_RESULT,
   "E_REBUILD_INDEX_FAILED": ErrorCode_E_REBUILD_INDEX_FAILED,
   "E_INVALID_PASSWORD": ErrorCode_E_INVALID_PASSWORD,
+  "E_FAILED_GET_ABS_PATH": ErrorCode_E_FAILED_GET_ABS_PATH,
   "E_BAD_USERNAME_PASSWORD": ErrorCode_E_BAD_USERNAME_PASSWORD,
   "E_SESSION_INVALID": ErrorCode_E_SESSION_INVALID,
   "E_SESSION_TIMEOUT": ErrorCode_E_SESSION_TIMEOUT,
@@ -387,6 +396,9 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_BACKUP_SPACE_NOT_FOUND": ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
   "E_RESTORE_FAILURE": ErrorCode_E_RESTORE_FAILURE,
   "E_SESSION_NOT_FOUND": ErrorCode_E_SESSION_NOT_FOUND,
+  "E_LIST_CLUSTER_FAILURE": ErrorCode_E_LIST_CLUSTER_FAILURE,
+  "E_LIST_CLUSTER_GET_ABS_PATH_FAILURE": ErrorCode_E_LIST_CLUSTER_GET_ABS_PATH_FAILURE,
+  "E_GET_META_DIR_FAILURE": ErrorCode_E_GET_META_DIR_FAILURE,
   "E_CONSENSUS_ERROR": ErrorCode_E_CONSENSUS_ERROR,
   "E_KEY_HAS_EXISTS": ErrorCode_E_KEY_HAS_EXISTS,
   "E_DATA_TYPE_MISMATCH": ErrorCode_E_DATA_TYPE_MISMATCH,
@@ -447,6 +459,7 @@ var ErrorCodeNames = []string {
   "E_PARTIAL_RESULT",
   "E_REBUILD_INDEX_FAILED",
   "E_INVALID_PASSWORD",
+  "E_FAILED_GET_ABS_PATH",
   "E_BAD_USERNAME_PASSWORD",
   "E_SESSION_INVALID",
   "E_SESSION_TIMEOUT",
@@ -496,6 +509,9 @@ var ErrorCodeNames = []string {
   "E_BACKUP_SPACE_NOT_FOUND",
   "E_RESTORE_FAILURE",
   "E_SESSION_NOT_FOUND",
+  "E_LIST_CLUSTER_FAILURE",
+  "E_LIST_CLUSTER_GET_ABS_PATH_FAILURE",
+  "E_GET_META_DIR_FAILURE",
   "E_CONSENSUS_ERROR",
   "E_KEY_HAS_EXISTS",
   "E_DATA_TYPE_MISMATCH",
@@ -556,6 +572,7 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_PARTIAL_RESULT,
   ErrorCode_E_REBUILD_INDEX_FAILED,
   ErrorCode_E_INVALID_PASSWORD,
+  ErrorCode_E_FAILED_GET_ABS_PATH,
   ErrorCode_E_BAD_USERNAME_PASSWORD,
   ErrorCode_E_SESSION_INVALID,
   ErrorCode_E_SESSION_TIMEOUT,
@@ -605,6 +622,9 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
   ErrorCode_E_RESTORE_FAILURE,
   ErrorCode_E_SESSION_NOT_FOUND,
+  ErrorCode_E_LIST_CLUSTER_FAILURE,
+  ErrorCode_E_LIST_CLUSTER_GET_ABS_PATH_FAILURE,
+  ErrorCode_E_GET_META_DIR_FAILURE,
   ErrorCode_E_CONSENSUS_ERROR,
   ErrorCode_E_KEY_HAS_EXISTS,
   ErrorCode_E_DATA_TYPE_MISMATCH,
@@ -4015,6 +4035,286 @@ func (p *LogInfo) String() string {
 }
 
 // Attributes:
+//  - Root
+//  - Data
+type DirInfo struct {
+  Root []byte `thrift:"root,1" db:"root" json:"root"`
+  Data [][]byte `thrift:"data,2" db:"data" json:"data"`
+}
+
+func NewDirInfo() *DirInfo {
+  return &DirInfo{}
+}
+
+
+func (p *DirInfo) GetRoot() []byte {
+  return p.Root
+}
+
+func (p *DirInfo) GetData() [][]byte {
+  return p.Data
+}
+func (p *DirInfo) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *DirInfo)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.Root = v
+}
+  return nil
+}
+
+func (p *DirInfo)  ReadField2(iprot thrift.Protocol) error {
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([][]byte, 0, size)
+  p.Data =  tSlice
+  for i := 0; i < size; i ++ {
+var _elem15 []byte
+    if v, err := iprot.ReadBinary(); err != nil {
+    return thrift.PrependError("error reading field 0: ", err)
+} else {
+    _elem15 = v
+}
+    p.Data = append(p.Data, _elem15)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
+  return nil
+}
+
+func (p *DirInfo) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("DirInfo"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *DirInfo) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("root", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:root: ", p), err) }
+  if err := oprot.WriteBinary(p.Root); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.root (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:root: ", p), err) }
+  return err
+}
+
+func (p *DirInfo) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("data", thrift.LIST, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:data: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.STRING, len(p.Data)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.Data {
+    if err := oprot.WriteBinary(v); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:data: ", p), err) }
+  return err
+}
+
+func (p *DirInfo) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  rootVal := fmt.Sprintf("%v", p.Root)
+  dataVal := fmt.Sprintf("%v", p.Data)
+  return fmt.Sprintf("DirInfo({Root:%s Data:%s})", rootVal, dataVal)
+}
+
+// Attributes:
+//  - Host
+//  - Dir
+type NodeInfo struct {
+  Host *HostAddr `thrift:"host,1" db:"host" json:"host"`
+  Dir *DirInfo `thrift:"dir,2" db:"dir" json:"dir"`
+}
+
+func NewNodeInfo() *NodeInfo {
+  return &NodeInfo{
+    Host: NewHostAddr(),
+    Dir: NewDirInfo(),
+  }
+}
+
+var NodeInfo_Host_DEFAULT *HostAddr
+func (p *NodeInfo) GetHost() *HostAddr {
+  if !p.IsSetHost() {
+    return NodeInfo_Host_DEFAULT
+  }
+return p.Host
+}
+var NodeInfo_Dir_DEFAULT *DirInfo
+func (p *NodeInfo) GetDir() *DirInfo {
+  if !p.IsSetDir() {
+    return NodeInfo_Dir_DEFAULT
+  }
+return p.Dir
+}
+func (p *NodeInfo) IsSetHost() bool {
+  return p != nil && p.Host != nil
+}
+
+func (p *NodeInfo) IsSetDir() bool {
+  return p != nil && p.Dir != nil
+}
+
+func (p *NodeInfo) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *NodeInfo)  ReadField1(iprot thrift.Protocol) error {
+  p.Host = NewHostAddr()
+  if err := p.Host.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Host), err)
+  }
+  return nil
+}
+
+func (p *NodeInfo)  ReadField2(iprot thrift.Protocol) error {
+  p.Dir = NewDirInfo()
+  if err := p.Dir.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Dir), err)
+  }
+  return nil
+}
+
+func (p *NodeInfo) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("NodeInfo"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *NodeInfo) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("host", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:host: ", p), err) }
+  if err := p.Host.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Host), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:host: ", p), err) }
+  return err
+}
+
+func (p *NodeInfo) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("dir", thrift.STRUCT, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:dir: ", p), err) }
+  if err := p.Dir.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Dir), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:dir: ", p), err) }
+  return err
+}
+
+func (p *NodeInfo) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var hostVal string
+  if p.Host == nil {
+    hostVal = "<nil>"
+  } else {
+    hostVal = fmt.Sprintf("%v", p.Host)
+  }
+  var dirVal string
+  if p.Dir == nil {
+    dirVal = "<nil>"
+  } else {
+    dirVal = fmt.Sprintf("%v", p.Dir)
+  }
+  return fmt.Sprintf("NodeInfo({Host:%s Dir:%s})", hostVal, dirVal)
+}
+
+// Attributes:
 //  - Info
 type PartitionBackupInfo struct {
   Info map[PartitionID]*LogInfo `thrift:"info,1" db:"info" json:"info"`
@@ -4068,18 +4368,18 @@ func (p *PartitionBackupInfo)  ReadField1(iprot thrift.Protocol) error {
   tMap := make(map[PartitionID]*LogInfo, size)
   p.Info =  tMap
   for i := 0; i < size; i ++ {
-var _key15 PartitionID
+var _key16 PartitionID
     if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 0: ", err)
 } else {
     temp := PartitionID(v)
-    _key15 = temp
+    _key16 = temp
 }
-    _val16 := NewLogInfo()
-    if err := _val16.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val16), err)
+    _val17 := NewLogInfo()
+    if err := _val17.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val17), err)
     }
-    p.Info[_key15] = _val16
+    p.Info[_key16] = _val17
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -4126,5 +4426,135 @@ func (p *PartitionBackupInfo) String() string {
 
   infoVal := fmt.Sprintf("%v", p.Info)
   return fmt.Sprintf("PartitionBackupInfo({Info:%s})", infoVal)
+}
+
+// Attributes:
+//  - PartitionInfo
+//  - Path
+type CheckpointInfo struct {
+  PartitionInfo *PartitionBackupInfo `thrift:"partition_info,1" db:"partition_info" json:"partition_info"`
+  Path []byte `thrift:"path,2" db:"path" json:"path"`
+}
+
+func NewCheckpointInfo() *CheckpointInfo {
+  return &CheckpointInfo{
+    PartitionInfo: NewPartitionBackupInfo(),
+  }
+}
+
+var CheckpointInfo_PartitionInfo_DEFAULT *PartitionBackupInfo
+func (p *CheckpointInfo) GetPartitionInfo() *PartitionBackupInfo {
+  if !p.IsSetPartitionInfo() {
+    return CheckpointInfo_PartitionInfo_DEFAULT
+  }
+return p.PartitionInfo
+}
+
+func (p *CheckpointInfo) GetPath() []byte {
+  return p.Path
+}
+func (p *CheckpointInfo) IsSetPartitionInfo() bool {
+  return p != nil && p.PartitionInfo != nil
+}
+
+func (p *CheckpointInfo) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CheckpointInfo)  ReadField1(iprot thrift.Protocol) error {
+  p.PartitionInfo = NewPartitionBackupInfo()
+  if err := p.PartitionInfo.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.PartitionInfo), err)
+  }
+  return nil
+}
+
+func (p *CheckpointInfo)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Path = v
+}
+  return nil
+}
+
+func (p *CheckpointInfo) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("CheckpointInfo"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CheckpointInfo) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("partition_info", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:partition_info: ", p), err) }
+  if err := p.PartitionInfo.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.PartitionInfo), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:partition_info: ", p), err) }
+  return err
+}
+
+func (p *CheckpointInfo) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("path", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:path: ", p), err) }
+  if err := oprot.WriteBinary(p.Path); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.path (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:path: ", p), err) }
+  return err
+}
+
+func (p *CheckpointInfo) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var partitionInfoVal string
+  if p.PartitionInfo == nil {
+    partitionInfoVal = "<nil>"
+  } else {
+    partitionInfoVal = fmt.Sprintf("%v", p.PartitionInfo)
+  }
+  pathVal := fmt.Sprintf("%v", p.Path)
+  return fmt.Sprintf("CheckpointInfo({PartitionInfo:%s Path:%s})", partitionInfoVal, pathVal)
 }
 
