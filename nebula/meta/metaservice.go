@@ -253,6 +253,15 @@ type MetaService interface {
   ListFTClients(ctx context.Context, req *ListFTClientsReq) (_r *ListFTClientsResp, err error)
   // Parameters:
   //  - Req
+  CreateFTIndex(ctx context.Context, req *CreateFTIndexReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropFTIndex(ctx context.Context, req *DropFTIndexReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListFTIndexes(ctx context.Context, req *ListFTIndexesReq) (_r *ListFTIndexesResp, err error)
+  // Parameters:
+  //  - Req
   CreateSession(ctx context.Context, req *CreateSessionReq) (_r *CreateSessionResp, err error)
   // Parameters:
   //  - Req
@@ -269,6 +278,12 @@ type MetaService interface {
   // Parameters:
   //  - Req
   ReportTaskFinish(ctx context.Context, req *ReportTaskReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListCluster(ctx context.Context, req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error)
+  // Parameters:
+  //  - Req
+  GetMetaDirInfo(ctx context.Context, req *GetMetaDirInfoReq) (_r *GetMetaDirInfoResp, err error)
 }
 
 type MetaServiceClientInterface interface {
@@ -503,6 +518,15 @@ type MetaServiceClientInterface interface {
   ListFTClients(req *ListFTClientsReq) (_r *ListFTClientsResp, err error)
   // Parameters:
   //  - Req
+  CreateFTIndex(req *CreateFTIndexReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropFTIndex(req *DropFTIndexReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListFTIndexes(req *ListFTIndexesReq) (_r *ListFTIndexesResp, err error)
+  // Parameters:
+  //  - Req
   CreateSession(req *CreateSessionReq) (_r *CreateSessionResp, err error)
   // Parameters:
   //  - Req
@@ -519,6 +543,12 @@ type MetaServiceClientInterface interface {
   // Parameters:
   //  - Req
   ReportTaskFinish(req *ReportTaskReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListCluster(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error)
+  // Parameters:
+  //  - Req
+  GetMetaDirInfo(req *GetMetaDirInfoReq) (_r *GetMetaDirInfoResp, err error)
 }
 
 type MetaServiceClient struct {
@@ -2072,6 +2102,66 @@ func (p *MetaServiceClient) recvListFTClients() (value *ListFTClientsResp, err e
 
 // Parameters:
 //  - Req
+func (p *MetaServiceClient) CreateFTIndex(req *CreateFTIndexReq) (_r *ExecResp, err error) {
+  args := MetaServiceCreateFTIndexArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("createFTIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateFTIndex()
+}
+
+
+func (p *MetaServiceClient) recvCreateFTIndex() (value *ExecResp, err error) {
+  var result MetaServiceCreateFTIndexResult
+  err = p.CC.RecvMsg("createFTIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) DropFTIndex(req *DropFTIndexReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropFTIndexArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("dropFTIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropFTIndex()
+}
+
+
+func (p *MetaServiceClient) recvDropFTIndex() (value *ExecResp, err error) {
+  var result MetaServiceDropFTIndexResult
+  err = p.CC.RecvMsg("dropFTIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) ListFTIndexes(req *ListFTIndexesReq) (_r *ListFTIndexesResp, err error) {
+  args := MetaServiceListFTIndexesArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("listFTIndexes", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListFTIndexes()
+}
+
+
+func (p *MetaServiceClient) recvListFTIndexes() (value *ListFTIndexesResp, err error) {
+  var result MetaServiceListFTIndexesResult
+  err = p.CC.RecvMsg("listFTIndexes", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
 func (p *MetaServiceClient) CreateSession(req *CreateSessionReq) (_r *CreateSessionResp, err error) {
   args := MetaServiceCreateSessionArgs{
     Req : req,
@@ -2185,6 +2275,46 @@ func (p *MetaServiceClient) ReportTaskFinish(req *ReportTaskReq) (_r *ExecResp, 
 func (p *MetaServiceClient) recvReportTaskFinish() (value *ExecResp, err error) {
   var result MetaServiceReportTaskFinishResult
   err = p.CC.RecvMsg("reportTaskFinish", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) ListCluster(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
+  args := MetaServiceListClusterArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("listCluster", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListCluster()
+}
+
+
+func (p *MetaServiceClient) recvListCluster() (value *ListClusterInfoResp, err error) {
+  var result MetaServiceListClusterResult
+  err = p.CC.RecvMsg("listCluster", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) GetMetaDirInfo(req *GetMetaDirInfoReq) (_r *GetMetaDirInfoResp, err error) {
+  args := MetaServiceGetMetaDirInfoArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("getMetaDirInfo", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetMetaDirInfo()
+}
+
+
+func (p *MetaServiceClient) recvGetMetaDirInfo() (value *GetMetaDirInfoResp, err error) {
+  var result MetaServiceGetMetaDirInfoResult
+  err = p.CC.RecvMsg("getMetaDirInfo", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -3901,6 +4031,72 @@ func (p *MetaServiceThreadsafeClient) recvListFTClients() (value *ListFTClientsR
 
 // Parameters:
 //  - Req
+func (p *MetaServiceThreadsafeClient) CreateFTIndex(req *CreateFTIndexReq) (_r *ExecResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := MetaServiceCreateFTIndexArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("createFTIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateFTIndex()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvCreateFTIndex() (value *ExecResp, err error) {
+  var result MetaServiceCreateFTIndexResult
+  err = p.CC.RecvMsg("createFTIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) DropFTIndex(req *DropFTIndexReq) (_r *ExecResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := MetaServiceDropFTIndexArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("dropFTIndex", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropFTIndex()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvDropFTIndex() (value *ExecResp, err error) {
+  var result MetaServiceDropFTIndexResult
+  err = p.CC.RecvMsg("dropFTIndex", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) ListFTIndexes(req *ListFTIndexesReq) (_r *ListFTIndexesResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := MetaServiceListFTIndexesArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("listFTIndexes", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListFTIndexes()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvListFTIndexes() (value *ListFTIndexesResp, err error) {
+  var result MetaServiceListFTIndexesResult
+  err = p.CC.RecvMsg("listFTIndexes", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
 func (p *MetaServiceThreadsafeClient) CreateSession(req *CreateSessionReq) (_r *CreateSessionResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
@@ -4026,6 +4222,50 @@ func (p *MetaServiceThreadsafeClient) ReportTaskFinish(req *ReportTaskReq) (_r *
 func (p *MetaServiceThreadsafeClient) recvReportTaskFinish() (value *ExecResp, err error) {
   var result MetaServiceReportTaskFinishResult
   err = p.CC.RecvMsg("reportTaskFinish", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) ListCluster(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := MetaServiceListClusterArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("listCluster", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListCluster()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvListCluster() (value *ListClusterInfoResp, err error) {
+  var result MetaServiceListClusterResult
+  err = p.CC.RecvMsg("listCluster", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) GetMetaDirInfo(req *GetMetaDirInfoReq) (_r *GetMetaDirInfoResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := MetaServiceGetMetaDirInfoArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("getMetaDirInfo", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetMetaDirInfo()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvGetMetaDirInfo() (value *GetMetaDirInfoResp, err error) {
+  var result MetaServiceGetMetaDirInfoResult
+  err = p.CC.RecvMsg("getMetaDirInfo", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -5042,6 +5282,45 @@ func (p *MetaServiceChannelClient) ListFTClients(ctx context.Context, req *ListF
 
 // Parameters:
 //  - Req
+func (p *MetaServiceChannelClient) CreateFTIndex(ctx context.Context, req *CreateFTIndexReq) (_r *ExecResp, err error) {
+  args := MetaServiceCreateFTIndexArgs{
+    Req : req,
+  }
+  var result MetaServiceCreateFTIndexResult
+  err = p.RequestChannel.Call(ctx, "createFTIndex", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropFTIndex(ctx context.Context, req *DropFTIndexReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropFTIndexArgs{
+    Req : req,
+  }
+  var result MetaServiceDropFTIndexResult
+  err = p.RequestChannel.Call(ctx, "dropFTIndex", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListFTIndexes(ctx context.Context, req *ListFTIndexesReq) (_r *ListFTIndexesResp, err error) {
+  args := MetaServiceListFTIndexesArgs{
+    Req : req,
+  }
+  var result MetaServiceListFTIndexesResult
+  err = p.RequestChannel.Call(ctx, "listFTIndexes", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
 func (p *MetaServiceChannelClient) CreateSession(ctx context.Context, req *CreateSessionReq) (_r *CreateSessionResp, err error) {
   args := MetaServiceCreateSessionArgs{
     Req : req,
@@ -5118,6 +5397,32 @@ func (p *MetaServiceChannelClient) ReportTaskFinish(ctx context.Context, req *Re
   return result.GetSuccess(), nil
 }
 
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) ListCluster(ctx context.Context, req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
+  args := MetaServiceListClusterArgs{
+    Req : req,
+  }
+  var result MetaServiceListClusterResult
+  err = p.RequestChannel.Call(ctx, "listCluster", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) GetMetaDirInfo(ctx context.Context, req *GetMetaDirInfoReq) (_r *GetMetaDirInfoResp, err error) {
+  args := MetaServiceGetMetaDirInfoArgs{
+    Req : req,
+  }
+  var result MetaServiceGetMetaDirInfoResult
+  err = p.RequestChannel.Call(ctx, "getMetaDirInfo", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
 
 type MetaServiceProcessor struct {
   processorMap map[string]thrift.ProcessorFunctionContext
@@ -5140,90 +5445,95 @@ func (p *MetaServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunctio
 }
 
 func NewMetaServiceProcessor(handler MetaService) *MetaServiceProcessor {
-  self80 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self80.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
-  self80.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
-  self80.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
-  self80.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
-  self80.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
-  self80.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
-  self80.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
-  self80.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
-  self80.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
-  self80.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
-  self80.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
-  self80.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
-  self80.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
-  self80.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
-  self80.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
-  self80.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
-  self80.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
-  self80.processorMap["multiPut"] = &metaServiceProcessorMultiPut{handler:handler}
-  self80.processorMap["get"] = &metaServiceProcessorGet{handler:handler}
-  self80.processorMap["multiGet"] = &metaServiceProcessorMultiGet{handler:handler}
-  self80.processorMap["remove"] = &metaServiceProcessorRemove{handler:handler}
-  self80.processorMap["removeRange"] = &metaServiceProcessorRemoveRange{handler:handler}
-  self80.processorMap["scan"] = &metaServiceProcessorScan{handler:handler}
-  self80.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
-  self80.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
-  self80.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
-  self80.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
-  self80.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
-  self80.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
-  self80.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
-  self80.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
-  self80.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
-  self80.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
-  self80.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
-  self80.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
-  self80.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
-  self80.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
-  self80.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
-  self80.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
-  self80.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
-  self80.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
-  self80.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
-  self80.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
-  self80.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
-  self80.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
-  self80.processorMap["balance"] = &metaServiceProcessorBalance{handler:handler}
-  self80.processorMap["leaderBalance"] = &metaServiceProcessorLeaderBalance{handler:handler}
-  self80.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
-  self80.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
-  self80.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
-  self80.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
-  self80.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
-  self80.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
-  self80.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
-  self80.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
-  self80.processorMap["addZone"] = &metaServiceProcessorAddZone{handler:handler}
-  self80.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
-  self80.processorMap["addHostIntoZone"] = &metaServiceProcessorAddHostIntoZone{handler:handler}
-  self80.processorMap["dropHostFromZone"] = &metaServiceProcessorDropHostFromZone{handler:handler}
-  self80.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
-  self80.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
-  self80.processorMap["addGroup"] = &metaServiceProcessorAddGroup{handler:handler}
-  self80.processorMap["dropGroup"] = &metaServiceProcessorDropGroup{handler:handler}
-  self80.processorMap["addZoneIntoGroup"] = &metaServiceProcessorAddZoneIntoGroup{handler:handler}
-  self80.processorMap["dropZoneFromGroup"] = &metaServiceProcessorDropZoneFromGroup{handler:handler}
-  self80.processorMap["getGroup"] = &metaServiceProcessorGetGroup{handler:handler}
-  self80.processorMap["listGroups"] = &metaServiceProcessorListGroups{handler:handler}
-  self80.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
-  self80.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
-  self80.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
-  self80.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
-  self80.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
-  self80.processorMap["getStatis"] = &metaServiceProcessorGetStatis{handler:handler}
-  self80.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
-  self80.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
-  self80.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
-  self80.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
-  self80.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
-  self80.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
-  self80.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
-  self80.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
-  self80.processorMap["reportTaskFinish"] = &metaServiceProcessorReportTaskFinish{handler:handler}
-  return self80
+  self86 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self86.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
+  self86.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
+  self86.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
+  self86.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
+  self86.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
+  self86.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
+  self86.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
+  self86.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
+  self86.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
+  self86.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
+  self86.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
+  self86.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
+  self86.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
+  self86.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
+  self86.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
+  self86.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
+  self86.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
+  self86.processorMap["multiPut"] = &metaServiceProcessorMultiPut{handler:handler}
+  self86.processorMap["get"] = &metaServiceProcessorGet{handler:handler}
+  self86.processorMap["multiGet"] = &metaServiceProcessorMultiGet{handler:handler}
+  self86.processorMap["remove"] = &metaServiceProcessorRemove{handler:handler}
+  self86.processorMap["removeRange"] = &metaServiceProcessorRemoveRange{handler:handler}
+  self86.processorMap["scan"] = &metaServiceProcessorScan{handler:handler}
+  self86.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
+  self86.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
+  self86.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
+  self86.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
+  self86.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
+  self86.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
+  self86.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
+  self86.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
+  self86.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
+  self86.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
+  self86.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
+  self86.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
+  self86.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
+  self86.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
+  self86.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
+  self86.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
+  self86.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
+  self86.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
+  self86.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
+  self86.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
+  self86.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
+  self86.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
+  self86.processorMap["balance"] = &metaServiceProcessorBalance{handler:handler}
+  self86.processorMap["leaderBalance"] = &metaServiceProcessorLeaderBalance{handler:handler}
+  self86.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
+  self86.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
+  self86.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
+  self86.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
+  self86.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
+  self86.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
+  self86.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
+  self86.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
+  self86.processorMap["addZone"] = &metaServiceProcessorAddZone{handler:handler}
+  self86.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
+  self86.processorMap["addHostIntoZone"] = &metaServiceProcessorAddHostIntoZone{handler:handler}
+  self86.processorMap["dropHostFromZone"] = &metaServiceProcessorDropHostFromZone{handler:handler}
+  self86.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
+  self86.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
+  self86.processorMap["addGroup"] = &metaServiceProcessorAddGroup{handler:handler}
+  self86.processorMap["dropGroup"] = &metaServiceProcessorDropGroup{handler:handler}
+  self86.processorMap["addZoneIntoGroup"] = &metaServiceProcessorAddZoneIntoGroup{handler:handler}
+  self86.processorMap["dropZoneFromGroup"] = &metaServiceProcessorDropZoneFromGroup{handler:handler}
+  self86.processorMap["getGroup"] = &metaServiceProcessorGetGroup{handler:handler}
+  self86.processorMap["listGroups"] = &metaServiceProcessorListGroups{handler:handler}
+  self86.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
+  self86.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
+  self86.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
+  self86.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
+  self86.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
+  self86.processorMap["getStatis"] = &metaServiceProcessorGetStatis{handler:handler}
+  self86.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
+  self86.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
+  self86.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
+  self86.processorMap["createFTIndex"] = &metaServiceProcessorCreateFTIndex{handler:handler}
+  self86.processorMap["dropFTIndex"] = &metaServiceProcessorDropFTIndex{handler:handler}
+  self86.processorMap["listFTIndexes"] = &metaServiceProcessorListFTIndexes{handler:handler}
+  self86.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
+  self86.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
+  self86.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
+  self86.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
+  self86.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
+  self86.processorMap["reportTaskFinish"] = &metaServiceProcessorReportTaskFinish{handler:handler}
+  self86.processorMap["listCluster"] = &metaServiceProcessorListCluster{handler:handler}
+  self86.processorMap["getMetaDirInfo"] = &metaServiceProcessorGetMetaDirInfo{handler:handler}
+  return self86
 }
 
 type metaServiceProcessorCreateSpace struct {
@@ -9026,6 +9336,156 @@ func (p *metaServiceProcessorListFTClients) RunContext(ctx context.Context, argS
   return &result, nil
 }
 
+type metaServiceProcessorCreateFTIndex struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorCreateFTIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceCreateFTIndexArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorCreateFTIndex) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("createFTIndex", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorCreateFTIndex) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceCreateFTIndexArgs)
+  var result MetaServiceCreateFTIndexResult
+  if retval, err := p.handler.CreateFTIndex(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createFTIndex: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorDropFTIndex struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorDropFTIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceDropFTIndexArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorDropFTIndex) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("dropFTIndex", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorDropFTIndex) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceDropFTIndexArgs)
+  var result MetaServiceDropFTIndexResult
+  if retval, err := p.handler.DropFTIndex(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropFTIndex: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorListFTIndexes struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorListFTIndexes) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceListFTIndexesArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorListFTIndexes) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("listFTIndexes", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorListFTIndexes) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceListFTIndexesArgs)
+  var result MetaServiceListFTIndexesResult
+  if retval, err := p.handler.ListFTIndexes(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listFTIndexes: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
 type metaServiceProcessorCreateSession struct {
   handler MetaService
 }
@@ -9318,6 +9778,106 @@ func (p *metaServiceProcessorReportTaskFinish) RunContext(ctx context.Context, a
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing reportTaskFinish: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorListCluster struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorListCluster) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceListClusterArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorListCluster) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("listCluster", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorListCluster) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceListClusterArgs)
+  var result MetaServiceListClusterResult
+  if retval, err := p.handler.ListCluster(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listCluster: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorGetMetaDirInfo struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorGetMetaDirInfo) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceGetMetaDirInfoArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorGetMetaDirInfo) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("getMetaDirInfo", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorGetMetaDirInfo) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceGetMetaDirInfoArgs)
+  var result MetaServiceGetMetaDirInfoResult
+  if retval, err := p.handler.GetMetaDirInfo(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getMetaDirInfo: " + err.Error())
       return x, x
     }
   } else {
@@ -24531,6 +25091,606 @@ func (p *MetaServiceListFTClientsResult) String() string {
 
 // Attributes:
 //  - Req
+type MetaServiceCreateFTIndexArgs struct {
+  thrift.IRequest
+  Req *CreateFTIndexReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceCreateFTIndexArgs() *MetaServiceCreateFTIndexArgs {
+  return &MetaServiceCreateFTIndexArgs{
+    Req: NewCreateFTIndexReq(),
+  }
+}
+
+var MetaServiceCreateFTIndexArgs_Req_DEFAULT *CreateFTIndexReq
+func (p *MetaServiceCreateFTIndexArgs) GetReq() *CreateFTIndexReq {
+  if !p.IsSetReq() {
+    return MetaServiceCreateFTIndexArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceCreateFTIndexArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *MetaServiceCreateFTIndexArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateFTIndexArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewCreateFTIndexReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateFTIndexArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("createFTIndex_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceCreateFTIndexArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceCreateFTIndexArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceCreateFTIndexArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceCreateFTIndexResult struct {
+  thrift.IResponse
+  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceCreateFTIndexResult() *MetaServiceCreateFTIndexResult {
+  return &MetaServiceCreateFTIndexResult{}
+}
+
+var MetaServiceCreateFTIndexResult_Success_DEFAULT *ExecResp
+func (p *MetaServiceCreateFTIndexResult) GetSuccess() *ExecResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceCreateFTIndexResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceCreateFTIndexResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *MetaServiceCreateFTIndexResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateFTIndexResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateFTIndexResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("createFTIndex_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceCreateFTIndexResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceCreateFTIndexResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceCreateFTIndexResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceDropFTIndexArgs struct {
+  thrift.IRequest
+  Req *DropFTIndexReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceDropFTIndexArgs() *MetaServiceDropFTIndexArgs {
+  return &MetaServiceDropFTIndexArgs{
+    Req: NewDropFTIndexReq(),
+  }
+}
+
+var MetaServiceDropFTIndexArgs_Req_DEFAULT *DropFTIndexReq
+func (p *MetaServiceDropFTIndexArgs) GetReq() *DropFTIndexReq {
+  if !p.IsSetReq() {
+    return MetaServiceDropFTIndexArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceDropFTIndexArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *MetaServiceDropFTIndexArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceDropFTIndexArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewDropFTIndexReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceDropFTIndexArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("dropFTIndex_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceDropFTIndexArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceDropFTIndexArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropFTIndexArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceDropFTIndexResult struct {
+  thrift.IResponse
+  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceDropFTIndexResult() *MetaServiceDropFTIndexResult {
+  return &MetaServiceDropFTIndexResult{}
+}
+
+var MetaServiceDropFTIndexResult_Success_DEFAULT *ExecResp
+func (p *MetaServiceDropFTIndexResult) GetSuccess() *ExecResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceDropFTIndexResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceDropFTIndexResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *MetaServiceDropFTIndexResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceDropFTIndexResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceDropFTIndexResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("dropFTIndex_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceDropFTIndexResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceDropFTIndexResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropFTIndexResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceListFTIndexesArgs struct {
+  thrift.IRequest
+  Req *ListFTIndexesReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceListFTIndexesArgs() *MetaServiceListFTIndexesArgs {
+  return &MetaServiceListFTIndexesArgs{
+    Req: NewListFTIndexesReq(),
+  }
+}
+
+var MetaServiceListFTIndexesArgs_Req_DEFAULT *ListFTIndexesReq
+func (p *MetaServiceListFTIndexesArgs) GetReq() *ListFTIndexesReq {
+  if !p.IsSetReq() {
+    return MetaServiceListFTIndexesArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceListFTIndexesArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *MetaServiceListFTIndexesArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceListFTIndexesArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewListFTIndexesReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceListFTIndexesArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("listFTIndexes_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceListFTIndexesArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceListFTIndexesArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListFTIndexesArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceListFTIndexesResult struct {
+  thrift.IResponse
+  Success *ListFTIndexesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceListFTIndexesResult() *MetaServiceListFTIndexesResult {
+  return &MetaServiceListFTIndexesResult{}
+}
+
+var MetaServiceListFTIndexesResult_Success_DEFAULT *ListFTIndexesResp
+func (p *MetaServiceListFTIndexesResult) GetSuccess() *ListFTIndexesResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceListFTIndexesResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceListFTIndexesResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *MetaServiceListFTIndexesResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceListFTIndexesResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewListFTIndexesResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceListFTIndexesResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("listFTIndexes_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceListFTIndexesResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceListFTIndexesResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListFTIndexesResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
 type MetaServiceCreateSessionArgs struct {
   thrift.IRequest
   Req *CreateSessionReq `thrift:"req,1" db:"req" json:"req"`
@@ -25727,6 +26887,406 @@ func (p *MetaServiceReportTaskFinishResult) String() string {
     successVal = fmt.Sprintf("%v", p.Success)
   }
   return fmt.Sprintf("MetaServiceReportTaskFinishResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceListClusterArgs struct {
+  thrift.IRequest
+  Req *ListClusterInfoReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceListClusterArgs() *MetaServiceListClusterArgs {
+  return &MetaServiceListClusterArgs{
+    Req: NewListClusterInfoReq(),
+  }
+}
+
+var MetaServiceListClusterArgs_Req_DEFAULT *ListClusterInfoReq
+func (p *MetaServiceListClusterArgs) GetReq() *ListClusterInfoReq {
+  if !p.IsSetReq() {
+    return MetaServiceListClusterArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceListClusterArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *MetaServiceListClusterArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceListClusterArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewListClusterInfoReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceListClusterArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("listCluster_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceListClusterArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceListClusterArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceListClusterArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceListClusterResult struct {
+  thrift.IResponse
+  Success *ListClusterInfoResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceListClusterResult() *MetaServiceListClusterResult {
+  return &MetaServiceListClusterResult{}
+}
+
+var MetaServiceListClusterResult_Success_DEFAULT *ListClusterInfoResp
+func (p *MetaServiceListClusterResult) GetSuccess() *ListClusterInfoResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceListClusterResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceListClusterResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *MetaServiceListClusterResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceListClusterResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewListClusterInfoResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceListClusterResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("listCluster_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceListClusterResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceListClusterResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceListClusterResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceGetMetaDirInfoArgs struct {
+  thrift.IRequest
+  Req *GetMetaDirInfoReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceGetMetaDirInfoArgs() *MetaServiceGetMetaDirInfoArgs {
+  return &MetaServiceGetMetaDirInfoArgs{
+    Req: NewGetMetaDirInfoReq(),
+  }
+}
+
+var MetaServiceGetMetaDirInfoArgs_Req_DEFAULT *GetMetaDirInfoReq
+func (p *MetaServiceGetMetaDirInfoArgs) GetReq() *GetMetaDirInfoReq {
+  if !p.IsSetReq() {
+    return MetaServiceGetMetaDirInfoArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceGetMetaDirInfoArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *MetaServiceGetMetaDirInfoArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceGetMetaDirInfoArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewGetMetaDirInfoReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceGetMetaDirInfoArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("getMetaDirInfo_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceGetMetaDirInfoArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceGetMetaDirInfoArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceGetMetaDirInfoArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceGetMetaDirInfoResult struct {
+  thrift.IResponse
+  Success *GetMetaDirInfoResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceGetMetaDirInfoResult() *MetaServiceGetMetaDirInfoResult {
+  return &MetaServiceGetMetaDirInfoResult{}
+}
+
+var MetaServiceGetMetaDirInfoResult_Success_DEFAULT *GetMetaDirInfoResp
+func (p *MetaServiceGetMetaDirInfoResult) GetSuccess() *GetMetaDirInfoResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceGetMetaDirInfoResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceGetMetaDirInfoResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *MetaServiceGetMetaDirInfoResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceGetMetaDirInfoResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewGetMetaDirInfoResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceGetMetaDirInfoResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("getMetaDirInfo_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceGetMetaDirInfoResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceGetMetaDirInfoResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceGetMetaDirInfoResult({Success:%s})", successVal)
 }
 
 

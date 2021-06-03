@@ -70,6 +70,9 @@ type StorageAdminService interface {
   // Parameters:
   //  - Req
   StopAdminTask(ctx context.Context, req *StopAdminTaskRequest) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListClusterInfo(ctx context.Context, req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error)
 }
 
 type StorageAdminServiceClientInterface interface {
@@ -119,6 +122,9 @@ type StorageAdminServiceClientInterface interface {
   // Parameters:
   //  - Req
   StopAdminTask(req *StopAdminTaskRequest) (_r *AdminExecResp, err error)
+  // Parameters:
+  //  - Req
+  ListClusterInfo(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error)
 }
 
 type StorageAdminServiceClient struct {
@@ -445,6 +451,26 @@ func (p *StorageAdminServiceClient) StopAdminTask(req *StopAdminTaskRequest) (_r
 func (p *StorageAdminServiceClient) recvStopAdminTask() (value *AdminExecResp, err error) {
   var result StorageAdminServiceStopAdminTaskResult
   err = p.CC.RecvMsg("stopAdminTask", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceClient) ListClusterInfo(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
+  args := StorageAdminServiceListClusterInfoArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("listClusterInfo", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListClusterInfo()
+}
+
+
+func (p *StorageAdminServiceClient) recvListClusterInfo() (value *ListClusterInfoResp, err error) {
+  var result StorageAdminServiceListClusterInfoResult
+  err = p.CC.RecvMsg("listClusterInfo", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -817,6 +843,28 @@ func (p *StorageAdminServiceThreadsafeClient) recvStopAdminTask() (value *AdminE
   return result.GetSuccess(), nil
 }
 
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceThreadsafeClient) ListClusterInfo(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := StorageAdminServiceListClusterInfoArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("listClusterInfo", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvListClusterInfo()
+}
+
+
+func (p *StorageAdminServiceThreadsafeClient) recvListClusterInfo() (value *ListClusterInfoResp, err error) {
+  var result StorageAdminServiceListClusterInfoResult
+  err = p.CC.RecvMsg("listClusterInfo", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
 
 type StorageAdminServiceChannelClient struct {
   RequestChannel thrift.RequestChannel
@@ -1033,6 +1081,19 @@ func (p *StorageAdminServiceChannelClient) StopAdminTask(ctx context.Context, re
   return result.GetSuccess(), nil
 }
 
+// Parameters:
+//  - Req
+func (p *StorageAdminServiceChannelClient) ListClusterInfo(ctx context.Context, req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
+  args := StorageAdminServiceListClusterInfoArgs{
+    Req : req,
+  }
+  var result StorageAdminServiceListClusterInfoResult
+  err = p.RequestChannel.Call(ctx, "listClusterInfo", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
 
 type StorageAdminServiceProcessor struct {
   processorMap map[string]thrift.ProcessorFunctionContext
@@ -1055,23 +1116,24 @@ func (p *StorageAdminServiceProcessor) ProcessorMap() map[string]thrift.Processo
 }
 
 func NewStorageAdminServiceProcessor(handler StorageAdminService) *StorageAdminServiceProcessor {
-  self157 := &StorageAdminServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self157.processorMap["transLeader"] = &storageAdminServiceProcessorTransLeader{handler:handler}
-  self157.processorMap["addPart"] = &storageAdminServiceProcessorAddPart{handler:handler}
-  self157.processorMap["addLearner"] = &storageAdminServiceProcessorAddLearner{handler:handler}
-  self157.processorMap["removePart"] = &storageAdminServiceProcessorRemovePart{handler:handler}
-  self157.processorMap["memberChange"] = &storageAdminServiceProcessorMemberChange{handler:handler}
-  self157.processorMap["waitingForCatchUpData"] = &storageAdminServiceProcessorWaitingForCatchUpData{handler:handler}
-  self157.processorMap["createCheckpoint"] = &storageAdminServiceProcessorCreateCheckpoint{handler:handler}
-  self157.processorMap["dropCheckpoint"] = &storageAdminServiceProcessorDropCheckpoint{handler:handler}
-  self157.processorMap["blockingWrites"] = &storageAdminServiceProcessorBlockingWrites{handler:handler}
-  self157.processorMap["rebuildTagIndex"] = &storageAdminServiceProcessorRebuildTagIndex{handler:handler}
-  self157.processorMap["rebuildEdgeIndex"] = &storageAdminServiceProcessorRebuildEdgeIndex{handler:handler}
-  self157.processorMap["getLeaderParts"] = &storageAdminServiceProcessorGetLeaderParts{handler:handler}
-  self157.processorMap["checkPeers"] = &storageAdminServiceProcessorCheckPeers{handler:handler}
-  self157.processorMap["addAdminTask"] = &storageAdminServiceProcessorAddAdminTask{handler:handler}
-  self157.processorMap["stopAdminTask"] = &storageAdminServiceProcessorStopAdminTask{handler:handler}
-  return self157
+  self158 := &StorageAdminServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self158.processorMap["transLeader"] = &storageAdminServiceProcessorTransLeader{handler:handler}
+  self158.processorMap["addPart"] = &storageAdminServiceProcessorAddPart{handler:handler}
+  self158.processorMap["addLearner"] = &storageAdminServiceProcessorAddLearner{handler:handler}
+  self158.processorMap["removePart"] = &storageAdminServiceProcessorRemovePart{handler:handler}
+  self158.processorMap["memberChange"] = &storageAdminServiceProcessorMemberChange{handler:handler}
+  self158.processorMap["waitingForCatchUpData"] = &storageAdminServiceProcessorWaitingForCatchUpData{handler:handler}
+  self158.processorMap["createCheckpoint"] = &storageAdminServiceProcessorCreateCheckpoint{handler:handler}
+  self158.processorMap["dropCheckpoint"] = &storageAdminServiceProcessorDropCheckpoint{handler:handler}
+  self158.processorMap["blockingWrites"] = &storageAdminServiceProcessorBlockingWrites{handler:handler}
+  self158.processorMap["rebuildTagIndex"] = &storageAdminServiceProcessorRebuildTagIndex{handler:handler}
+  self158.processorMap["rebuildEdgeIndex"] = &storageAdminServiceProcessorRebuildEdgeIndex{handler:handler}
+  self158.processorMap["getLeaderParts"] = &storageAdminServiceProcessorGetLeaderParts{handler:handler}
+  self158.processorMap["checkPeers"] = &storageAdminServiceProcessorCheckPeers{handler:handler}
+  self158.processorMap["addAdminTask"] = &storageAdminServiceProcessorAddAdminTask{handler:handler}
+  self158.processorMap["stopAdminTask"] = &storageAdminServiceProcessorStopAdminTask{handler:handler}
+  self158.processorMap["listClusterInfo"] = &storageAdminServiceProcessorListClusterInfo{handler:handler}
+  return self158
 }
 
 type storageAdminServiceProcessorTransLeader struct {
@@ -1816,6 +1878,56 @@ func (p *storageAdminServiceProcessorStopAdminTask) RunContext(ctx context.Conte
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing stopAdminTask: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type storageAdminServiceProcessorListClusterInfo struct {
+  handler StorageAdminService
+}
+
+func (p *storageAdminServiceProcessorListClusterInfo) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := StorageAdminServiceListClusterInfoArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *storageAdminServiceProcessorListClusterInfo) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("listClusterInfo", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *storageAdminServiceProcessorListClusterInfo) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*StorageAdminServiceListClusterInfoArgs)
+  var result StorageAdminServiceListClusterInfoResult
+  if retval, err := p.handler.ListClusterInfo(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listClusterInfo: " + err.Error())
       return x, x
     }
   } else {
@@ -4825,6 +4937,206 @@ func (p *StorageAdminServiceStopAdminTaskResult) String() string {
     successVal = fmt.Sprintf("%v", p.Success)
   }
   return fmt.Sprintf("StorageAdminServiceStopAdminTaskResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type StorageAdminServiceListClusterInfoArgs struct {
+  thrift.IRequest
+  Req *ListClusterInfoReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewStorageAdminServiceListClusterInfoArgs() *StorageAdminServiceListClusterInfoArgs {
+  return &StorageAdminServiceListClusterInfoArgs{
+    Req: NewListClusterInfoReq(),
+  }
+}
+
+var StorageAdminServiceListClusterInfoArgs_Req_DEFAULT *ListClusterInfoReq
+func (p *StorageAdminServiceListClusterInfoArgs) GetReq() *ListClusterInfoReq {
+  if !p.IsSetReq() {
+    return StorageAdminServiceListClusterInfoArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *StorageAdminServiceListClusterInfoArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *StorageAdminServiceListClusterInfoArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *StorageAdminServiceListClusterInfoArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewListClusterInfoReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *StorageAdminServiceListClusterInfoArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("listClusterInfo_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *StorageAdminServiceListClusterInfoArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *StorageAdminServiceListClusterInfoArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("StorageAdminServiceListClusterInfoArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type StorageAdminServiceListClusterInfoResult struct {
+  thrift.IResponse
+  Success *ListClusterInfoResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewStorageAdminServiceListClusterInfoResult() *StorageAdminServiceListClusterInfoResult {
+  return &StorageAdminServiceListClusterInfoResult{}
+}
+
+var StorageAdminServiceListClusterInfoResult_Success_DEFAULT *ListClusterInfoResp
+func (p *StorageAdminServiceListClusterInfoResult) GetSuccess() *ListClusterInfoResp {
+  if !p.IsSetSuccess() {
+    return StorageAdminServiceListClusterInfoResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *StorageAdminServiceListClusterInfoResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *StorageAdminServiceListClusterInfoResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *StorageAdminServiceListClusterInfoResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewListClusterInfoResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *StorageAdminServiceListClusterInfoResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("listClusterInfo_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *StorageAdminServiceListClusterInfoResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *StorageAdminServiceListClusterInfoResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("StorageAdminServiceListClusterInfoResult({Success:%s})", successVal)
 }
 
 
