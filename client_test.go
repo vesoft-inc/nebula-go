@@ -166,6 +166,20 @@ func TestConfigs(t *testing.T) {
 			return
 		}
 		checkResSetResp(t, "create space", resp)
+		// Create session with space name
+		session2, err := pool.GetSessionWithSpace(username, password, "client_test")
+		if err != nil {
+			t.Fatalf("Fail to create a new session from connection pool, username: %s, password: %s, %s",
+				username, password, err.Error())
+		}
+		defer session2.Release()
+
+		resp, err = session2.Execute("DESC SPACE client_test;")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResSetResp(t, "desc space", resp)
 
 		resp, err = session.Execute("DROP SPACE client_test;")
 		if err != nil {

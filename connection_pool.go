@@ -115,6 +115,23 @@ func (pool *ConnectionPool) GetSession(username, password string) (*Session, err
 	return &newSession, nil
 }
 
+func (pool *ConnectionPool) GetSessionWithSpace(username, password, space string) (*Session, error) {
+	session, err := pool.GetSession(username, password)
+	if err != nil {
+		return nil, err
+	}
+	stmt := "USE" + space
+	res, err := session.Execute(stmt)
+	if err != nil {
+		return nil, err
+	}
+	if !res.IsSucceed() {
+		return nil, fmt.Errorf("%s, ErrorCode: %v, ErrorMsg: %s", stmt, res.GetErrorCode(), res.GetErrorMsg())
+	}
+
+	return session, nil
+}
+
 func (pool *ConnectionPool) getIdleConn() (*connection, error) {
 	pool.rwLock.Lock()
 	defer pool.rwLock.Unlock()
