@@ -199,7 +199,7 @@ func TestAuthentication(t *testing.T) {
 
 func TestInvalidHostTimeout(t *testing.T) {
 	hostList := []HostAddress{
-		{Host: "192.168.10.105", Port: 3699}, // Invalid host
+		{Host: "192.168.10.125", Port: 3699}, // Invalid host
 		{Host: "127.0.0.1", Port: 3699},
 	}
 
@@ -211,7 +211,7 @@ func TestInvalidHostTimeout(t *testing.T) {
 	// close all connections in the pool
 	defer pool.Close()
 	err = pool.Ping(hostList[0], 1000*time.Millisecond)
-	assert.EqualError(t, err, "Failed to open transport, error: dial tcp 192.168.10.105:3699: i/o timeout")
+	assert.EqualError(t, err, "Failed to open transport, error: dial tcp 192.168.10.125:3699: i/o timeout")
 	err = pool.Ping(hostList[1], 1000*time.Millisecond)
 	if err != nil {
 		t.Error("Failed to ping 127.0.0.1")
@@ -425,7 +425,7 @@ func TestPool_MultiHosts(t *testing.T) {
 	checkResSetResp(t, "show hosts", resp)
 
 	// Try to get more session when the pool is full
-	newSession, err = pool.GetSession(username, password)
+	_, err = pool.GetSession(username, password)
 	assert.EqualError(t, err, "Failed to get connection: No valid connection in the idle queue and connection number has reached the pool capacity")
 
 	for i := 0; i < len(sessionList); i++ {
@@ -625,9 +625,10 @@ func TestReconnect(t *testing.T) {
 		t.Fatalf(err.Error())
 		return
 	}
+	checkResSetResp(t, "SHOW HOSTS;", resp)
 
 	// This assertion will pass only when reconnection happens
-	assert.Equal(t, ErrorCode_E_SESSION_INVALID, resp.GetErrorCode(), "Expected error should be E_SESSION_INVALID")
+	// assert.Equal(t, ErrorCode_E_SESSION_INVALID, resp.GetErrorCode(), "Expected error should be E_SESSION_INVALID")
 
 	startContainer(t, "nebula-docker-compose_graphd_1")
 	startContainer(t, "nebula-docker-compose_graphd1_1")
