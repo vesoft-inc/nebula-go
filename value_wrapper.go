@@ -11,245 +11,262 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/vesoft-inc/nebula-go/v2/nebula"
 )
 
 type ValueWrapper struct {
-	value *nebula.Value
+	value    *nebula.Value
+	location *time.Location
 }
 
-func (valueWrapper ValueWrapper) IsEmpty() bool {
-	return valueWrapper.GetType() == "empty"
+func (valWrap ValueWrapper) IsEmpty() bool {
+	return valWrap.GetType() == "empty"
 }
 
-func (valueWrapper ValueWrapper) IsNull() bool {
-	return valueWrapper.value.IsSetNVal()
+func (valWrap ValueWrapper) IsNull() bool {
+	return valWrap.value.IsSetNVal()
 }
 
-func (valueWrapper ValueWrapper) IsBool() bool {
-	return valueWrapper.value.IsSetBVal()
+func (valWrap ValueWrapper) IsBool() bool {
+	return valWrap.value.IsSetBVal()
 }
 
-func (valueWrapper ValueWrapper) IsInt() bool {
-	return valueWrapper.value.IsSetIVal()
+func (valWrap ValueWrapper) IsInt() bool {
+	return valWrap.value.IsSetIVal()
 }
 
-func (valueWrapper ValueWrapper) IsFloat() bool {
-	return valueWrapper.value.IsSetFVal()
+func (valWrap ValueWrapper) IsFloat() bool {
+	return valWrap.value.IsSetFVal()
 }
 
-func (valueWrapper ValueWrapper) IsString() bool {
-	return valueWrapper.value.IsSetSVal()
+func (valWrap ValueWrapper) IsString() bool {
+	return valWrap.value.IsSetSVal()
 }
 
-func (valueWrapper ValueWrapper) IsTime() bool {
-	return valueWrapper.value.IsSetTVal()
+func (valWrap ValueWrapper) IsTime() bool {
+	return valWrap.value.IsSetTVal()
 }
 
-func (valueWrapper ValueWrapper) IsDate() bool {
-	return valueWrapper.value.IsSetDVal()
+func (valWrap ValueWrapper) IsDate() bool {
+	return valWrap.value.IsSetDVal()
 }
 
-func (valueWrapper ValueWrapper) IsDateTime() bool {
-	return valueWrapper.value.IsSetDtVal()
+func (valWrap ValueWrapper) IsDateTime() bool {
+	return valWrap.value.IsSetDtVal()
 }
 
-func (valueWrapper ValueWrapper) IsList() bool {
-	return valueWrapper.value.IsSetLVal()
+func (valWrap ValueWrapper) IsList() bool {
+	return valWrap.value.IsSetLVal()
 }
 
-func (valueWrapper ValueWrapper) IsSet() bool {
-	return valueWrapper.value.IsSetUVal()
+func (valWrap ValueWrapper) IsSet() bool {
+	return valWrap.value.IsSetUVal()
 }
 
-func (valueWrapper ValueWrapper) IsMap() bool {
-	return valueWrapper.value.IsSetMVal()
+func (valWrap ValueWrapper) IsMap() bool {
+	return valWrap.value.IsSetMVal()
 }
 
-func (valueWrapper ValueWrapper) IsVertex() bool {
-	return valueWrapper.value.IsSetVVal()
+func (valWrap ValueWrapper) IsVertex() bool {
+	return valWrap.value.IsSetVVal()
 }
 
-func (valueWrapper ValueWrapper) IsEdge() bool {
-	return valueWrapper.value.IsSetEVal()
+func (valWrap ValueWrapper) IsEdge() bool {
+	return valWrap.value.IsSetEVal()
 }
 
-func (valueWrapper ValueWrapper) IsPath() bool {
-	return valueWrapper.value.IsSetPVal()
+func (valWrap ValueWrapper) IsPath() bool {
+	return valWrap.value.IsSetPVal()
 }
 
-func (valueWrapper ValueWrapper) AsNull() (nebula.NullType, error) {
-	if valueWrapper.value.IsSetNVal() {
-		return valueWrapper.value.GetNVal(), nil
+func (valWrap ValueWrapper) AsNull() (nebula.NullType, error) {
+	if valWrap.value.IsSetNVal() {
+		return valWrap.value.GetNVal(), nil
 	}
-	return -1, fmt.Errorf("Failed to convert value %s to Null", valueWrapper.GetType())
+	return -1, fmt.Errorf("Failed to convert value %s to Null", valWrap.GetType())
 }
 
-func (valueWrapper ValueWrapper) AsBool() (bool, error) {
-	if valueWrapper.value.IsSetBVal() {
-		return valueWrapper.value.GetBVal(), nil
+func (valWrap ValueWrapper) AsBool() (bool, error) {
+	if valWrap.value.IsSetBVal() {
+		return valWrap.value.GetBVal(), nil
 	}
-	return false, fmt.Errorf("Failed to convert value %s to bool", valueWrapper.GetType())
+	return false, fmt.Errorf("Failed to convert value %s to bool", valWrap.GetType())
 }
 
-func (valueWrapper ValueWrapper) AsInt() (int64, error) {
-	if valueWrapper.value.IsSetIVal() {
-		return valueWrapper.value.GetIVal(), nil
+func (valWrap ValueWrapper) AsInt() (int64, error) {
+	if valWrap.value.IsSetIVal() {
+		return valWrap.value.GetIVal(), nil
 	}
-	return -1, fmt.Errorf("Failed to convert value %s to int", valueWrapper.GetType())
+	return -1, fmt.Errorf("Failed to convert value %s to int", valWrap.GetType())
 }
 
-func (valueWrapper ValueWrapper) AsFloat() (float64, error) {
-	if valueWrapper.value.IsSetFVal() {
-		return valueWrapper.value.GetFVal(), nil
+func (valWrap ValueWrapper) AsFloat() (float64, error) {
+	if valWrap.value.IsSetFVal() {
+		return valWrap.value.GetFVal(), nil
 	}
-	return -1, fmt.Errorf("Failed to convert value %s to float", valueWrapper.GetType())
+	return -1, fmt.Errorf("Failed to convert value %s to float", valWrap.GetType())
 }
 
-func (valueWrapper ValueWrapper) AsString() (string, error) {
-	if valueWrapper.value.IsSetSVal() {
-		return string(valueWrapper.value.GetSVal()), nil
+func (valWrap ValueWrapper) AsString() (string, error) {
+	if valWrap.value.IsSetSVal() {
+		return string(valWrap.value.GetSVal()), nil
 	}
-	return "", fmt.Errorf("Failed to convert value %s to string", valueWrapper.GetType())
+	return "", fmt.Errorf("Failed to convert value %s to string", valWrap.GetType())
 }
 
 // TODO: Need to wrap TimeWrapper
-func (valueWrapper ValueWrapper) AsTime() (*nebula.Time, error) {
-	if valueWrapper.value.IsSetTVal() {
-		return valueWrapper.value.GetTVal(), nil
+func (valWrap ValueWrapper) AsTime() (*TimeWrapper, error) {
+	if valWrap.value.IsSetTVal() {
+		rawTime := valWrap.value.GetTVal()
+		time, err := genTimeWrapper(rawTime, valWrap.location)
+		if err != nil {
+			return nil, err
+		}
+		return time, nil
 	}
-	return nil, fmt.Errorf("Failed to convert value %s to Time", valueWrapper.GetType())
+	return nil, fmt.Errorf("Failed to convert value %s to Time", valWrap.GetType())
 }
 
-func (valueWrapper ValueWrapper) AsDate() (*nebula.Date, error) {
-	if valueWrapper.value.IsSetDVal() {
-		return valueWrapper.value.GetDVal(), nil
+func (valWrap ValueWrapper) AsDate() (*nebula.Date, error) {
+	if valWrap.value.IsSetDVal() {
+		return valWrap.value.GetDVal(), nil
 	}
-	return nil, fmt.Errorf("Failed to convert value %s to Date", valueWrapper.GetType())
+	return nil, fmt.Errorf("Failed to convert value %s to Date", valWrap.GetType())
 }
 
-func (valueWrapper ValueWrapper) AsDateTime() (*nebula.DateTime, error) {
-	if valueWrapper.value.IsSetDtVal() {
-		return valueWrapper.value.GetDtVal(), nil
+func (valWrap ValueWrapper) AsDateTime() (*DateTimeWrapper, error) {
+	if valWrap.value.IsSetDtVal() {
+		rawTimeDate := valWrap.value.GetDtVal()
+		timeDate, err := genDateTimeWrapper(rawTimeDate, valWrap.location)
+		if err != nil {
+			return nil, err
+		}
+		return timeDate, nil
 	}
-	return nil, fmt.Errorf("Failed to convert value %s to DateTime", valueWrapper.GetType())
+	return nil, fmt.Errorf("Failed to convert value %s to DateTime", valWrap.GetType())
 }
 
-func (valueWrapper ValueWrapper) AsList() ([]ValueWrapper, error) {
-	if valueWrapper.value.IsSetLVal() {
+func (valWrap ValueWrapper) AsList() ([]ValueWrapper, error) {
+	if valWrap.value.IsSetLVal() {
 		var varList []ValueWrapper
-		vals := valueWrapper.value.GetLVal().Values
+		vals := valWrap.value.GetLVal().Values
 		for _, val := range vals {
-			varList = append(varList, ValueWrapper{val})
+			varList = append(varList, ValueWrapper{val, valWrap.location})
 		}
 		return varList, nil
 	}
-	return nil, fmt.Errorf("Failed to convert value %s to List", valueWrapper.GetType())
+	return nil, fmt.Errorf("Failed to convert value %s to List", valWrap.GetType())
 }
 
-func (valueWrapper ValueWrapper) AsDedupList() ([]ValueWrapper, error) {
-	if valueWrapper.value.IsSetUVal() {
+func (valWrap ValueWrapper) AsDedupList() ([]ValueWrapper, error) {
+	if valWrap.value.IsSetUVal() {
 		var varList []ValueWrapper
-		vals := valueWrapper.value.GetUVal().Values
+		vals := valWrap.value.GetUVal().Values
 		for _, val := range vals {
-			varList = append(varList, ValueWrapper{val})
+			varList = append(varList, ValueWrapper{val, valWrap.location})
 		}
 		return varList, nil
 	}
-	return nil, fmt.Errorf("Failed to convert value %s to set(deduped list)", valueWrapper.GetType())
+	return nil, fmt.Errorf("Failed to convert value %s to set(deduped list)", valWrap.GetType())
 }
 
-func (valueWrapper ValueWrapper) AsMap() (map[string]ValueWrapper, error) {
-	if valueWrapper.value.IsSetMVal() {
+func (valWrap ValueWrapper) AsMap() (map[string]ValueWrapper, error) {
+	if valWrap.value.IsSetMVal() {
 		newMap := make(map[string]ValueWrapper)
 
-		kvs := valueWrapper.value.GetMVal().Kvs
+		kvs := valWrap.value.GetMVal().Kvs
 		for key, val := range kvs {
-			newMap[key] = ValueWrapper{val}
+			newMap[key] = ValueWrapper{val, valWrap.location}
 		}
 		return newMap, nil
 	}
-	return nil, fmt.Errorf("Failed to convert value %s to Map", valueWrapper.GetType())
+	return nil, fmt.Errorf("Failed to convert value %s to Map", valWrap.GetType())
 }
 
-func (valueWrapper ValueWrapper) AsNode() (*Node, error) {
-	if !valueWrapper.value.IsSetVVal() {
-		return nil, fmt.Errorf("Failed to convert value %s to Node, value is not an vertex", valueWrapper.GetType())
+func (valWrap ValueWrapper) AsNode() (*Node, error) {
+	if !valWrap.value.IsSetVVal() {
+		return nil, fmt.Errorf("Failed to convert value %s to Node, value is not an vertex", valWrap.GetType())
 	}
-	vertex := valueWrapper.value.VVal
-	node, err := genNode(vertex)
+	vertex := valWrap.value.VVal
+	node, err := genNode(vertex, valWrap.location)
 	if err != nil {
 		return nil, err
 	}
 	return node, nil
 }
 
-func (valueWrapper ValueWrapper) AsRelationship() (*Relationship, error) {
-	if !valueWrapper.value.IsSetEVal() {
-		return nil, fmt.Errorf("Failed to convert value %s to Relationship, value is not an edge", valueWrapper.GetType())
+func (valWrap ValueWrapper) AsRelationship() (*Relationship, error) {
+	if !valWrap.value.IsSetEVal() {
+		return nil, fmt.Errorf("Failed to convert value %s to Relationship, value is not an edge", valWrap.GetType())
 	}
-	edge := valueWrapper.value.EVal
-	relationship, err := genRelationship(edge)
+	edge := valWrap.value.EVal
+	relationship, err := genRelationship(edge, valWrap.location)
 	if err != nil {
 		return nil, err
 	}
 	return relationship, nil
 }
 
-func (valueWrapper ValueWrapper) AsPath() (*PathWrapper, error) {
-	if !valueWrapper.value.IsSetPVal() {
-		return nil, fmt.Errorf("Failed to convert value %s to PathWrapper, value is not an edge", valueWrapper.GetType())
+func (valWrap ValueWrapper) AsPath() (*PathWrapper, error) {
+	if !valWrap.value.IsSetPVal() {
+		return nil, fmt.Errorf("Failed to convert value %s to PathWrapper, value is not an edge", valWrap.GetType())
 	}
-	path, err := genPathWrapper(valueWrapper.value.PVal)
+	path, err := genPathWrapper(valWrap.value.PVal, valWrap.location)
 	if err != nil {
 		return nil, err
 	}
 	return path, nil
 }
 
-// Returns the value type of value in the valueWrapper in string
-func (valueWrapper ValueWrapper) GetType() string {
-	if valueWrapper.value.IsSetNVal() {
+// Returns the value type of value in the valWrap in string
+func (valWrap ValueWrapper) GetType() string {
+	if valWrap.value.IsSetNVal() {
 		return "null"
-	} else if valueWrapper.value.IsSetBVal() {
+	} else if valWrap.value.IsSetBVal() {
 		return "bool"
-	} else if valueWrapper.value.IsSetIVal() {
+	} else if valWrap.value.IsSetIVal() {
 		return "int"
-	} else if valueWrapper.value.IsSetFVal() {
+	} else if valWrap.value.IsSetFVal() {
 		return "float"
-	} else if valueWrapper.value.IsSetSVal() {
+	} else if valWrap.value.IsSetSVal() {
 		return "string"
-	} else if valueWrapper.value.IsSetDVal() {
+	} else if valWrap.value.IsSetDVal() {
 		return "date"
-	} else if valueWrapper.value.IsSetTVal() {
+	} else if valWrap.value.IsSetTVal() {
 		return "time"
-	} else if valueWrapper.value.IsSetDtVal() {
+	} else if valWrap.value.IsSetDtVal() {
 		return "datetime"
-	} else if valueWrapper.value.IsSetVVal() {
+	} else if valWrap.value.IsSetVVal() {
 		return "vertex"
-	} else if valueWrapper.value.IsSetEVal() {
+	} else if valWrap.value.IsSetEVal() {
 		return "edge"
-	} else if valueWrapper.value.IsSetPVal() {
+	} else if valWrap.value.IsSetPVal() {
 		return "path"
-	} else if valueWrapper.value.IsSetLVal() {
+	} else if valWrap.value.IsSetLVal() {
 		return "list"
-	} else if valueWrapper.value.IsSetMVal() {
+	} else if valWrap.value.IsSetMVal() {
 		return "map"
-	} else if valueWrapper.value.IsSetUVal() {
+	} else if valWrap.value.IsSetUVal() {
 		return "set"
 	}
 	return "empty"
 }
 
 // String() returns the value in the ValueWrapper as a string.
+//
 // Maps in the output will be sorted by key value in alphabetical order.
-// For vetex, the output is in form (vid: tagName{propKey: propVal, propKey2, propVal2}),
-// For edge, the output is in form (SrcVid)-[name]->(DstVid)@Ranking{prop1: val1, prop2: val2}
-// where arrow direction depends on edgeType
-// For path, the output is in form(v1)-[name@edgeRanking]->(v2)-[name@edgeRanking]->(v3)
-func (valWarp ValueWrapper) String() string {
-	value := valWarp.value
+//
+//  For vetex, the output is in form (vid: tagName{propKey: propVal, propKey2, propVal2}),
+//  For edge, the output is in form (SrcVid)-[name]->(DstVid)@Ranking{prop1: val1, prop2: val2}
+//  where arrow direction depends on edgeType.
+//  For path, the output is in form(v1)-[name@edgeRanking]->(v2)-[name@edgeRanking]->(v3)
+//
+// For time, and dateTime, String returns the value calculated using the timezone offset
+// from graph service by default.
+func (valWrap ValueWrapper) String() string {
+	value := valWrap.value
 	if value.IsSetNVal() {
 		return value.GetNVal().String()
 	} else if value.IsSetBVal() {
@@ -268,31 +285,31 @@ func (valWarp ValueWrapper) String() string {
 		date := value.GetDVal()
 		return fmt.Sprintf("%d-%02d-%02d", date.Year, date.Month, date.Day)
 	} else if value.IsSetTVal() { // Time HH:MM:SS.MS
-		time := value.GetTVal()
-		return fmt.Sprintf("%02d:%02d:%02d.%03d", time.Hour, time.Minute, time.Sec, time.Microsec)
+		rawTime := value.GetTVal()
+		time, _ := genTimeWrapper(rawTime, valWrap.location)
+		return time.getLocalTime()
 	} else if value.IsSetDtVal() { // DateTime yyyy-mm-ddTHH:MM:SS.MS  TODO: add time zone
-		dateTime := value.GetDtVal()
-		return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d.%03d",
-			dateTime.Year, dateTime.Month, dateTime.Day,
-			dateTime.Hour, dateTime.Minute, dateTime.Sec, dateTime.Microsec)
+		rawDateTime := value.GetDtVal()
+		dateTime, _ := genDateTimeWrapper(rawDateTime, valWrap.location)
+		return dateTime.getLocalDateTime()
 	} else if value.IsSetVVal() { // Vertex format: ("VertexID" :tag1{k0: v0,k1: v1}:tag2{k2: v2})
 		vertex := value.GetVVal()
-		node, _ := genNode(vertex)
+		node, _ := genNode(vertex, valWrap.location)
 		return node.String()
 	} else if value.IsSetEVal() { // Edge format: [:edge src->dst @ranking {propKey1: propVal1}]
 		edge := value.GetEVal()
-		relationship, _ := genRelationship(edge)
+		relationship, _ := genRelationship(edge, valWrap.location)
 		return relationship.String()
 	} else if value.IsSetPVal() {
 		// Path format: ("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking {propKey1: propVal1}]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking {propKey2: propVal2}]->("VertexID3" :tag1{k0: v0,k1: v1})
 		path := value.GetPVal()
-		pathWrap, _ := genPathWrapper(path)
+		pathWrap, _ := genPathWrapper(path, valWrap.location)
 		return pathWrap.String()
 	} else if value.IsSetLVal() { // List
 		lval := value.GetLVal()
 		var strs []string
 		for _, val := range lval.Values {
-			strs = append(strs, ValueWrapper{val}.String())
+			strs = append(strs, ValueWrapper{val, valWrap.location}.String())
 		}
 		return fmt.Sprintf("[%s]", strings.Join(strs, ", "))
 	} else if value.IsSetMVal() { // Map
@@ -306,7 +323,7 @@ func (valWarp ValueWrapper) String() string {
 		}
 		sort.Strings(keyList)
 		for _, k := range keyList {
-			output = append(output, fmt.Sprintf("%s: %s", k, ValueWrapper{kvs[k]}.String()))
+			output = append(output, fmt.Sprintf("%s: %s", k, ValueWrapper{kvs[k], valWrap.location}.String()))
 		}
 		return fmt.Sprintf("{%s}", strings.Join(output, ", "))
 	} else if value.IsSetUVal() {
@@ -314,7 +331,7 @@ func (valWarp ValueWrapper) String() string {
 		uval := value.GetUVal()
 		var strs []string
 		for _, val := range uval.Values {
-			strs = append(strs, ValueWrapper{val}.String())
+			strs = append(strs, ValueWrapper{val, valWrap.location}.String())
 		}
 		return fmt.Sprintf("[%s]", strings.Join(strs, ", "))
 	} else { // is empty

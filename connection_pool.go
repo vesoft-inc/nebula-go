@@ -104,12 +104,14 @@ func (pool *ConnectionPool) GetSession(username, password string) (*Session, err
 	}
 
 	sessID := resp.GetSessionID()
+	timezoneName := resp.GetTimeZoneName()
 	// Create new session
 	newSession := Session{
-		sessionID:  sessID,
-		connection: conn,
-		connPool:   pool,
-		log:        pool.log,
+		sessionID:          sessID,
+		connection:         conn,
+		connPool:           pool,
+		log:                pool.log,
+		timezoneOffsetName: timezoneName,
 	}
 
 	return &newSession, nil

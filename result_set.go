@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/vesoft-inc/nebula-go/v2/nebula"
 	"github.com/vesoft-inc/nebula-go/v2/nebula/graph"
@@ -21,28 +22,33 @@ type ResultSet struct {
 	resp            *graph.ExecutionResponse
 	columnNames     []string
 	colNameIndexMap map[string]int
+	location        *time.Location
 }
 
 type Record struct {
 	columnNames     *[]string
 	_record         []*ValueWrapper
 	colNameIndexMap *map[string]int
+	location        *time.Location
 }
 
 type Node struct {
 	vertex          *nebula.Vertex
 	tags            []string // tag name
 	tagNameIndexMap map[string]int
+	location        *time.Location
 }
 
 type Relationship struct {
-	edge *nebula.Edge
+	edge     *nebula.Edge
+	location *time.Location
 }
 
 type segment struct {
 	startNode    *Node
 	relationship *Relationship
 	endNode      *Node
+	location     *time.Location
 }
 
 type PathWrapper struct {
@@ -50,6 +56,22 @@ type PathWrapper struct {
 	nodeList         []*Node
 	relationshipList []*Relationship
 	segments         []segment
+	location         *time.Location
+}
+
+type TimeWrapper struct {
+	time     *nebula.Time
+	location *time.Location
+}
+
+type DateWrapper struct {
+	date     *nebula.Date
+	location *time.Location
+}
+
+type DateTimeWrapper struct {
+	dateTime *nebula.DateTime
+	location *time.Location
 }
 
 type ErrorCode int64
@@ -71,7 +93,7 @@ const (
 	ErrorCode_E_PARTIAL_SUCCEEDED     ErrorCode = ErrorCode(nebula.ErrorCode_E_PARTIAL_SUCCEEDED)
 )
 
-func genResultSet(resp *graph.ExecutionResponse) *ResultSet {
+func genResultSet(resp *graph.ExecutionResponse, timezonName []byte) (*ResultSet, error) {
 	var colNames []string
 	var colNameIndexMap = make(map[string]int)
 
@@ -80,21 +102,25 @@ func genResultSet(resp *graph.ExecutionResponse) *ResultSet {
 			resp:            resp,
 			columnNames:     colNames,
 			colNameIndexMap: colNameIndexMap,
-		}
+		}, nil
 	}
 	for i, name := range resp.Data.ColumnNames {
 		colNames = append(colNames, string(name))
 		colNameIndexMap[string(name)] = i
 	}
-
+	timezoneLocation, err := time.LoadLocation(string(timezonName))
+	if err != nil {
+		return nil, fmt.Errorf("Failed to Load timezone: %s", err.Error())
+	}
 	return &ResultSet{
 		resp:            resp,
 		columnNames:     colNames,
 		colNameIndexMap: colNameIndexMap,
-	}
+		location:        timezoneLocation,
+	}, nil
 }
 
-func genValWarps(row *nebula.Row) ([]*ValueWrapper, error) {
+func genValWraps(row *nebula.Row, locatoin *time.Location) ([]*ValueWrapper, error) {
 	if row == nil {
 		return nil, fmt.Errorf("Failed to generate valueWrapper: invalid row")
 	}
@@ -103,12 +129,12 @@ func genValWarps(row *nebula.Row) ([]*ValueWrapper, error) {
 		if val == nil {
 			return nil, fmt.Errorf("Failed to generate valueWrapper: value is nil")
 		}
-		valWraps = append(valWraps, &ValueWrapper{val})
+		valWraps = append(valWraps, &ValueWrapper{val, locatoin})
 	}
 	return valWraps, nil
 }
 
-func genNode(vertex *nebula.Vertex) (*Node, error) {
+func genNode(vertex *nebula.Vertex, location *time.Location) (*Node, error) {
 	if vertex == nil {
 		return nil, fmt.Errorf("Failed to generate Node: invalid vertex")
 	}
@@ -130,7 +156,7 @@ func genNode(vertex *nebula.Vertex) (*Node, error) {
 	}, nil
 }
 
-func genRelationship(edge *nebula.Edge) (*Relationship, error) {
+func genRelationship(edge *nebula.Edge, location *time.Location) (*Relationship, error) {
 	if edge == nil {
 		return nil, fmt.Errorf("Failed to generate Relationship: invalid edge")
 	}
@@ -139,7 +165,7 @@ func genRelationship(edge *nebula.Edge) (*Relationship, error) {
 	}, nil
 }
 
-func genPathWrapper(path *nebula.Path) (*PathWrapper, error) {
+func genPathWrapper(path *nebula.Path, location *time.Location) (*PathWrapper, error) {
 	if path == nil {
 		return nil, fmt.Errorf("Failed to generate Path Wrapper: invalid path")
 	}
@@ -152,14 +178,14 @@ func genPathWrapper(path *nebula.Path) (*PathWrapper, error) {
 		segEndNode       *Node
 		segType          nebula.EdgeType
 	)
-	src, err := genNode(path.Src)
+	src, err := genNode(path.Src, location)
 	if err != nil {
 		return nil, err
 	}
 	nodeList = append(nodeList, src)
 
 	for _, step := range path.Steps {
-		dst, err := genNode(step.Dst)
+		dst, err := genNode(step.Dst, location)
 		if err != nil {
 			return nil, err
 		}
@@ -183,7 +209,7 @@ func genPathWrapper(path *nebula.Path) (*PathWrapper, error) {
 			Ranking: step.Ranking,
 			Props:   step.Props,
 		}
-		relationship, err := genRelationship(edge)
+		relationship, err := genRelationship(edge, location)
 		if err != nil {
 			return nil, err
 		}
@@ -225,7 +251,7 @@ func (res ResultSet) AsStringTable() [][]string {
 	for _, row := range rows {
 		var tempRow []string
 		for _, val := range row.Values {
-			tempRow = append(tempRow, ValueWrapper{val}.String())
+			tempRow = append(tempRow, ValueWrapper{val, res.location}.String())
 		}
 		resTable = append(resTable, tempRow)
 	}
@@ -241,7 +267,7 @@ func (res ResultSet) GetValuesByColName(colName string) ([]*ValueWrapper, error)
 	index := res.colNameIndexMap[colName]
 	var valList []*ValueWrapper
 	for _, row := range res.resp.Data.Rows {
-		valList = append(valList, &ValueWrapper{row.Values[index]})
+		valList = append(valList, &ValueWrapper{row.Values[index], res.location})
 	}
 	return valList, nil
 }
@@ -251,7 +277,7 @@ func (res ResultSet) GetRowValuesByIndex(index int) (*Record, error) {
 	if err := checkIndex(index, res.resp.Data.Rows); err != nil {
 		return nil, err
 	}
-	valWrap, err := genValWarps(res.resp.Data.Rows[index])
+	valWrap, err := genValWraps(res.resp.Data.Rows[index], res.location)
 	if err != nil {
 		return nil, err
 	}
@@ -259,6 +285,7 @@ func (res ResultSet) GetRowValuesByIndex(index int) (*Record, error) {
 		columnNames:     &res.columnNames,
 		_record:         valWrap,
 		colNameIndexMap: &res.colNameIndexMap,
+		location:        res.location,
 	}, nil
 }
 
@@ -412,7 +439,7 @@ func (node Node) getRawID() *nebula.Value {
 
 // Returns a list of vid of node
 func (node Node) GetID() ValueWrapper {
-	return ValueWrapper{node.vertex.GetVid()}
+	return ValueWrapper{node.vertex.GetVid(), node.location}
 }
 
 // Returns a list of tag names of node
@@ -437,7 +464,7 @@ func (node Node) Properties(tagName string) (map[string]*ValueWrapper, error) {
 	}
 	index := node.tagNameIndexMap[tagName]
 	for k, v := range node.vertex.Tags[index].Props {
-		kvMap[k] = &ValueWrapper{v}
+		kvMap[k] = &ValueWrapper{v, node.location}
 	}
 	return kvMap, nil
 }
@@ -463,7 +490,7 @@ func (node Node) Values(tagName string) ([]*ValueWrapper, error) {
 	var propValList []*ValueWrapper
 	index := node.tagNameIndexMap[tagName]
 	for _, v := range node.vertex.Tags[index].Props {
-		propValList = append(propValList, &ValueWrapper{v})
+		propValList = append(propValList, &ValueWrapper{v, node.location})
 	}
 	return propValList, nil
 }
@@ -483,7 +510,7 @@ func (node Node) String() string {
 		}
 		sort.Strings(keyList)
 		for _, k := range keyList {
-			kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{kvs[k]}.String())
+			kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{kvs[k], node.location}.String())
 			kvStr = append(kvStr, kvTemp)
 		}
 		tagStr = append(tagStr, fmt.Sprintf("%s{%s}", tagName, strings.Join(kvStr, ", ")))
@@ -491,9 +518,9 @@ func (node Node) String() string {
 		kvStr = nil
 	}
 	if len(tagStr) == 0 { // No tag
-		return fmt.Sprintf("(%s)", ValueWrapper{vid}.String())
+		return fmt.Sprintf("(%s)", ValueWrapper{vid, node.location}.String())
 	}
-	return fmt.Sprintf("(%s :%s)", ValueWrapper{vid}.String(), strings.Join(tagStr, " :"))
+	return fmt.Sprintf("(%s :%s)", ValueWrapper{vid, node.location}.String(), strings.Join(tagStr, " :"))
 }
 
 // Returns true if two nodes have same vid
@@ -512,16 +539,16 @@ func (n1 Node) IsEqualTo(n2 *Node) bool {
 
 func (relationship Relationship) GetSrcVertexID() ValueWrapper {
 	if relationship.edge.Type > 0 {
-		return ValueWrapper{relationship.edge.GetSrc()}
+		return ValueWrapper{relationship.edge.GetSrc(), relationship.location}
 	}
-	return ValueWrapper{relationship.edge.GetDst()}
+	return ValueWrapper{relationship.edge.GetDst(), relationship.location}
 }
 
 func (relationship Relationship) GetDstVertexID() ValueWrapper {
 	if relationship.edge.Type > 0 {
-		return ValueWrapper{relationship.edge.GetDst()}
+		return ValueWrapper{relationship.edge.GetDst(), relationship.location}
 	}
-	return ValueWrapper{relationship.edge.GetSrc()}
+	return ValueWrapper{relationship.edge.GetSrc(), relationship.location}
 }
 
 func (relationship Relationship) GetEdgeName() string {
@@ -540,7 +567,7 @@ func (relationship Relationship) Properties() map[string]*ValueWrapper {
 	)
 	for k, v := range relationship.edge.Props {
 		keyList = append(keyList, k)
-		valueList = append(valueList, &ValueWrapper{v})
+		valueList = append(valueList, &ValueWrapper{v, relationship.location})
 	}
 
 	for i := 0; i < len(keyList); i++ {
@@ -562,7 +589,7 @@ func (relationship Relationship) Keys() []string {
 func (relationship Relationship) Values() []*ValueWrapper {
 	var values []*ValueWrapper
 	for _, value := range relationship.edge.GetProps() {
-		values = append(values, &ValueWrapper{value})
+		values = append(values, &ValueWrapper{value, relationship.location})
 	}
 	return values
 }
@@ -579,15 +606,15 @@ func (relationship Relationship) String() string {
 	}
 	sort.Strings(keyList)
 	for _, k := range keyList {
-		kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{edge.Props[k]}.String())
+		kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{edge.Props[k], relationship.location}.String())
 		kvStr = append(kvStr, kvTemp)
 	}
 	if relationship.edge.Type > 0 {
-		src = ValueWrapper{edge.Src}.String()
-		dst = ValueWrapper{edge.Dst}.String()
+		src = ValueWrapper{edge.Src, relationship.location}.String()
+		dst = ValueWrapper{edge.Dst, relationship.location}.String()
 	} else {
-		src = ValueWrapper{edge.Dst}.String()
-		dst = ValueWrapper{edge.Src}.String()
+		src = ValueWrapper{edge.Dst, relationship.location}.String()
+		dst = ValueWrapper{edge.Src, relationship.location}.String()
 	}
 	return fmt.Sprintf(`[:%s %s->%s @%d {%s}]`,
 		string(edge.Name), src, dst, edge.Ranking, fmt.Sprintf("%s", strings.Join(kvStr, ", ")))
@@ -596,13 +623,13 @@ func (relationship Relationship) String() string {
 func (r1 Relationship) IsEqualTo(r2 *Relationship) bool {
 	if r1.edge.GetSrc().IsSetSVal() && r2.edge.GetSrc().IsSetSVal() &&
 		r1.edge.GetDst().IsSetSVal() && r2.edge.GetDst().IsSetSVal() {
-		s1, _ := ValueWrapper{r1.edge.GetSrc()}.AsString()
-		s2, _ := ValueWrapper{r2.edge.GetSrc()}.AsString()
+		s1, _ := ValueWrapper{r1.edge.GetSrc(), r1.location}.AsString()
+		s2, _ := ValueWrapper{r2.edge.GetSrc(), r2.location}.AsString()
 		return s1 == s2 && string(r1.edge.Name) == string(r2.edge.Name) && r1.edge.Ranking == r2.edge.Ranking
 	} else if r1.edge.GetSrc().IsSetIVal() && r2.edge.GetSrc().IsSetIVal() &&
 		r1.edge.GetDst().IsSetIVal() && r2.edge.GetDst().IsSetIVal() {
-		s1, _ := ValueWrapper{r1.edge.GetSrc()}.AsInt()
-		s2, _ := ValueWrapper{r2.edge.GetSrc()}.AsInt()
+		s1, _ := ValueWrapper{r1.edge.GetSrc(), r1.location}.AsInt()
+		s2, _ := ValueWrapper{r2.edge.GetSrc(), r2.location}.AsInt()
 		return s1 == s2 && string(r1.edge.Name) == string(r2.edge.Name) && r1.edge.Ranking == r2.edge.Ranking
 	}
 	return false
@@ -661,7 +688,7 @@ func (pathWrap *PathWrapper) String() string {
 	path := pathWrap.path
 	src := path.Src
 	steps := path.Steps
-	resStr := ValueWrapper{&nebula.Value{VVal: src}}.String()
+	resStr := ValueWrapper{&nebula.Value{VVal: src}, pathWrap.location}.String()
 	for _, step := range steps {
 		var keyList []string
 		var kvStr []string
@@ -670,7 +697,7 @@ func (pathWrap *PathWrapper) String() string {
 		}
 		sort.Strings(keyList)
 		for _, k := range keyList {
-			kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{step.Props[k]}.String())
+			kvTemp := fmt.Sprintf("%s: %s", k, ValueWrapper{step.Props[k], pathWrap.location}.String())
 			kvStr = append(kvStr, kvTemp)
 		}
 		var dirChar1 string
@@ -688,7 +715,7 @@ func (pathWrap *PathWrapper) String() string {
 			step.Ranking,
 			fmt.Sprintf("%s", strings.Join(kvStr, ", ")),
 			dirChar2,
-			ValueWrapper{&nebula.Value{VVal: step.Dst}}.String())
+			ValueWrapper{&nebula.Value{VVal: step.Dst}, pathWrap.location}.String())
 	}
 	return "<" + resStr + ">"
 }
@@ -720,6 +747,256 @@ func (p1 *PathWrapper) IsEqualTo(p2 *PathWrapper) bool {
 		}
 	}
 	return true
+}
+
+func genTimeWrapper(time *nebula.Time, locatoin *time.Location) (*TimeWrapper, error) {
+	if time == nil {
+		return nil, fmt.Errorf("Failed to generate Time: invalid Time")
+	}
+
+	return &TimeWrapper{
+		time:     time,
+		location: locatoin,
+	}, nil
+}
+
+func (t TimeWrapper) getHour() int8 {
+	return t.time.Hour
+}
+
+func (t TimeWrapper) getMinute() int8 {
+	return t.time.Minute
+}
+
+func (t TimeWrapper) getSecond() int8 {
+	return t.time.Sec
+}
+
+func (t TimeWrapper) getMicrosec() int32 {
+	return t.time.Microsec
+}
+
+// getRawDateTime returns Time in UTC.
+// Output format: HH:MM:SS.MS
+func (t TimeWrapper) getRawTime() string {
+	return fmt.Sprintf("%02d:%02d:%02d.%03d",
+		t.getHour(), t.getMinute(), t.getSecond(), t.getMicrosec())
+}
+
+// getLocalTimeWithServerTimezone returns a string of local time using timezone offset from the server.
+// Output format: HH:MM:SS.MS
+func (t TimeWrapper) getLocalTime() string {
+	// Original time object generated from server in UTC
+	// Year, month and day are mocked up to fill the parameters
+	rawTime := time.Date(2020,
+		time.Month(12),
+		21,
+		int(t.getHour()),
+		int(t.getMinute()),
+		int(t.getSecond()),
+		int(t.getMicrosec()*1000),
+		time.UTC)
+
+	localTime := rawTime.In(t.location)
+	return fmt.Sprintf("%02d:%02d:%02d.%03d",
+		localTime.Hour(),
+		localTime.Minute(),
+		localTime.Second(),
+		localTime.Nanosecond()/1000)
+}
+
+// getLocalTimeWithCostomOffset returns a string of local time using user specified offset.
+// Offset is in seconds.
+// Output format: HH:MM:SS.MS
+func (t TimeWrapper) getLocalTimeWithTimezonOffset(timezoneOffsetSeconds int32) (string, error) {
+	// Original time object generated from server in UTC
+	// Year, month and day are mocked up to fill the parameters
+	rawTime := time.Date(2020,
+		time.Month(12),
+		21,
+		int(t.getHour()),
+		int(t.getMinute()),
+		int(t.getSecond()),
+		int(t.getMicrosec()*1000),
+		time.UTC)
+
+	offsetInSeconds, err := time.ParseDuration(fmt.Sprintf("%ds", timezoneOffsetSeconds))
+	if err != nil {
+		return "", err
+	}
+	localTime := rawTime.Add(offsetInSeconds)
+	return fmt.Sprintf("%02d:%02d:%02d.%03d",
+		localTime.Hour(),
+		localTime.Minute(),
+		localTime.Second(),
+		localTime.Nanosecond()/1000), nil
+}
+
+// GetLocalTimeWithTimezonName returns  a string of local time using user specified timezone name.
+// timezoneNames are defined in IANA time zone database.
+// Output format: HH:MM:SS.MS
+func (t TimeWrapper) GetLocalTimeWithTimezonName(timezoneName string) (*time.Time, error) {
+	// Original time object generated from server in UTC
+	// Year, month and day are mocked up to fill the parameters
+	rawTime := time.Date(2020,
+		time.Month(12),
+		21,
+		int(t.getHour()),
+		int(t.getMinute()),
+		int(t.getSecond()),
+		int(t.getMicrosec()*1000),
+		time.UTC)
+
+	location, err := time.LoadLocation(timezoneName)
+	if err != nil {
+		return nil, err
+	}
+	localTime := rawTime.In(location)
+	return &localTime, nil
+}
+
+func (t1 TimeWrapper) IsEqualTo(t2 TimeWrapper) bool {
+	return t1.getHour() == t2.getHour() &&
+		t1.getSecond() == t2.getSecond() &&
+		t1.getSecond() == t2.getSecond() &&
+		t1.getMicrosec() == t2.getMicrosec()
+}
+
+func genDateTimeWrapper(datetime *nebula.DateTime, locatoin *time.Location) (*DateTimeWrapper, error) {
+	if datetime == nil {
+		return nil, fmt.Errorf("Failed to generate datetime: invalid datetime")
+	}
+	return &DateTimeWrapper{
+		dateTime: datetime,
+		location: locatoin,
+	}, nil
+}
+
+func (dt DateTimeWrapper) getYear() int16 {
+	return dt.dateTime.Year
+}
+
+func (dt DateTimeWrapper) getMonth() int8 {
+	return dt.dateTime.Month
+}
+
+func (dt DateTimeWrapper) getDay() int8 {
+	return dt.dateTime.Day
+}
+
+func (dt DateTimeWrapper) getHour() int8 {
+	return dt.dateTime.Hour
+}
+
+func (dt DateTimeWrapper) getMinute() int8 {
+	return dt.dateTime.Minute
+}
+
+func (dt DateTimeWrapper) getSecond() int8 {
+	return dt.dateTime.Sec
+}
+
+func (dt DateTimeWrapper) getMicrosec() int32 {
+	return dt.dateTime.Microsec
+}
+
+func (dt1 DateTimeWrapper) IsEqualTo(dt2 DateTimeWrapper) bool {
+	return dt1.getYear() == dt2.getYear() &&
+		dt1.getMonth() == dt2.getMonth() &&
+		dt1.getDay() == dt2.getDay() &&
+		dt1.getHour() == dt2.getHour() &&
+		dt1.getSecond() == dt2.getSecond() &&
+		dt1.getSecond() == dt2.getSecond() &&
+		dt1.getMicrosec() == dt2.getMicrosec()
+}
+
+// getRawDateTime returns a string of DateTime in UTC.
+// Output format: yyyy-mm-ddTHH:MM:SS.MS
+func (dt DateTimeWrapper) getRawDateTime() string {
+	return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d.%03d",
+		dt.getYear(), dt.getMonth(), dt.getDay(),
+		dt.getHour(), dt.getMinute(), dt.getSecond(), dt.getMicrosec())
+}
+
+// getLocalDateTime returns a string of local time using timezone offset from the server.
+// Output format: yyyy-mm-ddTHH:MM:SS.MS
+func (dt DateTimeWrapper) getLocalDateTime() string {
+	// Original time object generated from server in UTC
+	rawTime := time.Date(int(dt.getYear()),
+		time.Month(dt.getMonth()),
+		int(dt.getDay()),
+		int(dt.getHour()),
+		int(dt.getSecond()),
+		int(dt.dateTime.Sec),
+		int(dt.dateTime.Microsec*1000),
+		time.UTC)
+
+	localDateTime := rawTime.In(dt.location)
+	return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d.%03d",
+		localDateTime.Year(),
+		localDateTime.Month(),
+		localDateTime.Day(),
+		localDateTime.Hour(),
+		localDateTime.Minute(),
+		localDateTime.Second(),
+		localDateTime.Nanosecond()/1000)
+}
+
+// getLocalTimeWithTimezonOffset returns a string of local time using user specified timezone offset.
+// Offset is in seconds.
+// Output format: yyyy-mm-ddTHH:MM:SS.MS
+func (dt DateTimeWrapper) getLocalTimeWithTimezonOffset(timezoneOffsetSeconds int32) (string, error) {
+	// Original time object generated from server in UTC
+	rawTime := time.Date(int(dt.getYear()),
+		time.Month(dt.getMonth()),
+		int(dt.getDay()),
+		int(dt.getHour()),
+		int(dt.getSecond()),
+		int(dt.dateTime.Sec),
+		int(dt.dateTime.Microsec*1000),
+		time.UTC)
+	offsetInSeconds, err := time.ParseDuration(fmt.Sprintf("%ds", timezoneOffsetSeconds))
+	if err != nil {
+		return "", err
+	}
+	localDateTime := rawTime.Add(offsetInSeconds)
+	return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d.%03d",
+		localDateTime.Year(),
+		localDateTime.Month(),
+		localDateTime.Day(),
+		localDateTime.Hour(),
+		localDateTime.Minute(),
+		localDateTime.Second(),
+		localDateTime.Nanosecond()/1000), nil
+}
+
+// GetLocalTimeWithTimezonName returns a string of local time using user specified timezone name.
+// timezoneNames are defined in IANA time zone database.
+// Output format: yyyy-mm-ddTHH:MM:SS.MS
+func (dt DateTimeWrapper) GetLocalTimeWithTimezonName(timezoneName string) (string, error) {
+	// Original time object generated from server in UTC
+	rawTime := time.Date(int(dt.getYear()),
+		time.Month(dt.getMonth()),
+		int(dt.getDay()),
+		int(dt.getHour()),
+		int(dt.getSecond()),
+		int(dt.getSecond()),
+		int(dt.getMicrosec()*1000),
+		time.UTC)
+
+	location, err := time.LoadLocation(timezoneName)
+	if err != nil {
+		return "", err
+	}
+	localDateTime := rawTime.In(location)
+	return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d.%03d",
+		localDateTime.Year(),
+		localDateTime.Month(),
+		localDateTime.Day(),
+		localDateTime.Hour(),
+		localDateTime.Minute(),
+		localDateTime.Second(),
+		localDateTime.Nanosecond()/1000), nil
 }
 
 func checkIndex(index int, list interface{}) error {

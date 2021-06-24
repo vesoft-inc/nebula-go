@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"sort"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/vesoft-inc/nebula-go/v2/nebula"
@@ -200,7 +201,7 @@ func TestAsNode(t *testing.T) {
 func TestAsRelationship(t *testing.T) {
 	// [:classmate "Alice"->"Bob" @100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]
 	value := nebula.Value{EVal: getEdge("Alice", "Bob", 5)}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, time.UTC}
 	assert.Equal(t, true, valWrap.IsEdge())
 	assert.Equal(t, "[:classmate \"Alice\"->\"Bob\" @100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]", valWrap.String())
 	res, _ := valWrap.AsRelationship()
