@@ -14,12 +14,17 @@ import (
 	graph "github.com/vesoft-inc/nebula-go/v2/nebula/graph"
 )
 
+type timezoneInfo struct {
+	offset int32
+	name   []byte
+}
+
 type Session struct {
-	sessionID          int64
-	connection         *connection
-	connPool           *ConnectionPool
-	log                Logger
-	timezoneOffsetName []byte
+	sessionID  int64
+	connection *connection
+	connPool   *ConnectionPool
+	log        Logger
+	timezoneInfo
 }
 
 // unsupported
@@ -34,7 +39,7 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 	}
 	resp, err := session.connection.execute(session.sessionID, stmt)
 	if err == nil {
-		resSet, err := genResultSet(resp, session.timezoneOffsetName)
+		resSet, err := genResultSet(resp, session.timezoneInfo)
 		if err != nil {
 			return nil, err
 		}
@@ -58,7 +63,7 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 		if err != nil {
 			return nil, err
 		}
-		resSet, err := genResultSet(resp, session.timezoneOffsetName)
+		resSet, err := genResultSet(resp, session.timezoneInfo)
 		if err != nil {
 			return nil, err
 		}

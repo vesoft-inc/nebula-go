@@ -11,14 +11,13 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/vesoft-inc/nebula-go/v2/nebula"
 )
 
 type ValueWrapper struct {
-	value    *nebula.Value
-	location *time.Location
+	value        *nebula.Value
+	timezoneInfo timezoneInfo
 }
 
 func (valWrap ValueWrapper) IsEmpty() bool {
@@ -120,7 +119,7 @@ func (valWrap ValueWrapper) AsString() (string, error) {
 func (valWrap ValueWrapper) AsTime() (*TimeWrapper, error) {
 	if valWrap.value.IsSetTVal() {
 		rawTime := valWrap.value.GetTVal()
-		time, err := genTimeWrapper(rawTime, valWrap.location)
+		time, err := genTimeWrapper(rawTime, valWrap.timezoneInfo)
 		if err != nil {
 			return nil, err
 		}
@@ -139,7 +138,7 @@ func (valWrap ValueWrapper) AsDate() (*nebula.Date, error) {
 func (valWrap ValueWrapper) AsDateTime() (*DateTimeWrapper, error) {
 	if valWrap.value.IsSetDtVal() {
 		rawTimeDate := valWrap.value.GetDtVal()
-		timeDate, err := genDateTimeWrapper(rawTimeDate, valWrap.location)
+		timeDate, err := genDateTimeWrapper(rawTimeDate, valWrap.timezoneInfo)
 		if err != nil {
 			return nil, err
 		}
@@ -153,7 +152,7 @@ func (valWrap ValueWrapper) AsList() ([]ValueWrapper, error) {
 		var varList []ValueWrapper
 		vals := valWrap.value.GetLVal().Values
 		for _, val := range vals {
-			varList = append(varList, ValueWrapper{val, valWrap.location})
+			varList = append(varList, ValueWrapper{val, valWrap.timezoneInfo})
 		}
 		return varList, nil
 	}
@@ -165,7 +164,7 @@ func (valWrap ValueWrapper) AsDedupList() ([]ValueWrapper, error) {
 		var varList []ValueWrapper
 		vals := valWrap.value.GetUVal().Values
 		for _, val := range vals {
-			varList = append(varList, ValueWrapper{val, valWrap.location})
+			varList = append(varList, ValueWrapper{val, valWrap.timezoneInfo})
 		}
 		return varList, nil
 	}
@@ -178,7 +177,7 @@ func (valWrap ValueWrapper) AsMap() (map[string]ValueWrapper, error) {
 
 		kvs := valWrap.value.GetMVal().Kvs
 		for key, val := range kvs {
-			newMap[key] = ValueWrapper{val, valWrap.location}
+			newMap[key] = ValueWrapper{val, valWrap.timezoneInfo}
 		}
 		return newMap, nil
 	}
@@ -190,7 +189,7 @@ func (valWrap ValueWrapper) AsNode() (*Node, error) {
 		return nil, fmt.Errorf("Failed to convert value %s to Node, value is not an vertex", valWrap.GetType())
 	}
 	vertex := valWrap.value.VVal
-	node, err := genNode(vertex, valWrap.location)
+	node, err := genNode(vertex, valWrap.timezoneInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +201,7 @@ func (valWrap ValueWrapper) AsRelationship() (*Relationship, error) {
 		return nil, fmt.Errorf("Failed to convert value %s to Relationship, value is not an edge", valWrap.GetType())
 	}
 	edge := valWrap.value.EVal
-	relationship, err := genRelationship(edge, valWrap.location)
+	relationship, err := genRelationship(edge, valWrap.timezoneInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -213,7 +212,7 @@ func (valWrap ValueWrapper) AsPath() (*PathWrapper, error) {
 	if !valWrap.value.IsSetPVal() {
 		return nil, fmt.Errorf("Failed to convert value %s to PathWrapper, value is not an edge", valWrap.GetType())
 	}
-	path, err := genPathWrapper(valWrap.value.PVal, valWrap.location)
+	path, err := genPathWrapper(valWrap.value.PVal, valWrap.timezoneInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -284,32 +283,34 @@ func (valWrap ValueWrapper) String() string {
 	} else if value.IsSetDVal() { // Date yyyy-mm-dd
 		date := value.GetDVal()
 		return fmt.Sprintf("%d-%02d-%02d", date.Year, date.Month, date.Day)
-	} else if value.IsSetTVal() { // Time HH:MM:SS.MS
+	} else if value.IsSetTVal() { // Time HH:MM:SS.MSMSMS
 		rawTime := value.GetTVal()
-		time, _ := genTimeWrapper(rawTime, valWrap.location)
-		return time.getLocalTime()
-	} else if value.IsSetDtVal() { // DateTime yyyy-mm-ddTHH:MM:SS.MS  TODO: add time zone
+		time, _ := genTimeWrapper(rawTime, valWrap.timezoneInfo)
+		localTimeStr, _ := time.getLocalTime()
+		return localTimeStr
+	} else if value.IsSetDtVal() { // DateTime yyyy-mm-ddTHH:MM:SS.MSMSMS
 		rawDateTime := value.GetDtVal()
-		dateTime, _ := genDateTimeWrapper(rawDateTime, valWrap.location)
-		return dateTime.getLocalDateTime()
+		dateTime, _ := genDateTimeWrapper(rawDateTime, valWrap.timezoneInfo)
+		localDateTime, _ := dateTime.getLocalDateTime()
+		return localDateTime
 	} else if value.IsSetVVal() { // Vertex format: ("VertexID" :tag1{k0: v0,k1: v1}:tag2{k2: v2})
 		vertex := value.GetVVal()
-		node, _ := genNode(vertex, valWrap.location)
+		node, _ := genNode(vertex, valWrap.timezoneInfo)
 		return node.String()
 	} else if value.IsSetEVal() { // Edge format: [:edge src->dst @ranking {propKey1: propVal1}]
 		edge := value.GetEVal()
-		relationship, _ := genRelationship(edge, valWrap.location)
+		relationship, _ := genRelationship(edge, valWrap.timezoneInfo)
 		return relationship.String()
 	} else if value.IsSetPVal() {
 		// Path format: ("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking {propKey1: propVal1}]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking {propKey2: propVal2}]->("VertexID3" :tag1{k0: v0,k1: v1})
 		path := value.GetPVal()
-		pathWrap, _ := genPathWrapper(path, valWrap.location)
+		pathWrap, _ := genPathWrapper(path, valWrap.timezoneInfo)
 		return pathWrap.String()
 	} else if value.IsSetLVal() { // List
 		lval := value.GetLVal()
 		var strs []string
 		for _, val := range lval.Values {
-			strs = append(strs, ValueWrapper{val, valWrap.location}.String())
+			strs = append(strs, ValueWrapper{val, valWrap.timezoneInfo}.String())
 		}
 		return fmt.Sprintf("[%s]", strings.Join(strs, ", "))
 	} else if value.IsSetMVal() { // Map
@@ -323,7 +324,7 @@ func (valWrap ValueWrapper) String() string {
 		}
 		sort.Strings(keyList)
 		for _, k := range keyList {
-			output = append(output, fmt.Sprintf("%s: %s", k, ValueWrapper{kvs[k], valWrap.location}.String()))
+			output = append(output, fmt.Sprintf("%s: %s", k, ValueWrapper{kvs[k], valWrap.timezoneInfo}.String()))
 		}
 		return fmt.Sprintf("{%s}", strings.Join(output, ", "))
 	} else if value.IsSetUVal() {
@@ -331,7 +332,7 @@ func (valWrap ValueWrapper) String() string {
 		uval := value.GetUVal()
 		var strs []string
 		for _, val := range uval.Values {
-			strs = append(strs, ValueWrapper{val, valWrap.location}.String())
+			strs = append(strs, ValueWrapper{val, valWrap.timezoneInfo}.String())
 		}
 		return fmt.Sprintf("[%s]", strings.Join(strs, ", "))
 	} else { // is empty

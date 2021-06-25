@@ -80,7 +80,7 @@ func TestConnection(t *testing.T) {
 
 	checkConResp(t, "show hosts", resp)
 
-	resp, err = conn.execute(sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1);")
+	resp, err = conn.execute(sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Error(err.Error())
 		return
@@ -160,7 +160,7 @@ func TestConfigs(t *testing.T) {
 		}
 		checkResSetResp(t, "show hosts", resp)
 		// Create a new space
-		resp, err = session.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1);")
+		resp, err = session.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -218,7 +218,7 @@ func TestInvalidHostTimeout(t *testing.T) {
 	}
 }
 
-func TestDataIO(t *testing.T) {
+func TestServiceDataIO(t *testing.T) {
 	hostAdress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
 	hostList = append(hostList, hostAdress)
@@ -252,14 +252,19 @@ func TestDataIO(t *testing.T) {
 			t.Fatalf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, res.GetErrorCode(), res.GetErrorMsg())
 		}
 	}
-	// Do some data read/write
+	// Create schemas
 	{
-		createSchema := "CREATE SPACE IF NOT EXISTS test_space; " +
-			"USE test_space;" +
-			"CREATE TAG IF NOT EXISTS person(name string, age int);" +
-			"CREATE EDGE IF NOT EXISTS like(likeness double)"
-
-		// Excute a query
+		createSchema := "CREATE SPACE IF NOT EXISTS test_data(vid_type = FIXED_STRING(30));" +
+			"USE test_data; " +
+			"CREATE TAG IF NOT EXISTS person(name string, age int8, grade int16, " +
+			"friends int32, book_num int64, birthday datetime, " +
+			"start_school date, morning time, property double, " +
+			"is_girl bool, child_name fixed_string(10), expend float, " +
+			"first_out_city timestamp, hobby string); " +
+			"CREATE TAG IF NOT EXISTS student(name string); " +
+			"CREATE EDGE IF NOT EXISTS like(likeness double); " +
+			"CREATE EDGE IF NOT EXISTS friend(start_year int, end_year int); " +
+			"CREATE TAG INDEX IF NOT EXISTS person_name_index ON person(name(8));"
 		resultSet, err := session.Execute(createSchema)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -268,50 +273,163 @@ func TestDataIO(t *testing.T) {
 		checkResultSet(createSchema, resultSet)
 	}
 	time.Sleep(10 * time.Second)
-	{
-		insertVertexes := "INSERT VERTEX person(name, age) VALUES " +
-			"'Bob':('Bob', 10), " +
-			"'Lily':('Lily', 9), " +
-			"'Tom':('Tom', 10), " +
-			"'Jerry':('Jerry', 13), " +
-			"'John':('John', 11);"
 
-		// Insert multiple vertexes
-		resultSet, err := session.Execute(insertVertexes)
-		if err != nil {
-			t.Fatalf(err.Error())
-			return
-		}
-		checkResultSet(insertVertexes, resultSet)
-	}
+	// Load data
 	{
-		insertEdges := "INSERT EDGE like(likeness) VALUES " +
-			"'Bob'->'Lily':(80.0), " +
-			"'Bob'->'Tom':(70.0), " +
-			"'Lily'->'Jerry':(84.0), " +
-			"'Tom'->'Jerry':(68.3), " +
-			"'Bob'->'John':(97.2);"
-
-		resultSet, err := session.Execute(insertEdges)
-		if err != nil {
-			t.Fatalf(err.Error())
-			return
-		}
-		checkResultSet(insertEdges, resultSet)
-	}
-	{
-		query := "GO FROM 'Bob' OVER like YIELD $^.person.name, $^.person.age, like.likeness"
-		// Send query
+		query := "INSERT VERTEX person(name, age, grade,friends, book_num," +
+			"birthday, start_school, morning, property," +
+			"is_girl, child_name, expend, first_out_city) VALUES" +
+			"'Bob':('Bob', 10, 3, 10, 100, datetime('2010-09-10T10:08:02')," +
+			"date('2017-09-10'), time('07:10:00'), " +
+			"1000.0, false, 'Hello World!', 100.0, 1111)," +
+			"'Lily':('Lily', 9, 3, 10, 100, datetime('2010-09-10T10:08:02'), " +
+			"date('2017-09-10'), time('07:10:00'), " +
+			"1000.0, false, 'Hello World!', 100.0, 1111)," +
+			"'Tom':('Tom', 10, 3, 10, 100, datetime('2010-09-10T10:08:02'), " +
+			"date('2017-09-10'), time('07:10:00'), " +
+			"1000.0, false, 'Hello World!', 100.0, 1111)," +
+			"'Jerry':('Jerry', 9, 3, 10, 100, datetime('2010-09-10T10:08:02')," +
+			"date('2017-09-10'), time('07:10:00'), " +
+			"1000.0, false, 'Hello World!', 100.0, 1111), " +
+			"'John':('John', 10, 3, 10, 100, datetime('2010-09-10T10:08:02'), " +
+			"date('2017-09-10'), time('07:10:00'), " +
+			"1000.0, false, 'Hello World!', 100.0, 1111)"
 		resultSet, err := session.Execute(query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
 		}
 		checkResultSet(query, resultSet)
+
+		query =
+			"INSERT VERTEX student(name) VALUES " +
+				"'Bob':('Bob'), 'Lily':('Lily'), " +
+				"'Tom':('Tom'), 'Jerry':('Jerry'), 'John':('John')"
+		resultSet, err = session.Execute(query)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResultSet(query, resultSet)
+
+		query =
+			"INSERT EDGE like(likeness) VALUES " +
+				"'Bob'->'Lily':(80.0), " +
+				"'Bob'->'Tom':(70.0), " +
+				"'Jerry'->'Lily':(84.0)," +
+				"'Tom'->'Jerry':(68.3), " +
+				"'Bob'->'John':(97.2)"
+		resultSet, err = session.Execute(query)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResultSet(query, resultSet)
+
+		query =
+			"INSERT EDGE friend(start_year, end_year) VALUES " +
+				"'Bob'->'Lily':(2018, 2020), " +
+				"'Bob'->'Tom':(2018, 2020), " +
+				"'Jerry'->'Lily':(2018, 2020)," +
+				"'Tom'->'Jerry':(2018, 2020), " +
+				"'Bob'->'John':(2018, 2020)"
+		resultSet, err = session.Execute(query)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResultSet(query, resultSet)
 	}
+
+	// test base type
+	{
+		query :=
+			"FETCH PROP ON person \"Bob\" YIELD person.name, person.age, person.grade," +
+				"person.friends, person.book_num, person.birthday, " +
+				"person.start_school, person.morning, " +
+				"person.property, person.is_girl, person.child_name, " +
+				"person.expend, person.first_out_city, person.hobby"
+		resp, err := session.Execute(query)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResultSet(query, resp)
+
+		assert.Equal(t, resp.GetLatency() > 0, true)
+		assert.Equal(t, "", resp.GetComment(), true)
+		assert.Equal(t, "test_data", resp.GetSpaceName())
+		assert.Equal(t, !resp.IsEmpty(), true)
+		assert.Equal(t, 1, resp.GetRowSize())
+		names := []string{"VertexID",
+			"person.name",
+			"person.age",
+			"person.grade",
+			"person.friends",
+			"person.book_num",
+			"person.birthday",
+			"person.start_school",
+			"person.morning",
+			"person.property",
+			"person.is_girl",
+			"person.child_name",
+			"person.expend",
+			"person.first_out_city",
+			"person.hobby"}
+		assert.Equal(t, names, resp.GetColNames())
+
+		// test datetime
+		record, err := resp.GetRowValuesByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		valWrap, err := record.GetValueByIndex(6)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		dateTimeWrapper, err := valWrap.AsDateTime()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		// local time
+		assert.Equal(t, "2010-09-10T10:08:02.000000", valWrap.String())
+		// UTC time
+		UTCTime := dateTimeWrapper.getRawDateTime()
+		assert.Equal(t, "2010-09-10T02:08:02.000000", UTCTime)
+
+		// test date
+		valWrap, err = record.GetValueByIndex(7)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, true, valWrap.IsDate())
+		assert.Equal(t, "2017-09-10", valWrap.String())
+
+		// test time
+		valWrap, err = record.GetValueByIndex(8)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		timeWrapper, err := valWrap.AsTime()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, true, valWrap.IsTime())
+		assert.Equal(t, "07:10:00.000000", valWrap.String())
+
+		UTCTime = timeWrapper.getRawTime()
+		assert.Equal(t, "23:10:00.000000", UTCTime)
+	}
+
 	// Drop space
 	{
-		query := "DROP SPACE test_space;"
+		query := "DROP SPACE test_data;"
 		_, err := session.Execute(query)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -355,7 +473,7 @@ func TestPool_SingleHost(t *testing.T) {
 	}
 	checkResSetResp(t, "show hosts", resp)
 	// Create a new space
-	resp, err = session.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1);")
+	resp, err = session.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -626,9 +744,6 @@ func TestReconnect(t *testing.T) {
 		return
 	}
 	checkResSetResp(t, "SHOW HOSTS;", resp)
-
-	// This assertion will pass only when reconnection happens
-	// assert.Equal(t, ErrorCode_E_SESSION_INVALID, resp.GetErrorCode(), "Expected error should be E_SESSION_INVALID")
 
 	startContainer(t, "nebula-docker-compose_graphd_1")
 	startContainer(t, "nebula-docker-compose_graphd1_1")
