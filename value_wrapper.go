@@ -84,38 +84,37 @@ func (valWrap ValueWrapper) AsNull() (nebula.NullType, error) {
 	if valWrap.value.IsSetNVal() {
 		return valWrap.value.GetNVal(), nil
 	}
-	return -1, fmt.Errorf("Failed to convert value %s to Null", valWrap.GetType())
+	return -1, fmt.Errorf("failed to convert value %s to Null", valWrap.GetType())
 }
 
 func (valWrap ValueWrapper) AsBool() (bool, error) {
 	if valWrap.value.IsSetBVal() {
 		return valWrap.value.GetBVal(), nil
 	}
-	return false, fmt.Errorf("Failed to convert value %s to bool", valWrap.GetType())
+	return false, fmt.Errorf("failed to convert value %s to bool", valWrap.GetType())
 }
 
 func (valWrap ValueWrapper) AsInt() (int64, error) {
 	if valWrap.value.IsSetIVal() {
 		return valWrap.value.GetIVal(), nil
 	}
-	return -1, fmt.Errorf("Failed to convert value %s to int", valWrap.GetType())
+	return -1, fmt.Errorf("failed to convert value %s to int", valWrap.GetType())
 }
 
 func (valWrap ValueWrapper) AsFloat() (float64, error) {
 	if valWrap.value.IsSetFVal() {
 		return valWrap.value.GetFVal(), nil
 	}
-	return -1, fmt.Errorf("Failed to convert value %s to float", valWrap.GetType())
+	return -1, fmt.Errorf("failed to convert value %s to float", valWrap.GetType())
 }
 
 func (valWrap ValueWrapper) AsString() (string, error) {
 	if valWrap.value.IsSetSVal() {
 		return string(valWrap.value.GetSVal()), nil
 	}
-	return "", fmt.Errorf("Failed to convert value %s to string", valWrap.GetType())
+	return "", fmt.Errorf("failed to convert value %s to string", valWrap.GetType())
 }
 
-// TODO: Need to wrap TimeWrapper
 func (valWrap ValueWrapper) AsTime() (*TimeWrapper, error) {
 	if valWrap.value.IsSetTVal() {
 		rawTime := valWrap.value.GetTVal()
@@ -125,14 +124,14 @@ func (valWrap ValueWrapper) AsTime() (*TimeWrapper, error) {
 		}
 		return time, nil
 	}
-	return nil, fmt.Errorf("Failed to convert value %s to Time", valWrap.GetType())
+	return nil, fmt.Errorf("failed to convert value %s to Time", valWrap.GetType())
 }
 
 func (valWrap ValueWrapper) AsDate() (*nebula.Date, error) {
 	if valWrap.value.IsSetDVal() {
 		return valWrap.value.GetDVal(), nil
 	}
-	return nil, fmt.Errorf("Failed to convert value %s to Date", valWrap.GetType())
+	return nil, fmt.Errorf("failed to convert value %s to Date", valWrap.GetType())
 }
 
 func (valWrap ValueWrapper) AsDateTime() (*DateTimeWrapper, error) {
@@ -144,7 +143,7 @@ func (valWrap ValueWrapper) AsDateTime() (*DateTimeWrapper, error) {
 		}
 		return timeDate, nil
 	}
-	return nil, fmt.Errorf("Failed to convert value %s to DateTime", valWrap.GetType())
+	return nil, fmt.Errorf("failed to convert value %s to DateTime", valWrap.GetType())
 }
 
 func (valWrap ValueWrapper) AsList() ([]ValueWrapper, error) {
@@ -156,7 +155,7 @@ func (valWrap ValueWrapper) AsList() ([]ValueWrapper, error) {
 		}
 		return varList, nil
 	}
-	return nil, fmt.Errorf("Failed to convert value %s to List", valWrap.GetType())
+	return nil, fmt.Errorf("failed to convert value %s to List", valWrap.GetType())
 }
 
 func (valWrap ValueWrapper) AsDedupList() ([]ValueWrapper, error) {
@@ -168,7 +167,7 @@ func (valWrap ValueWrapper) AsDedupList() ([]ValueWrapper, error) {
 		}
 		return varList, nil
 	}
-	return nil, fmt.Errorf("Failed to convert value %s to set(deduped list)", valWrap.GetType())
+	return nil, fmt.Errorf("failed to convert value %s to set(deduped list)", valWrap.GetType())
 }
 
 func (valWrap ValueWrapper) AsMap() (map[string]ValueWrapper, error) {
@@ -181,12 +180,12 @@ func (valWrap ValueWrapper) AsMap() (map[string]ValueWrapper, error) {
 		}
 		return newMap, nil
 	}
-	return nil, fmt.Errorf("Failed to convert value %s to Map", valWrap.GetType())
+	return nil, fmt.Errorf("failed to convert value %s to Map", valWrap.GetType())
 }
 
 func (valWrap ValueWrapper) AsNode() (*Node, error) {
 	if !valWrap.value.IsSetVVal() {
-		return nil, fmt.Errorf("Failed to convert value %s to Node, value is not an vertex", valWrap.GetType())
+		return nil, fmt.Errorf("failed to convert value %s to Node, value is not an vertex", valWrap.GetType())
 	}
 	vertex := valWrap.value.VVal
 	node, err := genNode(vertex, valWrap.timezoneInfo)
@@ -198,7 +197,7 @@ func (valWrap ValueWrapper) AsNode() (*Node, error) {
 
 func (valWrap ValueWrapper) AsRelationship() (*Relationship, error) {
 	if !valWrap.value.IsSetEVal() {
-		return nil, fmt.Errorf("Failed to convert value %s to Relationship, value is not an edge", valWrap.GetType())
+		return nil, fmt.Errorf("failed to convert value %s to Relationship, value is not an edge", valWrap.GetType())
 	}
 	edge := valWrap.value.EVal
 	relationship, err := genRelationship(edge, valWrap.timezoneInfo)
@@ -210,7 +209,7 @@ func (valWrap ValueWrapper) AsRelationship() (*Relationship, error) {
 
 func (valWrap ValueWrapper) AsPath() (*PathWrapper, error) {
 	if !valWrap.value.IsSetPVal() {
-		return nil, fmt.Errorf("Failed to convert value %s to PathWrapper, value is not an edge", valWrap.GetType())
+		return nil, fmt.Errorf("failed to convert value %s to PathWrapper, value is not an edge", valWrap.GetType())
 	}
 	path, err := genPathWrapper(valWrap.value.PVal, valWrap.timezoneInfo)
 	if err != nil {
@@ -282,7 +281,8 @@ func (valWrap ValueWrapper) String() string {
 		return `"` + string(value.GetSVal()) + `"`
 	} else if value.IsSetDVal() { // Date yyyy-mm-dd
 		date := value.GetDVal()
-		return fmt.Sprintf("%d-%02d-%02d", date.Year, date.Month, date.Day)
+		dateWrapper, _ := genDateWrapper(date)
+		return dateWrapper.getDate()
 	} else if value.IsSetTVal() { // Time HH:MM:SS.MSMSMS
 		rawTime := value.GetTVal()
 		time, _ := genTimeWrapper(rawTime, valWrap.timezoneInfo)

@@ -118,12 +118,12 @@ func genResultSet(resp *graph.ExecutionResponse, timezoneInfo timezoneInfo) (*Re
 
 func genValWraps(row *nebula.Row, timezoneInfo timezoneInfo) ([]*ValueWrapper, error) {
 	if row == nil {
-		return nil, fmt.Errorf("Failed to generate valueWrapper: invalid row")
+		return nil, fmt.Errorf("failed to generate valueWrapper: invalid row")
 	}
 	var valWraps []*ValueWrapper
 	for _, val := range row.Values {
 		if val == nil {
-			return nil, fmt.Errorf("Failed to generate valueWrapper: value is nil")
+			return nil, fmt.Errorf("failed to generate valueWrapper: value is nil")
 		}
 		valWraps = append(valWraps, &ValueWrapper{val, timezoneInfo})
 	}
@@ -132,7 +132,7 @@ func genValWraps(row *nebula.Row, timezoneInfo timezoneInfo) ([]*ValueWrapper, e
 
 func genNode(vertex *nebula.Vertex, timezoneInfo timezoneInfo) (*Node, error) {
 	if vertex == nil {
-		return nil, fmt.Errorf("Failed to generate Node: invalid vertex")
+		return nil, fmt.Errorf("failed to generate Node: invalid vertex")
 	}
 	var tags []string
 	nameIndex := make(map[string]int)
@@ -154,7 +154,7 @@ func genNode(vertex *nebula.Vertex, timezoneInfo timezoneInfo) (*Node, error) {
 
 func genRelationship(edge *nebula.Edge, timezoneInfo timezoneInfo) (*Relationship, error) {
 	if edge == nil {
-		return nil, fmt.Errorf("Failed to generate Relationship: invalid edge")
+		return nil, fmt.Errorf("failed to generate Relationship: invalid edge")
 	}
 	return &Relationship{
 		edge: edge,
@@ -163,7 +163,7 @@ func genRelationship(edge *nebula.Edge, timezoneInfo timezoneInfo) (*Relationshi
 
 func genPathWrapper(path *nebula.Path, timezoneInfo timezoneInfo) (*PathWrapper, error) {
 	if path == nil {
-		return nil, fmt.Errorf("Failed to generate Path Wrapper: invalid path")
+		return nil, fmt.Errorf("failed to generate Path Wrapper: invalid path")
 	}
 	var (
 		nodeList         []*Node
@@ -219,7 +219,7 @@ func genPathWrapper(path *nebula.Path, timezoneInfo timezoneInfo) (*PathWrapper,
 			nextEnd := segEndNode.GetID()
 			if prevStart.String() != nextStart.String() && prevStart.String() != nextEnd.String() &&
 				prevEnd.String() != nextStart.String() && prevEnd.String() != nextEnd.String() {
-				return nil, fmt.Errorf("Failed to generate PathWrapper, Path received is invalid")
+				return nil, fmt.Errorf("failed to generate PathWrapper, Path received is invalid")
 			}
 		}
 		segList = append(segList, segment{
@@ -257,7 +257,7 @@ func (res ResultSet) AsStringTable() [][]string {
 // Returns all values in the given column
 func (res ResultSet) GetValuesByColName(colName string) ([]*ValueWrapper, error) {
 	if !res.hasColName(colName) {
-		return nil, fmt.Errorf("Failed to get values, given column name '%s' does not exist", colName)
+		return nil, fmt.Errorf("failed to get values, given column name '%s' does not exist", colName)
 	}
 	// Get index
 	index := res.colNameIndexMap[colName]
@@ -406,7 +406,7 @@ func (record Record) GetValueByIndex(index int) (*ValueWrapper, error) {
 // Returns value in the record at given column name
 func (record Record) GetValueByColName(colName string) (*ValueWrapper, error) {
 	if !record.hasColName(colName) {
-		return nil, fmt.Errorf("Failed to get values, given column name '%s' does not exist", colName)
+		return nil, fmt.Errorf("failed to get values, given column name '%s' does not exist", colName)
 	}
 	// Get index
 	index := (*record.colNameIndexMap)[colName]
@@ -456,7 +456,7 @@ func (node Node) Properties(tagName string) (map[string]*ValueWrapper, error) {
 	kvMap := make(map[string]*ValueWrapper)
 	// Check if label exists
 	if !node.HasTag(tagName) {
-		return nil, fmt.Errorf("Failed to get properties: Tag name %s does not exsist in the Node", tagName)
+		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exsist in the Node", tagName)
 	}
 	index := node.tagNameIndexMap[tagName]
 	for k, v := range node.vertex.Tags[index].Props {
@@ -468,7 +468,7 @@ func (node Node) Properties(tagName string) (map[string]*ValueWrapper, error) {
 // Returns all prop names of the given tag name
 func (node Node) Keys(tagName string) ([]string, error) {
 	if !node.HasTag(tagName) {
-		return nil, fmt.Errorf("Failed to get properties: Tag name %s does not exsist in the Node", tagName)
+		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exsist in the Node", tagName)
 	}
 	var propNameList []string
 	index := node.tagNameIndexMap[tagName]
@@ -481,7 +481,7 @@ func (node Node) Keys(tagName string) ([]string, error) {
 // Returns all prop values of the given tag name
 func (node Node) Values(tagName string) ([]*ValueWrapper, error) {
 	if !node.HasTag(tagName) {
-		return nil, fmt.Errorf("Failed to get properties: Tag name %s does not exsist in the Node", tagName)
+		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exsist in the Node", tagName)
 	}
 	var propValList []*ValueWrapper
 	index := node.tagNameIndexMap[tagName]
@@ -667,14 +667,14 @@ func (path *PathWrapper) ContainsRelationship(relationship *Relationship) bool {
 
 func (path *PathWrapper) GetStartNode() (*Node, error) {
 	if len(path.segments) == 0 {
-		return nil, fmt.Errorf("Failed to get start node, no node in the path")
+		return nil, fmt.Errorf("failed to get start node, no node in the path")
 	}
 	return path.segments[0].startNode, nil
 }
 
 func (path *PathWrapper) GetEndNode() (*Node, error) {
 	if len(path.segments) == 0 {
-		return nil, fmt.Errorf("Failed to get start node, no node in the path")
+		return nil, fmt.Errorf("failed to get start node, no node in the path")
 	}
 	return path.segments[len(path.segments)-1].endNode, nil
 }
@@ -747,7 +747,7 @@ func (p1 *PathWrapper) IsEqualTo(p2 *PathWrapper) bool {
 
 func genTimeWrapper(time *nebula.Time, timezoneInfo timezoneInfo) (*TimeWrapper, error) {
 	if time == nil {
-		return nil, fmt.Errorf("Failed to generate Time: invalid Time")
+		return nil, fmt.Errorf("failed to generate Time: invalid Time")
 	}
 
 	return &TimeWrapper{
@@ -797,7 +797,7 @@ func (t TimeWrapper) getLocalTime() (string, error) {
 
 	// Use timezone name if exists
 	timezoneName := t.timezoneInfo.name
-	if timezoneName != nil && len(timezoneName) > 0 {
+	if len(timezoneName) > 0 {
 		location, err := time.LoadLocation(string(timezoneName))
 		if err != nil {
 			return "", err
@@ -880,9 +880,9 @@ func (t1 TimeWrapper) IsEqualTo(t2 TimeWrapper) bool {
 		t1.getMicrosec() == t2.getMicrosec()
 }
 
-func genDateWrapper(date *nebula.Date, timezoneInfo timezoneInfo) (*DateWrapper, error) {
+func genDateWrapper(date *nebula.Date) (*DateWrapper, error) {
 	if date == nil {
-		return nil, fmt.Errorf("Failed to generate datetime: invalid datetime")
+		return nil, fmt.Errorf("failed to generate datetime: invalid datetime")
 	}
 	return &DateWrapper{
 		date: date,
@@ -918,7 +918,7 @@ func (d DateWrapper) getDate() string {
 
 func genDateTimeWrapper(datetime *nebula.DateTime, timezoneInfo timezoneInfo) (*DateTimeWrapper, error) {
 	if datetime == nil {
-		return nil, fmt.Errorf("Failed to generate datetime: invalid datetime")
+		return nil, fmt.Errorf("failed to generate datetime: invalid datetime")
 	}
 	return &DateTimeWrapper{
 		dateTime:     datetime,
@@ -1079,12 +1079,12 @@ func (dt DateTimeWrapper) GetLocalDateTimeWithTimezonName(timezoneName string) (
 func checkIndex(index int, list interface{}) error {
 	if _, ok := list.([]*nebula.Row); ok {
 		if index < 0 || index >= len(list.([]*nebula.Row)) {
-			return fmt.Errorf("Failed to get Value, the index is out of range")
+			return fmt.Errorf("failed to get Value, the index is out of range")
 		}
 		return nil
 	} else if _, ok := list.([]*ValueWrapper); ok {
 		if index < 0 || index >= len(list.([]*ValueWrapper)) {
-			return fmt.Errorf("Failed to get Value, the index is out of range")
+			return fmt.Errorf("failed to get Value, the index is out of range")
 		}
 		return nil
 	}

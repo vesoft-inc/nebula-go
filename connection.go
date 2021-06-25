@@ -40,7 +40,7 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error
 	addressOption := thrift.SocketAddr(newAdd)
 	sock, err := thrift.NewSocket(timeoutOption, addressOption)
 	if err != nil {
-		return fmt.Errorf("Failed to create a net.Conn-backed Transport,: %s", err.Error())
+		return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
 	}
 	// Set transport buffer
 	bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
@@ -48,10 +48,10 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error
 	pf := thrift.NewBinaryProtocolFactoryDefault()
 	cn.graph = graph.NewGraphServiceClientFactory(transport, pf)
 	if err = cn.graph.Open(); err != nil {
-		return fmt.Errorf("Failed to open transport, error: %s", err.Error())
+		return fmt.Errorf("failed to open transport, error: %s", err.Error())
 	}
 	if !cn.graph.IsOpen() {
-		return fmt.Errorf("Transport is off")
+		return fmt.Errorf("transport is off")
 	}
 	return nil
 }
@@ -60,14 +60,14 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error
 func (cn *connection) authenticate(username, password string) (*graph.AuthResponse, error) {
 	resp, err := cn.graph.Authenticate([]byte(username), []byte(password))
 	if err != nil {
-		err = fmt.Errorf("Authentication fails, %s", err.Error())
+		err = fmt.Errorf("authentication fails, %s", err.Error())
 		if e := cn.graph.Close(); e != nil {
-			err = fmt.Errorf("Fail to close transport, error: %s", e.Error())
+			err = fmt.Errorf("fail to close transport, error: %s", e.Error())
 		}
 		return nil, err
 	}
 	if resp.ErrorCode != nebula.ErrorCode_SUCCEEDED {
-		return nil, fmt.Errorf("Fail to authenticate, error: %s", resp.ErrorMsg)
+		return nil, fmt.Errorf("fail to authenticate, error: %s", resp.ErrorMsg)
 	}
 	return resp, err
 }

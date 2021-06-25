@@ -513,16 +513,16 @@ func TestResultSet(t *testing.T) {
 	}
 	temp, err := record.GetValueByIndex(0)
 	_, err = temp.AsNode()
-	assert.EqualError(t, err, "Failed to convert value int to Node, value is not an vertex")
+	assert.EqualError(t, err, "failed to convert value int to Node, value is not an vertex")
 	temp, err = record.GetValueByColName("col2")
-	assert.EqualError(t, err, "Failed to get values, given column name 'col2' does not exist")
+	assert.EqualError(t, err, "failed to get values, given column name 'col2' does not exist")
 	val, _ := record.GetValueByColName("col2_vertex")
 	node, _ := val.AsNode()
 	assert.Equal(t, "\"Tom\"", node.GetID().String())
 
 	// Check get row values
 	_, err = resultSet.GetRowValuesByIndex(10)
-	assert.EqualError(t, err, "Failed to get Value, the index is out of range")
+	assert.EqualError(t, err, "failed to get Value, the index is out of range")
 
 	vlist := record._record
 

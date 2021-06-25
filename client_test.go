@@ -60,12 +60,12 @@ func TestConnection(t *testing.T) {
 	conn := newConnection(hostAdress)
 	err := conn.open(hostAdress, testPoolConfig.TimeOut)
 	if err != nil {
-		t.Fatalf("Fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
+		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
 
 	authresp, authErr := conn.authenticate(username, password)
 	if authErr != nil {
-		t.Fatalf("Fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
+		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
 	}
 
 	sessionID := authresp.GetSessionID()
@@ -140,7 +140,7 @@ func TestConfigs(t *testing.T) {
 		// Initialize connectin pool
 		pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 		if err != nil {
-			t.Fatalf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+			t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 		}
 		// close all connections in the pool
 		defer pool.Close()
@@ -148,7 +148,7 @@ func TestConfigs(t *testing.T) {
 		// Create session
 		session, err := pool.GetSession(username, password)
 		if err != nil {
-			t.Fatalf("Fail to create a new session from connection pool, username: %s, password: %s, %s",
+			t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 				username, password, err.Error())
 		}
 		defer session.Release()
@@ -189,12 +189,12 @@ func TestAuthentication(t *testing.T) {
 	conn := newConnection(hostAdress)
 	err := conn.open(hostAdress, testPoolConfig.TimeOut)
 	if err != nil {
-		t.Fatalf("Fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
+		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
 	defer conn.close()
 
 	_, authErr := conn.authenticate(username, password)
-	assert.EqualError(t, authErr, "Fail to authenticate, error: Bad username/password")
+	assert.EqualError(t, authErr, "fail to authenticate, error: Bad username/password")
 }
 
 func TestInvalidHostTimeout(t *testing.T) {
@@ -206,15 +206,15 @@ func TestInvalidHostTimeout(t *testing.T) {
 	// Initialize connectin pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
-		t.Fatalf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
 	// close all connections in the pool
 	defer pool.Close()
 	err = pool.Ping(hostList[0], 1000*time.Millisecond)
-	assert.EqualError(t, err, "Failed to open transport, error: dial tcp 192.168.10.125:3699: i/o timeout")
+	assert.EqualError(t, err, "failed to open transport, error: dial tcp 192.168.10.125:3699: i/o timeout")
 	err = pool.Ping(hostList[1], 1000*time.Millisecond)
 	if err != nil {
-		t.Error("Failed to ping 127.0.0.1")
+		t.Error("failed to ping 127.0.0.1")
 	}
 }
 
@@ -233,7 +233,7 @@ func TestServiceDataIO(t *testing.T) {
 	// Initialize connectin pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
-		t.Fatalf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
 	// close all connections in the pool
 	defer pool.Close()
@@ -241,7 +241,7 @@ func TestServiceDataIO(t *testing.T) {
 	// Create session
 	session, err := pool.GetSession(username, password)
 	if err != nil {
-		t.Fatalf("Fail to create a new session from connection pool, username: %s, password: %s, %s",
+		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error())
 	}
 	defer session.Release()
@@ -453,7 +453,7 @@ func TestPool_SingleHost(t *testing.T) {
 	// Initialize connectin pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
-		t.Fatalf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
 	// close all connections in the pool
 	defer pool.Close()
@@ -461,7 +461,7 @@ func TestPool_SingleHost(t *testing.T) {
 	// Create session
 	session, err := pool.GetSession(username, password)
 	if err != nil {
-		t.Fatalf("Fail to create a new session from connection pool, username: %s, password: %s, %s",
+		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error())
 	}
 	defer session.Release()
@@ -501,7 +501,7 @@ func TestPool_MultiHosts(t *testing.T) {
 	// Initialize connectin pool
 	pool, err := NewConnectionPool(hostList, multiHostsConfig, nebulaLog)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
+		log.Fatal(fmt.Sprintf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
 	}
 
 	var sessionList []*Session
@@ -510,7 +510,7 @@ func TestPool_MultiHosts(t *testing.T) {
 	for i := 0; i < multiHostsConfig.MaxConnPoolSize; i++ {
 		session, err := pool.GetSession(username, password)
 		if err != nil {
-			t.Errorf("Fail to create a new session from connection pool, %s", err.Error())
+			t.Errorf("fail to create a new session from connection pool, %s", err.Error())
 		}
 		sessionList = append(sessionList, session)
 	}
@@ -519,7 +519,7 @@ func TestPool_MultiHosts(t *testing.T) {
 	assert.Equal(t, 3, pool.activeConnectionQueue.Len())
 
 	_, err = pool.GetSession(username, password)
-	assert.EqualError(t, err, "Failed to get connection: No valid connection in the idle queue and connection number has reached the pool capacity")
+	assert.EqualError(t, err, "failed to get connection: No valid connection in the idle queue and connection number has reached the pool capacity")
 
 	// Release 1 connectin back to pool
 	sessionToRelease := sessionList[0]
@@ -530,7 +530,7 @@ func TestPool_MultiHosts(t *testing.T) {
 	// Try again to get connection
 	newSession, err := pool.GetSession(username, password)
 	if err != nil {
-		t.Errorf("Fail to create a new session, %s", err.Error())
+		t.Errorf("fail to create a new session, %s", err.Error())
 	}
 	assert.Equal(t, 0, pool.idleConnectionQueue.Len())
 	assert.Equal(t, 3, pool.activeConnectionQueue.Len())
@@ -544,7 +544,7 @@ func TestPool_MultiHosts(t *testing.T) {
 
 	// Try to get more session when the pool is full
 	_, err = pool.GetSession(username, password)
-	assert.EqualError(t, err, "Failed to get connection: No valid connection in the idle queue and connection number has reached the pool capacity")
+	assert.EqualError(t, err, "failed to get connection: No valid connection in the idle queue and connection number has reached the pool capacity")
 
 	for i := 0; i < len(sessionList); i++ {
 		sessionList[i].Release()
@@ -564,7 +564,7 @@ func TestMultiThreads(t *testing.T) {
 	// Initialize connectin pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
+		log.Fatal(fmt.Sprintf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
 	}
 	defer pool.Close()
 
@@ -580,7 +580,7 @@ func TestMultiThreads(t *testing.T) {
 			defer wg.Done()
 			session, err := pool.GetSession(username, password)
 			if err != nil {
-				t.Errorf("Fail to create a new session from connection pool, %s", err.Error())
+				t.Errorf("fail to create a new session from connection pool, %s", err.Error())
 			}
 			sessCh <- session
 		}(sessCh, &wg)
@@ -621,7 +621,7 @@ func TestLoadbalancer(t *testing.T) {
 	// Initialize connectin pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
-		t.Fatalf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
 	defer pool.Close()
 
@@ -631,7 +631,7 @@ func TestLoadbalancer(t *testing.T) {
 	for i := 0; i < 999; i++ {
 		session, err := pool.GetSession(username, password)
 		if err != nil {
-			t.Errorf("Fail to create a new session from connection pool, %s", err.Error())
+			t.Errorf("fail to create a new session from connection pool, %s", err.Error())
 		}
 		loadPerHost[session.connection.severAddress]++
 		sessionList = append(sessionList, session)
@@ -659,7 +659,7 @@ func TestIdleTimeoutCleaner(t *testing.T) {
 	// Initialize connection pool
 	pool, err := NewConnectionPool(hostList, idleTimeoutConfig, nebulaLog)
 	if err != nil {
-		t.Fatalf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
 	defer pool.Close()
 
@@ -669,7 +669,7 @@ func TestIdleTimeoutCleaner(t *testing.T) {
 	for i := 0; i < idleTimeoutConfig.MaxConnPoolSize; i++ {
 		session, err := pool.GetSession(username, password)
 		if err != nil {
-			t.Errorf("Fail to create a new session from connection pool, %s", err.Error())
+			t.Errorf("fail to create a new session from connection pool, %s", err.Error())
 		}
 		sessionList = append(sessionList, session)
 	}
@@ -706,7 +706,7 @@ func TestReconnect(t *testing.T) {
 	// Initialize connectin pool
 	pool, err := NewConnectionPool(hostList, timeoutConfig, nebulaLog)
 	if err != nil {
-		t.Fatalf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
 
 	var sessionList []*Session
@@ -715,7 +715,7 @@ func TestReconnect(t *testing.T) {
 	for i := 0; i < 3; i++ {
 		session, err := pool.GetSession(username, password)
 		if err != nil {
-			t.Errorf("Fail to create a new session from connection pool, %s", err.Error())
+			t.Errorf("fail to create a new session from connection pool, %s", err.Error())
 		}
 		sessionList = append(sessionList, session)
 	}
@@ -779,7 +779,7 @@ func stopContainer(t *testing.T, containerName string) {
 	cmd := exec.Command("docker", "stop", containerName)
 	err := cmd.Run()
 	if err != nil {
-		t.Fatalf("Failed to stop container, name: %s, error code: %s", containerName, err.Error())
+		t.Fatalf("failed to stop container, name: %s, error code: %s", containerName, err.Error())
 	}
 }
 
@@ -787,6 +787,6 @@ func startContainer(t *testing.T, containerName string) {
 	cmd := exec.Command("docker", "start", containerName)
 	err := cmd.Run()
 	if err != nil {
-		t.Fatalf("Failed to start container, name: %s, error code: %s", containerName, err.Error())
+		t.Fatalf("failed to start container, name: %s, error code: %s", containerName, err.Error())
 	}
 }
