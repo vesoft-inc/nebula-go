@@ -48,7 +48,6 @@ type segment struct {
 	startNode    *Node
 	relationship *Relationship
 	endNode      *Node
-	timezoneInfo timezoneInfo
 }
 
 type PathWrapper struct {
@@ -795,22 +794,12 @@ func (t TimeWrapper) getLocalTime() (string, error) {
 
 	var localTime time.Time
 
-	// Use timezone name if exists
-	timezoneName := t.timezoneInfo.name
-	if len(timezoneName) > 0 {
-		location, err := time.LoadLocation(string(timezoneName))
-		if err != nil {
-			return "", err
-		}
-		localTime = rawTime.In(location)
-	} else {
-		// Use offset in seconds
-		offsetInSeconds, err := time.ParseDuration(fmt.Sprintf("%ds", t.timezoneInfo.offset))
-		if err != nil {
-			return "", err
-		}
-		localTime = rawTime.Add(offsetInSeconds)
+	// Use offset in seconds
+	offset, err := time.ParseDuration(fmt.Sprintf("%ds", t.timezoneInfo.offset))
+	if err != nil {
+		return "", err
 	}
+	localTime = rawTime.Add(offset)
 
 	return fmt.Sprintf("%02d:%02d:%02d.%06d",
 		localTime.Hour(),
@@ -834,11 +823,11 @@ func (t TimeWrapper) getLocalTimeWithTimezonOffset(timezoneOffsetSeconds int32) 
 		int(t.getMicrosec()*1000),
 		time.UTC)
 
-	offsetInSeconds, err := time.ParseDuration(fmt.Sprintf("%ds", timezoneOffsetSeconds))
+	offset, err := time.ParseDuration(fmt.Sprintf("%ds", timezoneOffsetSeconds))
 	if err != nil {
 		return "", err
 	}
-	localTime := rawTime.Add(offsetInSeconds)
+	localTime := rawTime.Add(offset)
 	return fmt.Sprintf("%02d:%02d:%02d.%06d",
 		localTime.Hour(),
 		localTime.Minute(),
@@ -847,7 +836,13 @@ func (t TimeWrapper) getLocalTimeWithTimezonOffset(timezoneOffsetSeconds int32) 
 }
 
 // GetLocalTimeWithTimezonName returns  a string of local time using user specified timezone name.
-// timezoneNames are defined in IANA time zone database.
+//
+// If the name is "" or "UTC", LoadLocation returns UTC.
+// If the name is "Local", LoadLocation returns Local.
+//
+// Otherwise, the name is taken to be a location name corresponding to a file
+// in the IANA Time Zone database, such as "America/New_York".
+//
 // Output format: HH:MM:MSMSMS
 func (t TimeWrapper) GetLocalTimeWithTimezonName(timezoneName string) (string, error) {
 	// Original time object generated from server in UTC
@@ -988,22 +983,12 @@ func (dt DateTimeWrapper) getLocalDateTime() (string, error) {
 
 	var localDateTime time.Time
 
-	// Use timezone name if exists
-	timezoneName := dt.timezoneInfo.name
-	if timezoneName != nil && len(timezoneName) > 0 {
-		location, err := time.LoadLocation(string(timezoneName))
-		if err != nil {
-			return "", err
-		}
-		localDateTime = rawTime.In(location)
-	} else {
-		// Use offset in seconds
-		offsetInSeconds, err := time.ParseDuration(fmt.Sprintf("%ds", dt.timezoneInfo.offset))
-		if err != nil {
-			return "", err
-		}
-		localDateTime = rawTime.Add(offsetInSeconds)
+	// Use offset in seconds
+	offset, err := time.ParseDuration(fmt.Sprintf("%ds", dt.timezoneInfo.offset))
+	if err != nil {
+		return "", err
 	}
+	localDateTime = rawTime.Add(offset)
 
 	// localDateTime := rawTime.In(dt.location)
 	return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d.%06d",
@@ -1031,11 +1016,11 @@ func (dt DateTimeWrapper) getLocalDateTimeWithTimezonOffset(timezoneOffsetSecond
 		int(dt.dateTime.Microsec*1000),
 		time.UTC)
 
-	offsetInSeconds, err := time.ParseDuration(fmt.Sprintf("%ds", timezoneOffsetSeconds))
+	offset, err := time.ParseDuration(fmt.Sprintf("%ds", timezoneOffsetSeconds))
 	if err != nil {
 		return "", err
 	}
-	localDateTime := rawTime.Add(offsetInSeconds)
+	localDateTime := rawTime.Add(offset)
 	return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d.%06d",
 		localDateTime.Year(),
 		localDateTime.Month(),
@@ -1047,7 +1032,13 @@ func (dt DateTimeWrapper) getLocalDateTimeWithTimezonOffset(timezoneOffsetSecond
 }
 
 // GetLocalDateTimeWithTimezonName returns a string of local time using user specified timezone name.
-// timezoneNames are defined in IANA time zone database.
+//
+// If the name is "" or "UTC", LoadLocation returns UTC.
+// If the name is "Local", LoadLocation returns Local.
+//
+// Otherwise, the name is taken to be a location name corresponding to a file
+// in the IANA Time Zone database, such as "America/New_York".
+//
 // Output format: yyyy-mm-ddTHH:MM:MSMSMS
 func (dt DateTimeWrapper) GetLocalDateTimeWithTimezonName(timezoneName string) (string, error) {
 	// Original time object generated from server in UTC
@@ -1088,7 +1079,7 @@ func checkIndex(index int, list interface{}) error {
 		}
 		return nil
 	}
-	return fmt.Errorf("Given list type is invalid")
+	return fmt.Errorf("given list type is invalid")
 }
 
 func graphvizString(s string) string {
