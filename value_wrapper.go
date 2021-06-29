@@ -259,7 +259,7 @@ func (valWrap ValueWrapper) GetType() string {
 //  For vetex, the output is in form (vid: tagName{propKey: propVal, propKey2, propVal2}),
 //  For edge, the output is in form (SrcVid)-[name]->(DstVid)@Ranking{prop1: val1, prop2: val2}
 //  where arrow direction depends on edgeType.
-//  For path, the output is in form(v1)-[name@edgeRanking]->(v2)-[name@edgeRanking]->(v3)
+//  For path, the output is in form (v1)-[name@edgeRanking]->(v2)-[name@edgeRanking]->(v3)
 //
 // For time, and dateTime, String returns the value calculated using the timezone offset
 // from graph service by default.
@@ -282,17 +282,31 @@ func (valWrap ValueWrapper) String() string {
 	} else if value.IsSetDVal() { // Date yyyy-mm-dd
 		date := value.GetDVal()
 		dateWrapper, _ := genDateWrapper(date)
-		return dateWrapper.getDate()
+		return fmt.Sprintf("%04d-%02d-%02d",
+			dateWrapper.getYear(),
+			dateWrapper.getMonth(),
+			dateWrapper.getDay())
 	} else if value.IsSetTVal() { // Time HH:MM:SS.MSMSMS
 		rawTime := value.GetTVal()
 		time, _ := genTimeWrapper(rawTime, valWrap.timezoneInfo)
-		localTimeStr, _ := time.getLocalTime()
-		return localTimeStr
+		localTime, _ := time.getLocalTime()
+		return fmt.Sprintf("%02d:%02d:%02d.%06d",
+			localTime.GetHour(),
+			localTime.GetMinute(),
+			localTime.GetSec(),
+			localTime.GetMicrosec())
 	} else if value.IsSetDtVal() { // DateTime yyyy-mm-ddTHH:MM:SS.MSMSMS
 		rawDateTime := value.GetDtVal()
 		dateTime, _ := genDateTimeWrapper(rawDateTime, valWrap.timezoneInfo)
 		localDateTime, _ := dateTime.getLocalDateTime()
-		return localDateTime
+		return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d.%06d",
+			localDateTime.GetYear(),
+			localDateTime.GetMonth(),
+			localDateTime.GetDay(),
+			localDateTime.GetHour(),
+			localDateTime.GetMinute(),
+			localDateTime.GetSec(),
+			localDateTime.GetMicrosec())
 	} else if value.IsSetVVal() { // Vertex format: ("VertexID" :tag1{k0: v0,k1: v1}:tag2{k2: v2})
 		vertex := value.GetVVal()
 		node, _ := genNode(vertex, valWrap.timezoneInfo)
@@ -302,7 +316,12 @@ func (valWrap ValueWrapper) String() string {
 		relationship, _ := genRelationship(edge, valWrap.timezoneInfo)
 		return relationship.String()
 	} else if value.IsSetPVal() {
-		// Path format: ("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking {propKey1: propVal1}]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking {propKey2: propVal2}]->("VertexID3" :tag1{k0: v0,k1: v1})
+		// Path format:
+		// ("VertexID" :tag1{k0: v0,k1: v1})-
+		// [:TypeName@ranking {propKey1: propVal1}]->
+		// ("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-
+		// [:TypeName@ranking {propKey2: propVal2}]->
+		// ("VertexID3" :tag1{k0: v0,k1: v1})
 		path := value.GetPVal()
 		pathWrap, _ := genPathWrapper(path, valWrap.timezoneInfo)
 		return pathWrap.String()

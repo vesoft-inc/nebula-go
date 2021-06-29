@@ -148,6 +148,7 @@ func genNode(vertex *nebula.Vertex, timezoneInfo timezoneInfo) (*Node, error) {
 		vertex:          vertex,
 		tags:            tags,
 		tagNameIndexMap: nameIndex,
+		timezoneInfo:    timezoneInfo,
 	}, nil
 }
 
@@ -156,7 +157,8 @@ func genRelationship(edge *nebula.Edge, timezoneInfo timezoneInfo) (*Relationshi
 		return nil, fmt.Errorf("failed to generate Relationship: invalid edge")
 	}
 	return &Relationship{
-		edge: edge,
+		edge:         edge,
+		timezoneInfo: timezoneInfo,
 	}, nil
 }
 
@@ -755,14 +757,17 @@ func genTimeWrapper(time *nebula.Time, timezoneInfo timezoneInfo) (*TimeWrapper,
 	}, nil
 }
 
+// getHour returns the hour in UTC
 func (t TimeWrapper) getHour() int8 {
 	return t.time.Hour
 }
 
+// getHour returns the minute in UTC
 func (t TimeWrapper) getMinute() int8 {
 	return t.time.Minute
 }
 
+// getHour returns the second in UTC
 func (t TimeWrapper) getSecond() int8 {
 	return t.time.Sec
 }
@@ -771,52 +776,48 @@ func (t TimeWrapper) getMicrosec() int32 {
 	return t.time.Microsec
 }
 
-// getRawDateTime returns Time in UTC.
-// Output format: HH:MM:SS.MSMSMS
-func (t TimeWrapper) getRawTime() string {
-	return fmt.Sprintf("%02d:%02d:%02d.%06d",
-		t.getHour(), t.getMinute(), t.getSecond(), t.getMicrosec())
+// getRawTime returns a nebula.Time object in UTC.
+func (t TimeWrapper) getRawTime() *nebula.Time {
+	return t.time
 }
 
-// getLocalTimeWithServerTimezone returns a string of local time using timezone offset from the server.
-// Output format: HH:MM:SS.MSMSMS
-func (t TimeWrapper) getLocalTime() (string, error) {
+// getLocalTime returns a nebula.Time object representing
+// local time using timezone offset from the server.
+func (t TimeWrapper) getLocalTime() (*nebula.Time, error) {
 	// Original time object generated from server in UTC
 	// Year, month and day are mocked up to fill the parameters
 	rawTime := time.Date(2020,
-		time.Month(12),
-		21,
+		time.Month(1),
+		1,
 		int(t.getHour()),
 		int(t.getMinute()),
 		int(t.getSecond()),
 		int(t.getMicrosec()*1000),
 		time.UTC)
 
-	var localTime time.Time
-
 	// Use offset in seconds
 	offset, err := time.ParseDuration(fmt.Sprintf("%ds", t.timezoneInfo.offset))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	localTime = rawTime.Add(offset)
-
-	return fmt.Sprintf("%02d:%02d:%02d.%06d",
-		localTime.Hour(),
-		localTime.Minute(),
-		localTime.Second(),
-		localTime.Nanosecond()/1000), nil
+	localTime := rawTime.Add(offset)
+	return &nebula.Time{
+		Hour:     int8(localTime.Hour()),
+		Minute:   int8(localTime.Minute()),
+		Sec:      int8(localTime.Second()),
+		Microsec: int32(localTime.Nanosecond() / 1000)}, nil
 }
 
-// getLocalTimeWithCostomOffset returns a string of local time using user specified offset.
+// getLocalTimeWithTimezoneOffset returns a nebula.Time object representing
+// local time using user specified offset.
+// Year, month, day in time.Time are filled with dummy values.
 // Offset is in seconds.
-// Output format: HH:MM:MSMSMS
-func (t TimeWrapper) getLocalTimeWithTimezonOffset(timezoneOffsetSeconds int32) (string, error) {
+func (t TimeWrapper) getLocalTimeWithTimezoneOffset(timezoneOffsetSeconds int32) (*nebula.Time, error) {
 	// Original time object generated from server in UTC
 	// Year, month and day are mocked up to fill the parameters
 	rawTime := time.Date(2020,
-		time.Month(12),
-		21,
+		time.Month(1),
+		1,
 		int(t.getHour()),
 		int(t.getMinute()),
 		int(t.getSecond()),
@@ -825,31 +826,31 @@ func (t TimeWrapper) getLocalTimeWithTimezonOffset(timezoneOffsetSeconds int32) 
 
 	offset, err := time.ParseDuration(fmt.Sprintf("%ds", timezoneOffsetSeconds))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	localTime := rawTime.Add(offset)
-	return fmt.Sprintf("%02d:%02d:%02d.%06d",
-		localTime.Hour(),
-		localTime.Minute(),
-		localTime.Second(),
-		localTime.Nanosecond()/1000), nil
+	return &nebula.Time{
+		Hour:     int8(localTime.Hour()),
+		Minute:   int8(localTime.Minute()),
+		Sec:      int8(localTime.Second()),
+		Microsec: int32(localTime.Nanosecond() / 1000)}, nil
 }
 
-// GetLocalTimeWithTimezonName returns  a string of local time using user specified timezone name.
+// getLocalTimeWithTimezoneName returns a nebula.Time object
+// representing local time using user specified timezone name.
+// Year, month, day in time.Time are filled with 0.
 //
 // If the name is "" or "UTC", LoadLocation returns UTC.
 // If the name is "Local", LoadLocation returns Local.
 //
 // Otherwise, the name is taken to be a location name corresponding to a file
 // in the IANA Time Zone database, such as "America/New_York".
-//
-// Output format: HH:MM:MSMSMS
-func (t TimeWrapper) GetLocalTimeWithTimezonName(timezoneName string) (string, error) {
+func (t TimeWrapper) getLocalTimeWithTimezoneName(timezoneName string) (*nebula.Time, error) {
 	// Original time object generated from server in UTC
 	// Year, month and day are mocked up to fill the parameters
 	rawTime := time.Date(2020,
-		time.Month(12),
-		21,
+		time.Month(1),
+		1,
 		int(t.getHour()),
 		int(t.getMinute()),
 		int(t.getSecond()),
@@ -858,14 +859,14 @@ func (t TimeWrapper) GetLocalTimeWithTimezonName(timezoneName string) (string, e
 
 	location, err := time.LoadLocation(timezoneName)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	localTime := rawTime.In(location)
-	return fmt.Sprintf("%02d:%02d:%02d.%06d",
-		localTime.Hour(),
-		localTime.Minute(),
-		localTime.Second(),
-		localTime.Nanosecond()/1000), nil
+	return &nebula.Time{
+		Hour:     int8(localTime.Hour()),
+		Minute:   int8(localTime.Minute()),
+		Sec:      int8(localTime.Second()),
+		Microsec: int32(localTime.Nanosecond() / 1000)}, nil
 }
 
 func (t1 TimeWrapper) IsEqualTo(t2 TimeWrapper) bool {
@@ -896,19 +897,15 @@ func (d DateWrapper) getDay() int8 {
 	return d.date.Day
 }
 
+// getRawDate returns a nebula.Date object in UTC.
+func (d DateWrapper) getRawDate() *nebula.Date {
+	return d.date
+}
+
 func (d1 DateWrapper) IsEqualTo(d2 DateWrapper) bool {
 	return d1.getYear() == d2.getYear() &&
 		d1.getMonth() == d2.getMonth() &&
 		d1.getDay() == d2.getDay()
-}
-
-// getDate returns a string of Date.
-// Output format: yyyy-mm-dd
-func (d DateWrapper) getDate() string {
-	return fmt.Sprintf("%d-%02d-%02d",
-		d.getYear(),
-		d.getMonth(),
-		d.getDay())
 }
 
 func genDateTimeWrapper(datetime *nebula.DateTime, timezoneInfo timezoneInfo) (*DateTimeWrapper, error) {
@@ -959,112 +956,90 @@ func (dt1 DateTimeWrapper) IsEqualTo(dt2 DateTimeWrapper) bool {
 		dt1.getMicrosec() == dt2.getMicrosec()
 }
 
-// getRawDateTime returns a string of DateTime in UTC.
-// Output format: yyyy-mm-ddTHH:MM:SS.MSMSMS
-func (dt DateTimeWrapper) getRawDateTime() string {
-	return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d.%06d",
-		dt.getYear(), dt.getMonth(), dt.getDay(),
-		dt.getHour(), dt.getMinute(), dt.getSecond(), dt.getMicrosec())
+// getRawDateTime returns a nebula.DateTime object representing local dateTime in UTC.
+func (dt DateTimeWrapper) getRawDateTime() *nebula.DateTime {
+	return dt.dateTime
 }
 
-// getLocalDateTime returns a string of local time using timezone offset from the server.
-// Output format: yyyy-mm-ddTHH:MM:SS.MSMSMS
-func (dt DateTimeWrapper) getLocalDateTime() (string, error) {
+// getLocalDateTime returns a nebula.DateTime object representing
+// local datetime using timezone offset from the server.
+func (dt DateTimeWrapper) getLocalDateTime() (*nebula.DateTime, error) {
 	// Original time object generated from server in UTC
 	rawTime := time.Date(
-		int(dt.getYear()),
-		time.Month(dt.getMonth()),
-		int(dt.getDay()),
-		int(dt.getHour()),
-		int(dt.getMinute()),
-		int(dt.getSecond()),
-		int(dt.dateTime.Microsec*1000),
+		int(dt.getYear()), time.Month(dt.getMonth()), int(dt.getDay()),
+		int(dt.getHour()), int(dt.getMinute()), int(dt.getSecond()), int(dt.dateTime.Microsec*1000),
 		time.UTC)
-
-	var localDateTime time.Time
 
 	// Use offset in seconds
 	offset, err := time.ParseDuration(fmt.Sprintf("%ds", dt.timezoneInfo.offset))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	localDateTime = rawTime.Add(offset)
-
-	// localDateTime := rawTime.In(dt.location)
-	return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d.%06d",
-		localDateTime.Year(),
-		localDateTime.Month(),
-		localDateTime.Day(),
-		localDateTime.Hour(),
-		localDateTime.Minute(),
-		localDateTime.Second(),
-		localDateTime.Nanosecond()/1000), nil
+	localDT := rawTime.Add(offset)
+	return &nebula.DateTime{
+		Year:     int16(localDT.Year()),
+		Month:    int8(localDT.Month()),
+		Day:      int8(localDT.Day()),
+		Hour:     int8(localDT.Hour()),
+		Minute:   int8(localDT.Minute()),
+		Sec:      int8(localDT.Second()),
+		Microsec: int32(localDT.Nanosecond() / 1000)}, nil
 }
 
-// getLocalDateTimeWithTimezonOffset returns a string of local time using user specified timezone offset.
+// getLocalDateTimeWithTimezoneOffset returns a nebula.DateTime object representing
+// local datetime using user specified timezone offset.
 // Offset is in seconds.
-// Output format: yyyy-mm-ddTHH:MM:SS.MSMSMS
-func (dt DateTimeWrapper) getLocalDateTimeWithTimezonOffset(timezoneOffsetSeconds int32) (string, error) {
+func (dt DateTimeWrapper) getLocalDateTimeWithTimezoneOffset(timezoneOffsetSeconds int32) (*nebula.DateTime, error) {
 	// Original time object generated from server in UTC
 	rawTime := time.Date(
-		int(dt.getYear()),
-		time.Month(dt.getMonth()),
-		int(dt.getDay()),
-		int(dt.getHour()),
-		int(dt.getMinute()),
-		int(dt.getSecond()),
-		int(dt.dateTime.Microsec*1000),
+		int(dt.getYear()), time.Month(dt.getMonth()), int(dt.getDay()),
+		int(dt.getHour()), int(dt.getMinute()), int(dt.getSecond()), int(dt.dateTime.Microsec*1000),
 		time.UTC)
 
 	offset, err := time.ParseDuration(fmt.Sprintf("%ds", timezoneOffsetSeconds))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	localDateTime := rawTime.Add(offset)
-	return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d.%06d",
-		localDateTime.Year(),
-		localDateTime.Month(),
-		localDateTime.Day(),
-		localDateTime.Hour(),
-		localDateTime.Minute(),
-		localDateTime.Second(),
-		localDateTime.Nanosecond()/1000), nil
+	localDT := rawTime.Add(offset)
+	return &nebula.DateTime{
+		Year:     int16(localDT.Year()),
+		Month:    int8(localDT.Month()),
+		Day:      int8(localDT.Day()),
+		Hour:     int8(localDT.Hour()),
+		Minute:   int8(localDT.Minute()),
+		Sec:      int8(localDT.Second()),
+		Microsec: int32(localDT.Nanosecond() / 1000)}, nil
 }
 
-// GetLocalDateTimeWithTimezonName returns a string of local time using user specified timezone name.
+// GetLocalDateTimeWithTimezoneName returns a nebula.DateTime object representing
+// local time using user specified timezone name.
 //
 // If the name is "" or "UTC", LoadLocation returns UTC.
 // If the name is "Local", LoadLocation returns Local.
 //
 // Otherwise, the name is taken to be a location name corresponding to a file
 // in the IANA Time Zone database, such as "America/New_York".
-//
-// Output format: yyyy-mm-ddTHH:MM:MSMSMS
-func (dt DateTimeWrapper) GetLocalDateTimeWithTimezonName(timezoneName string) (string, error) {
+func (dt DateTimeWrapper) GetLocalDateTimeWithTimezoneName(timezoneName string) (*nebula.DateTime, error) {
 	// Original time object generated from server in UTC
-	rawTime := time.Date(int(
-		dt.getYear()),
-		time.Month(dt.getMonth()),
-		int(dt.getDay()),
-		int(dt.getHour()),
-		int(dt.getMinute()),
-		int(dt.getSecond()),
-		int(dt.getMicrosec()*1000),
+	rawTime := time.Date(
+		int(dt.getYear()), time.Month(dt.getMonth()), int(dt.getDay()),
+		int(dt.getHour()), int(dt.getMinute()), int(dt.getSecond()), int(dt.getMicrosec()*1000),
 		time.UTC)
 
 	location, err := time.LoadLocation(timezoneName)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	localDateTime := rawTime.In(location)
-	return fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d.%06d",
-		localDateTime.Year(),
-		localDateTime.Month(),
-		localDateTime.Day(),
-		localDateTime.Hour(),
-		localDateTime.Minute(),
-		localDateTime.Second(),
-		localDateTime.Nanosecond()/1000), nil
+	localDT := rawTime.In(location)
+
+	return &nebula.DateTime{
+		Year:     int16(localDT.Year()),
+		Month:    int8(localDT.Month()),
+		Day:      int8(localDT.Day()),
+		Hour:     int8(localDT.Hour()),
+		Minute:   int8(localDT.Minute()),
+		Sec:      int8(localDT.Second()),
+		Microsec: int32(localDT.Nanosecond() / 1000)}, nil
 }
 
 func checkIndex(index int, list interface{}) error {

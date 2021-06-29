@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/vesoft-inc/nebula-go/v2/nebula"
 	"github.com/vesoft-inc/nebula-go/v2/nebula/graph"
 )
 
@@ -199,7 +200,7 @@ func TestAuthentication(t *testing.T) {
 
 func TestInvalidHostTimeout(t *testing.T) {
 	hostList := []HostAddress{
-		{Host: "192.168.10.125", Port: 3699}, // Invalid host
+		{Host: "192.168.100.125", Port: 3699}, // Invalid host
 		{Host: "127.0.0.1", Port: 3699},
 	}
 
@@ -211,7 +212,7 @@ func TestInvalidHostTimeout(t *testing.T) {
 	// close all connections in the pool
 	defer pool.Close()
 	err = pool.Ping(hostList[0], 1000*time.Millisecond)
-	assert.EqualError(t, err, "failed to open transport, error: dial tcp 192.168.10.125:3699: i/o timeout")
+	assert.EqualError(t, err, "failed to open transport, error: dial tcp 192.168.100.125:3699: i/o timeout")
 	err = pool.Ping(hostList[1], 1000*time.Millisecond)
 	if err != nil {
 		t.Error("failed to ping 127.0.0.1")
@@ -276,24 +277,24 @@ func TestServiceDataIO(t *testing.T) {
 
 	// Load data
 	{
-		query := "INSERT VERTEX person(name, age, grade,friends, book_num," +
+		query := "INSERT VERTEX person(name, age, grade, friends, book_num," +
 			"birthday, start_school, morning, property," +
 			"is_girl, child_name, expend, first_out_city) VALUES" +
 			"'Bob':('Bob', 10, 3, 10, 100, datetime('2010-09-10T10:08:02')," +
 			"date('2017-09-10'), time('07:10:00'), " +
-			"1000.0, false, 'Hello World!', 100.0, 1111)," +
+			"1000.0, false, \"Hello World!\", 100.0, 1111)," +
 			"'Lily':('Lily', 9, 3, 10, 100, datetime('2010-09-10T10:08:02'), " +
 			"date('2017-09-10'), time('07:10:00'), " +
-			"1000.0, false, 'Hello World!', 100.0, 1111)," +
+			"1000.0, false, \"Hello World!\", 100.0, 1111)," +
 			"'Tom':('Tom', 10, 3, 10, 100, datetime('2010-09-10T10:08:02'), " +
 			"date('2017-09-10'), time('07:10:00'), " +
-			"1000.0, false, 'Hello World!', 100.0, 1111)," +
+			"1000.0, false, \"Hello World!\", 100.0, 1111)," +
 			"'Jerry':('Jerry', 9, 3, 10, 100, datetime('2010-09-10T10:08:02')," +
 			"date('2017-09-10'), time('07:10:00'), " +
-			"1000.0, false, 'Hello World!', 100.0, 1111), " +
+			"1000.0, false, \"Hello World!\", 100.0, 1111), " +
 			"'John':('John', 10, 3, 10, 100, datetime('2010-09-10T10:08:02'), " +
 			"date('2017-09-10'), time('07:10:00'), " +
-			"1000.0, false, 'Hello World!', 100.0, 1111)"
+			"1000.0, false, \"Hello World!\", 100.0, 1111)"
 		resultSet, err := session.Execute(query)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -397,8 +398,9 @@ func TestServiceDataIO(t *testing.T) {
 		// local time
 		assert.Equal(t, "2010-09-10T10:08:02.000000", valWrap.String())
 		// UTC time
-		UTCTime := dateTimeWrapper.getRawDateTime()
-		assert.Equal(t, "2010-09-10T02:08:02.000000", UTCTime)
+		UTCDatetime := dateTimeWrapper.getRawDateTime()
+		expectedDatetime := nebula.DateTime{2010, 9, 10, 2, 8, 2, 0}
+		assert.Equal(t, expectedDatetime, *UTCDatetime)
 
 		// test date
 		valWrap, err = record.GetValueByIndex(7)
@@ -423,10 +425,43 @@ func TestServiceDataIO(t *testing.T) {
 		assert.Equal(t, true, valWrap.IsTime())
 		assert.Equal(t, "07:10:00.000000", valWrap.String())
 
-		UTCTime = timeWrapper.getRawTime()
-		assert.Equal(t, "23:10:00.000000", UTCTime)
+		UTCTime := timeWrapper.getRawTime()
+		expected := nebula.Time{23, 10, 0, 0}
+		assert.Equal(t, expected, *UTCTime)
 	}
-
+	// test node
+	{
+		resp, err := session.Execute("MATCH (v:person {name: \"Bob\"}) RETURN v")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, 1, resp.GetRowSize())
+		record, err := resp.GetRowValuesByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		valWrap, err := record.GetValueByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		node, err := valWrap.AsNode()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t,
+			"(\"Bob\" :student{name: \"Bob\"} "+
+				":person{age: 10, birthday: 2010-09-10T10:08:02.000000, book_num: 100, "+
+				"child_name: \"Hello Worl\", expend: 100.0, "+
+				"first_out_city: 1111, friends: 10, grade: 3, "+
+				"hobby: __NULL__, is_girl: false, "+
+				"morning: 07:10:00.000000, name: \"Bob\", "+
+				"property: 1000.0, start_school: 2017-09-10})",
+			node.String())
+	}
 	// Drop space
 	{
 		query := "DROP SPACE test_data;"

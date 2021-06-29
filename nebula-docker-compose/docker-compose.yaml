@@ -15,6 +15,7 @@ services:
       - --log_dir=/logs
       - --v=0
       - --minloglevel=0
+      - --timezone_name=+08:00
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad0:11000/status"]
       interval: 30s
@@ -49,6 +50,7 @@ services:
       - --log_dir=/logs
       - --v=0
       - --minloglevel=0
+      - --timezone_name=+08:00
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad1:11000/status"]
       interval: 30s
@@ -83,6 +85,7 @@ services:
       - --log_dir=/logs
       - --v=0
       - --minloglevel=0
+      - --timezone_name=+08:00
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad2:11000/status"]
       interval: 30s
@@ -195,6 +198,7 @@ services:
       - --log_dir=/logs
       - --v=0
       - --minloglevel=0
+      - --timezone_name=+08:00
     depends_on:
       - metad0
       - metad1
