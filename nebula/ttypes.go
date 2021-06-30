@@ -204,6 +204,7 @@ const (
   ErrorCode_E_OUTDATED_LOCK ErrorCode = -3047
   ErrorCode_E_INVALID_TASK_PARA ErrorCode = -3051
   ErrorCode_E_USER_CANCEL ErrorCode = -3052
+  ErrorCode_E_TASK_EXECUTION_FAILED ErrorCode = -3053
   ErrorCode_E_UNKNOWN ErrorCode = -8000
 )
 
@@ -317,6 +318,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_OUTDATED_LOCK: "E_OUTDATED_LOCK",
   ErrorCode_E_INVALID_TASK_PARA: "E_INVALID_TASK_PARA",
   ErrorCode_E_USER_CANCEL: "E_USER_CANCEL",
+  ErrorCode_E_TASK_EXECUTION_FAILED: "E_TASK_EXECUTION_FAILED",
   ErrorCode_E_UNKNOWN: "E_UNKNOWN",
 }
 
@@ -430,6 +432,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_OUTDATED_LOCK": ErrorCode_E_OUTDATED_LOCK,
   "E_INVALID_TASK_PARA": ErrorCode_E_INVALID_TASK_PARA,
   "E_USER_CANCEL": ErrorCode_E_USER_CANCEL,
+  "E_TASK_EXECUTION_FAILED": ErrorCode_E_TASK_EXECUTION_FAILED,
   "E_UNKNOWN": ErrorCode_E_UNKNOWN,
 }
 
@@ -543,6 +546,7 @@ var ErrorCodeNames = []string {
   "E_OUTDATED_LOCK",
   "E_INVALID_TASK_PARA",
   "E_USER_CANCEL",
+  "E_TASK_EXECUTION_FAILED",
   "E_UNKNOWN",
 }
 
@@ -656,6 +660,7 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_OUTDATED_LOCK,
   ErrorCode_E_INVALID_TASK_PARA,
   ErrorCode_E_USER_CANCEL,
+  ErrorCode_E_TASK_EXECUTION_FAILED,
   ErrorCode_E_UNKNOWN,
 }
 

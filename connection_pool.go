@@ -31,12 +31,12 @@ func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*C
 	// Process domain to IP
 	convAddress, err := DomainToIP(addresses)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to find IP, error: %s ", err.Error())
+		return nil, fmt.Errorf("failed to find IP, error: %s ", err.Error())
 	}
 
 	// Check input
 	if len(convAddress) == 0 {
-		return nil, fmt.Errorf("Failed to initialize connection pool: illegal address input")
+		return nil, fmt.Errorf("failed to initialize connection pool: illegal address input")
 	}
 
 	// Check config
@@ -69,7 +69,7 @@ func (pool *ConnectionPool) initPool() error {
 				pool.idleConnectionQueue.Front().Value.(*connection).close()
 				pool.idleConnectionQueue.Remove(pool.idleConnectionQueue.Front())
 			}
-			return fmt.Errorf("Failed to open connection, error: %s ", err.Error())
+			return fmt.Errorf("failed to open connection, error: %s ", err.Error())
 		}
 		// Mark connection as in use
 		pool.idleConnectionQueue.PushBack(newConn)
@@ -104,12 +104,15 @@ func (pool *ConnectionPool) GetSession(username, password string) (*Session, err
 	}
 
 	sessID := resp.GetSessionID()
+	timezoneOffset := resp.GetTimeZoneOffsetSeconds()
+	timezoneName := resp.GetTimeZoneName()
 	// Create new session
 	newSession := Session{
-		sessionID:  sessID,
-		connection: conn,
-		connPool:   pool,
-		log:        pool.log,
+		sessionID:    sessID,
+		connection:   conn,
+		connPool:     pool,
+		log:          pool.log,
+		timezoneInfo: timezoneInfo{timezoneOffset, timezoneName},
 	}
 
 	return &newSession, nil
@@ -237,7 +240,8 @@ func (pool *ConnectionPool) createConnection() (*connection, error) {
 	totalConn := pool.idleConnectionQueue.Len() + pool.activeConnectionQueue.Len()
 	// If no idle avaliable and the number of total connection reaches the max pool size, return error/wait for timeout
 	if totalConn >= pool.conf.MaxConnPoolSize {
-		return nil, fmt.Errorf("Failed to get connection: No valid connection in the idle queue and connection number has reached the pool capacity")
+		return nil, fmt.Errorf("failed to get connection: No valid connection" +
+			" in the idle queue and connection number has reached the pool capacity")
 	}
 
 	newConn, err := pool.newConnToHost()
