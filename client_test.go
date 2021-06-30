@@ -154,7 +154,7 @@ func TestConfigs(t *testing.T) {
 		}
 		defer session.Release()
 		// Excute a query
-		resp, err := session.Execute("SHOW HOSTS;")
+		resp, err := tryToExecute(session, "SHOW HOSTS;")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -168,7 +168,7 @@ func TestConfigs(t *testing.T) {
 		}
 		checkResSetResp(t, "create space", resp)
 
-		resp, err = session.Execute("DROP SPACE client_test;")
+		resp, err = tryToExecute(session, "DROP SPACE client_test;")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -266,7 +266,7 @@ func TestServiceDataIO(t *testing.T) {
 			"CREATE EDGE IF NOT EXISTS like(likeness double); " +
 			"CREATE EDGE IF NOT EXISTS friend(start_year int, end_year int); " +
 			"CREATE TAG INDEX IF NOT EXISTS person_name_index ON person(name(8));"
-		resultSet, err := session.Execute(createSchema)
+		resultSet, err := tryToExecute(session, createSchema)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -295,7 +295,7 @@ func TestServiceDataIO(t *testing.T) {
 			"'John':('John', 10, 3, 10, 100, datetime('2010-09-10T10:08:02'), " +
 			"date('2017-09-10'), time('07:10:00'), " +
 			"1000.0, false, \"Hello World!\", 100.0, 1111)"
-		resultSet, err := session.Execute(query)
+		resultSet, err := tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -306,7 +306,7 @@ func TestServiceDataIO(t *testing.T) {
 			"INSERT VERTEX student(name) VALUES " +
 				"'Bob':('Bob'), 'Lily':('Lily'), " +
 				"'Tom':('Tom'), 'Jerry':('Jerry'), 'John':('John')"
-		resultSet, err = session.Execute(query)
+		resultSet, err = tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -320,7 +320,7 @@ func TestServiceDataIO(t *testing.T) {
 				"'Jerry'->'Lily':(84.0)," +
 				"'Tom'->'Jerry':(68.3), " +
 				"'Bob'->'John':(97.2)"
-		resultSet, err = session.Execute(query)
+		resultSet, err = tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -334,7 +334,7 @@ func TestServiceDataIO(t *testing.T) {
 				"'Jerry'->'Lily':(2018, 2020)," +
 				"'Tom'->'Jerry':(2018, 2020), " +
 				"'Bob'->'John':(2018, 2020)"
-		resultSet, err = session.Execute(query)
+		resultSet, err = tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -350,7 +350,7 @@ func TestServiceDataIO(t *testing.T) {
 				"person.start_school, person.morning, " +
 				"person.property, person.is_girl, person.child_name, " +
 				"person.expend, person.first_out_city, person.hobby"
-		resp, err := session.Execute(query)
+		resp, err := tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -465,7 +465,7 @@ func TestServiceDataIO(t *testing.T) {
 	// Drop space
 	{
 		query := "DROP SPACE test_data;"
-		_, err := session.Execute(query)
+		_, err := tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -501,7 +501,7 @@ func TestPool_SingleHost(t *testing.T) {
 	}
 	defer session.Release()
 	// Excute a query
-	resp, err := session.Execute("SHOW HOSTS;")
+	resp, err := tryToExecute(session, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -515,7 +515,7 @@ func TestPool_SingleHost(t *testing.T) {
 	}
 	checkResSetResp(t, "create space", resp)
 
-	resp, err = session.Execute("DROP SPACE client_test;")
+	resp, err = tryToExecute(session, "DROP SPACE client_test;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -570,7 +570,7 @@ func TestPool_MultiHosts(t *testing.T) {
 	assert.Equal(t, 0, pool.idleConnectionQueue.Len())
 	assert.Equal(t, 3, pool.activeConnectionQueue.Len())
 
-	resp, err := newSession.Execute("SHOW HOSTS;")
+	resp, err := tryToExecute(newSession, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -824,4 +824,15 @@ func startContainer(t *testing.T, containerName string) {
 	if err != nil {
 		t.Fatalf("failed to start container, name: %s, error code: %s", containerName, err.Error())
 	}
+}
+
+func tryToExecute(session *Session, query string) (*ResultSet, error) {
+	var err error
+	for i := 3; i > 0; i-- {
+		resp, err := session.Execute(query)
+		if err == nil {
+			return resp, nil
+		}
+	}
+	return nil, err
 }
