@@ -161,9 +161,10 @@ func TestAsDate(t *testing.T) {
 
 func TestAsTime(t *testing.T) {
 	value := nebula.Value{TVal: &nebula.Time{13, 12, 25, 29}}
-	valWrap := ValueWrapper{&value, testTimezone}
+	timezoneInfo := timezoneInfo{8 * 3600, []byte("+08:00")}
+	valWrap := ValueWrapper{&value, timezoneInfo}
 	assert.Equal(t, true, valWrap.IsTime())
-	assert.Equal(t, "13:12:25.000029", valWrap.String())
+	assert.Equal(t, "21:12:25.000029", valWrap.String())
 
 	// test timezone conversion
 	timeWrapper, err := valWrap.AsTime()
