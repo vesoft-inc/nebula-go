@@ -154,21 +154,23 @@ func TestConfigs(t *testing.T) {
 		}
 		defer session.Release()
 		// Excute a query
-		resp, err := session.Execute("SHOW HOSTS;")
+		resp, err := tryToExecute(session, "SHOW HOSTS;")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
 		}
 		checkResSetResp(t, "show hosts", resp)
 		// Create a new space
-		resp, err = session.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
+		resp, err = tryToExecute(
+			session,
+			"CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
 		}
 		checkResSetResp(t, "create space", resp)
 
-		resp, err = session.Execute("DROP SPACE client_test;")
+		resp, err = tryToExecute(session, "DROP SPACE client_test;")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -264,16 +266,16 @@ func TestServiceDataIO(t *testing.T) {
 			"first_out_city timestamp, hobby string); " +
 			"CREATE TAG IF NOT EXISTS student(name string); " +
 			"CREATE EDGE IF NOT EXISTS like(likeness double); " +
-			"CREATE EDGE IF NOT EXISTS friend(start_year int, end_year int); " +
+			"CREATE EDGE IF NOT EXISTS friend(start_Datetime datetime, end_Datetime datetime); " +
 			"CREATE TAG INDEX IF NOT EXISTS person_name_index ON person(name(8));"
-		resultSet, err := session.Execute(createSchema)
+		resultSet, err := tryToExecute(session, createSchema)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
 		}
 		checkResultSet(createSchema, resultSet)
 	}
-	time.Sleep(10 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	// Load data
 	{
@@ -295,7 +297,7 @@ func TestServiceDataIO(t *testing.T) {
 			"'John':('John', 10, 3, 10, 100, datetime('2010-09-10T10:08:02'), " +
 			"date('2017-09-10'), time('07:10:00'), " +
 			"1000.0, false, \"Hello World!\", 100.0, 1111)"
-		resultSet, err := session.Execute(query)
+		resultSet, err := tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -306,7 +308,7 @@ func TestServiceDataIO(t *testing.T) {
 			"INSERT VERTEX student(name) VALUES " +
 				"'Bob':('Bob'), 'Lily':('Lily'), " +
 				"'Tom':('Tom'), 'Jerry':('Jerry'), 'John':('John')"
-		resultSet, err = session.Execute(query)
+		resultSet, err = tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -320,7 +322,7 @@ func TestServiceDataIO(t *testing.T) {
 				"'Jerry'->'Lily':(84.0)," +
 				"'Tom'->'Jerry':(68.3), " +
 				"'Bob'->'John':(97.2)"
-		resultSet, err = session.Execute(query)
+		resultSet, err = tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -328,13 +330,13 @@ func TestServiceDataIO(t *testing.T) {
 		checkResultSet(query, resultSet)
 
 		query =
-			"INSERT EDGE friend(start_year, end_year) VALUES " +
-				"'Bob'->'Lily':(2018, 2020), " +
-				"'Bob'->'Tom':(2018, 2020), " +
-				"'Jerry'->'Lily':(2018, 2020)," +
-				"'Tom'->'Jerry':(2018, 2020), " +
-				"'Bob'->'John':(2018, 2020)"
-		resultSet, err = session.Execute(query)
+			"INSERT EDGE friend(start_Datetime, end_Datetime) VALUES " +
+				"'Bob'->'Lily':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
+				"'Bob'->'Tom':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
+				"'Jerry'->'Lily':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
+				"'Tom'->'Jerry':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
+				"'Bob'->'John':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02'))"
+		resultSet, err = tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -350,7 +352,7 @@ func TestServiceDataIO(t *testing.T) {
 				"person.start_school, person.morning, " +
 				"person.property, person.is_girl, person.child_name, " +
 				"person.expend, person.first_out_city, person.hobby"
-		resp, err := session.Execute(query)
+		resp, err := tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -429,9 +431,10 @@ func TestServiceDataIO(t *testing.T) {
 		expected := nebula.Time{23, 10, 0, 0}
 		assert.Equal(t, expected, *UTCTime)
 	}
+
 	// test node
 	{
-		resp, err := session.Execute("MATCH (v:person {name: \"Bob\"}) RETURN v")
+		resp, err := tryToExecute(session, "MATCH (v:person {name: \"Bob\"}) RETURN v")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -461,11 +464,68 @@ func TestServiceDataIO(t *testing.T) {
 				"morning: 07:10:00.000000, name: \"Bob\", "+
 				"property: 1000.0, start_school: 2017-09-10})",
 			node.String())
+		props, _ := node.Properties("person")
+		datetime := props["birthday"]
+		dtWrapper, err := datetime.AsDateTime()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		utcTime := dtWrapper.getRawDateTime()
+		expected := nebula.DateTime{2010, 9, 10, 2, 8, 2, 0}
+		assert.Equal(t, expected, *utcTime)
+
+		localTime, _ := dtWrapper.getLocalDateTime()
+		expected = nebula.DateTime{2010, 9, 10, 10, 8, 2, 0}
+		assert.Equal(t, expected, *localTime)
 	}
+
+	// test edge
+	{
+		resp, err := tryToExecute(session, "MATCH (:person{name: \"Bob\"}) -[e:friend]-> (:person{name: \"Lily\"}) RETURN e")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, 1, resp.GetRowSize())
+		record, err := resp.GetRowValuesByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		valWrap, err := record.GetValueByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		relationship, err := valWrap.AsRelationship()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t,
+			"[:friend \"Bob\"->\"Lily\" @0 {end_Datetime: 2010-09-10T10:08:02.000000, start_Datetime: 2008-09-10T10:08:02.000000}]",
+			relationship.String())
+		props := relationship.Properties()
+		datetime := props["end_Datetime"]
+		dtWrapper, err := datetime.AsDateTime()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		utcTime := dtWrapper.getRawDateTime()
+		expected := nebula.DateTime{2010, 9, 10, 2, 8, 2, 0}
+		assert.Equal(t, expected, *utcTime)
+
+		localTime, _ := dtWrapper.getLocalDateTime()
+		expected = nebula.DateTime{2010, 9, 10, 10, 8, 2, 0}
+		assert.Equal(t, expected, *localTime)
+	}
+
 	// Drop space
 	{
 		query := "DROP SPACE test_data;"
-		_, err := session.Execute(query)
+		_, err := tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -501,21 +561,21 @@ func TestPool_SingleHost(t *testing.T) {
 	}
 	defer session.Release()
 	// Excute a query
-	resp, err := session.Execute("SHOW HOSTS;")
+	resp, err := tryToExecute(session, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkResSetResp(t, "show hosts", resp)
 	// Create a new space
-	resp, err = session.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
+	resp, err = tryToExecute(session, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkResSetResp(t, "create space", resp)
 
-	resp, err = session.Execute("DROP SPACE client_test;")
+	resp, err = tryToExecute(session, "DROP SPACE client_test;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -570,7 +630,7 @@ func TestPool_MultiHosts(t *testing.T) {
 	assert.Equal(t, 0, pool.idleConnectionQueue.Len())
 	assert.Equal(t, 3, pool.activeConnectionQueue.Len())
 
-	resp, err := newSession.Execute("SHOW HOSTS;")
+	resp, err := tryToExecute(newSession, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -824,4 +884,16 @@ func startContainer(t *testing.T, containerName string) {
 	if err != nil {
 		t.Fatalf("failed to start container, name: %s, error code: %s", containerName, err.Error())
 	}
+}
+
+func tryToExecute(session *Session, query string) (*ResultSet, error) {
+	var err error
+	for i := 3; i > 0; i-- {
+		resp, err := session.Execute(query)
+		if err == nil && resp.IsSucceed() {
+			return resp, nil
+		}
+		time.Sleep(2 * time.Second)
+	}
+	return nil, err
 }

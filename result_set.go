@@ -429,22 +429,22 @@ func (record Record) hasColName(colName string) bool {
 	return false
 }
 
-// Returns a list of row vid
+// getRawID returns a list of row vid
 func (node Node) getRawID() *nebula.Value {
 	return node.vertex.GetVid()
 }
 
-// Returns a list of vid of node
+// GetID returns a list of vid of node
 func (node Node) GetID() ValueWrapper {
 	return ValueWrapper{node.vertex.GetVid(), node.timezoneInfo}
 }
 
-// Returns a list of tag names of node
+// GetTags returns a list of tag names of node
 func (node Node) GetTags() []string {
 	return node.tags
 }
 
-// Check if node contains given label
+// HasTag checks if node contains given label
 func (node Node) HasTag(label string) bool {
 	if _, ok := node.tagNameIndexMap[label]; ok {
 		return true
@@ -452,7 +452,7 @@ func (node Node) HasTag(label string) bool {
 	return false
 }
 
-// Returns all properties of a tag
+// Properties returns all properties of a tag
 func (node Node) Properties(tagName string) (map[string]*ValueWrapper, error) {
 	kvMap := make(map[string]*ValueWrapper)
 	// Check if label exists
@@ -466,7 +466,7 @@ func (node Node) Properties(tagName string) (map[string]*ValueWrapper, error) {
 	return kvMap, nil
 }
 
-// Returns all prop names of the given tag name
+// Keys returns all prop names of the given tag name
 func (node Node) Keys(tagName string) ([]string, error) {
 	if !node.HasTag(tagName) {
 		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exsist in the Node", tagName)
@@ -479,7 +479,7 @@ func (node Node) Keys(tagName string) ([]string, error) {
 	return propNameList, nil
 }
 
-// Returns all prop values of the given tag name
+// Values returns all prop values of the given tag name
 func (node Node) Values(tagName string) ([]*ValueWrapper, error) {
 	if !node.HasTag(tagName) {
 		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exsist in the Node", tagName)
@@ -492,6 +492,7 @@ func (node Node) Values(tagName string) ([]*ValueWrapper, error) {
 	return propValList, nil
 }
 
+// String returns a string representing node
 // Node format: ("VertexID" :tag1{k0: v0,k1: v1}:tag2{k2: v2})
 func (node Node) String() string {
 	var keyList []string
@@ -556,6 +557,7 @@ func (relationship Relationship) GetRanking() int64 {
 	return int64(relationship.edge.Ranking)
 }
 
+// Properties returns a map where the key is property name and the value is property name
 func (relationship Relationship) Properties() map[string]*ValueWrapper {
 	kvMap := make(map[string]*ValueWrapper)
 	var (
@@ -573,7 +575,7 @@ func (relationship Relationship) Properties() map[string]*ValueWrapper {
 	return kvMap
 }
 
-// Returns a list of keys
+// Keys returns a list of keys
 func (relationship Relationship) Keys() []string {
 	var keys []string
 	for key := range relationship.edge.GetProps() {
@@ -582,7 +584,7 @@ func (relationship Relationship) Keys() []string {
 	return keys
 }
 
-// Returns a list of values wrapped as ValueWrappers
+// Values returns a list of values wrapped as ValueWrappers
 func (relationship Relationship) Values() []*ValueWrapper {
 	var values []*ValueWrapper
 	for _, value := range relationship.edge.GetProps() {
@@ -591,6 +593,7 @@ func (relationship Relationship) Values() []*ValueWrapper {
 	return values
 }
 
+// String returns a string representing relationship
 // Relationship format: [:edge src->dst @ranking {props}]
 func (relationship Relationship) String() string {
 	edge := relationship.edge
@@ -680,7 +683,11 @@ func (path *PathWrapper) GetEndNode() (*Node, error) {
 	return path.segments[len(path.segments)-1].endNode, nil
 }
 
-// Path format: <("VertexID" :tag1{k0: v0,k1: v1})-[:TypeName@ranking {edgeProps}]->("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})-[:TypeName@ranking {edgeProps}]->("VertexID3" :tag1{k0: v0,k1: v1})>
+// Path format: <("VertexID" :tag1{k0: v0,k1: v1})
+// -[:TypeName@ranking {edgeProps}]->
+// ("VertexID2" :tag1{k0: v0,k1: v1} :tag2{k2: v2})
+// -[:TypeName@ranking {edgeProps}]->
+// ("VertexID3" :tag1{k0: v0,k1: v1})>
 func (pathWrap *PathWrapper) String() string {
 	path := pathWrap.path
 	src := path.Src
