@@ -1,4 +1,5 @@
 # nebula-go
+[![Go Reference](https://pkg.go.dev/badge/github.com/vesoft-inc/nebula-go/v2.svg)](https://pkg.go.dev/github.com/vesoft-inc/nebula-go/v2)
 
 **IMPORTANT: Code of Nebula go client has been transferred from [nebula-clients](https://github.com/vesoft-inc/nebula-clients) to this repository(nebula-go), and new releases in the future will be published in this repository.
 Please update your go.mod and imports correspondingly.**
