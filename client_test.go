@@ -507,7 +507,7 @@ func TestServiceDataIO(t *testing.T) {
 			"[:friend \"Bob\"->\"Lily\" @0 {end_Datetime: 2010-09-10T10:08:02.000000, start_Datetime: 2008-09-10T10:08:02.000000}]",
 			relationship.String())
 		props := relationship.Properties()
-		datetime := props["birthday"]
+		datetime := props["end_Datetime"]
 		dtWrapper, err := datetime.AsDateTime()
 		if err != nil {
 			t.Fatalf(err.Error())
