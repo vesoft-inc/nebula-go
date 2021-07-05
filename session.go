@@ -14,11 +14,17 @@ import (
 	graph "github.com/vesoft-inc/nebula-go/v2/nebula/graph"
 )
 
+type timezoneInfo struct {
+	offset int32
+	name   []byte
+}
+
 type Session struct {
 	sessionID  int64
 	connection *connection
 	connPool   *ConnectionPool
 	log        Logger
+	timezoneInfo
 }
 
 // unsupported
@@ -26,14 +32,18 @@ type Session struct {
 // 	return session.graph.ExecuteJson(session.sessionID, []byte(stmt))
 // }
 
-// Execute() returns the result of given query as a ResultSet
+// Execute returns the result of given query as a ResultSet
 func (session *Session) Execute(stmt string) (*ResultSet, error) {
 	if session.connection == nil {
-		return nil, fmt.Errorf("Failed to execute: Session has been released")
+		return nil, fmt.Errorf("failed to execute: Session has been released")
 	}
 	resp, err := session.connection.execute(session.sessionID, stmt)
 	if err == nil {
-		return genResultSet(resp), nil
+		resSet, err := genResultSet(resp, session.timezoneInfo)
+		if err != nil {
+			return nil, err
+		}
+		return resSet, nil
 	}
 	// Reconnect only if the tranport is closed
 	err2, ok := err.(thrift.TransportException)
@@ -53,7 +63,11 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 		if err != nil {
 			return nil, err
 		}
-		return genResultSet(resp), nil
+		resSet, err := genResultSet(resp, session.timezoneInfo)
+		if err != nil {
+			return nil, err
+		}
+		return resSet, nil
 	} else { // No need to reconnect
 		session.log.Error(fmt.Sprintf("Error info: %s", err2.Error()))
 		return nil, err2

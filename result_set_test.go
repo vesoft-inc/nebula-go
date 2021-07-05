@@ -16,9 +16,11 @@ import (
 	"github.com/vesoft-inc/nebula-go/v2/nebula/graph"
 )
 
+var testTimezone timezoneInfo = timezoneInfo{0, []byte("UTC")}
+
 func TestIsEmpty(t *testing.T) {
 	value := nebula.Value{}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, "", valWrap.String())
 	assert.Equal(t, true, valWrap.IsEmpty())
 }
@@ -26,7 +28,7 @@ func TestIsEmpty(t *testing.T) {
 func TestAsNull(t *testing.T) {
 	null := nebula.NullType___NULL__
 	value := nebula.Value{NVal: &null}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	res, _ := valWrap.AsNull()
 	assert.Equal(t, "__NULL__", valWrap.String())
 	assert.Equal(t, value.GetNVal(), res)
@@ -36,7 +38,7 @@ func TestAsBool(t *testing.T) {
 	bval := new(bool)
 	*bval = true
 	value := nebula.Value{BVal: bval}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsBool())
 	assert.Equal(t, "true", valWrap.String())
 	res, _ := valWrap.AsBool()
@@ -47,7 +49,7 @@ func TestAsInt(t *testing.T) {
 	val := new(int64)
 	*val = 100
 	value := nebula.Value{IVal: val}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsInt())
 	assert.Equal(t, "100", valWrap.String())
 	res, _ := valWrap.AsInt()
@@ -58,11 +60,11 @@ func TestAsFloat(t *testing.T) {
 	val := new(float64)
 	*val = 100.111
 	value := nebula.Value{FVal: val}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	val2 := new(float64)
 	*val2 = 100.00
 	value2 := nebula.Value{FVal: val2}
-	valWrap2 := ValueWrapper{&value2}
+	valWrap2 := ValueWrapper{&value2, testTimezone}
 	assert.Equal(t, "100.111", valWrap.String())
 	assert.Equal(t, "100.0", valWrap2.String())
 	assert.Equal(t, true, valWrap.IsFloat())
@@ -73,7 +75,7 @@ func TestAsFloat(t *testing.T) {
 func TestAsString(t *testing.T) {
 	val := "test_string"
 	value := nebula.Value{SVal: []byte(val)}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsString())
 	assert.Equal(t, "\"test_string\"", valWrap.String())
 	res, _ := valWrap.AsString()
@@ -82,14 +84,14 @@ func TestAsString(t *testing.T) {
 
 func TestAsList(t *testing.T) {
 	var valList = []*nebula.Value{
-		&nebula.Value{SVal: []byte("elem1")},
-		&nebula.Value{SVal: []byte("elem2")},
-		&nebula.Value{SVal: []byte("elem3")},
+		{SVal: []byte("elem1")},
+		{SVal: []byte("elem2")},
+		{SVal: []byte("elem3")},
 	}
 	value := nebula.Value{
 		LVal: &nebula.NList{Values: valList},
 	}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, "[\"elem1\", \"elem2\", \"elem3\"]", valWrap.String())
 	assert.Equal(t, true, valWrap.IsList())
 
@@ -112,7 +114,7 @@ func TestAsDedupList(t *testing.T) {
 	value := nebula.Value{
 		UVal: &nebula.NSet{Values: valList},
 	}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, "[\"elem1\", \"elem2\", \"elem3\"]", valWrap.String())
 	assert.Equal(t, true, valWrap.IsSet())
 
@@ -135,7 +137,7 @@ func TestAsMap(t *testing.T) {
 	}
 	mval := nebula.NMap{Kvs: valueMap}
 	value := nebula.Value{MVal: &mval}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, "{key0: \"val0\", key1: \"val1\", key2: \"val2\"}", valWrap.String())
 	assert.Equal(t, true, valWrap.IsMap())
 	vMap := value.GetMVal().Kvs
@@ -150,31 +152,128 @@ func TestAsMap(t *testing.T) {
 	}
 }
 
-// TODO: add tests for AsTime/Date/DateTime when service supports timezone
 func TestAsDate(t *testing.T) {
 	value := nebula.Value{DVal: &nebula.Date{2020, 12, 25}}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsDate())
 	assert.Equal(t, "2020-12-25", valWrap.String())
 }
 
 func TestAsTime(t *testing.T) {
 	value := nebula.Value{TVal: &nebula.Time{13, 12, 25, 29}}
-	valWrap := ValueWrapper{&value}
+	timezoneInfo := timezoneInfo{8 * 3600, []byte("+08:00")}
+	valWrap := ValueWrapper{&value, timezoneInfo}
 	assert.Equal(t, true, valWrap.IsTime())
-	assert.Equal(t, "13:12:25.029", valWrap.String())
+	assert.Equal(t, "21:12:25.000029", valWrap.String())
+
+	// test timezone conversion
+	timeWrapper, err := valWrap.AsTime()
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	localTime, err := timeWrapper.getLocalTimeWithTimezoneName("Asia/Shanghai")
+	if err != nil {
+		t.Error(err.Error())
+	}
+	expected := nebula.Time{
+		21, 12, 25, 29,
+	}
+	assert.Equal(t, expected, *localTime)
+
+	localTime, err = timeWrapper.getLocalTimeWithTimezoneName("America/Los_Angeles")
+	if err != nil {
+		t.Error(err.Error())
+	}
+	expected = nebula.Time{
+		05, 12, 25, 29,
+	}
+	assert.Equal(t, expected, *localTime)
+
+	localTime, err = timeWrapper.getLocalTimeWithTimezoneOffset(3600)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	expected = nebula.Time{
+		14, 12, 25, 29,
+	}
+	assert.Equal(t, expected, *localTime)
+
+	localTime, err = timeWrapper.getLocalTimeWithTimezoneOffset(-2 * 3600)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	expected = nebula.Time{
+		11, 12, 25, 29,
+	}
+	assert.Equal(t, expected, *localTime)
+
+	localTime, err = timeWrapper.getLocalTimeWithTimezoneOffset(12 * 3600)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	expected = nebula.Time{
+		01, 12, 25, 29,
+	}
+	assert.Equal(t, expected, *localTime)
 }
 
 func TestAsDateTime(t *testing.T) {
-	value := nebula.Value{DtVal: &nebula.DateTime{2020, 12, 25, 13, 12, 25, 29}}
-	valWrap := ValueWrapper{&value}
+	value := nebula.Value{DtVal: &nebula.DateTime{2020, 12, 25, 22, 12, 25, 29}}
+	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsDateTime())
-	assert.Equal(t, "2020-12-25T13:12:25.029", valWrap.String())
+	assert.Equal(t, "2020-12-25T22:12:25.000029", valWrap.String())
+
+	// test timezone conversion
+	dateTimeWrapper, err := valWrap.AsDateTime()
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	localTime, err := dateTimeWrapper.GetLocalDateTimeWithTimezoneName("Asia/Shanghai")
+	if err != nil {
+		t.Error(err.Error())
+	}
+	expected := nebula.DateTime{
+		2020, 12, 26,
+		06, 12, 25, 29,
+	}
+	assert.Equal(t, expected, *localTime)
+
+	localTime, err = dateTimeWrapper.GetLocalDateTimeWithTimezoneName("America/Los_Angeles")
+	if err != nil {
+		t.Error(err.Error())
+	}
+	expected = nebula.DateTime{
+		2020, 12, 25,
+		14, 12, 25, 29,
+	}
+	assert.Equal(t, expected, *localTime)
+
+	localTime, err = dateTimeWrapper.getLocalDateTimeWithTimezoneOffset(3600)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	expected = nebula.DateTime{
+		2020, 12, 25,
+		23, 12, 25, 29,
+	}
+	assert.Equal(t, expected, *localTime)
+
+	localTime, err = dateTimeWrapper.getLocalDateTimeWithTimezoneOffset(-2 * 3600)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	expected = nebula.DateTime{
+		2020, 12, 25,
+		20, 12, 25, 29,
+	}
+	assert.Equal(t, expected, *localTime)
 }
 
 func TestAsNode(t *testing.T) {
 	value := nebula.Value{VVal: getVertex("Adam", 3, 5)}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsVertex())
 	assert.Equal(t,
 		"(\"Adam\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
@@ -182,45 +281,95 @@ func TestAsNode(t *testing.T) {
 			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})",
 		valWrap.String())
 	res, _ := valWrap.AsNode()
-	node, _ := genNode(value.GetVVal())
+	node, _ := genNode(value.GetVVal(), testTimezone)
 	assert.Equal(t, *node, *res)
 
 	// Vertex without tag
 	value = nebula.Value{VVal: getVertex("Adam", 0, 0)}
-	valWrap = ValueWrapper{&value}
+	valWrap = ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsVertex())
 	assert.Equal(t,
 		"(\"Adam\")",
 		valWrap.String())
 	res, _ = valWrap.AsNode()
-	node, _ = genNode(value.GetVVal())
+	node, _ = genNode(value.GetVVal(), testTimezone)
+	assert.Equal(t, *node, *res)
+
+	// Vertex contains datetime
+	var tags []*nebula.Tag
+	var vidVal = nebula.NewValue()
+	vidVal.SVal = []byte("Bob")
+	props := make(map[string]*nebula.Value)
+	props["datetimeProp"] = &nebula.Value{DtVal: &nebula.DateTime{2020, 12, 25, 22, 12, 25, 29}}
+	tag := nebula.Tag{
+		Name:  []byte("tag0"),
+		Props: props,
+	}
+	tags = append(tags, &tag)
+	vertex := &nebula.Vertex{vidVal, tags}
+	value = nebula.Value{VVal: vertex}
+	valWrap = ValueWrapper{&value, testTimezone}
+
+	assert.Equal(t, true, valWrap.IsVertex())
+	assert.Equal(t,
+		"(\"Bob\" :tag0{datetimeProp: 2020-12-25T22:12:25.000029})",
+		valWrap.String())
+	res, _ = valWrap.AsNode()
+	node, _ = genNode(value.GetVVal(), testTimezone)
 	assert.Equal(t, *node, *res)
 }
 
 func TestAsRelationship(t *testing.T) {
 	// [:classmate "Alice"->"Bob" @100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]
 	value := nebula.Value{EVal: getEdge("Alice", "Bob", 5)}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsEdge())
-	assert.Equal(t, "[:classmate \"Alice\"->\"Bob\" @100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]", valWrap.String())
+	assert.Equal(t,
+		"[:classmate \"Alice\"->\"Bob\" @100 {prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4}]",
+		valWrap.String())
 	res, _ := valWrap.AsRelationship()
-	relationship, _ := genRelationship(value.GetEVal())
+	relationship, _ := genRelationship(value.GetEVal(), testTimezone)
 	assert.Equal(t, *relationship, *res)
 
 	// edge without prop
 	value = nebula.Value{EVal: getEdge("Alice", "Bob", 0)}
-	valWrap = ValueWrapper{&value}
+	valWrap = ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsEdge())
 	assert.Equal(t, "[:classmate \"Alice\"->\"Bob\" @100 {}]", valWrap.String())
 	res, _ = valWrap.AsRelationship()
-	relationship, _ = genRelationship(value.GetEVal())
+	relationship, _ = genRelationship(value.GetEVal(), testTimezone)
+	assert.Equal(t, *relationship, *res)
+
+	// edge contains datetime
+	var srcVidVal = nebula.NewValue()
+	var dstVidVal = nebula.NewValue()
+	srcVidVal.SVal = []byte("Alice")
+	dstVidVal.SVal = []byte("Bob")
+	props := make(map[string]*nebula.Value)
+	props["datetimeProp"] = &nebula.Value{DtVal: &nebula.DateTime{2020, 12, 25, 22, 12, 25, 29}}
+	edge := &nebula.Edge{
+		Src:     srcVidVal,
+		Dst:     dstVidVal,
+		Type:    1,
+		Name:    []byte("classmate"),
+		Ranking: 100,
+		Props:   props,
+	}
+	value = nebula.Value{EVal: edge}
+	valWrap = ValueWrapper{&value, testTimezone}
+	assert.Equal(t, true, valWrap.IsEdge())
+	assert.Equal(t,
+		"[:classmate \"Alice\"->\"Bob\" @100 {datetimeProp: 2020-12-25T22:12:25.000029}]",
+		valWrap.String())
+	res, _ = valWrap.AsRelationship()
+	relationship, _ = genRelationship(value.GetEVal(), testTimezone)
 	assert.Equal(t, *relationship, *res)
 }
 
 func TestAsPathWrapper(t *testing.T) {
 	//("Tim Duncan" :tag0{prop0: 0, prop1: 1})-[:serve@0]->("Spurs")<-[:serve@0]-("Tony Parker" :tag0{prop0: 0, prop1: 1})
 	value := nebula.Value{PVal: getPath("Alice", 5)}
-	valWrap := ValueWrapper{&value}
+	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsPath())
 	assert.Equal(t,
 		"<(\"Alice\" :tag0{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4} "+
@@ -243,13 +392,13 @@ func TestAsPathWrapper(t *testing.T) {
 			":tag2{prop0: 0, prop1: 1, prop2: 2, prop3: 3, prop4: 4})>",
 		valWrap.String())
 	res, _ := valWrap.AsPath()
-	path, _ := genPathWrapper(value.GetPVal())
+	path, _ := genPathWrapper(value.GetPVal(), testTimezone)
 	assert.Equal(t, *path, *res)
 }
 
 func TestNode(t *testing.T) {
 	vertex := getVertex("Tom", 3, 5)
-	node, err := genNode(vertex)
+	node, err := genNode(vertex, testTimezone)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
@@ -274,7 +423,7 @@ func TestNode(t *testing.T) {
 
 func TestRelationship(t *testing.T) {
 	edge := getEdge("Tom", "Lily", 5)
-	relationship, err := genRelationship(edge)
+	relationship, err := genRelationship(edge, testTimezone)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
@@ -299,17 +448,17 @@ func TestRelationship(t *testing.T) {
 
 func TestPathWrapper(t *testing.T) {
 	path := getPath("Tom", 5)
-	pathWrapper, err := genPathWrapper(path)
+	pathWrapper, err := genPathWrapper(path, testTimezone)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
 	assert.Equal(t, 5, pathWrapper.GetPathLength())
-	node, err := genNode(getVertex("Tom", 3, 5))
+	node, err := genNode(getVertex("Tom", 3, 5), testTimezone)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
 	assert.Equal(t, true, pathWrapper.ContainsNode(*node))
-	relationship, err := genRelationship(getEdge("Tom", "vertex0", 5))
+	relationship, err := genRelationship(getEdge("Tom", "vertex0", 5), testTimezone)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
@@ -318,7 +467,7 @@ func TestPathWrapper(t *testing.T) {
 	var nodeList []Node
 	nodeList = append(nodeList, *node)
 	for i := 0; i < 5; i++ {
-		genNode, err := genNode(getVertex(fmt.Sprintf("vertex%d", i), 3, 5))
+		genNode, err := genNode(getVertex(fmt.Sprintf("vertex%d", i), 3, 5), testTimezone)
 		if err != nil {
 			t.Errorf(err.Error())
 		}
@@ -334,7 +483,7 @@ func TestPathWrapper(t *testing.T) {
 		} else {
 			edge = getEdge(fmt.Sprintf("vertex%d", i), fmt.Sprintf("vertex%d", i+1), 5)
 		}
-		newRelationship, err := genRelationship(edge)
+		newRelationship, err := genRelationship(edge, testTimezone)
 		if err != nil {
 			t.Errorf(err.Error())
 		}
@@ -372,7 +521,11 @@ func TestResultSet(t *testing.T) {
 		nil,
 		nil,
 		nil}
-	resultSetWithNil := genResultSet(respWithNil)
+	resultSetWithNil, err := genResultSet(respWithNil, testTimezone)
+	if err != nil {
+		t.Error(err)
+	}
+
 	assert.Equal(t, ErrorCode_E_STATEMENT_EMPTY, resultSetWithNil.GetErrorCode())
 	assert.Equal(t, int32(1000), resultSetWithNil.GetLatency())
 	assert.Equal(t, "", resultSetWithNil.GetErrorMsg())
@@ -382,7 +535,7 @@ func TestResultSet(t *testing.T) {
 
 	planDesc := graph.PlanDescription{
 		[]*graph.PlanNodeDescription{
-			&graph.PlanNodeDescription{
+			{
 				[]byte("Project"),
 				0,
 				[]byte("__Project_0"),
@@ -390,7 +543,7 @@ func TestResultSet(t *testing.T) {
 				[]*graph.ProfilingStats{},
 				nil,
 				[]int64{2}},
-			&graph.PlanNodeDescription{
+			{
 				[]byte("Start"),
 				2,
 				[]byte("__Start_2"),
@@ -412,8 +565,11 @@ func TestResultSet(t *testing.T) {
 		[]byte("test_err_msg"),
 		&planDesc,
 		[]byte("test_comment")}
-	resultSet := genResultSet(resp)
 
+	resultSet, err := genResultSet(resp, testTimezone)
+	if err != nil {
+		t.Error(err)
+	}
 	assert.Equal(t, ErrorCode_SUCCEEDED, resultSet.GetErrorCode())
 	assert.Equal(t, int32(1000), resultSet.GetLatency())
 	assert.Equal(t, "test_err_msg", resultSet.GetErrorMsg())
@@ -439,30 +595,30 @@ func TestResultSet(t *testing.T) {
 	}
 	temp, err := record.GetValueByIndex(0)
 	_, err = temp.AsNode()
-	assert.EqualError(t, err, "Failed to convert value int to Node, value is not an vertex")
+	assert.EqualError(t, err, "failed to convert value int to Node, value is not an vertex")
 	temp, err = record.GetValueByColName("col2")
-	assert.EqualError(t, err, "Failed to get values, given column name 'col2' does not exist")
+	assert.EqualError(t, err, "failed to get values, given column name 'col2' does not exist")
 	val, _ := record.GetValueByColName("col2_vertex")
 	node, _ := val.AsNode()
 	assert.Equal(t, "\"Tom\"", node.GetID().String())
 
 	// Check get row values
 	_, err = resultSet.GetRowValuesByIndex(10)
-	assert.EqualError(t, err, "Failed to get Value, the index is out of range")
+	assert.EqualError(t, err, "failed to get Value, the index is out of range")
 
 	vlist := record._record
 
-	expected_v1, err := vlist[0].AsInt()
-	expected_v2, err := vlist[1].AsString()
-	expected_v3, err := vlist[2].AsNode()
-	expected_v4, err := vlist[3].AsRelationship()
-	expected_v5, err := vlist[4].AsPath()
+	expected_v1, _ := vlist[0].AsInt()
+	expected_v2, _ := vlist[1].AsString()
+	expected_v3, _ := vlist[2].AsNode()
+	expected_v4, _ := vlist[3].AsRelationship()
+	expected_v5, _ := vlist[4].AsPath()
 
 	v1 := int64(1)
 	v2 := "value1"
-	v3, err := genNode(getVertex("Tom", 3, 5))
-	v4, err := genRelationship(getEdge("Tom", "Lily", 5))
-	v5, err := genPathWrapper(getPath("Tom", 3))
+	v3, _ := genNode(getVertex("Tom", 3, 5), testTimezone)
+	v4, _ := genRelationship(getEdge("Tom", "Lily", 5), testTimezone)
+	v5, _ := genPathWrapper(getPath("Tom", 3), testTimezone)
 
 	assert.Equal(t, v1, expected_v1)
 	assert.Equal(t, v2, expected_v2)
@@ -488,8 +644,10 @@ func TestAsStringTable(t *testing.T) {
 		[]byte("test"),
 		graph.NewPlanDescription(),
 		[]byte("test_comment")}
-	resultSet := genResultSet(resp)
-
+	resultSet, err := genResultSet(resp, testTimezone)
+	if err != nil {
+		t.Error(err)
+	}
 	table := resultSet.AsStringTable()
 	var r string
 	for i := 0; i < len(table); i++ {
@@ -526,7 +684,7 @@ func TestAsStringTable(t *testing.T) {
 
 func TestIntVid(t *testing.T) {
 	vertex := getVertexInt(101, 3, 5)
-	node, err := genNode(vertex)
+	node, err := genNode(vertex, testTimezone)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
@@ -672,8 +830,7 @@ func getDateset() *nebula.DataSet {
 	var v5 = nebula.NewValue()
 	v5.PVal = getPath("Tom", 3)
 
-	var valueList []*nebula.Value
-	valueList = []*nebula.Value{v1, v2, v3, v4, v5}
+	valueList := []*nebula.Value{v1, v2, v3, v4, v5}
 	var rows []*nebula.Row
 	row := &nebula.Row{
 		valueList,

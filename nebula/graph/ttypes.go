@@ -1469,10 +1469,14 @@ func (p *ExecutionResponse) String() string {
 //  - ErrorCode
 //  - ErrorMsg
 //  - SessionID
+//  - TimeZoneOffsetSeconds
+//  - TimeZoneName
 type AuthResponse struct {
   ErrorCode nebula0.ErrorCode `thrift:"error_code,1,required" db:"error_code" json:"error_code"`
   ErrorMsg []byte `thrift:"error_msg,2" db:"error_msg" json:"error_msg,omitempty"`
   SessionID *int64 `thrift:"session_id,3" db:"session_id" json:"session_id,omitempty"`
+  TimeZoneOffsetSeconds *int32 `thrift:"time_zone_offset_seconds,4" db:"time_zone_offset_seconds" json:"time_zone_offset_seconds,omitempty"`
+  TimeZoneName []byte `thrift:"time_zone_name,5" db:"time_zone_name" json:"time_zone_name,omitempty"`
 }
 
 func NewAuthResponse() *AuthResponse {
@@ -1495,12 +1499,32 @@ func (p *AuthResponse) GetSessionID() int64 {
   }
 return *p.SessionID
 }
+var AuthResponse_TimeZoneOffsetSeconds_DEFAULT int32
+func (p *AuthResponse) GetTimeZoneOffsetSeconds() int32 {
+  if !p.IsSetTimeZoneOffsetSeconds() {
+    return AuthResponse_TimeZoneOffsetSeconds_DEFAULT
+  }
+return *p.TimeZoneOffsetSeconds
+}
+var AuthResponse_TimeZoneName_DEFAULT []byte
+
+func (p *AuthResponse) GetTimeZoneName() []byte {
+  return p.TimeZoneName
+}
 func (p *AuthResponse) IsSetErrorMsg() bool {
   return p != nil && p.ErrorMsg != nil
 }
 
 func (p *AuthResponse) IsSetSessionID() bool {
   return p != nil && p.SessionID != nil
+}
+
+func (p *AuthResponse) IsSetTimeZoneOffsetSeconds() bool {
+  return p != nil && p.TimeZoneOffsetSeconds != nil
+}
+
+func (p *AuthResponse) IsSetTimeZoneName() bool {
+  return p != nil && p.TimeZoneName != nil
 }
 
 func (p *AuthResponse) Read(iprot thrift.Protocol) error {
@@ -1528,6 +1552,14 @@ func (p *AuthResponse) Read(iprot thrift.Protocol) error {
       }
     case 3:
       if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    case 4:
+      if err := p.ReadField4(iprot); err != nil {
+        return err
+      }
+    case 5:
+      if err := p.ReadField5(iprot); err != nil {
         return err
       }
     default:
@@ -1576,12 +1608,32 @@ func (p *AuthResponse)  ReadField3(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *AuthResponse)  ReadField4(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 4: ", err)
+} else {
+  p.TimeZoneOffsetSeconds = &v
+}
+  return nil
+}
+
+func (p *AuthResponse)  ReadField5(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 5: ", err)
+} else {
+  p.TimeZoneName = v
+}
+  return nil
+}
+
 func (p *AuthResponse) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("AuthResponse"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := p.writeField2(oprot); err != nil { return err }
   if err := p.writeField3(oprot); err != nil { return err }
+  if err := p.writeField4(oprot); err != nil { return err }
+  if err := p.writeField5(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -1623,6 +1675,30 @@ func (p *AuthResponse) writeField3(oprot thrift.Protocol) (err error) {
   return err
 }
 
+func (p *AuthResponse) writeField4(oprot thrift.Protocol) (err error) {
+  if p.IsSetTimeZoneOffsetSeconds() {
+    if err := oprot.WriteFieldBegin("time_zone_offset_seconds", thrift.I32, 4); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:time_zone_offset_seconds: ", p), err) }
+    if err := oprot.WriteI32(int32(*p.TimeZoneOffsetSeconds)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.time_zone_offset_seconds (4) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 4:time_zone_offset_seconds: ", p), err) }
+  }
+  return err
+}
+
+func (p *AuthResponse) writeField5(oprot thrift.Protocol) (err error) {
+  if p.IsSetTimeZoneName() {
+    if err := oprot.WriteFieldBegin("time_zone_name", thrift.STRING, 5); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:time_zone_name: ", p), err) }
+    if err := oprot.WriteBinary(p.TimeZoneName); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.time_zone_name (5) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 5:time_zone_name: ", p), err) }
+  }
+  return err
+}
+
 func (p *AuthResponse) String() string {
   if p == nil {
     return "<nil>"
@@ -1636,6 +1712,13 @@ func (p *AuthResponse) String() string {
   } else {
     sessionIDVal = fmt.Sprintf("%v", *p.SessionID)
   }
-  return fmt.Sprintf("AuthResponse({ErrorCode:%s ErrorMsg:%s SessionID:%s})", errorCodeVal, errorMsgVal, sessionIDVal)
+  var timeZoneOffsetSecondsVal string
+  if p.TimeZoneOffsetSeconds == nil {
+    timeZoneOffsetSecondsVal = "<nil>"
+  } else {
+    timeZoneOffsetSecondsVal = fmt.Sprintf("%v", *p.TimeZoneOffsetSeconds)
+  }
+  timeZoneNameVal := fmt.Sprintf("%v", p.TimeZoneName)
+  return fmt.Sprintf("AuthResponse({ErrorCode:%s ErrorMsg:%s SessionID:%s TimeZoneOffsetSeconds:%s TimeZoneName:%s})", errorCodeVal, errorMsgVal, sessionIDVal, timeZoneOffsetSecondsVal, timeZoneNameVal)
 }
 
