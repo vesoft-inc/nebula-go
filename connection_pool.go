@@ -120,7 +120,7 @@ func (pool *ConnectionPool) GetSessionWithSpace(username, password, space string
 	if err != nil {
 		return nil, err
 	}
-	stmt := "USE" + space
+	stmt := "USE " + space
 	res, err := session.Execute(stmt)
 	if err != nil {
 		return nil, err
