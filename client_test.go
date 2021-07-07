@@ -247,6 +247,7 @@ func TestServiceDataIO(t *testing.T) {
 		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error())
 	}
+	sessionCreatedTime := time.Now()
 	defer session.Release()
 
 	// Method used to check execution response
@@ -520,6 +521,71 @@ func TestServiceDataIO(t *testing.T) {
 		localTime, _ := dtWrapper.getLocalDateTime()
 		expected = nebula.DateTime{2010, 9, 10, 10, 8, 2, 0}
 		assert.Equal(t, expected, *localTime)
+	}
+
+	// Check timestamp
+	{
+		// test show jobs
+		_, err := tryToExecute(session, "SUBMIT JOB STATS")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		expected := int8(time.Now().Hour())
+		time.Sleep(10 * time.Second)
+
+		resp, err := tryToExecute(session, "SHOW JOBS")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, true, resp.GetRowSize() >= 1)
+
+		// Row[1][3] is the Start Time of the job
+		record, err := resp.GetRowValuesByIndex(1)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		valWrap, err := record.GetValueByIndex(3)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+
+		dtWrapper, err := valWrap.AsDateTime()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		localTime, _ := dtWrapper.getLocalDateTime()
+		assert.Equal(t, expected, localTime.GetHour())
+
+		// test show sessions
+		resp, err = tryToExecute(session, "SHOW SESSIONS")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		// Row[1][3] is the CreateTime of the session
+		record, err = resp.GetRowValuesByIndex(1)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		valWrap, err = record.GetValueByIndex(3)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+
+		dtWrapper, err = valWrap.AsDateTime()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		localTime, _ = dtWrapper.getLocalDateTime()
+		assert.Equal(t, int8(sessionCreatedTime.Hour()), localTime.GetHour())
 	}
 
 	// Drop space
