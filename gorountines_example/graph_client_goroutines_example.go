@@ -18,7 +18,7 @@ import (
 const (
 	address  = "127.0.0.1"
 	port     = 9669
-	username = "user"
+	username = "root"
 	password = "password"
 )
 
@@ -54,11 +54,11 @@ func main() {
 		// Method used to check execution response
 		checkResultSet := func(prefix string, res *nebula.ResultSet) {
 			if !res.IsSucceed() {
-				fmt.Printf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, res.GetErrorCode(), res.GetErrorMsg())
+				log.Fatal(fmt.Sprintf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, res.GetErrorCode(), res.GetErrorMsg()))
 			}
 		}
 		{
-			createSchema := "CREATE SPACE IF NOT EXISTS example_space; " +
+			createSchema := "CREATE SPACE IF NOT EXISTS example_space(vid_type=FIXED_STRING(10)); " +
 				"USE example_space;" +
 				"CREATE TAG IF NOT EXISTS person(name string, age int);" +
 				"CREATE EDGE IF NOT EXISTS like(likeness double)"
@@ -144,6 +144,17 @@ func main() {
 			}
 			// Print ValueWrapper using String()
 			fmt.Printf("Print using ValueWrapper.String(): %s", valueWrapper.String())
+		}
+		// Drop space
+		{
+			query := "DROP SPACE example_space"
+			// Send query
+			resultSet, err := session.Execute(query)
+			if err != nil {
+				fmt.Print(err.Error())
+				return
+			}
+			checkResultSet(query, resultSet)
 		}
 	}(&wg)
 	wg.Wait()

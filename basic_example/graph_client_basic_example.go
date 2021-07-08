@@ -15,7 +15,7 @@ import (
 const (
 	address  = "127.0.0.1"
 	port     = 9669
-	username = "user"
+	username = "root"
 	password = "password"
 )
 
@@ -47,14 +47,14 @@ func main() {
 
 	checkResultSet := func(prefix string, res *nebula.ResultSet) {
 		if !res.IsSucceed() {
-			fmt.Printf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, res.GetErrorCode(), res.GetErrorMsg())
+			log.Fatal(fmt.Sprintf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, res.GetErrorCode(), res.GetErrorMsg()))
 		}
 	}
 
 	{
 		// Prepare the query
-		createSchema := "CREATE SPACE IF NOT EXISTS test; " +
-			"USE test;" +
+		createSchema := "CREATE SPACE IF NOT EXISTS basic_example_space(vid_type=FIXED_STRING(20)); " +
+			"USE basic_example_space;" +
 			"CREATE TAG IF NOT EXISTS person(name string, age int);" +
 			"CREATE EDGE IF NOT EXISTS like(likeness double)"
 
@@ -65,6 +65,17 @@ func main() {
 			return
 		}
 		checkResultSet(createSchema, resultSet)
+	}
+	// Drop space
+	{
+		query := "DROP SPACE basic_example_space"
+		// Send query
+		resultSet, err := session.Execute(query)
+		if err != nil {
+			fmt.Print(err.Error())
+			return
+		}
+		checkResultSet(query, resultSet)
 	}
 
 	fmt.Print("\n")
