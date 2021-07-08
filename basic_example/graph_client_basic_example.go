@@ -13,10 +13,12 @@ import (
 )
 
 const (
-	address  = "127.0.0.1"
-	port     = 3669 // Modify port as needed
+	address = "127.0.0.1"
+	// The default port of Nebula Graph 2.x is 9669.
+	// 3699 is only for testing.
+	port     = 3699
 	username = "root"
-	password = "password"
+	password = "nebula"
 )
 
 // Initialize logger
@@ -68,7 +70,7 @@ func main() {
 	}
 	// Drop space
 	{
-		query := "DROP SPACE basic_example_space"
+		query := "DROP SPACE IF EXISTS basic_example_space"
 		// Send query
 		resultSet, err := session.Execute(query)
 		if err != nil {

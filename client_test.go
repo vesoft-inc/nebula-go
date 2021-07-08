@@ -275,7 +275,7 @@ func TestServiceDataIO(t *testing.T) {
 		}
 		checkResultSet(createSchema, resultSet)
 	}
-	time.Sleep(5 * time.Second)
+	time.Sleep(3 * time.Second)
 
 	// Load data
 	{
@@ -886,14 +886,13 @@ func startContainer(t *testing.T, containerName string) {
 	}
 }
 
-func tryToExecute(session *Session, query string) (*ResultSet, error) {
-	var err error
+func tryToExecute(session *Session, query string) (resp *ResultSet, err error) {
 	for i := 3; i > 0; i-- {
-		resp, err := session.Execute(query)
+		resp, err = session.Execute(query)
 		if err == nil && resp.IsSucceed() {
-			return resp, nil
+			return
 		}
 		time.Sleep(2 * time.Second)
 	}
-	return nil, err
+	return
 }
