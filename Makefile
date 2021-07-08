@@ -1,4 +1,4 @@
-.PHONY: build test test-dev fmt ci
+.PHONY: build test fmt ci run-examples
 
 default: build
 
@@ -19,3 +19,7 @@ ci:
 	cd .. && \
 	go test -v -race; \
 	cd ./nebula-docker-compose && docker-compose down -v 
+
+run-examples:
+	go run basic_example/graph_client_basic_example.go
+	go run gorountines_example/graph_client_goroutines_example.go

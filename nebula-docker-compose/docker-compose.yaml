@@ -16,6 +16,7 @@ services:
       - --v=0
       - --minloglevel=0
       - --timezone_name=+08:00
+      - --heartbeat_interval_secs=1
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad0:11000/status"]
       interval: 30s
@@ -51,6 +52,7 @@ services:
       - --v=0
       - --minloglevel=0
       - --timezone_name=+08:00
+      - --heartbeat_interval_secs=1
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad1:11000/status"]
       interval: 30s
@@ -86,6 +88,7 @@ services:
       - --v=0
       - --minloglevel=0
       - --timezone_name=+08:00
+      - --heartbeat_interval_secs=1
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad2:11000/status"]
       interval: 30s
@@ -121,6 +124,7 @@ services:
       - --v=0
       - --minloglevel=0
       - --timezone_name=+08:00
+      - --heartbeat_interval_secs=1
     depends_on:
       - metad0
       - metad1
@@ -160,6 +164,7 @@ services:
       - --v=0
       - --minloglevel=0
       - --timezone_name=+08:00
+      - --heartbeat_interval_secs=1
     depends_on:
       - metad0
       - metad1
@@ -199,6 +204,7 @@ services:
       - --v=0
       - --minloglevel=0
       - --timezone_name=+08:00
+      - --heartbeat_interval_secs=1
     depends_on:
       - metad0
       - metad1
@@ -235,9 +241,10 @@ services:
       - --log_dir=/logs
       - --v=0
       - --minloglevel=0
-      - --enable_authorize
+      - --enable_authorize=true
       - --timezone_name=+08:00
       - --system_memory_high_watermark_ratio=0.99
+      - --heartbeat_interval_secs=1
     depends_on:
       - metad0
       - metad1
@@ -273,8 +280,10 @@ services:
       - --log_dir=/logs
       - --v=0
       - --minloglevel=0
+      - --enable_authorize=true
       - --timezone_name=+08:00
       - --system_memory_high_watermark_ratio=0.99
+      - --heartbeat_interval_secs=1
     depends_on:
       - metad0
       - metad1
@@ -310,8 +319,10 @@ services:
       - --log_dir=/logs
       - --v=0
       - --minloglevel=0
+      - --enable_authorize=true
       - --timezone_name=+08:00
       - --system_memory_high_watermark_ratio=0.99
+      - --heartbeat_interval_secs=1
     depends_on:
       - metad0
       - metad1
