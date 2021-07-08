@@ -544,7 +544,7 @@ func TestServiceDataIO(t *testing.T) {
 		// Row[1][3] is the Start Time of the job
 		record, err := resp.GetRowValuesByIndex(1)
 		if err != nil {
-			t.Fatalf(err.Error())
+			t.Fatalf("%s, record size: %s", err.Error(), record.String())
 			return
 		}
 		valWrap, err := record.GetValueByIndex(3)
