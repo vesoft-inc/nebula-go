@@ -56,20 +56,11 @@ func main() {
 		// Method used to check execution response
 		checkResultSet := func(prefix string, res *nebula.ResultSet) {
 			if !res.IsSucceed() {
-<<<<<<< Updated upstream
 				log.Fatal(fmt.Sprintf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, res.GetErrorCode(), res.GetErrorMsg()))
 			}
 		}
 		{
 			createSchema := "CREATE SPACE IF NOT EXISTS example_space(vid_type=FIXED_STRING(20)); " +
-=======
-				fmt.Printf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, res.GetErrorCode(), res.GetErrorMsg())
-				return
-			}
-		}
-		{
-			createSchema := "CREATE SPACE IF NOT EXISTS example_space(vid_type=INT64); " +
->>>>>>> Stashed changes
 				"USE example_space;" +
 				"CREATE TAG IF NOT EXISTS person(name string, age int);" +
 				"CREATE EDGE IF NOT EXISTS like(likeness double)"

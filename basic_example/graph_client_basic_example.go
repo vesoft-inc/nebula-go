@@ -13,19 +13,12 @@ import (
 )
 
 const (
-<<<<<<< Updated upstream
 	address = "127.0.0.1"
 	// The default port of Nebula Graph 2.x is 9669.
 	// 3699 is only for testing.
 	port     = 3699
 	username = "root"
 	password = "nebula"
-=======
-	address  = "127.0.0.1"
-	port     = 9669
-	username = "root"
-	password = "password"
->>>>>>> Stashed changes
 )
 
 // Initialize logger
