@@ -16,10 +16,12 @@ import (
 )
 
 const (
-	address  = "127.0.0.1"
-	port     = 9669
-	username = "user"
-	password = "password"
+	address = "127.0.0.1"
+	// The default port of Nebula Graph 2.x is 9669.
+	// 3699 is only for testing.
+	port     = 3699
+	username = "root"
+	password = "nebula"
 )
 
 // Initialize logger
@@ -54,11 +56,11 @@ func main() {
 		// Method used to check execution response
 		checkResultSet := func(prefix string, res *nebula.ResultSet) {
 			if !res.IsSucceed() {
-				fmt.Printf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, res.GetErrorCode(), res.GetErrorMsg())
+				log.Fatal(fmt.Sprintf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, res.GetErrorCode(), res.GetErrorMsg()))
 			}
 		}
 		{
-			createSchema := "CREATE SPACE IF NOT EXISTS example_space; " +
+			createSchema := "CREATE SPACE IF NOT EXISTS example_space(vid_type=FIXED_STRING(20)); " +
 				"USE example_space;" +
 				"CREATE TAG IF NOT EXISTS person(name string, age int);" +
 				"CREATE EDGE IF NOT EXISTS like(likeness double)"
@@ -144,6 +146,17 @@ func main() {
 			}
 			// Print ValueWrapper using String()
 			fmt.Printf("Print using ValueWrapper.String(): %s", valueWrapper.String())
+		}
+		// Drop space
+		{
+			query := "DROP SPACE IF EXISTS example_space"
+			// Send query
+			resultSet, err := session.Execute(query)
+			if err != nil {
+				fmt.Print(err.Error())
+				return
+			}
+			checkResultSet(query, resultSet)
 		}
 	}(&wg)
 	wg.Wait()
