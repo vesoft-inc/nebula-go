@@ -247,6 +247,9 @@ func TestServiceDataIO(t *testing.T) {
 		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error())
 	}
+	// Save session create time
+	loc, _ := time.LoadLocation("Asia/Shanghai")
+	sessionCreatedTime := time.Now().In(loc)
 	defer session.Release()
 
 	// Method used to check execution response
@@ -520,6 +523,78 @@ func TestServiceDataIO(t *testing.T) {
 		localTime, _ := dtWrapper.getLocalDateTime()
 		expected = nebula.DateTime{2010, 9, 10, 10, 8, 2, 0}
 		assert.Equal(t, expected, *localTime)
+	}
+
+	// Check timestamp
+	{
+		// test show jobs
+		_, err := tryToExecute(session, "SUBMIT JOB STATS")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		expected := int8(time.Now().In(loc).Hour())
+		time.Sleep(5 * time.Second)
+
+		resp, err := tryToExecute(session, "SHOW JOBS")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+
+		// Row[0][3] is the Start Time of the job
+		record, err := resp.GetRowValuesByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		valWrap, err := record.GetValueByColName("Start Time")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+
+		dtWrapper, err := valWrap.AsDateTime()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		localTime, err := dtWrapper.getLocalDateTime()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, expected, localTime.GetHour())
+
+		// test show sessions
+		resp, err = tryToExecute(session, "SHOW SESSIONS")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		// Row[0][4] is the CreateTime of the session
+		record, err = resp.GetRowValuesByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		valWrap, err = record.GetValueByColName("CreateTime")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+
+		dtWrapper, err = valWrap.AsDateTime()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		localTime, err = dtWrapper.getLocalDateTime()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, int8(sessionCreatedTime.Hour()), localTime.GetHour())
 	}
 
 	// Drop space
