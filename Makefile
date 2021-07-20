@@ -3,11 +3,11 @@
 default: build
 
 build: fmt
-	go mod tidy 
+	go mod tidy
 	go build
 
-test: 
-	go mod tidy 
+test:
+	go mod tidy
 	go test -v -race
 
 fmt:
@@ -18,7 +18,7 @@ ci:
 	sleep 5 && \
 	cd .. && \
 	go test -v -race; \
-	cd ./nebula-docker-compose && docker-compose down -v 
+	cd ./nebula-docker-compose && docker-compose down -v
 
 run-examples:
 	go run basic_example/graph_client_basic_example.go

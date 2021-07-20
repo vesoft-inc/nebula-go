@@ -1103,7 +1103,7 @@ func condEdgeLabel(condNode *graph.PlanNodeDescription, doBranch bool) string {
 
 func nodeString(planNodeDesc *graph.PlanNodeDescription, planNodeName string) string {
 	var outputVar = graphvizString(string(planNodeDesc.GetOutputVar()))
-	var inputVar string
+	var inputVar, inPlaceUpdate string
 	if planNodeDesc.IsSetDescription() {
 		desc := planNodeDesc.GetDescription()
 		for _, pair := range desc {
@@ -1111,10 +1111,13 @@ func nodeString(planNodeDesc *graph.PlanNodeDescription, planNodeName string) st
 			if key == "inputVar" {
 				inputVar = graphvizString(string(pair.GetValue()))
 			}
+			if key == "inPlaceUpdate" {
+				inPlaceUpdate = graphvizString(string(pair.GetValue()))
+			}
 		}
 	}
-	return fmt.Sprintf("\t\"%s\"[label=\"{%s|outputVar: %s|inputVar: %s}\", shape=Mrecord];\n",
-		planNodeName, planNodeName, outputVar, inputVar)
+	return fmt.Sprintf("\t\"%s\"[label=\"{%s|outputVar: %s|inputVar: %s|inPlaceUpdate: %s}\", shape=Mrecord];\n",
+		planNodeName, planNodeName, outputVar, inputVar, inPlaceUpdate)
 }
 
 func edgeString(start, end string) string {
