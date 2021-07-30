@@ -104,6 +104,10 @@ func (session *Session) Release() {
 	session.connection = nil
 }
 
+func (session *Session) GetSessionID() int64 {
+	return session.sessionID
+}
+
 func IsError(resp *graph.ExecutionResponse) bool {
 	return resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED
 }
