@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// PoolConfig is the configs of connection pool
 type PoolConfig struct {
 	// Socket timeout and Socket connection timeout, unit: seconds
 	TimeOut time.Duration
@@ -23,7 +24,7 @@ type PoolConfig struct {
 	MinConnPoolSize int
 }
 
-// Validate config
+// validateConf validates config
 func (conf *PoolConfig) validateConf(log Logger) {
 	if conf.TimeOut < 0 {
 		conf.TimeOut = 0 * time.Millisecond
@@ -43,7 +44,7 @@ func (conf *PoolConfig) validateConf(log Logger) {
 	}
 }
 
-// Return the default config
+// GetDefaultConf returns the default config
 func GetDefaultConf() PoolConfig {
 	return PoolConfig{
 		TimeOut:         0 * time.Millisecond,

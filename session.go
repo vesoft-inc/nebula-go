@@ -87,7 +87,7 @@ func (session *Session) reConnect() error {
 	return nil
 }
 
-// Logout and release connetion hold by session
+// Release logs out and releases connetion hold by session
 func (session *Session) Release() {
 	if session == nil {
 		return
