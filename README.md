@@ -44,4 +44,8 @@ For example: `$ go get -u -v github.com/vesoft-inc/nebula-go/v2@v2.0.0-ga`
 
 [Code Example with Gorountines](https://github.com/vesoft-inc/nebula-go/tree/master/gorountines_example/graph_client_goroutines_example.go)
 
+## Licensing
 
+**Nebula GO** is under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) license, so you can freely download, modify, and deploy the source code to meet your needs. You can also freely deploy **Nebula GO** as a back-end service to support your SaaS deployment.
+
+In order to prevent cloud providers monetizing from the project without contributing back, we added [Commons Clause 1.0](https://commonsclause.com/) to the project. As mentioned above, we fully commit to the open source community. We would love to hear your thoughts on the licensing model and are willing to make it more suitable for the community.
