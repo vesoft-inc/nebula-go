@@ -27,6 +27,7 @@ type ConnectionPool struct {
 	closed                bool
 }
 
+// NewConnectionPool constructs a new connection pool using the given addresses and configs
 func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*ConnectionPool, error) {
 	// Process domain to IP
 	convAddress, err := DomainToIP(addresses)
@@ -55,6 +56,7 @@ func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*C
 	return newPool, nil
 }
 
+// initPool innitializes the connection pool
 func (pool *ConnectionPool) initPool() error {
 	for i := 0; i < pool.conf.MinConnPoolSize; i++ {
 		// Simple round-robin
@@ -78,6 +80,8 @@ func (pool *ConnectionPool) initPool() error {
 	return nil
 }
 
+// GetSession authenticates the username and password.
+// It returns a session if the authentication succeed.
 func (pool *ConnectionPool) GetSession(username, password string) (*Session, error) {
 	// Get valid and usable connection
 	var conn *connection = nil
@@ -159,7 +163,7 @@ func (pool *ConnectionPool) release(conn *connection) {
 	pool.idleConnectionQueue.PushBack(conn)
 }
 
-// Check avaliability of host
+// Ping checks avaliability of host
 func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error {
 	newConn := newConnection(host)
 	// Open connection to host
@@ -170,7 +174,7 @@ func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error 
 	return nil
 }
 
-// Close all connection
+// Close closes all connection
 func (pool *ConnectionPool) Close() {
 	pool.rwLock.Lock()
 	defer pool.rwLock.Unlock()
