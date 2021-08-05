@@ -173,6 +173,7 @@ const (
   ErrorCode_E_LIST_CLUSTER_FAILURE ErrorCode = -2070
   ErrorCode_E_LIST_CLUSTER_GET_ABS_PATH_FAILURE ErrorCode = -2071
   ErrorCode_E_GET_META_DIR_FAILURE ErrorCode = -2072
+  ErrorCode_E_QUERY_NOT_FOUND ErrorCode = -2073
   ErrorCode_E_CONSENSUS_ERROR ErrorCode = -3001
   ErrorCode_E_KEY_HAS_EXISTS ErrorCode = -3002
   ErrorCode_E_DATA_TYPE_MISMATCH ErrorCode = -3003
@@ -183,6 +184,7 @@ const (
   ErrorCode_E_OUT_OF_RANGE ErrorCode = -3008
   ErrorCode_E_ATOMIC_OP_FAILED ErrorCode = -3009
   ErrorCode_E_DATA_CONFLICT_ERROR ErrorCode = -3010
+  ErrorCode_E_WRITE_STALLED ErrorCode = -3011
   ErrorCode_E_IMPROPER_DATA_TYPE ErrorCode = -3021
   ErrorCode_E_INVALID_SPACEVIDLEN ErrorCode = -3022
   ErrorCode_E_INVALID_FILTER ErrorCode = -3031
@@ -287,6 +289,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_LIST_CLUSTER_FAILURE: "E_LIST_CLUSTER_FAILURE",
   ErrorCode_E_LIST_CLUSTER_GET_ABS_PATH_FAILURE: "E_LIST_CLUSTER_GET_ABS_PATH_FAILURE",
   ErrorCode_E_GET_META_DIR_FAILURE: "E_GET_META_DIR_FAILURE",
+  ErrorCode_E_QUERY_NOT_FOUND: "E_QUERY_NOT_FOUND",
   ErrorCode_E_CONSENSUS_ERROR: "E_CONSENSUS_ERROR",
   ErrorCode_E_KEY_HAS_EXISTS: "E_KEY_HAS_EXISTS",
   ErrorCode_E_DATA_TYPE_MISMATCH: "E_DATA_TYPE_MISMATCH",
@@ -297,6 +300,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_OUT_OF_RANGE: "E_OUT_OF_RANGE",
   ErrorCode_E_ATOMIC_OP_FAILED: "E_ATOMIC_OP_FAILED",
   ErrorCode_E_DATA_CONFLICT_ERROR: "E_DATA_CONFLICT_ERROR",
+  ErrorCode_E_WRITE_STALLED: "E_WRITE_STALLED",
   ErrorCode_E_IMPROPER_DATA_TYPE: "E_IMPROPER_DATA_TYPE",
   ErrorCode_E_INVALID_SPACEVIDLEN: "E_INVALID_SPACEVIDLEN",
   ErrorCode_E_INVALID_FILTER: "E_INVALID_FILTER",
@@ -401,6 +405,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_LIST_CLUSTER_FAILURE": ErrorCode_E_LIST_CLUSTER_FAILURE,
   "E_LIST_CLUSTER_GET_ABS_PATH_FAILURE": ErrorCode_E_LIST_CLUSTER_GET_ABS_PATH_FAILURE,
   "E_GET_META_DIR_FAILURE": ErrorCode_E_GET_META_DIR_FAILURE,
+  "E_QUERY_NOT_FOUND": ErrorCode_E_QUERY_NOT_FOUND,
   "E_CONSENSUS_ERROR": ErrorCode_E_CONSENSUS_ERROR,
   "E_KEY_HAS_EXISTS": ErrorCode_E_KEY_HAS_EXISTS,
   "E_DATA_TYPE_MISMATCH": ErrorCode_E_DATA_TYPE_MISMATCH,
@@ -411,6 +416,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_OUT_OF_RANGE": ErrorCode_E_OUT_OF_RANGE,
   "E_ATOMIC_OP_FAILED": ErrorCode_E_ATOMIC_OP_FAILED,
   "E_DATA_CONFLICT_ERROR": ErrorCode_E_DATA_CONFLICT_ERROR,
+  "E_WRITE_STALLED": ErrorCode_E_WRITE_STALLED,
   "E_IMPROPER_DATA_TYPE": ErrorCode_E_IMPROPER_DATA_TYPE,
   "E_INVALID_SPACEVIDLEN": ErrorCode_E_INVALID_SPACEVIDLEN,
   "E_INVALID_FILTER": ErrorCode_E_INVALID_FILTER,
@@ -515,6 +521,7 @@ var ErrorCodeNames = []string {
   "E_LIST_CLUSTER_FAILURE",
   "E_LIST_CLUSTER_GET_ABS_PATH_FAILURE",
   "E_GET_META_DIR_FAILURE",
+  "E_QUERY_NOT_FOUND",
   "E_CONSENSUS_ERROR",
   "E_KEY_HAS_EXISTS",
   "E_DATA_TYPE_MISMATCH",
@@ -525,6 +532,7 @@ var ErrorCodeNames = []string {
   "E_OUT_OF_RANGE",
   "E_ATOMIC_OP_FAILED",
   "E_DATA_CONFLICT_ERROR",
+  "E_WRITE_STALLED",
   "E_IMPROPER_DATA_TYPE",
   "E_INVALID_SPACEVIDLEN",
   "E_INVALID_FILTER",
@@ -629,6 +637,7 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_LIST_CLUSTER_FAILURE,
   ErrorCode_E_LIST_CLUSTER_GET_ABS_PATH_FAILURE,
   ErrorCode_E_GET_META_DIR_FAILURE,
+  ErrorCode_E_QUERY_NOT_FOUND,
   ErrorCode_E_CONSENSUS_ERROR,
   ErrorCode_E_KEY_HAS_EXISTS,
   ErrorCode_E_DATA_TYPE_MISMATCH,
@@ -639,6 +648,7 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_OUT_OF_RANGE,
   ErrorCode_E_ATOMIC_OP_FAILED,
   ErrorCode_E_DATA_CONFLICT_ERROR,
+  ErrorCode_E_WRITE_STALLED,
   ErrorCode_E_IMPROPER_DATA_TYPE,
   ErrorCode_E_INVALID_SPACEVIDLEN,
   ErrorCode_E_INVALID_FILTER,
@@ -723,6 +733,10 @@ func PortPtr(v Port) *Port { return &v }
 type SessionID = int64
 
 func SessionIDPtr(v SessionID) *SessionID { return &v }
+
+type ExecutionPlanID = int64
+
+func ExecutionPlanIDPtr(v ExecutionPlanID) *ExecutionPlanID { return &v }
 
 // Attributes:
 //  - Year
