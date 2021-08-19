@@ -863,6 +863,109 @@ func TestIdleTimeoutCleaner(t *testing.T) {
 	pool.rwLock.RUnlock()
 }
 
+func TestTimeout(t *testing.T) {
+	hostAdress := HostAddress{Host: address, Port: port}
+	hostList := []HostAddress{}
+	hostList = append(hostList, hostAdress)
+
+	testPoolConfig = PoolConfig{
+		TimeOut:         1000 * time.Millisecond,
+		IdleTime:        0 * time.Millisecond,
+		MaxConnPoolSize: 10,
+		MinConnPoolSize: 1,
+	}
+
+	// Initialize connectin pool
+	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+	if err != nil {
+		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+	}
+	// close all connections in the pool
+	defer pool.Close()
+
+	// Create session
+	session, err := pool.GetSession(username, password)
+	if err != nil {
+		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
+			username, password, err.Error())
+	}
+	assert.NotEmptyf(t, session, "session is nil")
+
+	// Create schemas
+	{
+		createSchema :=
+			"CREATE SPACE IF NOT EXISTS test_timeout(VID_TYPE=FIXED_STRING(32));" +
+				"USE test_timeout;" +
+				"CREATE TAG IF NOT EXISTS person (name string, age int);" +
+				"CREATE EDGE IF NOT EXISTS like(likeness int);"
+		resultSet, err := tryToExecute(session, createSchema)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.True(t, resultSet.IsSucceed())
+	}
+	time.Sleep(3 * time.Second)
+
+	// Load data
+	{
+		query := "INSERT VERTEX person (name, age) VALUES" +
+			"'A':('A', 10), " +
+			"'B':('B', 10), " +
+			"'C':('C', 10), " +
+			"'D':('D', 10), " +
+			"'E':('E', 10), " +
+			"'F':('F', 10), " +
+			"'G':('G', 10)"
+		resultSet, err := tryToExecute(session, query)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Truef(t, resultSet.IsSucceed(), resultSet.GetErrorMsg())
+		query =
+			"INSERT EDGE like(likeness) VALUES " +
+				"'A'->'B':(80), " +
+				"'B'->'C':(70), " +
+				"'C'->'D':(84), " +
+				"'D'->'E':(68), " +
+				"'E'->'F':(97), " +
+				"'F'->'G':(97), " +
+				"'G'->'A':(97), " +
+				"'A'->'B':(80), " +
+				"'B'->'C':(70), " +
+				"'C'->'D':(84), " +
+				"'D'->'E':(68), " +
+				"'E'->'F':(97), " +
+				"'F'->'G':(97)"
+		resultSet, err = tryToExecute(session, query)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Truef(t, resultSet.IsSucceed(), resultSet.GetErrorMsg())
+	}
+
+	// trigger timeout
+	_, err = tryToExecute(session, "GO 10000 STEPS FROM 'A' OVER * YIELD like.likeness")
+	assert.Contains(t, err.Error(), "timeout")
+
+	resultSet, err := tryToExecute(session, "YIELD 999")
+	assert.Empty(t, err)
+	assert.Equal(t, resultSet.IsSucceed(), true)
+	assert.Contains(t, resultSet.AsStringTable(), []string{"999"})
+
+	// Drop space
+	{
+		query := "DROP SPACE test_timeout;"
+		_, err := tryToExecute(session, query)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+	}
+}
+
 func TestReconnect(t *testing.T) {
 	hostList := poolAddress
 
