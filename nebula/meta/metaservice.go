@@ -241,7 +241,7 @@ type MetaService interface {
   ListListener(ctx context.Context, req *ListListenerReq) (_r *ListListenerResp, err error)
   // Parameters:
   //  - Req
-  GetStatis(ctx context.Context, req *GetStatisReq) (_r *GetStatisResp, err error)
+  GetStats(ctx context.Context, req *GetStatsReq) (_r *GetStatsResp, err error)
   // Parameters:
   //  - Req
   SignInFTService(ctx context.Context, req *SignInFTServiceReq) (_r *ExecResp, err error)
@@ -509,7 +509,7 @@ type MetaServiceClientInterface interface {
   ListListener(req *ListListenerReq) (_r *ListListenerResp, err error)
   // Parameters:
   //  - Req
-  GetStatis(req *GetStatisReq) (_r *GetStatisResp, err error)
+  GetStats(req *GetStatsReq) (_r *GetStatsResp, err error)
   // Parameters:
   //  - Req
   SignInFTService(req *SignInFTServiceReq) (_r *ExecResp, err error)
@@ -2028,19 +2028,19 @@ func (p *MetaServiceClient) recvListListener() (value *ListListenerResp, err err
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) GetStatis(req *GetStatisReq) (_r *GetStatisResp, err error) {
-  args := MetaServiceGetStatisArgs{
+func (p *MetaServiceClient) GetStats(req *GetStatsReq) (_r *GetStatsResp, err error) {
+  args := MetaServiceGetStatsArgs{
     Req : req,
   }
-  err = p.CC.SendMsg("getStatis", &args, thrift.CALL)
+  err = p.CC.SendMsg("getStats", &args, thrift.CALL)
   if err != nil { return }
-  return p.recvGetStatis()
+  return p.recvGetStats()
 }
 
 
-func (p *MetaServiceClient) recvGetStatis() (value *GetStatisResp, err error) {
-  var result MetaServiceGetStatisResult
-  err = p.CC.RecvMsg("getStatis", &result)
+func (p *MetaServiceClient) recvGetStats() (value *GetStatsResp, err error) {
+  var result MetaServiceGetStatsResult
+  err = p.CC.RecvMsg("getStats", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -3969,21 +3969,21 @@ func (p *MetaServiceThreadsafeClient) recvListListener() (value *ListListenerRes
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) GetStatis(req *GetStatisReq) (_r *GetStatisResp, err error) {
+func (p *MetaServiceThreadsafeClient) GetStats(req *GetStatsReq) (_r *GetStatsResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  args := MetaServiceGetStatisArgs{
+  args := MetaServiceGetStatsArgs{
     Req : req,
   }
-  err = p.CC.SendMsg("getStatis", &args, thrift.CALL)
+  err = p.CC.SendMsg("getStats", &args, thrift.CALL)
   if err != nil { return }
-  return p.recvGetStatis()
+  return p.recvGetStats()
 }
 
 
-func (p *MetaServiceThreadsafeClient) recvGetStatis() (value *GetStatisResp, err error) {
-  var result MetaServiceGetStatisResult
-  err = p.CC.RecvMsg("getStatis", &result)
+func (p *MetaServiceThreadsafeClient) recvGetStats() (value *GetStatsResp, err error) {
+  var result MetaServiceGetStatsResult
+  err = p.CC.RecvMsg("getStats", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -5278,12 +5278,12 @@ func (p *MetaServiceChannelClient) ListListener(ctx context.Context, req *ListLi
 
 // Parameters:
 //  - Req
-func (p *MetaServiceChannelClient) GetStatis(ctx context.Context, req *GetStatisReq) (_r *GetStatisResp, err error) {
-  args := MetaServiceGetStatisArgs{
+func (p *MetaServiceChannelClient) GetStats(ctx context.Context, req *GetStatsReq) (_r *GetStatsResp, err error) {
+  args := MetaServiceGetStatsArgs{
     Req : req,
   }
-  var result MetaServiceGetStatisResult
-  err = p.RequestChannel.Call(ctx, "getStatis", &args, &result)
+  var result MetaServiceGetStatsResult
+  err = p.RequestChannel.Call(ctx, "getStats", &args, &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -5579,7 +5579,7 @@ func NewMetaServiceProcessor(handler MetaService) *MetaServiceProcessor {
   self97.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
   self97.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
   self97.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
-  self97.processorMap["getStatis"] = &metaServiceProcessorGetStatis{handler:handler}
+  self97.processorMap["getStats"] = &metaServiceProcessorGetStats{handler:handler}
   self97.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
   self97.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
   self97.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
@@ -9198,12 +9198,12 @@ func (p *metaServiceProcessorListListener) RunContext(ctx context.Context, argSt
   return &result, nil
 }
 
-type metaServiceProcessorGetStatis struct {
+type metaServiceProcessorGetStats struct {
   handler MetaService
 }
 
-func (p *metaServiceProcessorGetStatis) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
-  args := MetaServiceGetStatisArgs{}
+func (p *metaServiceProcessorGetStats) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceGetStatsArgs{}
   if err := args.Read(iprot); err != nil {
     return nil, err
   }
@@ -9211,14 +9211,14 @@ func (p *metaServiceProcessorGetStatis) Read(iprot thrift.Protocol) (thrift.Stru
   return &args, nil
 }
 
-func (p *metaServiceProcessorGetStatis) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+func (p *metaServiceProcessorGetStats) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
   var err2 error
   messageType := thrift.REPLY
   switch result.(type) {
   case thrift.ApplicationException:
     messageType = thrift.EXCEPTION
   }
-  if err2 = oprot.WriteMessageBegin("getStatis", messageType, seqId); err2 != nil {
+  if err2 = oprot.WriteMessageBegin("getStats", messageType, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -9233,13 +9233,13 @@ func (p *metaServiceProcessorGetStatis) Write(seqId int32, result thrift.Writabl
   return err
 }
 
-func (p *metaServiceProcessorGetStatis) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
-  args := argStruct.(*MetaServiceGetStatisArgs)
-  var result MetaServiceGetStatisResult
-  if retval, err := p.handler.GetStatis(ctx, args.Req); err != nil {
+func (p *metaServiceProcessorGetStats) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceGetStatsArgs)
+  var result MetaServiceGetStatsResult
+  if retval, err := p.handler.GetStats(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
-      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getStatis: " + err.Error())
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getStats: " + err.Error())
       return x, x
     }
   } else {
@@ -24403,29 +24403,29 @@ func (p *MetaServiceListListenerResult) String() string {
 
 // Attributes:
 //  - Req
-type MetaServiceGetStatisArgs struct {
+type MetaServiceGetStatsArgs struct {
   thrift.IRequest
-  Req *GetStatisReq `thrift:"req,1" db:"req" json:"req"`
+  Req *GetStatsReq `thrift:"req,1" db:"req" json:"req"`
 }
 
-func NewMetaServiceGetStatisArgs() *MetaServiceGetStatisArgs {
-  return &MetaServiceGetStatisArgs{
-    Req: NewGetStatisReq(),
+func NewMetaServiceGetStatsArgs() *MetaServiceGetStatsArgs {
+  return &MetaServiceGetStatsArgs{
+    Req: NewGetStatsReq(),
   }
 }
 
-var MetaServiceGetStatisArgs_Req_DEFAULT *GetStatisReq
-func (p *MetaServiceGetStatisArgs) GetReq() *GetStatisReq {
+var MetaServiceGetStatsArgs_Req_DEFAULT *GetStatsReq
+func (p *MetaServiceGetStatsArgs) GetReq() *GetStatsReq {
   if !p.IsSetReq() {
-    return MetaServiceGetStatisArgs_Req_DEFAULT
+    return MetaServiceGetStatsArgs_Req_DEFAULT
   }
 return p.Req
 }
-func (p *MetaServiceGetStatisArgs) IsSetReq() bool {
+func (p *MetaServiceGetStatsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
-func (p *MetaServiceGetStatisArgs) Read(iprot thrift.Protocol) error {
+func (p *MetaServiceGetStatsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -24457,16 +24457,16 @@ func (p *MetaServiceGetStatisArgs) Read(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceGetStatisArgs)  ReadField1(iprot thrift.Protocol) error {
-  p.Req = NewGetStatisReq()
+func (p *MetaServiceGetStatsArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewGetStatsReq()
   if err := p.Req.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
   }
   return nil
 }
 
-func (p *MetaServiceGetStatisArgs) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("getStatis_args"); err != nil {
+func (p *MetaServiceGetStatsArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("getStats_args"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
@@ -24476,7 +24476,7 @@ func (p *MetaServiceGetStatisArgs) Write(oprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceGetStatisArgs) writeField1(oprot thrift.Protocol) (err error) {
+func (p *MetaServiceGetStatsArgs) writeField1(oprot thrift.Protocol) (err error) {
   if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
   if err := p.Req.Write(oprot); err != nil {
@@ -24487,7 +24487,7 @@ func (p *MetaServiceGetStatisArgs) writeField1(oprot thrift.Protocol) (err error
   return err
 }
 
-func (p *MetaServiceGetStatisArgs) String() string {
+func (p *MetaServiceGetStatsArgs) String() string {
   if p == nil {
     return "<nil>"
   }
@@ -24498,32 +24498,32 @@ func (p *MetaServiceGetStatisArgs) String() string {
   } else {
     reqVal = fmt.Sprintf("%v", p.Req)
   }
-  return fmt.Sprintf("MetaServiceGetStatisArgs({Req:%s})", reqVal)
+  return fmt.Sprintf("MetaServiceGetStatsArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
-type MetaServiceGetStatisResult struct {
+type MetaServiceGetStatsResult struct {
   thrift.IResponse
-  Success *GetStatisResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetStatsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
-func NewMetaServiceGetStatisResult() *MetaServiceGetStatisResult {
-  return &MetaServiceGetStatisResult{}
+func NewMetaServiceGetStatsResult() *MetaServiceGetStatsResult {
+  return &MetaServiceGetStatsResult{}
 }
 
-var MetaServiceGetStatisResult_Success_DEFAULT *GetStatisResp
-func (p *MetaServiceGetStatisResult) GetSuccess() *GetStatisResp {
+var MetaServiceGetStatsResult_Success_DEFAULT *GetStatsResp
+func (p *MetaServiceGetStatsResult) GetSuccess() *GetStatsResp {
   if !p.IsSetSuccess() {
-    return MetaServiceGetStatisResult_Success_DEFAULT
+    return MetaServiceGetStatsResult_Success_DEFAULT
   }
 return p.Success
 }
-func (p *MetaServiceGetStatisResult) IsSetSuccess() bool {
+func (p *MetaServiceGetStatsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
 }
 
-func (p *MetaServiceGetStatisResult) Read(iprot thrift.Protocol) error {
+func (p *MetaServiceGetStatsResult) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -24555,16 +24555,16 @@ func (p *MetaServiceGetStatisResult) Read(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceGetStatisResult)  ReadField0(iprot thrift.Protocol) error {
-  p.Success = NewGetStatisResp()
+func (p *MetaServiceGetStatsResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewGetStatsResp()
   if err := p.Success.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
   }
   return nil
 }
 
-func (p *MetaServiceGetStatisResult) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("getStatis_result"); err != nil {
+func (p *MetaServiceGetStatsResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("getStats_result"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField0(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
@@ -24574,7 +24574,7 @@ func (p *MetaServiceGetStatisResult) Write(oprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceGetStatisResult) writeField0(oprot thrift.Protocol) (err error) {
+func (p *MetaServiceGetStatsResult) writeField0(oprot thrift.Protocol) (err error) {
   if p.IsSetSuccess() {
     if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
@@ -24587,7 +24587,7 @@ func (p *MetaServiceGetStatisResult) writeField0(oprot thrift.Protocol) (err err
   return err
 }
 
-func (p *MetaServiceGetStatisResult) String() string {
+func (p *MetaServiceGetStatsResult) String() string {
   if p == nil {
     return "<nil>"
   }
@@ -24598,7 +24598,7 @@ func (p *MetaServiceGetStatisResult) String() string {
   } else {
     successVal = fmt.Sprintf("%v", p.Success)
   }
-  return fmt.Sprintf("MetaServiceGetStatisResult({Success:%s})", successVal)
+  return fmt.Sprintf("MetaServiceGetStatsResult({Success:%s})", successVal)
 }
 
 // Attributes:
