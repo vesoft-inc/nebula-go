@@ -7,6 +7,7 @@
 package nebula_go
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os/exec"
@@ -56,8 +57,8 @@ func logoutAndClose(conn *connection, sessionID int64) {
 }
 
 func TestConnection(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
-
+	// hostAdress := HostAddress{Host: address, Port: port}
+	hostAdress := HostAddress{Host: "127.0.0.1", Port: 29562}
 	conn := newConnection(hostAdress)
 	err := conn.open(hostAdress, testPoolConfig.TimeOut)
 	if err != nil {
@@ -78,8 +79,18 @@ func TestConnection(t *testing.T) {
 		t.Fatalf(err.Error())
 		return
 	}
-
 	checkConResp(t, "show hosts", resp)
+
+	respJson, err := conn.executeJson(sessionID, "yield 1")
+	if err != nil {
+		t.Fatalf(err.Error())
+		return
+	}
+	if err != nil {
+		t.Fatalf("fail to get the result in json format, %s", err.Error())
+	}
+	jsonObj := `{"some":"json"}`
+	json.Unmarshal(respJson, &jsonObj)
 
 	resp, err = conn.execute(sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
@@ -1013,6 +1024,45 @@ func TestReconnect(t *testing.T) {
 		sessionList[i].Release()
 	}
 	pool.Close()
+}
+
+func TestExecuteJson(t *testing.T) {
+	// hostAdress := HostAddress{Host: "192.168.8.6", Port: 29562}
+	hostList := []HostAddress{{Host: "127.0.0.1", Port: 29562}}
+	// hostList = append(hostList, hostAdress)
+
+	testPoolConfig = PoolConfig{
+		TimeOut:         0 * time.Millisecond,
+		IdleTime:        0 * time.Millisecond,
+		MaxConnPoolSize: 10,
+		MinConnPoolSize: 1,
+	}
+
+	// Initialize connectin pool
+	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+	if err != nil {
+		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+	}
+	// close all connections in the pool
+	defer pool.Close()
+
+	// Create session
+	session, err := pool.GetSession(username, password)
+	if err != nil {
+		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
+			username, password, err.Error())
+	}
+	defer session.Release()
+
+	// Method used to check execution response
+	jsonStrResult, err := session.ExecuteJson(`yield 1, "hello"`)
+	if err != nil {
+		t.Fatalf("fail to get the result in json format, %s", err.Error())
+	}
+	var jsonObj map[string]interface{}
+	// jsonObj := {"some":"json"}
+	json.Unmarshal(jsonStrResult, &jsonObj)
+
 }
 
 func TestIpLookup(t *testing.T) {

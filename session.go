@@ -74,6 +74,40 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 	}
 }
 
+// Execute returns the result of given query as a json string
+func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
+	if session.connection == nil {
+		return nil, fmt.Errorf("failed to execute: Session has been released")
+	}
+	resp, err := session.connection.executeJson(session.sessionID, stmt)
+	if err == nil {
+		return resp, nil
+	}
+	// Reconnect only if the tranport is closed
+	err2, ok := err.(thrift.TransportException)
+	if !ok {
+		return nil, err
+	}
+	if err2.TypeID() == thrift.END_OF_FILE {
+		_err := session.reConnect()
+		if _err != nil {
+			session.log.Error(fmt.Sprintf("Failed to reconnect, %s", _err.Error()))
+			return nil, _err
+		}
+		session.log.Info(fmt.Sprintf("Successfully reconnect to host: %s, port: %d",
+			session.connection.severAddress.Host, session.connection.severAddress.Port))
+		// Execute with the new connetion
+		resp, err := session.connection.executeJson(session.sessionID, stmt)
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	} else { // No need to reconnect
+		session.log.Error(fmt.Sprintf("Error info: %s", err2.Error()))
+		return nil, err2
+	}
+}
+
 func (session *Session) reConnect() error {
 	newconnection, err := session.connPool.getIdleConn()
 	if err != nil {

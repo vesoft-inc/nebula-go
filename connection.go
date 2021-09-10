@@ -102,10 +102,23 @@ func (cn *connection) execute(sessionID int64, stmt string) (*graph.ExecutionRes
 	return resp, err
 }
 
-// unsupported
-// func (client *GraphClient) ExecuteJson((sessionID int64, stmt string) (*graph.ExecutionResponse, error) {
-// 	return cn.graph.ExecuteJson(sessionID, []byte(stmt))
-// }
+func (cn *connection) executeJson(sessionID int64, stmt string) ([]byte, error) {
+	jsonResp, err := cn.graph.ExecuteJson(sessionID, []byte(stmt))
+	if err != nil {
+		// reopen the connection if timeout
+		if _, ok := err.(thrift.TransportException); ok {
+			if err.(thrift.TransportException).TypeID() == thrift.TIMED_OUT {
+				reopenErr := cn.reopen()
+				if reopenErr != nil {
+					return nil, reopenErr
+				}
+				return cn.graph.ExecuteJson(sessionID, []byte(stmt))
+			}
+		}
+	}
+
+	return jsonResp, err
+}
 
 // Check connection to host address
 func (cn *connection) ping() bool {
