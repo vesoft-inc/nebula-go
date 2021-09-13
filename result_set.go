@@ -678,7 +678,7 @@ func (path *PathWrapper) GetStartNode() (*Node, error) {
 
 func (path *PathWrapper) GetEndNode() (*Node, error) {
 	if len(path.segments) == 0 {
-		return nil, fmt.Errorf("failed to get start node, no node in the path")
+		return nil, fmt.Errorf("failed to get end node, no node in the path")
 	}
 	return path.segments[len(path.segments)-1].endNode, nil
 }
