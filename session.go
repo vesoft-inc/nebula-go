@@ -27,12 +27,7 @@ type Session struct {
 	timezoneInfo
 }
 
-// unsupported
-// func (session *Session) ExecuteJson(stmt string) (*graph.ExecutionResponse, error) {
-// 	return session.graph.ExecuteJson(session.sessionID, []byte(stmt))
-// }
-
-// Execute returns the result of given query as a ResultSet
+// Execute returns the result of the given query as a ResultSet
 func (session *Session) Execute(stmt string) (*ResultSet, error) {
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
@@ -74,7 +69,7 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 	}
 }
 
-// Execute returns the result of given query as a json string
+// ExecuteJson returns the result of the given query as a json string
 func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
@@ -121,7 +116,9 @@ func (session *Session) reConnect() error {
 	return nil
 }
 
-// Release logs out and releases connetion hold by session
+// Release logs out and releases connetion hold by session.
+// The connection will be added into the activeConnectionQueue of the connection pool
+// so that it could be reused.
 func (session *Session) Release() {
 	if session == nil {
 		return
