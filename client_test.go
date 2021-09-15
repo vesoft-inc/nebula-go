@@ -913,10 +913,7 @@ func TestTimeout(t *testing.T) {
 			"'A':('A', 10), " +
 			"'B':('B', 10), " +
 			"'C':('C', 10), " +
-			"'D':('D', 10), " +
-			"'E':('E', 10), " +
-			"'F':('F', 10), " +
-			"'G':('G', 10)"
+			"'D':('D', 10)"
 		resultSet, err := tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -928,16 +925,7 @@ func TestTimeout(t *testing.T) {
 				"'A'->'B':(80), " +
 				"'B'->'C':(70), " +
 				"'C'->'D':(84), " +
-				"'D'->'E':(68), " +
-				"'E'->'F':(97), " +
-				"'F'->'G':(97), " +
-				"'G'->'A':(97), " +
-				"'A'->'B':(80), " +
-				"'B'->'C':(70), " +
-				"'C'->'D':(84), " +
-				"'D'->'E':(68), " +
-				"'E'->'F':(97), " +
-				"'F'->'G':(97)"
+				"'D'->'A':(68)"
 		resultSet, err = tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -947,7 +935,7 @@ func TestTimeout(t *testing.T) {
 	}
 
 	// trigger timeout
-	_, err = tryToExecute(session, "GO 10000 STEPS FROM 'A' OVER * YIELD like.likeness")
+	_, err = session.Execute("GO 10000 STEPS FROM 'A' OVER * YIELD like.likeness")
 	assert.Contains(t, err.Error(), "timeout")
 
 	resultSet, err := tryToExecute(session, "YIELD 999")
