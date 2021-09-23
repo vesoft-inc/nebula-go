@@ -874,67 +874,6 @@ func TestTimeout(t *testing.T) {
 	}
 }
 
-func TestReconnect(t *testing.T) {
-	hostList := poolAddress
-
-	timeoutConfig := PoolConfig{
-		TimeOut:         0 * time.Millisecond,
-		IdleTime:        0 * time.Millisecond,
-		MaxConnPoolSize: 10,
-		MinConnPoolSize: 6,
-	}
-
-	// Initialize connectin pool
-	pool, err := NewConnectionPool(hostList, timeoutConfig, nebulaLog)
-	if err != nil {
-		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
-	}
-
-	var sessionList []*Session
-
-	// Create session
-	for i := 0; i < 3; i++ {
-		session, err := pool.GetSession(username, password)
-		if err != nil {
-			t.Errorf("fail to create a new session from connection pool, %s", err.Error())
-		}
-		sessionList = append(sessionList, session)
-	}
-
-	// Send query to server periodically
-	for i := 0; i < timeoutConfig.MaxConnPoolSize; i++ {
-		time.Sleep(200 * time.Millisecond)
-		if i == 3 {
-			stopContainer(t, "nebula-docker-compose_graphd_1")
-		}
-		if i == 7 {
-			stopContainer(t, "nebula-docker-compose_graphd1_1")
-		}
-		_, err := sessionList[0].Execute("SHOW HOSTS;")
-		fmt.Println("Sending query...")
-
-		if err != nil {
-			t.Errorf("Error info: %s", err.Error())
-			return
-		}
-	}
-
-	resp, err := sessionList[0].Execute("SHOW HOSTS;")
-	if err != nil {
-		t.Fatalf(err.Error())
-		return
-	}
-	checkResultSet(t, "SHOW HOSTS;", resp)
-
-	startContainer(t, "nebula-docker-compose_graphd_1")
-	startContainer(t, "nebula-docker-compose_graphd1_1")
-
-	for i := 0; i < len(sessionList); i++ {
-		sessionList[i].Release()
-	}
-	pool.Close()
-}
-
 func TestExecuteJson(t *testing.T) {
 	hostList := []HostAddress{{Host: address, Port: port}}
 
@@ -974,6 +913,7 @@ func TestExecuteJson(t *testing.T) {
 	var jsonObj map[string]interface{}
 	exp := []interface{}{float64(1), float64(2.2), "hello"}
 
+	// Parse JSON
 	json.Unmarshal(jsonStrResult, &jsonObj)
 	rowData := jsonObj["results"].([]interface{})[0].(map[string]interface{})["data"].([]interface{})[0].(map[string]interface{})["row"]
 	assert.Equal(t, exp, rowData)
@@ -1004,9 +944,71 @@ func TestExecuteJson(t *testing.T) {
 		},
 	}
 
+	// Parse JSON
 	json.Unmarshal(jsonStrResult, &jsonObj2)
 	rowData = jsonObj2["results"].([]interface{})[0].(map[string]interface{})["data"].([]interface{})[0].(map[string]interface{})["row"]
 	assert.Equal(t, exp, rowData)
+}
+
+func TestReconnect(t *testing.T) {
+	hostList := poolAddress
+
+	timeoutConfig := PoolConfig{
+		TimeOut:         0 * time.Millisecond,
+		IdleTime:        0 * time.Millisecond,
+		MaxConnPoolSize: 10,
+		MinConnPoolSize: 6,
+	}
+
+	// Initialize connectin pool
+	pool, err := NewConnectionPool(hostList, timeoutConfig, nebulaLog)
+	if err != nil {
+		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+	}
+	defer pool.Close()
+
+	// Create session
+	var sessionList []*Session
+
+	for i := 0; i < 3; i++ {
+		session, err := pool.GetSession(username, password)
+		if err != nil {
+			t.Errorf("fail to create a new session from connection pool, %s", err.Error())
+		}
+		sessionList = append(sessionList, session)
+	}
+
+	// Send query to server periodically
+	for i := 0; i < timeoutConfig.MaxConnPoolSize; i++ {
+		time.Sleep(200 * time.Millisecond)
+		if i == 3 {
+			stopContainer(t, "nebula-docker-compose_graphd_1")
+		}
+		if i == 7 {
+			stopContainer(t, "nebula-docker-compose_graphd1_1")
+		}
+		_, err := sessionList[0].Execute("SHOW HOSTS;")
+		fmt.Println("Sending query...")
+
+		if err != nil {
+			t.Errorf("Error info: %s", err.Error())
+			return
+		}
+	}
+
+	resp, err := sessionList[0].Execute("SHOW HOSTS;")
+	if err != nil {
+		t.Fatalf(err.Error())
+		return
+	}
+	checkResultSet(t, "SHOW HOSTS;", resp)
+
+	startContainer(t, "nebula-docker-compose_graphd_1")
+	startContainer(t, "nebula-docker-compose_graphd1_1")
+
+	for i := 0; i < len(sessionList); i++ {
+		sessionList[i].Release()
+	}
 }
 
 func TestIpLookup(t *testing.T) {
