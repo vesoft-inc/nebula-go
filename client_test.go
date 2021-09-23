@@ -906,48 +906,78 @@ func TestExecuteJson(t *testing.T) {
 	loadTestData(t, session)
 
 	// Simple query
-	jsonStrResult, err := session.ExecuteJson(`yield 1, 2.2, "hello"`)
-	if err != nil {
-		t.Fatalf("fail to get the result in json format, %s", err.Error())
-	}
-	var jsonObj map[string]interface{}
-	exp := []interface{}{float64(1), float64(2.2), "hello"}
+	{
+		jsonStrResult, err := session.ExecuteJson(`yield 1, 2.2, "hello"`)
+		if err != nil {
+			t.Fatalf("fail to get the result in json format, %s", err.Error())
+		}
+		var jsonObj map[string]interface{}
+		exp := []interface{}{float64(1), float64(2.2), "hello"}
 
-	// Parse JSON
-	json.Unmarshal(jsonStrResult, &jsonObj)
-	rowData := jsonObj["results"].([]interface{})[0].(map[string]interface{})["data"].([]interface{})[0].(map[string]interface{})["row"]
-	assert.Equal(t, exp, rowData)
+		// Parse JSON
+		// Get data
+		json.Unmarshal(jsonStrResult, &jsonObj)
+		rowData := jsonObj["results"].([]interface{})[0].(map[string]interface{})["data"].([]interface{})[0].(map[string]interface{})["row"]
+		assert.Equal(t, exp, rowData)
+
+		// Get space name
+		respSpace := jsonObj["results"].([]interface{})[0].(map[string]interface{})["spaceName"]
+		assert.Equal(t, "test_data", respSpace)
+
+	}
 
 	// Complex result
-	jsonStrResult, err = session.ExecuteJson("MATCH (v:person {name: \"Bob\"}) RETURN v")
-	if err != nil {
-		t.Fatalf("fail to get the result in json format, %s", err.Error())
-	}
-	var jsonObj2 map[string]interface{}
-	exp = []interface{}{
-		map[string]interface{}{
-			"person.age":            float64(10),
-			"person.birthday":       "2010-09-10T02:08:02.0Z",
-			"person.book_num":       float64(100),
-			"person.child_name":     "Hello Worl",
-			"person.expend":         float64(100),
-			"person.first_out_city": float64(1111),
-			"person.friends":        float64(10),
-			"person.grade":          float64(3),
-			"person.hobby":          nil,
-			"person.is_girl":        false,
-			"person.morning":        `23:10:00.000000Z`,
-			"person.name":           "Bob",
-			"person.property":       float64(1000),
-			"person.start_school":   `2017-09-10`,
-			"student.name":          "Bob",
-		},
+	{
+		jsonStrResult, err := session.ExecuteJson("MATCH (v:person {name: \"Bob\"}) RETURN v")
+		if err != nil {
+			t.Fatalf("fail to get the result in json format, %s", err.Error())
+		}
+		var jsonObj map[string]interface{}
+		exp := []interface{}{
+			map[string]interface{}{
+				"person.age":            float64(10),
+				"person.birthday":       `2010-09-10T02:08:02.0Z`,
+				"person.book_num":       float64(100),
+				"person.child_name":     "Hello Worl",
+				"person.expend":         float64(100),
+				"person.first_out_city": float64(1111),
+				"person.friends":        float64(10),
+				"person.grade":          float64(3),
+				"person.hobby":          nil,
+				"person.is_girl":        false,
+				"person.morning":        `23:10:00.000000Z`,
+				"person.name":           "Bob",
+				"person.property":       float64(1000),
+				"person.start_school":   `2017-09-10`,
+				"student.name":          "Bob",
+			},
+		}
+
+		// Parse JSON
+		json.Unmarshal(jsonStrResult, &jsonObj)
+		rowData := jsonObj["results"].([]interface{})[0].(map[string]interface{})["data"].([]interface{})[0].(map[string]interface{})["row"]
+		assert.Equal(t, exp, rowData)
 	}
 
-	// Parse JSON
-	json.Unmarshal(jsonStrResult, &jsonObj2)
-	rowData = jsonObj2["results"].([]interface{})[0].(map[string]interface{})["data"].([]interface{})[0].(map[string]interface{})["row"]
-	assert.Equal(t, exp, rowData)
+	// Error test
+	{
+		jsonStrResult, err := session.ExecuteJson("MATCH (v:invalidTag {name: \"Bob\"}) RETURN v")
+		if err != nil {
+			t.Fatalf("fail to get the result in json format, %s", err.Error())
+		}
+		var jsonObj map[string]interface{}
+
+		// Parse JSON
+		json.Unmarshal(jsonStrResult, &jsonObj)
+
+		errorCode := "E_SEMANTIC_ERROR"
+		respErrorCode := jsonObj["results"].([]interface{})[0].(map[string]interface{})["errors"].(map[string]interface{})["errorCode"]
+		assert.Equal(t, errorCode, respErrorCode)
+
+		errorMsg := "SemanticError: `invalidTag': Unknown tag"
+		respErrorMsg := jsonObj["results"].([]interface{})[0].(map[string]interface{})["errors"].(map[string]interface{})["errorMsg"]
+		assert.Equal(t, errorMsg, respErrorMsg)
+	}
 }
 
 func TestReconnect(t *testing.T) {
