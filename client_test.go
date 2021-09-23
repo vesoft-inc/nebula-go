@@ -57,8 +57,7 @@ func logoutAndClose(conn *connection, sessionID int64) {
 }
 
 func TestConnection(t *testing.T) {
-	// hostAdress := HostAddress{Host: address, Port: port}
-	hostAdress := HostAddress{Host: "127.0.0.1", Port: 29562}
+	hostAdress := HostAddress{Host: address, Port: port}
 	conn := newConnection(hostAdress)
 	err := conn.open(hostAdress, testPoolConfig.TimeOut)
 	if err != nil {
@@ -937,9 +936,7 @@ func TestReconnect(t *testing.T) {
 }
 
 func TestExecuteJson(t *testing.T) {
-	// hostAdress := HostAddress{Host: "192.168.8.6", Port: 29562}
-	hostList := []HostAddress{{Host: "127.0.0.1", Port: 29562}}
-	// hostList = append(hostList, hostAdress)
+	hostList := []HostAddress{{Host: address, Port: port}}
 
 	testPoolConfig = PoolConfig{
 		TimeOut:         0 * time.Millisecond,
@@ -990,7 +987,7 @@ func TestExecuteJson(t *testing.T) {
 	exp = []interface{}{
 		map[string]interface{}{
 			"person.age":            float64(10),
-			"person.birthday":       "2010-09-10T18:08:02.0",
+			"person.birthday":       "2010-09-10T02:08:02.0Z",
 			"person.book_num":       float64(100),
 			"person.child_name":     "Hello Worl",
 			"person.expend":         float64(100),
@@ -999,7 +996,7 @@ func TestExecuteJson(t *testing.T) {
 			"person.grade":          float64(3),
 			"person.hobby":          nil,
 			"person.is_girl":        false,
-			"person.morning":        `15:10:00.000000`,
+			"person.morning":        `23:10:00.000000Z`,
 			"person.name":           "Bob",
 			"person.property":       float64(1000),
 			"person.start_school":   `2017-09-10`,
