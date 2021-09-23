@@ -80,17 +80,6 @@ func TestConnection(t *testing.T) {
 	}
 	checkConResp(t, "show hosts", resp)
 
-	respJson, err := conn.executeJson(sessionID, "yield 1")
-	if err != nil {
-		t.Fatalf(err.Error())
-		return
-	}
-	if err != nil {
-		t.Fatalf("fail to get the result in json format, %s", err.Error())
-	}
-	jsonObj := `{"some":"json"}`
-	json.Unmarshal(respJson, &jsonObj)
-
 	resp, err = conn.execute(sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Error(err.Error())
