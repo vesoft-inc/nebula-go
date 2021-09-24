@@ -896,12 +896,15 @@ func TestExecuteJson(t *testing.T) {
 
 	// Simple query
 	{
-		jsonStrResult, err := session.ExecuteJson(`yield 1, 2.2, "hello"`)
+		jsonStrResult, err := session.ExecuteJson(`YIELD 1, 2.2, "hello", [1,2,"abc"], {key: "value"}`)
 		if err != nil {
 			t.Fatalf("fail to get the result in json format, %s", err.Error())
 		}
 		var jsonObj map[string]interface{}
-		exp := []interface{}{float64(1), float64(2.2), "hello"}
+		exp := []interface{}{
+			float64(1), float64(2.2), "hello",
+			[]interface{}{float64(1), float64(2), "abc"},
+			map[string]interface{}{"key": "value"}}
 
 		// Parse JSON
 		// Get data
