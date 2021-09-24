@@ -896,7 +896,7 @@ func TestExecuteJson(t *testing.T) {
 
 	// Simple query
 	{
-		jsonStrResult, err := session.ExecuteJson(`YIELD 1, 2.2, "hello", [1,2,"abc"], {key: "value"}`)
+		jsonStrResult, err := session.ExecuteJson(`YIELD 1, 2.2, "hello", [1,2,"abc"], {key: "value"}, "汉字"`)
 		if err != nil {
 			t.Fatalf("fail to get the result in json format, %s", err.Error())
 		}
@@ -904,7 +904,8 @@ func TestExecuteJson(t *testing.T) {
 		exp := []interface{}{
 			float64(1), float64(2.2), "hello",
 			[]interface{}{float64(1), float64(2), "abc"},
-			map[string]interface{}{"key": "value"}}
+			map[string]interface{}{"key": "value"},
+			"汉字"}
 
 		// Parse JSON
 		// Get data
