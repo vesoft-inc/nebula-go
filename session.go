@@ -72,54 +72,61 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 // ExecuteJson returns the result of the given query as a json string
 // Date and Datetime will be returned in UTC
 //	JSON struct:
-//	{
-//	"results":[
-//		{
-//		"columns":[],
-//		"data":[
-//			{
-//			"row":row-data,
-//			"meta":metadata]
-//			}
-//		],
-//		"latencyInUs":0,
-//		"spaceName":"",
-//		"planDesc ":{
-//			"planNodeDescs":[
-//			{
-//				"name":"",
-//				"id":0,
-//				"outputVar":"",
-//				"description":{
-//				"key":""
-//				},
-//				"profiles":[
-//				{
-//					"rows":1,
-//					"execDurationInUs":0,
-//					"totalDurationInUs":0,
-//					"otherStats":{}
-//				}
-//				],
-//				"branchInfo":{
-//				"isDoBranch":false,
-//				"conditionNodeId":-1
-//				},
-//				"dependencies":[]
-//			}
-//			],
-//			"nodeIndexMap":{},
-//			"format":"",
-//			"optimize_time_in_us":0
-//		},
-//		"comment ":"",
-//		"errors":{
-//			"errorCode":0,
-//			"errorMsg":""
-//		}
-//		}
-//		]
-//	}
+// {
+//     "results":[
+//         {
+//             "columns":[
+//             ],
+//             "data":[
+//                 {
+//                     "row":[
+//                         "row-data"
+//                     ],
+//                     "meta":[
+//                         "metadata"
+//                     ]
+//                 }
+//             ],
+//             "latencyInUs":0,
+//             "spaceName":"",
+//             "planDesc ":{
+//                 "planNodeDescs":[
+//                     {
+//                         "name":"",
+//                         "id":0,
+//                         "outputVar":"",
+//                         "description":{
+//                             "key":""
+//                         },
+//                         "profiles":[
+//                             {
+//                                 "rows":1,
+//                                 "execDurationInUs":0,
+//                                 "totalDurationInUs":0,
+//                                 "otherStats":{}
+//                             }
+//                         ],
+//                         "branchInfo":{
+//                             "isDoBranch":false,
+//                             "conditionNodeId":-1
+//                         },
+//                         "dependencies":[]
+//                     }
+//                 ],
+//                 "nodeIndexMap":{},
+//                 "format":"",
+//                 "optimize_time_in_us":0
+//             },
+//             "comment ":""
+//         }
+//     ],
+//     "errors":[
+//         {
+//       		"code": 0,
+//       		"message": ""
+//         }
+//     ]
+// }
 func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")

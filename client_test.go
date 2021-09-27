@@ -20,42 +20,42 @@ import (
 	"github.com/vesoft-inc/nebula-go/v2/nebula/graph"
 )
 
-const (
-	address  = "127.0.0.1"
-	port     = 3699
-	username = "root"
-	password = "nebula"
-)
-
-var poolAddress = []HostAddress{
-	{
-		Host: "127.0.0.1",
-		Port: 3699,
-	},
-	{
-		Host: "127.0.0.1",
-		Port: 3700,
-	},
-	{
-		Host: "127.0.0.1",
-		Port: 3701,
-	},
-}
-
-// Used for test using local port
 // const (
-// 	address  = "192.168.8.6"
-// 	port     = 29562
+// 	address  = "127.0.0.1"
+// 	port     = 3699
 // 	username = "root"
 // 	password = "nebula"
 // )
 
 // var poolAddress = []HostAddress{
 // 	{
-// 		Host: "192.168.8.6",
-// 		Port: 29562,
+// 		Host: "127.0.0.1",
+// 		Port: 3699,
+// 	},
+// 	{
+// 		Host: "127.0.0.1",
+// 		Port: 3700,
+// 	},
+// 	{
+// 		Host: "127.0.0.1",
+// 		Port: 3701,
 // 	},
 // }
+
+// Used for test using local port
+const (
+	address  = "192.168.8.6"
+	port     = 29562
+	username = "root"
+	password = "nebula"
+)
+
+var poolAddress = []HostAddress{
+	{
+		Host: "192.168.8.6",
+		Port: 29562,
+	},
+}
 
 var nebulaLog = DefaultLogger{}
 
@@ -902,7 +902,7 @@ func TestExecuteJson(t *testing.T) {
 
 		// Get errorcode
 		errorCode := float64(0)
-		respErrorCode := jsonObj["results"].([]interface{})[0].(map[string]interface{})["errors"].(map[string]interface{})["errorCode"]
+		respErrorCode := jsonObj["errors"].([]interface{})[0].(map[string]interface{})["code"]
 		assert.Equal(t, errorCode, respErrorCode)
 
 		// Get data
@@ -960,11 +960,11 @@ func TestExecuteJson(t *testing.T) {
 		json.Unmarshal(jsonStrResult, &jsonObj)
 
 		errorCode := float64(-1009)
-		respErrorCode := jsonObj["results"].([]interface{})[0].(map[string]interface{})["errors"].(map[string]interface{})["errorCode"]
+		respErrorCode := jsonObj["errors"].([]interface{})[0].(map[string]interface{})["code"]
 		assert.Equal(t, errorCode, respErrorCode)
 
 		errorMsg := "SemanticError: `invalidTag': Unknown tag"
-		respErrorMsg := jsonObj["results"].([]interface{})[0].(map[string]interface{})["errors"].(map[string]interface{})["errorMsg"]
+		respErrorMsg := jsonObj["errors"].([]interface{})[0].(map[string]interface{})["message"]
 		assert.Equal(t, errorMsg, respErrorMsg)
 	}
 }
@@ -1045,6 +1045,7 @@ func checkResultSet(t *testing.T, prefix string, err *ResultSet) {
 		t.Errorf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, err.GetErrorCode(), err.GetErrorMsg())
 	}
 }
+
 func checkConResp(t *testing.T, prefix string, err *graph.ExecutionResponse) {
 	if IsError(err) {
 		t.Errorf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, err.ErrorCode, err.ErrorMsg)
