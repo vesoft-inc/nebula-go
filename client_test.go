@@ -42,6 +42,21 @@ var poolAddress = []HostAddress{
 	},
 }
 
+// Used for test using local port
+// const (
+// 	address  = "192.168.8.6"
+// 	port     = 29562
+// 	username = "root"
+// 	password = "nebula"
+// )
+
+// var poolAddress = []HostAddress{
+// 	{
+// 		Host: "192.168.8.6",
+// 		Port: 29562,
+// 	},
+// }
+
 var nebulaLog = DefaultLogger{}
 
 // Create default configs
@@ -95,7 +110,7 @@ func TestConnection(t *testing.T) {
 
 	res := conn.ping()
 	if res != true {
-		t.Error("Connectin ping failed")
+		t.Error("Connection ping failed")
 		return
 	}
 }
@@ -169,12 +184,7 @@ func TestConfigs(t *testing.T) {
 		}
 		checkResultSet(t, "create space", resp)
 
-		resp, err = tryToExecute(session, "DROP SPACE client_test;")
-		if err != nil {
-			t.Fatalf(err.Error())
-			return
-		}
-		checkResultSet(t, "drop space", resp)
+		dropSpace(t, session, "client_test")
 	}
 }
 
@@ -205,7 +215,7 @@ func TestInvalidHostTimeout(t *testing.T) {
 		{Host: "127.0.0.1", Port: 3699},
 	}
 
-	// Initialize connectin pool
+	// Initialize connection pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
@@ -506,15 +516,7 @@ func TestServiceDataIO(t *testing.T) {
 		assert.Equal(t, int8(sessionCreatedTime.Hour()), localTime.GetHour())
 	}
 
-	// Drop space
-	{
-		query := "DROP SPACE test_data;"
-		_, err := tryToExecute(session, query)
-		if err != nil {
-			t.Fatalf(err.Error())
-			return
-		}
-	}
+	dropSpace(t, session, "client_test")
 }
 
 func TestPool_SingleHost(t *testing.T) {
@@ -559,12 +561,7 @@ func TestPool_SingleHost(t *testing.T) {
 	}
 	checkResultSet(t, "create space", resp)
 
-	resp, err = tryToExecute(session, "DROP SPACE client_test;")
-	if err != nil {
-		t.Fatalf(err.Error())
-		return
-	}
-	checkResultSet(t, "drop space", resp)
+	dropSpace(t, session, "client_test")
 }
 
 func TestPool_MultiHosts(t *testing.T) {
@@ -577,7 +574,7 @@ func TestPool_MultiHosts(t *testing.T) {
 		MinConnPoolSize: 1,
 	}
 
-	// Initialize connectin pool
+	// Initialize connection pool
 	pool, err := NewConnectionPool(hostList, multiHostsConfig, nebulaLog)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
@@ -600,7 +597,7 @@ func TestPool_MultiHosts(t *testing.T) {
 	_, err = pool.GetSession(username, password)
 	assert.EqualError(t, err, "failed to get connection: No valid connection in the idle queue and connection number has reached the pool capacity")
 
-	// Release 1 connectin back to pool
+	// Release 1 connection back to pool
 	sessionToRelease := sessionList[0]
 	sessionToRelease.Release()
 	sessionList = sessionList[1:]
@@ -853,14 +850,7 @@ func TestTimeout(t *testing.T) {
 	assert.Contains(t, resultSet.AsStringTable(), []string{"999"})
 
 	// Drop space
-	{
-		query := "DROP SPACE test_timeout;"
-		_, err := tryToExecute(session, query)
-		if err != nil {
-			t.Fatalf(err.Error())
-			return
-		}
-	}
+	dropSpace(t, session, "client_test")
 }
 
 func TestExecuteJson(t *testing.T) {
@@ -908,8 +898,14 @@ func TestExecuteJson(t *testing.T) {
 			"汉字"}
 
 		// Parse JSON
-		// Get data
 		json.Unmarshal(jsonStrResult, &jsonObj)
+
+		// Get errorcode
+		errorCode := float64(0)
+		respErrorCode := jsonObj["results"].([]interface{})[0].(map[string]interface{})["errors"].(map[string]interface{})["errorCode"]
+		assert.Equal(t, errorCode, respErrorCode)
+
+		// Get data
 		rowData := jsonObj["results"].([]interface{})[0].(map[string]interface{})["data"].([]interface{})[0].(map[string]interface{})["row"]
 		assert.Equal(t, exp, rowData)
 
@@ -963,7 +959,7 @@ func TestExecuteJson(t *testing.T) {
 		// Parse JSON
 		json.Unmarshal(jsonStrResult, &jsonObj)
 
-		errorCode := "E_SEMANTIC_ERROR"
+		errorCode := float64(-1009)
 		respErrorCode := jsonObj["results"].([]interface{})[0].(map[string]interface{})["errors"].(map[string]interface{})["errorCode"]
 		assert.Equal(t, errorCode, respErrorCode)
 
@@ -1165,6 +1161,16 @@ func loadTestData(t *testing.T, session *Session) {
 			"'Tom'->'Jerry':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
 			"'Bob'->'John':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02'))"
 	resultSet, err = tryToExecute(session, query)
+	if err != nil {
+		t.Fatalf(err.Error())
+		return
+	}
+	checkResultSet(t, query, resultSet)
+}
+
+func dropSpace(t *testing.T, session *Session, spaceName string) {
+	query := fmt.Sprintf("DROP SPACE %s;", spaceName)
+	resultSet, err := tryToExecute(session, query)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
