@@ -8,6 +8,8 @@ package nebula_go
 
 import (
 	"container/list"
+	"crypto/tls"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -49,21 +51,59 @@ func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*C
 		addresses: convAddress,
 		hostIndex: 0,
 	}
-	if err = newPool.initPool(); err != nil {
+
+	// Init pool with non-SSL socket
+	if err = newPool.initPool(false, nil); err != nil {
 		return nil, err
 	}
 	newPool.startCleaner()
 	return newPool, nil
 }
 
-// initPool innitializes the connection pool
-func (pool *ConnectionPool) initPool() error {
+// NewConnectionPool constructs a new SSL connection pool using the given addresses and configs
+func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *tls.Config, log Logger) (*ConnectionPool, error) {
+	// Process domain to IP
+	convAddress, err := DomainToIP(addresses)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find IP, error: %s ", err.Error())
+	}
+
+	// Check input
+	if len(convAddress) == 0 {
+		return nil, fmt.Errorf("failed to initialize connection pool: illegal address input")
+	}
+
+	// Check config
+	conf.validateConf(log)
+
+	newPool := &ConnectionPool{
+		conf:      conf,
+		log:       log,
+		addresses: convAddress,
+		hostIndex: 0,
+	}
+
+	// Init pool with SSL socket
+	if err = newPool.initPool(true, sslConfig); err != nil {
+		return nil, err
+	}
+	newPool.startCleaner()
+	return newPool, nil
+}
+
+// initPool initializes the connection pool
+func (pool *ConnectionPool) initPool(SSLEnabled bool, sslConfig *tls.Config) error {
 	for i := 0; i < pool.conf.MinConnPoolSize; i++ {
 		// Simple round-robin
 		newConn := newConnection(pool.addresses[i%len(pool.addresses)])
 
 		// Open connection to host
-		err := newConn.open(newConn.severAddress, pool.conf.TimeOut)
+		err := errors.New("")
+		if SSLEnabled {
+			err = newConn.openSSL(newConn.severAddress, pool.conf.TimeOut, sslConfig)
+		} else {
+			err = newConn.open(newConn.severAddress, pool.conf.TimeOut)
+		}
 		if err != nil {
 			// If initialization failed, clean idle queue
 			idleLen := pool.idleConnectionQueue.Len()
