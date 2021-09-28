@@ -114,6 +114,7 @@ const (
   ErrorCode_E_PART_NOT_FOUND ErrorCode = -16
   ErrorCode_E_KEY_NOT_FOUND ErrorCode = -17
   ErrorCode_E_USER_NOT_FOUND ErrorCode = -18
+  ErrorCode_E_STATS_NOT_FOUND ErrorCode = -19
   ErrorCode_E_BACKUP_FAILED ErrorCode = -24
   ErrorCode_E_BACKUP_EMPTY_TABLE ErrorCode = -25
   ErrorCode_E_BACKUP_TABLE_FAILED ErrorCode = -26
@@ -165,6 +166,7 @@ const (
   ErrorCode_E_BALANCER_FAILURE ErrorCode = -2047
   ErrorCode_E_JOB_NOT_FINISHED ErrorCode = -2048
   ErrorCode_E_TASK_REPORT_OUT_DATE ErrorCode = -2049
+  ErrorCode_E_JOB_NOT_IN_SPACE ErrorCode = -2050
   ErrorCode_E_INVALID_JOB ErrorCode = -2065
   ErrorCode_E_BACKUP_BUILDING_INDEX ErrorCode = -2066
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND ErrorCode = -2067
@@ -207,6 +209,11 @@ const (
   ErrorCode_E_INVALID_TASK_PARA ErrorCode = -3051
   ErrorCode_E_USER_CANCEL ErrorCode = -3052
   ErrorCode_E_TASK_EXECUTION_FAILED ErrorCode = -3053
+  ErrorCode_E_PLAN_IS_KILLED ErrorCode = -3060
+  ErrorCode_E_NO_TERM ErrorCode = -3070
+  ErrorCode_E_OUTDATED_TERM ErrorCode = -3071
+  ErrorCode_E_OUTDATED_EDGE ErrorCode = -3072
+  ErrorCode_E_WRITE_WRITE_CONFLICT ErrorCode = -3073
   ErrorCode_E_UNKNOWN ErrorCode = -8000
 )
 
@@ -230,6 +237,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_PART_NOT_FOUND: "E_PART_NOT_FOUND",
   ErrorCode_E_KEY_NOT_FOUND: "E_KEY_NOT_FOUND",
   ErrorCode_E_USER_NOT_FOUND: "E_USER_NOT_FOUND",
+  ErrorCode_E_STATS_NOT_FOUND: "E_STATS_NOT_FOUND",
   ErrorCode_E_BACKUP_FAILED: "E_BACKUP_FAILED",
   ErrorCode_E_BACKUP_EMPTY_TABLE: "E_BACKUP_EMPTY_TABLE",
   ErrorCode_E_BACKUP_TABLE_FAILED: "E_BACKUP_TABLE_FAILED",
@@ -281,6 +289,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_BALANCER_FAILURE: "E_BALANCER_FAILURE",
   ErrorCode_E_JOB_NOT_FINISHED: "E_JOB_NOT_FINISHED",
   ErrorCode_E_TASK_REPORT_OUT_DATE: "E_TASK_REPORT_OUT_DATE",
+  ErrorCode_E_JOB_NOT_IN_SPACE: "E_JOB_NOT_IN_SPACE",
   ErrorCode_E_INVALID_JOB: "E_INVALID_JOB",
   ErrorCode_E_BACKUP_BUILDING_INDEX: "E_BACKUP_BUILDING_INDEX",
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND: "E_BACKUP_SPACE_NOT_FOUND",
@@ -323,6 +332,11 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_INVALID_TASK_PARA: "E_INVALID_TASK_PARA",
   ErrorCode_E_USER_CANCEL: "E_USER_CANCEL",
   ErrorCode_E_TASK_EXECUTION_FAILED: "E_TASK_EXECUTION_FAILED",
+  ErrorCode_E_PLAN_IS_KILLED: "E_PLAN_IS_KILLED",
+  ErrorCode_E_NO_TERM: "E_NO_TERM",
+  ErrorCode_E_OUTDATED_TERM: "E_OUTDATED_TERM",
+  ErrorCode_E_OUTDATED_EDGE: "E_OUTDATED_EDGE",
+  ErrorCode_E_WRITE_WRITE_CONFLICT: "E_WRITE_WRITE_CONFLICT",
   ErrorCode_E_UNKNOWN: "E_UNKNOWN",
 }
 
@@ -346,6 +360,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_PART_NOT_FOUND": ErrorCode_E_PART_NOT_FOUND,
   "E_KEY_NOT_FOUND": ErrorCode_E_KEY_NOT_FOUND,
   "E_USER_NOT_FOUND": ErrorCode_E_USER_NOT_FOUND,
+  "E_STATS_NOT_FOUND": ErrorCode_E_STATS_NOT_FOUND,
   "E_BACKUP_FAILED": ErrorCode_E_BACKUP_FAILED,
   "E_BACKUP_EMPTY_TABLE": ErrorCode_E_BACKUP_EMPTY_TABLE,
   "E_BACKUP_TABLE_FAILED": ErrorCode_E_BACKUP_TABLE_FAILED,
@@ -397,6 +412,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_BALANCER_FAILURE": ErrorCode_E_BALANCER_FAILURE,
   "E_JOB_NOT_FINISHED": ErrorCode_E_JOB_NOT_FINISHED,
   "E_TASK_REPORT_OUT_DATE": ErrorCode_E_TASK_REPORT_OUT_DATE,
+  "E_JOB_NOT_IN_SPACE": ErrorCode_E_JOB_NOT_IN_SPACE,
   "E_INVALID_JOB": ErrorCode_E_INVALID_JOB,
   "E_BACKUP_BUILDING_INDEX": ErrorCode_E_BACKUP_BUILDING_INDEX,
   "E_BACKUP_SPACE_NOT_FOUND": ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
@@ -439,6 +455,11 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_INVALID_TASK_PARA": ErrorCode_E_INVALID_TASK_PARA,
   "E_USER_CANCEL": ErrorCode_E_USER_CANCEL,
   "E_TASK_EXECUTION_FAILED": ErrorCode_E_TASK_EXECUTION_FAILED,
+  "E_PLAN_IS_KILLED": ErrorCode_E_PLAN_IS_KILLED,
+  "E_NO_TERM": ErrorCode_E_NO_TERM,
+  "E_OUTDATED_TERM": ErrorCode_E_OUTDATED_TERM,
+  "E_OUTDATED_EDGE": ErrorCode_E_OUTDATED_EDGE,
+  "E_WRITE_WRITE_CONFLICT": ErrorCode_E_WRITE_WRITE_CONFLICT,
   "E_UNKNOWN": ErrorCode_E_UNKNOWN,
 }
 
@@ -462,6 +483,7 @@ var ErrorCodeNames = []string {
   "E_PART_NOT_FOUND",
   "E_KEY_NOT_FOUND",
   "E_USER_NOT_FOUND",
+  "E_STATS_NOT_FOUND",
   "E_BACKUP_FAILED",
   "E_BACKUP_EMPTY_TABLE",
   "E_BACKUP_TABLE_FAILED",
@@ -513,6 +535,7 @@ var ErrorCodeNames = []string {
   "E_BALANCER_FAILURE",
   "E_JOB_NOT_FINISHED",
   "E_TASK_REPORT_OUT_DATE",
+  "E_JOB_NOT_IN_SPACE",
   "E_INVALID_JOB",
   "E_BACKUP_BUILDING_INDEX",
   "E_BACKUP_SPACE_NOT_FOUND",
@@ -555,6 +578,11 @@ var ErrorCodeNames = []string {
   "E_INVALID_TASK_PARA",
   "E_USER_CANCEL",
   "E_TASK_EXECUTION_FAILED",
+  "E_PLAN_IS_KILLED",
+  "E_NO_TERM",
+  "E_OUTDATED_TERM",
+  "E_OUTDATED_EDGE",
+  "E_WRITE_WRITE_CONFLICT",
   "E_UNKNOWN",
 }
 
@@ -578,6 +606,7 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_PART_NOT_FOUND,
   ErrorCode_E_KEY_NOT_FOUND,
   ErrorCode_E_USER_NOT_FOUND,
+  ErrorCode_E_STATS_NOT_FOUND,
   ErrorCode_E_BACKUP_FAILED,
   ErrorCode_E_BACKUP_EMPTY_TABLE,
   ErrorCode_E_BACKUP_TABLE_FAILED,
@@ -629,6 +658,7 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_BALANCER_FAILURE,
   ErrorCode_E_JOB_NOT_FINISHED,
   ErrorCode_E_TASK_REPORT_OUT_DATE,
+  ErrorCode_E_JOB_NOT_IN_SPACE,
   ErrorCode_E_INVALID_JOB,
   ErrorCode_E_BACKUP_BUILDING_INDEX,
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
@@ -671,6 +701,11 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_INVALID_TASK_PARA,
   ErrorCode_E_USER_CANCEL,
   ErrorCode_E_TASK_EXECUTION_FAILED,
+  ErrorCode_E_PLAN_IS_KILLED,
+  ErrorCode_E_NO_TERM,
+  ErrorCode_E_OUTDATED_TERM,
+  ErrorCode_E_OUTDATED_EDGE,
+  ErrorCode_E_WRITE_WRITE_CONFLICT,
   ErrorCode_E_UNKNOWN,
 }
 
@@ -737,6 +772,167 @@ func SessionIDPtr(v SessionID) *SessionID { return &v }
 type ExecutionPlanID = int64
 
 func ExecutionPlanIDPtr(v ExecutionPlanID) *ExecutionPlanID { return &v }
+
+// Attributes:
+//  - TagID
+//  - EdgeType
+type SchemaID struct {
+  TagID *TagID `thrift:"tag_id,1" db:"tag_id" json:"tag_id,omitempty"`
+  EdgeType *EdgeType `thrift:"edge_type,2" db:"edge_type" json:"edge_type,omitempty"`
+}
+
+func NewSchemaID() *SchemaID {
+  return &SchemaID{}
+}
+
+var SchemaID_TagID_DEFAULT TagID
+func (p *SchemaID) GetTagID() TagID {
+  if !p.IsSetTagID() {
+    return SchemaID_TagID_DEFAULT
+  }
+return *p.TagID
+}
+var SchemaID_EdgeType_DEFAULT EdgeType
+func (p *SchemaID) GetEdgeType() EdgeType {
+  if !p.IsSetEdgeType() {
+    return SchemaID_EdgeType_DEFAULT
+  }
+return *p.EdgeType
+}
+func (p *SchemaID) CountSetFieldsSchemaID() int {
+  count := 0
+  if (p.IsSetTagID()) {
+    count++
+  }
+  if (p.IsSetEdgeType()) {
+    count++
+  }
+  return count
+
+}
+
+func (p *SchemaID) IsSetTagID() bool {
+  return p != nil && p.TagID != nil
+}
+
+func (p *SchemaID) IsSetEdgeType() bool {
+  return p != nil && p.EdgeType != nil
+}
+
+func (p *SchemaID) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *SchemaID)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  temp := TagID(v)
+  p.TagID = &temp
+}
+  return nil
+}
+
+func (p *SchemaID)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  temp := EdgeType(v)
+  p.EdgeType = &temp
+}
+  return nil
+}
+
+func (p *SchemaID) Write(oprot thrift.Protocol) error {
+  if c := p.CountSetFieldsSchemaID(); c > 1 {
+    return fmt.Errorf("%T write union: no more than one field must be set (%d set).", p, c)
+  }
+  if err := oprot.WriteStructBegin("SchemaID"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *SchemaID) writeField1(oprot thrift.Protocol) (err error) {
+  if p.IsSetTagID() {
+    if err := oprot.WriteFieldBegin("tag_id", thrift.I32, 1); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:tag_id: ", p), err) }
+    if err := oprot.WriteI32(int32(*p.TagID)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.tag_id (1) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 1:tag_id: ", p), err) }
+  }
+  return err
+}
+
+func (p *SchemaID) writeField2(oprot thrift.Protocol) (err error) {
+  if p.IsSetEdgeType() {
+    if err := oprot.WriteFieldBegin("edge_type", thrift.I32, 2); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:edge_type: ", p), err) }
+    if err := oprot.WriteI32(int32(*p.EdgeType)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.edge_type (2) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 2:edge_type: ", p), err) }
+  }
+  return err
+}
+
+func (p *SchemaID) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var tagIDVal string
+  if p.TagID == nil {
+    tagIDVal = "<nil>"
+  } else {
+    tagIDVal = fmt.Sprintf("%v", *p.TagID)
+  }
+  var edgeTypeVal string
+  if p.EdgeType == nil {
+    edgeTypeVal = "<nil>"
+  } else {
+    edgeTypeVal = fmt.Sprintf("%v", *p.EdgeType)
+  }
+  return fmt.Sprintf("SchemaID({TagID:%s EdgeType:%s})", tagIDVal, edgeTypeVal)
+}
 
 // Attributes:
 //  - Year
