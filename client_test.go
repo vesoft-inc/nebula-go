@@ -20,40 +20,25 @@ import (
 	"github.com/vesoft-inc/nebula-go/v2/nebula/graph"
 )
 
-// const (
-// 	address  = "127.0.0.1"
-// 	port     = 3699
-// 	username = "root"
-// 	password = "nebula"
-// )
-
-// var poolAddress = []HostAddress{
-// 	{
-// 		Host: "127.0.0.1",
-// 		Port: 3699,
-// 	},
-// 	{
-// 		Host: "127.0.0.1",
-// 		Port: 3700,
-// 	},
-// 	{
-// 		Host: "127.0.0.1",
-// 		Port: 3701,
-// 	},
-// }
-
-// Used for test using local port
 const (
-	address  = "192.168.8.6"
-	port     = 29562
+	address  = "127.0.0.1"
+	port     = 3699
 	username = "root"
 	password = "nebula"
 )
 
 var poolAddress = []HostAddress{
 	{
-		Host: "192.168.8.6",
-		Port: 29562,
+		Host: "127.0.0.1",
+		Port: 3699,
+	},
+	{
+		Host: "127.0.0.1",
+		Port: 3700,
+	},
+	{
+		Host: "127.0.0.1",
+		Port: 3701,
 	},
 }
 
@@ -281,10 +266,10 @@ func TestServiceDataIO(t *testing.T) {
 		}
 		checkResultSet(t, query, resp)
 
-		assert.Equal(t, resp.GetLatency() > 0, true)
-		assert.Equal(t, "", resp.GetComment(), true)
+		assert.True(t, resp.GetLatency() > 0)
+		assert.Empty(t, resp.GetComment())
 		assert.Equal(t, "test_data", resp.GetSpaceName())
-		assert.Equal(t, !resp.IsEmpty(), true)
+		assert.False(t, resp.IsEmpty())
 		assert.Equal(t, 1, resp.GetRowSize())
 		names := []string{"VertexID",
 			"person.name",
@@ -332,7 +317,7 @@ func TestServiceDataIO(t *testing.T) {
 			t.Fatalf(err.Error())
 			return
 		}
-		assert.Equal(t, true, valWrap.IsDate())
+		assert.True(t, valWrap.IsDate())
 		assert.Equal(t, "2017-09-10", valWrap.String())
 
 		// test time
@@ -346,7 +331,7 @@ func TestServiceDataIO(t *testing.T) {
 			t.Fatalf(err.Error())
 			return
 		}
-		assert.Equal(t, true, valWrap.IsTime())
+		assert.True(t, valWrap.IsTime())
 		assert.Equal(t, "07:10:00.000000", valWrap.String())
 
 		UTCTime := timeWrapper.getRawTime()
@@ -712,10 +697,10 @@ func TestLoadbalancer(t *testing.T) {
 		loadPerHost[session.connection.severAddress]++
 		sessionList = append(sessionList, session)
 	}
-	assert.Equal(t, len(sessionList), 999, "Total number of sessions should be 666")
+	assert.Equal(t, 999, len(sessionList), "Total number of sessions should be 666")
 
 	for _, v := range loadPerHost {
-		assert.Equal(t, v, 333, "Total number of sessions should be 333")
+		assert.Equal(t, 333, v, "Total number of sessions should be 333")
 	}
 	for i := 0; i < len(sessionList); i++ {
 		sessionList[i].Release()
@@ -846,7 +831,7 @@ func TestTimeout(t *testing.T) {
 
 	resultSet, err := tryToExecute(session, "YIELD 999")
 	assert.Empty(t, err)
-	assert.Equal(t, resultSet.IsSucceed(), true)
+	assert.True(t, resultSet.IsSucceed())
 	assert.Contains(t, resultSet.AsStringTable(), []string{"999"})
 
 	// Drop space
@@ -1170,7 +1155,7 @@ func loadTestData(t *testing.T, session *Session) {
 }
 
 func dropSpace(t *testing.T, session *Session, spaceName string) {
-	query := fmt.Sprintf("DROP SPACE %s;", spaceName)
+	query := fmt.Sprintf("DROP SPACE IF EXISTS %s;", spaceName)
 	resultSet, err := tryToExecute(session, query)
 	if err != nil {
 		t.Fatalf(err.Error())
