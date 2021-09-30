@@ -77,21 +77,21 @@ func TestSSLConnection(t *testing.T) {
 		t.Fatalf(err.Error())
 		return
 	}
-	checkResSetResp(t, "show hosts", resp)
+	checkResultSet(t, "show hosts", resp)
 	// Create a new space
 	resp, err = tryToExecute(session, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
-	checkResSetResp(t, "create space", resp)
+	checkResultSet(t, "create space", resp)
 
 	resp, err = tryToExecute(session, "DROP SPACE client_test;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
-	checkResSetResp(t, "drop space", resp)
+	checkResultSet(t, "drop space", resp)
 }
 
 func openAndReadFile(t *testing.T, path string) []byte {

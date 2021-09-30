@@ -16,10 +16,17 @@ jobs:
       - name: Test with GO test
         run: |
           pushd nebula-docker-compose/
-          docker-compose up -d
+          enable_ssl=false docker-compose up -d
           sleep 10
           popd
           go test -v -race
+      - name: Test SSL connection
+        run: |
+          pushd nebula-docker-compose/
+          enable_ssl=true docker-compose up -d
+          sleep 10
+          popd
+          go test -v -run TestSSLConnection
       - name: Run examples
         run: |
           go run basic_example/graph_client_basic_example.go

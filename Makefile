@@ -1,4 +1,4 @@
-.PHONY: build test fmt ci run-examples
+.PHONY: build test fmt ci ssl-test run-examples
 
 default: build
 
@@ -18,6 +18,13 @@ ci:
 	sleep 5 && \
 	cd .. && \
 	go test -v -race; \
+	cd ./nebula-docker-compose && docker-compose down -v 
+
+ssl-test:
+	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d && \
+	sleep 5 && \
+	cd .. && \
+	go test -v -run TestSSLConnection; \
 	cd ./nebula-docker-compose && docker-compose down -v 
 
 run-examples:
