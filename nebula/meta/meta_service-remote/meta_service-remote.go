@@ -93,7 +93,7 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "  ExecResp addListener(AddListenerReq req)")
   fmt.Fprintln(os.Stderr, "  ExecResp removeListener(RemoveListenerReq req)")
   fmt.Fprintln(os.Stderr, "  ListListenerResp listListener(ListListenerReq req)")
-  fmt.Fprintln(os.Stderr, "  GetStatisResp getStatis(GetStatisReq req)")
+  fmt.Fprintln(os.Stderr, "  GetStatsResp getStats(GetStatsReq req)")
   fmt.Fprintln(os.Stderr, "  ExecResp signInFTService(SignInFTServiceReq req)")
   fmt.Fprintln(os.Stderr, "  ExecResp signOutFTService(SignOutFTServiceReq req)")
   fmt.Fprintln(os.Stderr, "  ListFTClientsResp listFTClients(ListFTClientsReq req)")
@@ -2003,9 +2003,9 @@ func main() {
     fmt.Print(client.ListListener(value0))
     fmt.Print("\n")
     break
-  case "getStatis":
+  case "getStats":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetStatis requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetStats requires 1 args")
       flag.Usage()
     }
     arg531 := flag.Arg(1)
@@ -2018,14 +2018,14 @@ func main() {
     }
     factory534 := thrift.NewSimpleJSONProtocolFactory()
     jsProt535 := factory534.GetProtocol(mbTrans532)
-    argvalue0 := meta.NewGetStatisReq()
+    argvalue0 := meta.NewGetStatsReq()
     err536 := argvalue0.Read(jsProt535)
     if err536 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetStatis(value0))
+    fmt.Print(client.GetStats(value0))
     fmt.Print("\n")
     break
   case "signInFTService":

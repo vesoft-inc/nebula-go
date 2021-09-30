@@ -27,12 +27,7 @@ type Session struct {
 	timezoneInfo
 }
 
-// unsupported
-// func (session *Session) ExecuteJson(stmt string) (*graph.ExecutionResponse, error) {
-// 	return session.graph.ExecuteJson(session.sessionID, []byte(stmt))
-// }
-
-// Execute returns the result of given query as a ResultSet
+// Execute returns the result of the given query as a ResultSet
 func (session *Session) Execute(stmt string) (*ResultSet, error) {
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
@@ -74,6 +69,97 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 	}
 }
 
+// ExecuteJson returns the result of the given query as a json string
+// Date and Datetime will be returned in UTC
+//	JSON struct:
+// {
+//     "results":[
+//         {
+//             "columns":[
+//             ],
+//             "data":[
+//                 {
+//                     "row":[
+//                         "row-data"
+//                     ],
+//                     "meta":[
+//                         "metadata"
+//                     ]
+//                 }
+//             ],
+//             "latencyInUs":0,
+//             "spaceName":"",
+//             "planDesc ":{
+//                 "planNodeDescs":[
+//                     {
+//                         "name":"",
+//                         "id":0,
+//                         "outputVar":"",
+//                         "description":{
+//                             "key":""
+//                         },
+//                         "profiles":[
+//                             {
+//                                 "rows":1,
+//                                 "execDurationInUs":0,
+//                                 "totalDurationInUs":0,
+//                                 "otherStats":{}
+//                             }
+//                         ],
+//                         "branchInfo":{
+//                             "isDoBranch":false,
+//                             "conditionNodeId":-1
+//                         },
+//                         "dependencies":[]
+//                     }
+//                 ],
+//                 "nodeIndexMap":{},
+//                 "format":"",
+//                 "optimize_time_in_us":0
+//             },
+//             "comment ":""
+//         }
+//     ],
+//     "errors":[
+//         {
+//       		"code": 0,
+//       		"message": ""
+//         }
+//     ]
+// }
+func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
+	if session.connection == nil {
+		return nil, fmt.Errorf("failed to execute: Session has been released")
+	}
+	resp, err := session.connection.executeJson(session.sessionID, stmt)
+	if err == nil {
+		return resp, nil
+	}
+	// Reconnect only if the tranport is closed
+	err2, ok := err.(thrift.TransportException)
+	if !ok {
+		return nil, err
+	}
+	if err2.TypeID() == thrift.END_OF_FILE {
+		_err := session.reConnect()
+		if _err != nil {
+			session.log.Error(fmt.Sprintf("Failed to reconnect, %s", _err.Error()))
+			return nil, _err
+		}
+		session.log.Info(fmt.Sprintf("Successfully reconnect to host: %s, port: %d",
+			session.connection.severAddress.Host, session.connection.severAddress.Port))
+		// Execute with the new connetion
+		resp, err := session.connection.executeJson(session.sessionID, stmt)
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	} else { // No need to reconnect
+		session.log.Error(fmt.Sprintf("Error info: %s", err2.Error()))
+		return nil, err2
+	}
+}
+
 func (session *Session) reConnect() error {
 	newconnection, err := session.connPool.getIdleConn()
 	if err != nil {
@@ -87,7 +173,9 @@ func (session *Session) reConnect() error {
 	return nil
 }
 
-// Release logs out and releases connetion hold by session
+// Release logs out and releases connetion hold by session.
+// The connection will be added into the activeConnectionQueue of the connection pool
+// so that it could be reused.
 func (session *Session) Release() {
 	if session == nil {
 		return

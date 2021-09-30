@@ -45,6 +45,9 @@ type GraphStorageService interface {
   DeleteVertices(ctx context.Context, req *DeleteVerticesRequest) (_r *ExecResponse, err error)
   // Parameters:
   //  - Req
+  DeleteTags(ctx context.Context, req *DeleteTagsRequest) (_r *ExecResponse, err error)
+  // Parameters:
+  //  - Req
   UpdateVertex(ctx context.Context, req *UpdateVertexRequest) (_r *UpdateResponse, err error)
   // Parameters:
   //  - Req
@@ -89,6 +92,9 @@ type GraphStorageServiceClientInterface interface {
   // Parameters:
   //  - Req
   DeleteVertices(req *DeleteVerticesRequest) (_r *ExecResponse, err error)
+  // Parameters:
+  //  - Req
+  DeleteTags(req *DeleteTagsRequest) (_r *ExecResponse, err error)
   // Parameters:
   //  - Req
   UpdateVertex(req *UpdateVertexRequest) (_r *UpdateResponse, err error)
@@ -259,6 +265,26 @@ func (p *GraphStorageServiceClient) DeleteVertices(req *DeleteVerticesRequest) (
 func (p *GraphStorageServiceClient) recvDeleteVertices() (value *ExecResponse, err error) {
   var result GraphStorageServiceDeleteVerticesResult
   err = p.CC.RecvMsg("deleteVertices", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceClient) DeleteTags(req *DeleteTagsRequest) (_r *ExecResponse, err error) {
+  args := GraphStorageServiceDeleteTagsArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("deleteTags", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDeleteTags()
+}
+
+
+func (p *GraphStorageServiceClient) recvDeleteTags() (value *ExecResponse, err error) {
+  var result GraphStorageServiceDeleteTagsResult
+  err = p.CC.RecvMsg("deleteTags", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -595,6 +621,28 @@ func (p *GraphStorageServiceThreadsafeClient) recvDeleteVertices() (value *ExecR
 
 // Parameters:
 //  - Req
+func (p *GraphStorageServiceThreadsafeClient) DeleteTags(req *DeleteTagsRequest) (_r *ExecResponse, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := GraphStorageServiceDeleteTagsArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("deleteTags", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDeleteTags()
+}
+
+
+func (p *GraphStorageServiceThreadsafeClient) recvDeleteTags() (value *ExecResponse, err error) {
+  var result GraphStorageServiceDeleteTagsResult
+  err = p.CC.RecvMsg("deleteTags", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
 func (p *GraphStorageServiceThreadsafeClient) UpdateVertex(req *UpdateVertexRequest) (_r *UpdateResponse, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
@@ -870,6 +918,19 @@ func (p *GraphStorageServiceChannelClient) DeleteVertices(ctx context.Context, r
 
 // Parameters:
 //  - Req
+func (p *GraphStorageServiceChannelClient) DeleteTags(ctx context.Context, req *DeleteTagsRequest) (_r *ExecResponse, err error) {
+  args := GraphStorageServiceDeleteTagsArgs{
+    Req : req,
+  }
+  var result GraphStorageServiceDeleteTagsResult
+  err = p.RequestChannel.Call(ctx, "deleteTags", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
 func (p *GraphStorageServiceChannelClient) UpdateVertex(ctx context.Context, req *UpdateVertexRequest) (_r *UpdateResponse, err error) {
   args := GraphStorageServiceUpdateVertexArgs{
     Req : req,
@@ -994,22 +1055,23 @@ func (p *GraphStorageServiceProcessor) ProcessorMap() map[string]thrift.Processo
 }
 
 func NewGraphStorageServiceProcessor(handler GraphStorageService) *GraphStorageServiceProcessor {
-  self72 := &GraphStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self72.processorMap["getNeighbors"] = &graphStorageServiceProcessorGetNeighbors{handler:handler}
-  self72.processorMap["getProps"] = &graphStorageServiceProcessorGetProps{handler:handler}
-  self72.processorMap["addVertices"] = &graphStorageServiceProcessorAddVertices{handler:handler}
-  self72.processorMap["addEdges"] = &graphStorageServiceProcessorAddEdges{handler:handler}
-  self72.processorMap["deleteEdges"] = &graphStorageServiceProcessorDeleteEdges{handler:handler}
-  self72.processorMap["deleteVertices"] = &graphStorageServiceProcessorDeleteVertices{handler:handler}
-  self72.processorMap["updateVertex"] = &graphStorageServiceProcessorUpdateVertex{handler:handler}
-  self72.processorMap["updateEdge"] = &graphStorageServiceProcessorUpdateEdge{handler:handler}
-  self72.processorMap["scanVertex"] = &graphStorageServiceProcessorScanVertex{handler:handler}
-  self72.processorMap["scanEdge"] = &graphStorageServiceProcessorScanEdge{handler:handler}
-  self72.processorMap["getUUID"] = &graphStorageServiceProcessorGetUUID{handler:handler}
-  self72.processorMap["lookupIndex"] = &graphStorageServiceProcessorLookupIndex{handler:handler}
-  self72.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
-  self72.processorMap["addEdgesAtomic"] = &graphStorageServiceProcessorAddEdgesAtomic{handler:handler}
-  return self72
+  self78 := &GraphStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self78.processorMap["getNeighbors"] = &graphStorageServiceProcessorGetNeighbors{handler:handler}
+  self78.processorMap["getProps"] = &graphStorageServiceProcessorGetProps{handler:handler}
+  self78.processorMap["addVertices"] = &graphStorageServiceProcessorAddVertices{handler:handler}
+  self78.processorMap["addEdges"] = &graphStorageServiceProcessorAddEdges{handler:handler}
+  self78.processorMap["deleteEdges"] = &graphStorageServiceProcessorDeleteEdges{handler:handler}
+  self78.processorMap["deleteVertices"] = &graphStorageServiceProcessorDeleteVertices{handler:handler}
+  self78.processorMap["deleteTags"] = &graphStorageServiceProcessorDeleteTags{handler:handler}
+  self78.processorMap["updateVertex"] = &graphStorageServiceProcessorUpdateVertex{handler:handler}
+  self78.processorMap["updateEdge"] = &graphStorageServiceProcessorUpdateEdge{handler:handler}
+  self78.processorMap["scanVertex"] = &graphStorageServiceProcessorScanVertex{handler:handler}
+  self78.processorMap["scanEdge"] = &graphStorageServiceProcessorScanEdge{handler:handler}
+  self78.processorMap["getUUID"] = &graphStorageServiceProcessorGetUUID{handler:handler}
+  self78.processorMap["lookupIndex"] = &graphStorageServiceProcessorLookupIndex{handler:handler}
+  self78.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
+  self78.processorMap["addEdgesAtomic"] = &graphStorageServiceProcessorAddEdgesAtomic{handler:handler}
+  return self78
 }
 
 type graphStorageServiceProcessorGetNeighbors struct {
@@ -1304,6 +1366,56 @@ func (p *graphStorageServiceProcessorDeleteVertices) RunContext(ctx context.Cont
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing deleteVertices: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type graphStorageServiceProcessorDeleteTags struct {
+  handler GraphStorageService
+}
+
+func (p *graphStorageServiceProcessorDeleteTags) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := GraphStorageServiceDeleteTagsArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *graphStorageServiceProcessorDeleteTags) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("deleteTags", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *graphStorageServiceProcessorDeleteTags) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*GraphStorageServiceDeleteTagsArgs)
+  var result GraphStorageServiceDeleteTagsResult
+  if retval, err := p.handler.DeleteTags(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing deleteTags: " + err.Error())
       return x, x
     }
   } else {
@@ -2913,6 +3025,206 @@ func (p *GraphStorageServiceDeleteVerticesResult) String() string {
     successVal = fmt.Sprintf("%v", p.Success)
   }
   return fmt.Sprintf("GraphStorageServiceDeleteVerticesResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type GraphStorageServiceDeleteTagsArgs struct {
+  thrift.IRequest
+  Req *DeleteTagsRequest `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewGraphStorageServiceDeleteTagsArgs() *GraphStorageServiceDeleteTagsArgs {
+  return &GraphStorageServiceDeleteTagsArgs{
+    Req: NewDeleteTagsRequest(),
+  }
+}
+
+var GraphStorageServiceDeleteTagsArgs_Req_DEFAULT *DeleteTagsRequest
+func (p *GraphStorageServiceDeleteTagsArgs) GetReq() *DeleteTagsRequest {
+  if !p.IsSetReq() {
+    return GraphStorageServiceDeleteTagsArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *GraphStorageServiceDeleteTagsArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *GraphStorageServiceDeleteTagsArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceDeleteTagsArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewDeleteTagsRequest()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceDeleteTagsArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("deleteTags_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServiceDeleteTagsArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *GraphStorageServiceDeleteTagsArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("GraphStorageServiceDeleteTagsArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type GraphStorageServiceDeleteTagsResult struct {
+  thrift.IResponse
+  Success *ExecResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewGraphStorageServiceDeleteTagsResult() *GraphStorageServiceDeleteTagsResult {
+  return &GraphStorageServiceDeleteTagsResult{}
+}
+
+var GraphStorageServiceDeleteTagsResult_Success_DEFAULT *ExecResponse
+func (p *GraphStorageServiceDeleteTagsResult) GetSuccess() *ExecResponse {
+  if !p.IsSetSuccess() {
+    return GraphStorageServiceDeleteTagsResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *GraphStorageServiceDeleteTagsResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *GraphStorageServiceDeleteTagsResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceDeleteTagsResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecResponse()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceDeleteTagsResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("deleteTags_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServiceDeleteTagsResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *GraphStorageServiceDeleteTagsResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GraphStorageServiceDeleteTagsResult({Success:%s})", successVal)
 }
 
 // Attributes:
