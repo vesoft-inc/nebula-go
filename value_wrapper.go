@@ -286,7 +286,7 @@ func (valWrap ValueWrapper) String() string {
 	} else if value.IsSetIVal() {
 		return fmt.Sprintf("%d", value.GetIVal())
 	} else if value.IsSetFVal() {
-		fStr := strconv.FormatFloat(value.GetFVal(), 'f', -1, 64)
+		fStr := strconv.FormatFloat(value.GetFVal(), 'g', -1, 64)
 		if !strings.Contains(fStr, ".") {
 			fStr = fStr + ".0"
 		}
