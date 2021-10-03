@@ -26,7 +26,7 @@ jobs:
           enable_ssl=true docker-compose up -d
           sleep 10
           popd
-          go test -v -run TestSSLConnection
+          ssl_test=true go test -v -run TestSSLConnection
       - name: Run examples
         run: |
           go run basic_example/graph_client_basic_example.go

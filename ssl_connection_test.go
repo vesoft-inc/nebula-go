@@ -17,6 +17,9 @@ import (
 )
 
 func TestSSLConnection(t *testing.T) {
+	// skip test when ssl_test is not set to true
+	skipCI(t)
+
 	hostAdress := HostAddress{Host: address, Port: port}
 	// hostAdress := HostAddress{Host: "192.168.8.6", Port: 29562}
 	hostList := []HostAddress{}
@@ -106,4 +109,10 @@ func openAndReadFile(t *testing.T, path string) []byte {
 		t.Fatalf(fmt.Sprintf("unable to ReadAll of test file %s: %s", path, err))
 	}
 	return b
+}
+
+func skipCI(t *testing.T) {
+	if os.Getenv("ssl_test") != "true" {
+		t.Skip("Skipping SSL testing in CI environment")
+	}
 }
