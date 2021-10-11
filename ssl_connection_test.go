@@ -21,7 +21,6 @@ func TestSslConnection(t *testing.T) {
 	skipSsl(t)
 
 	hostAdress := HostAddress{Host: address, Port: port}
-	// hostAdress := HostAddress{Host: "192.168.8.6", Port: 29562}
 	hostList := []HostAddress{}
 	hostList = append(hostList, hostAdress)
 
@@ -103,7 +102,6 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	skipSslSelfSigned(t)
 
 	hostAdress := HostAddress{Host: address, Port: port}
-	// hostAdress := HostAddress{Host: "192.168.8.6", Port: 29562}
 	hostList := []HostAddress{}
 	hostList = append(hostList, hostAdress)
 
@@ -115,6 +113,8 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	}
 
 	var (
+		// for self-signed cert, use the local cert as the root ca
+		rootCA     = openAndReadFile(t, "./nebula-docker-compose/secrets/test.self-signed.pem")
 		cert       = openAndReadFile(t, "./nebula-docker-compose/secrets/test.self-signed.pem")
 		privateKey = openAndReadFile(t, "./nebula-docker-compose/secrets/test.self-signed.key")
 	)
@@ -126,8 +126,9 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	}
 
 	// parse root CA pem and add into CA pool
+	// for self-signed cert, use the local cert as the root ca
 	rootCAPool := x509.NewCertPool()
-	ok := rootCAPool.AppendCertsFromPEM(cert)
+	ok := rootCAPool.AppendCertsFromPEM(rootCA)
 	if !ok {
 		t.Fatal("unable to append supplied cert into tls.Config, are you sure it is a valid certificate")
 	}
@@ -135,8 +136,8 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	// set tls config
 	// InsecureSkipVerify is set to true for test purpose ONLY. DO NOT use it in production.
 	sslConfig := &tls.Config{
-		Certificates: []tls.Certificate{clientCert},
-		// RootCAs:      rootCAPool,
+		Certificates:       []tls.Certificate{clientCert},
+		RootCAs:            rootCAPool,
 		InsecureSkipVerify: true, // This is only used for testing
 	}
 
