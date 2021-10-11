@@ -30,7 +30,7 @@ jobs:
       - name: Test SSL connection self-signed
         run: |
           pushd nebula-docker-compose/
-          enable_ssl=true ca_signed docker-compose up -d
+          enable_ssl=true docker-compose up -d
           sleep 10
           popd
           self_signed=true go test -v -run TestSslConnectionSelfSigned
@@ -38,4 +38,3 @@ jobs:
         run: |
           go run basic_example/graph_client_basic_example.go
           go run gorountines_example/graph_client_goroutines_example.go
-        

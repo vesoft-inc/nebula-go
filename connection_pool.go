@@ -102,10 +102,10 @@ func (pool *ConnectionPool) initPool() error {
 
 		// Open connection to host
 		err := errors.New("")
-		if pool.sslConfig != nil {
-			err = newConn.openSSL(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig)
-		} else {
+		if pool.sslConfig == nil {
 			err = newConn.open(newConn.severAddress, pool.conf.TimeOut)
+		} else {
+			err = newConn.openSSL(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig)
 		}
 		if err != nil {
 			// If initialization failed, clean idle queue
@@ -210,7 +210,7 @@ func (pool *ConnectionPool) release(conn *connection) {
 func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error {
 	newConn := newConnection(host)
 	// Open connection to host
-	if pool.sslConfig != nil {
+	if pool.sslConfig == nil {
 		if err := newConn.open(newConn.severAddress, timeout); err != nil {
 			return err
 		}
@@ -269,7 +269,7 @@ func (pool *ConnectionPool) newConnToHost() (*connection, error) {
 	host := pool.getHost()
 	newConn := newConnection(host)
 	// Open connection to host
-	if pool.sslConfig != nil {
+	if pool.sslConfig == nil {
 		if err := newConn.open(newConn.severAddress, pool.conf.TimeOut); err != nil {
 			return nil, err
 		}

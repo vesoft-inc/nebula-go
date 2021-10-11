@@ -20,8 +20,8 @@ func TestSslConnection(t *testing.T) {
 	// skip test when ssl_test is not set to true
 	skipSsl(t)
 
-	// hostAdress := HostAddress{Host: address, Port: port}
-	hostAdress := HostAddress{Host: "192.168.8.6", Port: 29562}
+	hostAdress := HostAddress{Host: address, Port: port}
+	// hostAdress := HostAddress{Host: "192.168.8.6", Port: 29562}
 	hostList := []HostAddress{}
 	hostList = append(hostList, hostAdress)
 
@@ -102,8 +102,8 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	// skip test when ssl_test is not set to true
 	skipSslSelfSigned(t)
 
-	// hostAdress := HostAddress{Host: address, Port: port}
-	hostAdress := HostAddress{Host: "192.168.8.6", Port: 29562}
+	hostAdress := HostAddress{Host: address, Port: port}
+	// hostAdress := HostAddress{Host: "192.168.8.6", Port: 29562}
 	hostList := []HostAddress{}
 	hostList = append(hostList, hostAdress)
 
@@ -115,8 +115,8 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	}
 
 	var (
-		cert       = openAndReadFile(t, "./nebula-docker-compose/secrets/test.client.crt")
-		privateKey = openAndReadFile(t, "./nebula-docker-compose/secrets/test.client.key")
+		cert       = openAndReadFile(t, "./nebula-docker-compose/secrets/test.self-signed.pem")
+		privateKey = openAndReadFile(t, "./nebula-docker-compose/secrets/test.self-signed.key")
 	)
 
 	// generate the client certificate

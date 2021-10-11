@@ -27,7 +27,7 @@ ssl-test:
 	go test -v -run TestSslConnection; \
 	cd ./nebula-docker-compose && docker-compose down -v 
 
-ssl-test:
+ssl-test-self-signed:
 	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d && \
 	sleep 5 && \
 	cd .. && \
