@@ -18,13 +18,20 @@ ci:
 	sleep 5 && \
 	cd .. && \
 	go test -v -race; \
+	cd ./nebula-docker-compose && docker-compose down -v
+
+ssl-test:
+	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d && \
+	sleep 5 && \
+	cd .. && \
+	go test -v -run TestSslConnection; \
 	cd ./nebula-docker-compose && docker-compose down -v 
 
 ssl-test:
 	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d && \
 	sleep 5 && \
 	cd .. && \
-	go test -v -run TestSSLConnection; \
+	ssl_test=true go test -v -run TestSslConnection; \
 	cd ./nebula-docker-compose && docker-compose down -v 
 
 run-examples:

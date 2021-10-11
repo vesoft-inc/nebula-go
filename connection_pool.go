@@ -27,6 +27,7 @@ type ConnectionPool struct {
 	rwLock                sync.RWMutex
 	cleanerChan           chan struct{} //notify when pool is close
 	closed                bool
+	sslConfig             *tls.Config
 }
 
 // NewConnectionPool constructs a new connection pool using the given addresses and configs
@@ -50,10 +51,11 @@ func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*C
 		log:       log,
 		addresses: convAddress,
 		hostIndex: 0,
+		sslConfig: nil,
 	}
 
 	// Init pool with non-SSL socket
-	if err = newPool.initPool(false, nil); err != nil {
+	if err = newPool.initPool(); err != nil {
 		return nil, err
 	}
 	newPool.startCleaner()
@@ -81,10 +83,11 @@ func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *t
 		log:       log,
 		addresses: convAddress,
 		hostIndex: 0,
+		sslConfig: sslConfig,
 	}
 
 	// Init pool with SSL socket
-	if err = newPool.initPool(true, sslConfig); err != nil {
+	if err = newPool.initPool(); err != nil {
 		return nil, err
 	}
 	newPool.startCleaner()
@@ -92,15 +95,15 @@ func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *t
 }
 
 // initPool initializes the connection pool
-func (pool *ConnectionPool) initPool(SSLEnabled bool, sslConfig *tls.Config) error {
+func (pool *ConnectionPool) initPool() error {
 	for i := 0; i < pool.conf.MinConnPoolSize; i++ {
 		// Simple round-robin
 		newConn := newConnection(pool.addresses[i%len(pool.addresses)])
 
 		// Open connection to host
 		err := errors.New("")
-		if SSLEnabled {
-			err = newConn.openSSL(newConn.severAddress, pool.conf.TimeOut, sslConfig)
+		if pool.sslConfig != nil {
+			err = newConn.openSSL(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig)
 		} else {
 			err = newConn.open(newConn.severAddress, pool.conf.TimeOut)
 		}
@@ -207,8 +210,14 @@ func (pool *ConnectionPool) release(conn *connection) {
 func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error {
 	newConn := newConnection(host)
 	// Open connection to host
-	if err := newConn.open(newConn.severAddress, timeout); err != nil {
-		return err
+	if pool.sslConfig != nil {
+		if err := newConn.open(newConn.severAddress, timeout); err != nil {
+			return err
+		}
+	} else {
+		if err := newConn.openSSL(newConn.severAddress, timeout, pool.sslConfig); err != nil {
+			return err
+		}
 	}
 	newConn.close()
 	return nil
@@ -260,9 +269,14 @@ func (pool *ConnectionPool) newConnToHost() (*connection, error) {
 	host := pool.getHost()
 	newConn := newConnection(host)
 	// Open connection to host
-	err := newConn.open(newConn.severAddress, pool.conf.TimeOut)
-	if err != nil {
-		return nil, err
+	if pool.sslConfig != nil {
+		if err := newConn.open(newConn.severAddress, pool.conf.TimeOut); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := newConn.openSSL(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig); err != nil {
+			return nil, err
+		}
 	}
 	// Add connection to active queue
 	pool.activeConnectionQueue.PushBack(newConn)

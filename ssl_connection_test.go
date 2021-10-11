@@ -16,12 +16,12 @@ import (
 	"time"
 )
 
-func TestSSLConnection(t *testing.T) {
+func TestSslConnection(t *testing.T) {
 	// skip test when ssl_test is not set to true
-	skipCI(t)
+	skipSsl(t)
 
-	hostAdress := HostAddress{Host: address, Port: port}
-	// hostAdress := HostAddress{Host: "192.168.8.6", Port: 29562}
+	// hostAdress := HostAddress{Host: address, Port: port}
+	hostAdress := HostAddress{Host: "192.168.8.6", Port: 29562}
 	hostList := []HostAddress{}
 	hostList = append(hostList, hostAdress)
 
@@ -64,7 +64,88 @@ func TestSSLConnection(t *testing.T) {
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
-	// close all connections in the pool
+	// Close all connections in the pool
+	defer pool.Close()
+
+	// Create session
+	session, err := pool.GetSession(username, password)
+	if err != nil {
+		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
+			username, password, err.Error())
+	}
+	defer session.Release()
+	// Excute a query
+	resp, err := tryToExecute(session, "SHOW HOSTS;")
+	if err != nil {
+		t.Fatalf(err.Error())
+		return
+	}
+	checkResultSet(t, "show hosts", resp)
+	// Create a new space
+	resp, err = tryToExecute(session, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
+	if err != nil {
+		t.Fatalf(err.Error())
+		return
+	}
+	checkResultSet(t, "create space", resp)
+
+	resp, err = tryToExecute(session, "DROP SPACE client_test;")
+	if err != nil {
+		t.Fatalf(err.Error())
+		return
+	}
+	checkResultSet(t, "drop space", resp)
+}
+
+// TODO: generate certificate with hostName info and disable InsecureSkipVerify
+func TestSslConnectionSelfSigned(t *testing.T) {
+	// skip test when ssl_test is not set to true
+	skipSslSelfSigned(t)
+
+	// hostAdress := HostAddress{Host: address, Port: port}
+	hostAdress := HostAddress{Host: "192.168.8.6", Port: 29562}
+	hostList := []HostAddress{}
+	hostList = append(hostList, hostAdress)
+
+	testPoolConfig = PoolConfig{
+		TimeOut:         0 * time.Millisecond,
+		IdleTime:        0 * time.Millisecond,
+		MaxConnPoolSize: 10,
+		MinConnPoolSize: 1,
+	}
+
+	var (
+		cert       = openAndReadFile(t, "./nebula-docker-compose/secrets/test.client.crt")
+		privateKey = openAndReadFile(t, "./nebula-docker-compose/secrets/test.client.key")
+	)
+
+	// generate the client certificate
+	clientCert, err := tls.X509KeyPair(cert, privateKey)
+	if err != nil {
+		panic(err)
+	}
+
+	// parse root CA pem and add into CA pool
+	rootCAPool := x509.NewCertPool()
+	ok := rootCAPool.AppendCertsFromPEM(cert)
+	if !ok {
+		t.Fatal("unable to append supplied cert into tls.Config, are you sure it is a valid certificate")
+	}
+
+	// set tls config
+	// InsecureSkipVerify is set to true for test purpose ONLY. DO NOT use it in production.
+	sslConfig := &tls.Config{
+		Certificates: []tls.Certificate{clientCert},
+		// RootCAs:      rootCAPool,
+		InsecureSkipVerify: true, // This is only used for testing
+	}
+
+	// Initialize connectin pool
+	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConfig, nebulaLog)
+	if err != nil {
+		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+	}
+	// Close all connections in the pool
 	defer pool.Close()
 
 	// Create session
@@ -111,8 +192,14 @@ func openAndReadFile(t *testing.T, path string) []byte {
 	return b
 }
 
-func skipCI(t *testing.T) {
+func skipSsl(t *testing.T) {
 	if os.Getenv("ssl_test") != "true" {
+		t.Skip("Skipping SSL testing in CI environment")
+	}
+}
+
+func skipSslSelfSigned(t *testing.T) {
+	if os.Getenv("self_signed") != "true" {
 		t.Skip("Skipping SSL testing in CI environment")
 	}
 }

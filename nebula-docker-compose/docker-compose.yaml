@@ -22,6 +22,8 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
+      - --ca_signed=${ca_signed}
+      - --password_path=${password_path}
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad0:11000/status"]
       interval: 30s
@@ -64,6 +66,8 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
+      - --ca_signed=${ca_signed}
+      - --password_path=${password_path}
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad1:11000/status"]
       interval: 30s
@@ -106,6 +110,8 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
+      - --ca_signed=${ca_signed}
+      - --password_path=${password_path}
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad2:11000/status"]
       interval: 30s
@@ -148,6 +154,8 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
+      - --ca_signed=${ca_signed}
+      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -194,6 +202,8 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
+      - --ca_signed=${ca_signed}
+      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -240,6 +250,8 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
+      - --ca_signed=${ca_signed}
+      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -286,6 +298,8 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
+      - --ca_signed=${ca_signed}
+      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -331,6 +345,8 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
+      - --ca_signed=${ca_signed}
+      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -376,6 +392,10 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
+      - --ca_signed=${ca_signed}
+      - --password_path=${password_path}
+
+
     depends_on:
       - metad0
       - metad1
