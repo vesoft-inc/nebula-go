@@ -38,6 +38,9 @@ type GraphService interface {
   //  - SessionId
   //  - Stmt
   ExecuteJson(ctx context.Context, sessionId int64, stmt []byte) (_r []byte, err error)
+  // Parameters:
+  //  - Req
+  VerifyClientVersion(ctx context.Context, req *VerifyClientVersionReq) (_r *VerifyClientVersionResp, err error)
 }
 
 type GraphServiceClientInterface interface {
@@ -57,6 +60,9 @@ type GraphServiceClientInterface interface {
   //  - SessionId
   //  - Stmt
   ExecuteJson(sessionId int64, stmt []byte) (_r []byte, err error)
+  // Parameters:
+  //  - Req
+  VerifyClientVersion(req *VerifyClientVersionReq) (_r *VerifyClientVersionResp, err error)
 }
 
 type GraphServiceClient struct {
@@ -160,6 +166,26 @@ func (p *GraphServiceClient) ExecuteJson(sessionId int64, stmt []byte) (_r []byt
 func (p *GraphServiceClient) recvExecuteJson() (value []byte, err error) {
   var result GraphServiceExecuteJsonResult
   err = p.CC.RecvMsg("executeJson", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphServiceClient) VerifyClientVersion(req *VerifyClientVersionReq) (_r *VerifyClientVersionResp, err error) {
+  args := GraphServiceVerifyClientVersionArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("verifyClientVersion", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvVerifyClientVersion()
+}
+
+
+func (p *GraphServiceClient) recvVerifyClientVersion() (value *VerifyClientVersionResp, err error) {
+  var result GraphServiceVerifyClientVersionResult
+  err = p.CC.RecvMsg("verifyClientVersion", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -287,6 +313,28 @@ func (p *GraphServiceThreadsafeClient) recvExecuteJson() (value []byte, err erro
   return result.GetSuccess(), nil
 }
 
+// Parameters:
+//  - Req
+func (p *GraphServiceThreadsafeClient) VerifyClientVersion(req *VerifyClientVersionReq) (_r *VerifyClientVersionResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := GraphServiceVerifyClientVersionArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("verifyClientVersion", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvVerifyClientVersion()
+}
+
+
+func (p *GraphServiceThreadsafeClient) recvVerifyClientVersion() (value *VerifyClientVersionResp, err error) {
+  var result GraphServiceVerifyClientVersionResult
+  err = p.CC.RecvMsg("verifyClientVersion", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
 
 type GraphServiceChannelClient struct {
   RequestChannel thrift.RequestChannel
@@ -365,6 +413,19 @@ func (p *GraphServiceChannelClient) ExecuteJson(ctx context.Context, sessionId i
   return result.GetSuccess(), nil
 }
 
+// Parameters:
+//  - Req
+func (p *GraphServiceChannelClient) VerifyClientVersion(ctx context.Context, req *VerifyClientVersionReq) (_r *VerifyClientVersionResp, err error) {
+  args := GraphServiceVerifyClientVersionArgs{
+    Req : req,
+  }
+  var result GraphServiceVerifyClientVersionResult
+  err = p.RequestChannel.Call(ctx, "verifyClientVersion", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
 
 type GraphServiceProcessor struct {
   processorMap map[string]thrift.ProcessorFunctionContext
@@ -392,6 +453,7 @@ func NewGraphServiceProcessor(handler GraphService) *GraphServiceProcessor {
   self9.processorMap["signout"] = &graphServiceProcessorSignout{handler:handler}
   self9.processorMap["execute"] = &graphServiceProcessorExecute{handler:handler}
   self9.processorMap["executeJson"] = &graphServiceProcessorExecuteJson{handler:handler}
+  self9.processorMap["verifyClientVersion"] = &graphServiceProcessorVerifyClientVersion{handler:handler}
   return self9
 }
 
@@ -584,6 +646,56 @@ func (p *graphServiceProcessorExecuteJson) RunContext(ctx context.Context, argSt
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing executeJson: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type graphServiceProcessorVerifyClientVersion struct {
+  handler GraphService
+}
+
+func (p *graphServiceProcessorVerifyClientVersion) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := GraphServiceVerifyClientVersionArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *graphServiceProcessorVerifyClientVersion) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("verifyClientVersion", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *graphServiceProcessorVerifyClientVersion) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*GraphServiceVerifyClientVersionArgs)
+  var result GraphServiceVerifyClientVersionResult
+  if retval, err := p.handler.VerifyClientVersion(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing verifyClientVersion: " + err.Error())
       return x, x
     }
   } else {
@@ -1323,6 +1435,206 @@ func (p *GraphServiceExecuteJsonResult) String() string {
 
   successVal := fmt.Sprintf("%v", p.Success)
   return fmt.Sprintf("GraphServiceExecuteJsonResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type GraphServiceVerifyClientVersionArgs struct {
+  thrift.IRequest
+  Req *VerifyClientVersionReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewGraphServiceVerifyClientVersionArgs() *GraphServiceVerifyClientVersionArgs {
+  return &GraphServiceVerifyClientVersionArgs{
+    Req: NewVerifyClientVersionReq(),
+  }
+}
+
+var GraphServiceVerifyClientVersionArgs_Req_DEFAULT *VerifyClientVersionReq
+func (p *GraphServiceVerifyClientVersionArgs) GetReq() *VerifyClientVersionReq {
+  if !p.IsSetReq() {
+    return GraphServiceVerifyClientVersionArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *GraphServiceVerifyClientVersionArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *GraphServiceVerifyClientVersionArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceVerifyClientVersionArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewVerifyClientVersionReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceVerifyClientVersionArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("verifyClientVersion_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphServiceVerifyClientVersionArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *GraphServiceVerifyClientVersionArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("GraphServiceVerifyClientVersionArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type GraphServiceVerifyClientVersionResult struct {
+  thrift.IResponse
+  Success *VerifyClientVersionResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewGraphServiceVerifyClientVersionResult() *GraphServiceVerifyClientVersionResult {
+  return &GraphServiceVerifyClientVersionResult{}
+}
+
+var GraphServiceVerifyClientVersionResult_Success_DEFAULT *VerifyClientVersionResp
+func (p *GraphServiceVerifyClientVersionResult) GetSuccess() *VerifyClientVersionResp {
+  if !p.IsSetSuccess() {
+    return GraphServiceVerifyClientVersionResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *GraphServiceVerifyClientVersionResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *GraphServiceVerifyClientVersionResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceVerifyClientVersionResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewVerifyClientVersionResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceVerifyClientVersionResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("verifyClientVersion_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphServiceVerifyClientVersionResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *GraphServiceVerifyClientVersionResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GraphServiceVerifyClientVersionResult({Success:%s})", successVal)
 }
 
 

@@ -25,6 +25,7 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "  void signout(i64 sessionId)")
   fmt.Fprintln(os.Stderr, "  ExecutionResponse execute(i64 sessionId, string stmt)")
   fmt.Fprintln(os.Stderr, "  string executeJson(i64 sessionId, string stmt)")
+  fmt.Fprintln(os.Stderr, "  VerifyClientVersionResp verifyClientVersion(VerifyClientVersionReq req)")
   fmt.Fprintln(os.Stderr)
   os.Exit(0)
 }
@@ -175,6 +176,31 @@ func main() {
     argvalue1 := []byte(flag.Arg(2))
     value1 := argvalue1
     fmt.Print(client.ExecuteJson(value0, value1))
+    fmt.Print("\n")
+    break
+  case "verifyClientVersion":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "VerifyClientVersion requires 1 args")
+      flag.Usage()
+    }
+    arg18 := flag.Arg(1)
+    mbTrans19 := thrift.NewMemoryBufferLen(len(arg18))
+    defer mbTrans19.Close()
+    _, err20 := mbTrans19.WriteString(arg18)
+    if err20 != nil {
+      Usage()
+      return
+    }
+    factory21 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt22 := factory21.GetProtocol(mbTrans19)
+    argvalue0 := graph.NewVerifyClientVersionReq()
+    err23 := argvalue0.Read(jsProt22)
+    if err23 != nil {
+      Usage()
+      return
+    }
+    value0 := argvalue0
+    fmt.Print(client.VerifyClientVersion(value0))
     fmt.Print("\n")
     break
   case "":

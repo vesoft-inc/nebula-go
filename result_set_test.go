@@ -396,6 +396,27 @@ func TestAsPathWrapper(t *testing.T) {
 	assert.Equal(t, *path, *res)
 }
 
+func TestAsGeography(t *testing.T) {
+	point := nebula.Value{GgVal: &nebula.Geography{PtVal: &nebula.Point{Coord: &nebula.Coordinate{X: 48.3, Y: 78.6}}}}
+	pointWrap := ValueWrapper{&point, testTimezone}
+	assert.Equal(t, true, pointWrap.IsGeography())
+	assert.Equal(t, "POINT(48.3 78.6)", pointWrap.String())
+
+	linestring := nebula.Value{
+		GgVal: &nebula.Geography{LsVal: &nebula.LineString{CoordList: []*nebula.Coordinate{{X: 48.3, Y: 78.6}, {X: 77.9, Y: 89.6}, {X: -24, Y: -49.7}}}},
+	}
+	linestringWrap := ValueWrapper{&linestring, testTimezone}
+	assert.Equal(t, true, linestringWrap.IsGeography())
+	assert.Equal(t, "LINESTRING(48.3 78.6, 77.9 89.6, -24 -49.7)", linestringWrap.String())
+
+	polygon := nebula.Value{
+		GgVal: &nebula.Geography{PgVal: &nebula.Polygon{CoordListList: [][]*nebula.Coordinate{{{X: 48.3, Y: 78.6}, {X: 77.9, Y: 89.6}, {X: -24, Y: -49.7}, {X: -36, Y: 78.3}, {X: 48.3, Y: 78.6}}}}},
+	}
+	polygonWrap := ValueWrapper{&polygon, testTimezone}
+	assert.Equal(t, true, polygonWrap.IsGeography())
+	assert.Equal(t, "POLYGON((48.3 78.6, 77.9 89.6, -24 -49.7, -36 78.3, 48.3 78.6))", polygonWrap.String())
+}
+
 func TestNode(t *testing.T) {
 	vertex := getVertex("Tom", 3, 5)
 	node, err := genNode(vertex, testTimezone)

@@ -80,6 +80,10 @@ func (valWrap ValueWrapper) IsPath() bool {
 	return valWrap.value.IsSetPVal()
 }
 
+func (valWrap ValueWrapper) IsGeography() bool {
+	return valWrap.value.IsSetGgVal()
+}
+
 // AsNull converts the ValueWrapper to nebula.NullType
 func (valWrap ValueWrapper) AsNull() (nebula.NullType, error) {
 	if valWrap.value.IsSetNVal() {
@@ -232,6 +236,14 @@ func (valWrap ValueWrapper) AsPath() (*PathWrapper, error) {
 	return path, nil
 }
 
+// AsPath converts the ValueWrapper to a nebula.Geography
+func (valWrap ValueWrapper) AsGeography() (*nebula.Geography, error) {
+	if valWrap.value.IsSetGgVal() {
+		return valWrap.value.GetGgVal(), nil
+	}
+	return nil, fmt.Errorf("failed to convert value %s to nebula.Geography, value is not an geography", valWrap.GetType())
+}
+
 // GetType returns the value type of value in the valWrap as a string
 func (valWrap ValueWrapper) GetType() string {
 	if valWrap.value.IsSetNVal() {
@@ -262,6 +274,8 @@ func (valWrap ValueWrapper) GetType() string {
 		return "map"
 	} else if valWrap.value.IsSetUVal() {
 		return "set"
+	} else if valWrap.value.IsSetGgVal() {
+		return "geography"
 	}
 	return "empty"
 }
@@ -368,7 +382,55 @@ func (valWrap ValueWrapper) String() string {
 			strs = append(strs, ValueWrapper{val, valWrap.timezoneInfo}.String())
 		}
 		return fmt.Sprintf("[%s]", strings.Join(strs, ", "))
+	} else if value.IsSetGgVal() {
+		ggval := value.GetGgVal()
+		return toWKT(ggval)
 	} else { // is empty
 		return ""
 	}
+}
+
+func toWKT(geo *nebula.Geography) string {
+	if geo == nil {
+		return ""
+	}
+	if geo.IsSetPtVal() {
+		ptVal := geo.GetPtVal()
+		coord := ptVal.GetCoord()
+		return fmt.Sprintf("POINT(%v %v)", coord.GetX(), coord.GetY())
+	} else if geo.IsSetLsVal() {
+		lsVal := geo.GetLsVal()
+		coordList := lsVal.GetCoordList()
+		wkt := "LINESTRING("
+		for i, coord := range coordList {
+			wkt += fmt.Sprintf("%v %v", coord.GetX(), coord.GetY())
+			if i != len(coordList)-1 {
+				wkt += ", "
+			}
+		}
+		wkt += ")"
+		return wkt
+	} else if geo.IsSetPgVal() {
+		fmt.Println("pyfdafads")
+		pgVal := geo.GetPgVal()
+		coordListList := pgVal.GetCoordListList()
+		wkt := "POLYGON("
+		for i, coordList := range coordListList {
+			wkt += "("
+			for j, coord := range coordList {
+				wkt += fmt.Sprintf("%v %v", coord.GetX(), coord.GetY())
+				if j != len(coordList)-1 {
+					wkt += ", "
+				}
+			}
+			wkt += ")"
+			if i != len(coordListList)-1 {
+				wkt += ", "
+			}
+		}
+		wkt += ")"
+
+		return wkt
+	}
+	return ""
 }
