@@ -20,6 +20,4 @@ jobs:
       - name: Test SSL connection self-signed
         run:  make ssl-test-self-signed
       - name: Run examples
-        run: |
-          go run basic_example/graph_client_basic_example.go
-          go run gorountines_example/graph_client_goroutines_example.go
+        run: make run-examples
