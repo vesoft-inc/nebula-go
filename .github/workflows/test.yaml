@@ -18,6 +18,6 @@ jobs:
       - name: Test SSL connection with CA
         run: make ssl-test
       - name: Test SSL connection self-signed
-        run:  make ssl-test-self-signed
+        run: make ssl-test-self-signed
       - name: Run examples
         run: make run-examples
