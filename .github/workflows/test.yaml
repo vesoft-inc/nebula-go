@@ -14,26 +14,11 @@ jobs:
         with:
           go-version: '1.13'
       - name: Test with GO test
-        run: |
-          pushd nebula-docker-compose/
-          enable_ssl=false docker-compose up -d
-          sleep 10
-          popd
-          go test -v -race
+        run: make ci
       - name: Test SSL connection with CA
-        run: |
-          pushd nebula-docker-compose/
-          enable_ssl=true docker-compose up -d
-          sleep 10
-          popd
-          ssl_test=true go test -v -run TestSslConnection
+        run: make ssl-test
       - name: Test SSL connection self-signed
-        run: |
-          pushd nebula-docker-compose/
-          enable_ssl=true docker-compose up -d
-          sleep 10
-          popd
-          self_signed=true go test -v -run TestSslConnectionSelfSigned
+        run:  make ssl-test-self-signed
       - name: Run examples
         run: |
           go run basic_example/graph_client_basic_example.go

@@ -3,11 +3,11 @@
 default: build
 
 build: fmt
-	go mod tidy 
+	go mod tidy
 	go build
 
-test: 
-	go mod tidy 
+test:
+	go mod tidy
 	go test -v -race
 
 fmt:
@@ -15,24 +15,24 @@ fmt:
 
 ci:
 	cd ./nebula-docker-compose && docker-compose up -d && \
-	sleep 5 && \
+	sleep 10 && \
 	cd .. && \
 	go test -v -race; \
 	cd ./nebula-docker-compose && docker-compose down -v
 
 ssl-test:
 	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d && \
-	sleep 5 && \
+	sleep 10 && \
 	cd .. && \
 	go test -v -run TestSslConnection; \
-	cd ./nebula-docker-compose && docker-compose down -v 
+	cd ./nebula-docker-compose && docker-compose down -v
 
 ssl-test-self-signed:
 	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d && \
-	sleep 5 && \
+	sleep 10 && \
 	cd .. && \
 	ssl_test=true go test -v -run TestSslConnection; \
-	cd ./nebula-docker-compose && docker-compose down -v 
+	cd ./nebula-docker-compose && docker-compose down -v
 
 run-examples:
 	go run basic_example/graph_client_basic_example.go
