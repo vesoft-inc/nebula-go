@@ -885,7 +885,7 @@ func (t1 TimeWrapper) IsEqualTo(t2 TimeWrapper) bool {
 
 func genDateWrapper(date *nebula.Date) (*DateWrapper, error) {
 	if date == nil {
-		return nil, fmt.Errorf("failed to generate datetime: invalid datetime")
+		return nil, fmt.Errorf("failed to generate date: invalid date")
 	}
 	return &DateWrapper{
 		date: date,

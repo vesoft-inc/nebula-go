@@ -1722,3 +1722,224 @@ func (p *AuthResponse) String() string {
   return fmt.Sprintf("AuthResponse({ErrorCode:%s ErrorMsg:%s SessionID:%s TimeZoneOffsetSeconds:%s TimeZoneName:%s})", errorCodeVal, errorMsgVal, sessionIDVal, timeZoneOffsetSecondsVal, timeZoneNameVal)
 }
 
+// Attributes:
+//  - ErrorCode
+//  - ErrorMsg
+type VerifyClientVersionResp struct {
+  ErrorCode nebula0.ErrorCode `thrift:"error_code,1,required" db:"error_code" json:"error_code"`
+  ErrorMsg []byte `thrift:"error_msg,2" db:"error_msg" json:"error_msg,omitempty"`
+}
+
+func NewVerifyClientVersionResp() *VerifyClientVersionResp {
+  return &VerifyClientVersionResp{}
+}
+
+
+func (p *VerifyClientVersionResp) GetErrorCode() nebula0.ErrorCode {
+  return p.ErrorCode
+}
+var VerifyClientVersionResp_ErrorMsg_DEFAULT []byte
+
+func (p *VerifyClientVersionResp) GetErrorMsg() []byte {
+  return p.ErrorMsg
+}
+func (p *VerifyClientVersionResp) IsSetErrorMsg() bool {
+  return p != nil && p.ErrorMsg != nil
+}
+
+func (p *VerifyClientVersionResp) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+  var issetErrorCode bool = false;
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+      issetErrorCode = true
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  if !issetErrorCode{
+    return thrift.NewProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field ErrorCode is not set"));
+  }
+  return nil
+}
+
+func (p *VerifyClientVersionResp)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  temp := nebula0.ErrorCode(v)
+  p.ErrorCode = temp
+}
+  return nil
+}
+
+func (p *VerifyClientVersionResp)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.ErrorMsg = v
+}
+  return nil
+}
+
+func (p *VerifyClientVersionResp) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("VerifyClientVersionResp"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *VerifyClientVersionResp) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("error_code", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:error_code: ", p), err) }
+  if err := oprot.WriteI32(int32(p.ErrorCode)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.error_code (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:error_code: ", p), err) }
+  return err
+}
+
+func (p *VerifyClientVersionResp) writeField2(oprot thrift.Protocol) (err error) {
+  if p.IsSetErrorMsg() {
+    if err := oprot.WriteFieldBegin("error_msg", thrift.STRING, 2); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:error_msg: ", p), err) }
+    if err := oprot.WriteBinary(p.ErrorMsg); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.error_msg (2) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 2:error_msg: ", p), err) }
+  }
+  return err
+}
+
+func (p *VerifyClientVersionResp) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  errorCodeVal := fmt.Sprintf("%v", p.ErrorCode)
+  errorMsgVal := fmt.Sprintf("%v", p.ErrorMsg)
+  return fmt.Sprintf("VerifyClientVersionResp({ErrorCode:%s ErrorMsg:%s})", errorCodeVal, errorMsgVal)
+}
+
+// Attributes:
+//  - Version
+type VerifyClientVersionReq struct {
+  Version []byte `thrift:"version,1,required" db:"version" json:"version"`
+}
+
+func NewVerifyClientVersionReq() *VerifyClientVersionReq {
+  return &VerifyClientVersionReq{
+    Version: []byte("2.6.0"),
+  }
+}
+
+
+func (p *VerifyClientVersionReq) GetVersion() []byte {
+  return p.Version
+}
+func (p *VerifyClientVersionReq) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+  var issetVersion bool = false;
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+      issetVersion = true
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  if !issetVersion{
+    return thrift.NewProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field Version is not set"));
+  }
+  return nil
+}
+
+func (p *VerifyClientVersionReq)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.Version = v
+}
+  return nil
+}
+
+func (p *VerifyClientVersionReq) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("VerifyClientVersionReq"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *VerifyClientVersionReq) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("version", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:version: ", p), err) }
+  if err := oprot.WriteBinary(p.Version); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.version (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:version: ", p), err) }
+  return err
+}
+
+func (p *VerifyClientVersionReq) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  versionVal := fmt.Sprintf("%v", p.Version)
+  return fmt.Sprintf("VerifyClientVersionReq({Version:%s})", versionVal)
+}
+
