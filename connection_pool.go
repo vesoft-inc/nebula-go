@@ -9,7 +9,6 @@ package nebula_go
 import (
 	"container/list"
 	"crypto/tls"
-	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -32,34 +31,7 @@ type ConnectionPool struct {
 
 // NewConnectionPool constructs a new connection pool using the given addresses and configs
 func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*ConnectionPool, error) {
-	// Process domain to IP
-	convAddress, err := DomainToIP(addresses)
-	if err != nil {
-		return nil, fmt.Errorf("failed to find IP, error: %s ", err.Error())
-	}
-
-	// Check input
-	if len(convAddress) == 0 {
-		return nil, fmt.Errorf("failed to initialize connection pool: illegal address input")
-	}
-
-	// Check config
-	conf.validateConf(log)
-
-	newPool := &ConnectionPool{
-		conf:      conf,
-		log:       log,
-		addresses: convAddress,
-		hostIndex: 0,
-		sslConfig: nil,
-	}
-
-	// Init pool with non-SSL socket
-	if err = newPool.initPool(); err != nil {
-		return nil, err
-	}
-	newPool.startCleaner()
-	return newPool, nil
+	return NewSslConnectionPool(addresses, conf, nil, log)
 }
 
 // NewConnectionPool constructs a new SSL connection pool using the given addresses and configs
@@ -101,13 +73,7 @@ func (pool *ConnectionPool) initPool() error {
 		newConn := newConnection(pool.addresses[i%len(pool.addresses)])
 
 		// Open connection to host
-		err := errors.New("")
-		if pool.sslConfig == nil {
-			err = newConn.open(newConn.severAddress, pool.conf.TimeOut)
-		} else {
-			err = newConn.openSSL(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig)
-		}
-		if err != nil {
+		if err := newConn.openSSL(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig); err != nil {
 			// If initialization failed, clean idle queue
 			idleLen := pool.idleConnectionQueue.Len()
 			for i := 0; i < idleLen; i++ {
