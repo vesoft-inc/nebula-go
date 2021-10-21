@@ -10,6 +10,8 @@ import (
 	"crypto/tls"
 	"fmt"
 	"math"
+	"net"
+	"strconv"
 	"time"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -33,7 +35,27 @@ func newConnection(severAddress HostAddress) *connection {
 	}
 }
 
+func (cn *connection) check(hostAddress HostAddress, timeout time.Duration) error {
+	var defaultTimeout time.Duration = 3
+	if timeout == 0 || timeout > defaultTimeout {
+		timeout = defaultTimeout
+	}
+
+	host, port := hostAddress.Host, hostAddress.Port
+	addr := net.JoinHostPort(host, strconv.Itoa(port))
+	conn, err := net.DialTimeout("tcp", addr, timeout*time.Second)
+	defer func() {
+		if conn != nil {
+			conn.Close()
+		}
+	}()
+	return err
+}
+
 func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error {
+	if err := cn.check(hostAddress, timeout); err != nil {
+		return err
+	}
 	ip := hostAddress.Host
 	port := hostAddress.Port
 	newAdd := fmt.Sprintf("%s:%d", ip, port)

@@ -1015,6 +1015,50 @@ func TestReconnect(t *testing.T) {
 	}
 }
 
+func TestUnreachableHost(t *testing.T) {
+	hostList := poolAddress
+
+	timeoutConfig := PoolConfig{
+		TimeOut:         0 * time.Millisecond,
+		IdleTime:        0 * time.Millisecond,
+		MaxConnPoolSize: 6,
+		MinConnPoolSize: 0,
+	}
+
+	// Initialize connectin pool
+	pool, err := NewConnectionPool(hostList, timeoutConfig, nebulaLog)
+	if err != nil {
+		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+	}
+	defer pool.Close()
+
+	// simulate the host is unreachable
+	pool.addresses[0] = HostAddress{Host: "192.192.192.1", Port: 9669}
+
+	var sessionList []*Session
+	c := make(chan bool)
+	go func() {
+		// at least 6 seconds because of 2 * 3 timeout seconds.
+		for i := 0; i < 4; i++ {
+			session, err := pool.GetSession(username, password)
+			if err != nil {
+				t.Errorf("fail to create a new session from connection pool, %s", err.Error())
+			}
+			sessionList = append(sessionList, session)
+		}
+		for _, session := range sessionList {
+			session.Release()
+		}
+		c <- true
+	}()
+	select {
+	case <-c:
+		return
+	case <-time.After(15 * time.Second):
+		t.Fatal("could not catch the error")
+	}
+}
+
 func TestIpLookup(t *testing.T) {
 	hostAddress := HostAddress{Host: "192.168.10.105", Port: 3699}
 	hostList := []HostAddress{hostAddress}
