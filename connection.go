@@ -54,7 +54,7 @@ func (cn *connection) check(hostAddress HostAddress, timeout time.Duration) erro
 
 func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error {
 	if err := cn.check(hostAddress, timeout); err != nil {
-		return err
+		return fmt.Errorf("failed to open transport, error: %s", err.Error())
 	}
 	ip := hostAddress.Host
 	port := hostAddress.Port
