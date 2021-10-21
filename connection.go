@@ -7,6 +7,7 @@
 package nebula_go
 
 import (
+	"crypto/tls"
 	"fmt"
 	"math"
 	"time"
@@ -48,6 +49,33 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error
 	// Set transport buffer
 	bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
 	transport := thrift.NewFramedTransportMaxLength(bufferedTranFactory.GetTransport(sock), frameMaxLength)
+	pf := thrift.NewBinaryProtocolFactoryDefault()
+	cn.graph = graph.NewGraphServiceClientFactory(transport, pf)
+	if err = cn.graph.Open(); err != nil {
+		return fmt.Errorf("failed to open transport, error: %s", err.Error())
+	}
+	if !cn.graph.IsOpen() {
+		return fmt.Errorf("transport is off")
+	}
+	return nil
+}
+
+func (cn *connection) openSSL(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config) error {
+	ip := hostAddress.Host
+	port := hostAddress.Port
+	newAdd := fmt.Sprintf("%s:%d", ip, port)
+	cn.timeout = timeout
+	bufferSize := 128 << 10
+	frameMaxLength := uint32(math.MaxUint32)
+
+	SSLSocket, err := thrift.NewSSLSocketTimeout(newAdd, sslConfig, timeout)
+	if err != nil {
+		return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
+	}
+
+	// Set transport buffer
+	bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
+	transport := thrift.NewFramedTransportMaxLength(bufferedTranFactory.GetTransport(SSLSocket), frameMaxLength)
 	pf := thrift.NewBinaryProtocolFactoryDefault()
 	cn.graph = graph.NewGraphServiceClientFactory(transport, pf)
 	if err = cn.graph.Open(); err != nil {
