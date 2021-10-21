@@ -2165,7 +2165,7 @@ func (p *SpaceDesc) GetCollateName() []byte {
 }
 var SpaceDesc_VidType_DEFAULT *ColumnTypeDef = &ColumnTypeDef{
   Type:   7,
-  TypeLength: &const_lit_vid_type_type_length,
+  TypeLength: const_lit_vid_type_type_length,
 }
 func (p *SpaceDesc) GetVidType() *ColumnTypeDef {
   if !p.IsSetVidType() {
