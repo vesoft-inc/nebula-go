@@ -56,18 +56,28 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error
 	if err := cn.check(hostAddress, timeout); err != nil {
 		return fmt.Errorf("failed to open transport, error: %s", err.Error())
 	}
+	return cn.openSSL(hostAddress, timeout, nil)
+}
+
+func (cn *connection) openSSL(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config) error {
 	ip := hostAddress.Host
 	port := hostAddress.Port
 	newAdd := fmt.Sprintf("%s:%d", ip, port)
 	cn.timeout = timeout
-	timeoutOption := thrift.SocketTimeout(timeout)
 	bufferSize := 128 << 10
 	frameMaxLength := uint32(math.MaxUint32)
-	addressOption := thrift.SocketAddr(newAdd)
-	sock, err := thrift.NewSocket(timeoutOption, addressOption)
+
+	var err error
+	var sock thrift.Transport
+	if sslConfig != nil {
+		sock, err = thrift.NewSSLSocketTimeout(newAdd, sslConfig, timeout)
+	} else {
+		sock, err = thrift.NewSocket(thrift.SocketAddr(newAdd), thrift.SocketTimeout(timeout))
+	}
 	if err != nil {
 		return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
 	}
+
 	// Set transport buffer
 	bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
 	transport := thrift.NewFramedTransportMaxLength(bufferedTranFactory.GetTransport(sock), frameMaxLength)
@@ -79,32 +89,17 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error
 	if !cn.graph.IsOpen() {
 		return fmt.Errorf("transport is off")
 	}
-	return nil
+	return cn.verifyClientVersion()
 }
 
-func (cn *connection) openSSL(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config) error {
-	ip := hostAddress.Host
-	port := hostAddress.Port
-	newAdd := fmt.Sprintf("%s:%d", ip, port)
-	cn.timeout = timeout
-	bufferSize := 128 << 10
-	frameMaxLength := uint32(math.MaxUint32)
-
-	SSLSocket, err := thrift.NewSSLSocketTimeout(newAdd, sslConfig, timeout)
+func (cn *connection) verifyClientVersion() error {
+	req := graph.NewVerifyClientVersionReq()
+	resp, err := cn.graph.VerifyClientVersion(req)
 	if err != nil {
-		return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
+		return fmt.Errorf("failed to verify client version: %s", err.Error())
 	}
-
-	// Set transport buffer
-	bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
-	transport := thrift.NewFramedTransportMaxLength(bufferedTranFactory.GetTransport(SSLSocket), frameMaxLength)
-	pf := thrift.NewBinaryProtocolFactoryDefault()
-	cn.graph = graph.NewGraphServiceClientFactory(transport, pf)
-	if err = cn.graph.Open(); err != nil {
-		return fmt.Errorf("failed to open transport, error: %s", err.Error())
-	}
-	if !cn.graph.IsOpen() {
-		return fmt.Errorf("transport is off")
+	if resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+		return fmt.Errorf("incompatible version between client and server: %s", string(resp.GetErrorMsg()))
 	}
 	return nil
 }
