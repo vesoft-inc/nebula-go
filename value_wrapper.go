@@ -411,7 +411,6 @@ func toWKT(geo *nebula.Geography) string {
 		wkt += ")"
 		return wkt
 	} else if geo.IsSetPgVal() {
-		fmt.Println("pyfdafads")
 		pgVal := geo.GetPgVal()
 		coordListList := pgVal.GetCoordListList()
 		wkt := "POLYGON("
