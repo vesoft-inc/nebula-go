@@ -53,13 +53,13 @@ func (cn *connection) check(hostAddress HostAddress, timeout time.Duration) erro
 }
 
 func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error {
-	if err := cn.check(hostAddress, timeout); err != nil {
-		return fmt.Errorf("failed to open transport, error: %s", err.Error())
-	}
 	return cn.openSSL(hostAddress, timeout, nil)
 }
 
 func (cn *connection) openSSL(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config) error {
+	if err := cn.check(hostAddress, timeout); err != nil {
+		return fmt.Errorf("failed to open transport, error: %s", err.Error())
+	}
 	ip := hostAddress.Host
 	port := hostAddress.Port
 	newAdd := fmt.Sprintf("%s:%d", ip, port)
