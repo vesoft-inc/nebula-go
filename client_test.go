@@ -195,7 +195,10 @@ func TestAuthentication(t *testing.T) {
 }
 
 func TestInvalidHostTimeout(t *testing.T) {
-	hostList := []HostAddress{
+	hostAdress := HostAddress{Host: address, Port: port}
+	hostList := []HostAddress{hostAdress}
+
+	invalidHostList := []HostAddress{
 		{Host: "192.168.100.125", Port: 3699}, // Invalid host
 		{Host: "127.0.0.1", Port: 3699},
 	}
@@ -207,9 +210,9 @@ func TestInvalidHostTimeout(t *testing.T) {
 	}
 	// close all connections in the pool
 	defer pool.Close()
-	err = pool.Ping(hostList[0], 1000*time.Millisecond)
+	err = pool.Ping(invalidHostList[0], 1000*time.Millisecond)
 	assert.EqualError(t, err, "failed to open transport, error: dial tcp 192.168.100.125:3699: i/o timeout")
-	err = pool.Ping(hostList[1], 1000*time.Millisecond)
+	err = pool.Ping(invalidHostList[1], 1000*time.Millisecond)
 	if err != nil {
 		t.Error("failed to ping 127.0.0.1")
 	}

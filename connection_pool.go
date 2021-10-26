@@ -68,6 +68,16 @@ func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *t
 
 // initPool initializes the connection pool
 func (pool *ConnectionPool) initPool() error {
+	var timeout = 3 * time.Second
+	if pool.conf.TimeOut != 0 && pool.conf.TimeOut < timeout {
+		timeout = pool.conf.TimeOut
+	}
+	for _, address := range pool.addresses {
+		if err := pool.Ping(address, timeout); err != nil {
+			return fmt.Errorf("failed to open connection, error: %s ", err.Error())
+		}
+	}
+
 	for i := 0; i < pool.conf.MinConnPoolSize; i++ {
 		// Simple round-robin
 		newConn := newConnection(pool.addresses[i%len(pool.addresses)])
