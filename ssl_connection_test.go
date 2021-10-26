@@ -58,7 +58,7 @@ func TestSslConnection(t *testing.T) {
 		InsecureSkipVerify: true, // This is only used for testing
 	}
 
-	// Initialize connectin pool
+	// Initialize connection pool
 	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
@@ -141,7 +141,7 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 		InsecureSkipVerify: true, // This is only used for testing
 	}
 
-	// Initialize connectin pool
+	// Initialize connection pool
 	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
