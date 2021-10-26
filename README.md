@@ -4,7 +4,7 @@
 **IMPORTANT: Code of Nebula go client has been transferred from [nebula-clients](https://github.com/vesoft-inc/nebula-clients) to this repository(nebula-go), and new releases in the future will be published in this repository.
 Please update your go.mod and imports correspondingly.**
 
-Official Nebula Go client which communicates with the server using [fbthrift](https://github.com/facebook/fbthrift/). Currently the latest stable release is **[v2.5.1](https://github.com/vesoft-inc/nebula-go/tree/release-v2.5.1)**
+Official Nebula Go client which communicates with the server using [fbthrift](https://github.com/facebook/fbthrift/). Currently the latest stable release is **[v2.6.0](https://github.com/vesoft-inc/nebula-go/tree/release-v2.6.0)**
 
 The code in **master branch** will be updated to accommodate the nightly changes made in Nebula Graph.
 To Use the console with a stable release of Nebula Graph, please check the branches and use the corresponding version.
@@ -14,6 +14,7 @@ To Use the console with a stable release of Nebula Graph, please check the branc
 |   **[v1.0.0](https://github.com/vesoft-inc/nebula-go/tree/v1.0)**              |       1.x.x         |
 |   **[v2.0.0-ga](https://github.com/vesoft-inc/nebula-go/tree/v2.0.0-ga)**      |       2.0.0-ga, 2.0.1    |
 |   **[v2.5.1](https://github.com/vesoft-inc/nebula-go/tree/v2.5.1)**      |       >=2.5.0    |
+|   **[v2.6.0](https://github.com/vesoft-inc/nebula-go/tree/v2.6.0)**      |       >=2.6.0    |
 |   **[master](https://github.com/vesoft-inc/nebula-go/tree/master)**     |       2.x-nightly |
 
 
