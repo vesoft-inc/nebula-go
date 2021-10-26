@@ -89,7 +89,6 @@ func (pool *ConnectionPool) initPool() error {
 		// Mark connection as in use
 		pool.idleConnectionQueue.PushBack(newConn)
 	}
-	pool.log.Info("connection pool is initialized successfully")
 	return nil
 }
 
