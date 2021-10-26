@@ -137,7 +137,7 @@ func TestConfigs(t *testing.T) {
 	}
 
 	for _, testPoolConfig := range configList {
-		// Initialize connectin pool
+		// Initialize connection pool
 		pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 		if err != nil {
 			t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
@@ -227,7 +227,7 @@ func TestServiceDataIO(t *testing.T) {
 		MinConnPoolSize: 1,
 	}
 
-	// Initialize connectin pool
+	// Initialize connection pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
@@ -516,7 +516,7 @@ func TestPool_SingleHost(t *testing.T) {
 		MinConnPoolSize: 1,
 	}
 
-	// Initialize connectin pool
+	// Initialize connection pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
@@ -622,7 +622,7 @@ func TestMultiThreads(t *testing.T) {
 		MinConnPoolSize: 1,
 	}
 
-	// Initialize connectin pool
+	// Initialize connection pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
@@ -679,7 +679,7 @@ func TestLoadbalancer(t *testing.T) {
 		MinConnPoolSize: 0,
 	}
 
-	// Initialize connectin pool
+	// Initialize connection pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
@@ -766,7 +766,7 @@ func TestTimeout(t *testing.T) {
 		MinConnPoolSize: 1,
 	}
 
-	// Initialize connectin pool
+	// Initialize connection pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
@@ -848,7 +848,7 @@ func TestExecuteJson(t *testing.T) {
 		MinConnPoolSize: 1,
 	}
 
-	// Initialize connectin pool
+	// Initialize connection pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
@@ -964,7 +964,7 @@ func TestReconnect(t *testing.T) {
 		MinConnPoolSize: 6,
 	}
 
-	// Initialize connectin pool
+	// Initialize connection pool
 	pool, err := NewConnectionPool(hostList, timeoutConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
