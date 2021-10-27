@@ -46,6 +46,7 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 		return nil, err
 	}
 	if err2.TypeID() == thrift.END_OF_FILE {
+		session.log.Info("Reconnect the session.")
 		_err := session.reConnect()
 		if _err != nil {
 			session.log.Error(fmt.Sprintf("Failed to reconnect, %s", _err.Error()))
@@ -161,7 +162,7 @@ func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
 }
 
 func (session *Session) reConnect() error {
-	newconnection, err := session.connPool.getIdleConn()
+	newconnection, err := session.connPool.getConnection()
 	if err != nil {
 		err = fmt.Errorf(err.Error())
 		return err

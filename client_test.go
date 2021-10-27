@@ -751,10 +751,8 @@ func TestIdleTimeoutCleaner(t *testing.T) {
 	pool.cleanerChan <- struct{}{} // The minimum interval for cleanup is 1 minute, so in CI we need to trigger cleanup manually
 	time.Sleep(idleTimeoutConfig.IdleTime)
 
-	pool.rwLock.RLock()
 	assert.Equal(t, idleTimeoutConfig.MinConnPoolSize, pool.idleConnectionQueue.Len())
 	assert.Equal(t, 0, pool.activeConnectionQueue.Len())
-	pool.rwLock.RUnlock()
 }
 
 func TestTimeout(t *testing.T) {
