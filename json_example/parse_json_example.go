@@ -65,8 +65,8 @@ type JsonObj struct {
 		Comment string `json:"comment "`
 	} `json:"results"`
 	Errors []struct {
-		ErrorCode int    `json:"errorCode"`
-		ErrorMsg  string `json:"errorMsg"`
+		Code    int    `json:"code"`
+		Message string `json:"message"`
 	} `json:"errors"`
 }
 
@@ -118,7 +118,25 @@ func main() {
 
 		// Get a property
 		birthday := jsonObj.Results[0].Data[0].Row[0].(map[string]interface{})["person.birthday"]
-		fmt.Printf("person.birthday is %s \n", birthday)
+		fmt.Printf("person.birthday is %s \n\n", birthday)
+	}
+	// With error
+	{
+		jsonStrResult, err := session.ExecuteJson("MAT (v:person {name: \"Bob\"}) RETURN v")
+		if err != nil {
+			log.Fatal(fmt.Sprintf("fail to get the result in json format, %s", err.Error()))
+		}
+
+		var jsonObj JsonObj
+		// Parse JSON
+		json.Unmarshal(jsonStrResult, &jsonObj)
+		// Get error message
+		errorMsg := jsonObj.Errors[0].Message
+		msg, err := json.MarshalIndent(errorMsg, "", "  ")
+		if err != nil {
+			fmt.Println("error:", err)
+		}
+		fmt.Println("Error message: ", string(msg))
 	}
 	dropSpace(session, "client_test")
 
