@@ -40,4 +40,5 @@ run-examples:
 	cd .. && \
 	go run basic_example/graph_client_basic_example.go && \
 	go run gorountines_example/graph_client_goroutines_example.go && \
+	go run json_example/parse_json_example.go && \
 	cd ./nebula-docker-compose && docker-compose down -v
