@@ -579,8 +579,8 @@ func TestPool_MultiHosts(t *testing.T) {
 		sessionList = append(sessionList, session)
 	}
 
-	assert.Equal(t, 0, pool.idleConnectionQueue.Len())
-	assert.Equal(t, 3, pool.activeConnectionQueue.Len())
+	assert.Equal(t, 0, pool.idleConnectionList.Len())
+	assert.Equal(t, 3, pool.activeConnectionList.Len())
 
 	_, err = pool.GetSession(username, password)
 	assert.EqualError(t, err, "failed to get connection: No valid connection in the idle queue and connection number has reached the pool capacity")
@@ -589,15 +589,15 @@ func TestPool_MultiHosts(t *testing.T) {
 	sessionToRelease := sessionList[0]
 	sessionToRelease.Release()
 	sessionList = sessionList[1:]
-	assert.Equal(t, 1, pool.idleConnectionQueue.Len())
-	assert.Equal(t, 2, pool.activeConnectionQueue.Len())
+	assert.Equal(t, 1, pool.idleConnectionList.Len())
+	assert.Equal(t, 2, pool.activeConnectionList.Len())
 	// Try again to get connection
 	newSession, err := pool.GetSession(username, password)
 	if err != nil {
 		t.Errorf("fail to create a new session, %s", err.Error())
 	}
-	assert.Equal(t, 0, pool.idleConnectionQueue.Len())
-	assert.Equal(t, 3, pool.activeConnectionQueue.Len())
+	assert.Equal(t, 0, pool.idleConnectionList.Len())
+	assert.Equal(t, 3, pool.activeConnectionList.Len())
 
 	resp, err := tryToExecute(newSession, "SHOW HOSTS;")
 	if err != nil {
@@ -751,8 +751,8 @@ func TestIdleTimeoutCleaner(t *testing.T) {
 	pool.cleanerChan <- struct{}{} // The minimum interval for cleanup is 1 minute, so in CI we need to trigger cleanup manually
 	time.Sleep(idleTimeoutConfig.IdleTime)
 
-	assert.Equal(t, idleTimeoutConfig.MinConnPoolSize, pool.idleConnectionQueue.Len())
-	assert.Equal(t, 0, pool.activeConnectionQueue.Len())
+	assert.Equal(t, idleTimeoutConfig.MinConnPoolSize, pool.idleConnectionList.Len())
+	assert.Equal(t, 0, pool.activeConnectionList.Len())
 }
 
 func TestTimeout(t *testing.T) {

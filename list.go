@@ -11,33 +11,33 @@ import (
 	"sync"
 )
 
-// Queue goroutine safe for list
-type Queue struct {
+// ConcurrentList goroutine safe for list
+type ConcurrentList struct {
 	list   list.List
 	rwLock sync.RWMutex
 }
 
-func (q *Queue) Len() int { return q.list.Len() }
+func (q *ConcurrentList) Len() int { return q.list.Len() }
 
-func (q *Queue) Front() *list.Element {
+func (q *ConcurrentList) Front() *list.Element {
 	q.rwLock.Lock()
 	defer q.rwLock.Unlock()
 	return q.list.Front()
 }
 
-func (q *Queue) Back() *list.Element {
+func (q *ConcurrentList) Back() *list.Element {
 	q.rwLock.Lock()
 	defer q.rwLock.Unlock()
 	return q.list.Back()
 }
 
-func (q *Queue) Remove(e *list.Element) interface{} {
+func (q *ConcurrentList) Remove(e *list.Element) interface{} {
 	q.rwLock.Lock()
 	defer q.rwLock.Unlock()
 	return q.list.Remove(e)
 }
 
-func (q *Queue) RemoveByValue(v interface{}) interface{} {
+func (q *ConcurrentList) RemoveByValue(v interface{}) interface{} {
 	q.rwLock.Lock()
 	defer q.rwLock.Unlock()
 	for ele := q.list.Front(); ele != nil; ele = ele.Next() {
@@ -48,24 +48,24 @@ func (q *Queue) RemoveByValue(v interface{}) interface{} {
 	return nil
 }
 
-func (q *Queue) PushFront(v interface{}) *list.Element {
+func (q *ConcurrentList) PushFront(v interface{}) *list.Element {
 	q.rwLock.Lock()
 	defer q.rwLock.Unlock()
 	return q.list.PushFront(v)
 }
 
-func (q *Queue) PushBack(v interface{}) *list.Element {
+func (q *ConcurrentList) PushBack(v interface{}) *list.Element {
 	q.rwLock.Lock()
 	defer q.rwLock.Unlock()
 	return q.list.PushBack(v)
 }
-func (q *Queue) MoveToFront(e *list.Element) {
+func (q *ConcurrentList) MoveToFront(e *list.Element) {
 	q.rwLock.Lock()
 	defer q.rwLock.Unlock()
 	q.list.MoveToFront(e)
 }
 
-func (q *Queue) MoveToBack(e *list.Element) {
+func (q *ConcurrentList) MoveToBack(e *list.Element) {
 	q.rwLock.Lock()
 	defer q.rwLock.Unlock()
 	q.list.MoveToBack(e)
