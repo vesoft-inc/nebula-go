@@ -7,6 +7,13 @@
 package nebula_go
 
 import (
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/pem"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -44,6 +51,108 @@ func (conf *PoolConfig) validateConf(log Logger) {
 	}
 }
 
+// SslConfig is a warpper of tls.Config which will be used to initialize SSL connection
+// Notice that while users can use NewCaSignedSslConf() or NewSelfSignedSslConf() to generate SSL configs,
+// it is also possible to manually a construct SslConfig by setting a customized SslConf using SetConfig()
+type SslConfig struct {
+	SslConf    tls.Config
+	IsCaSigned bool
+	Password   string
+}
+
+// NewCaSignedSslConf reads the given file path and generate SslConfig for CA-signed SSL connection
+func NewCaSignedSslConf(rootCAPath string, certPath string, priKeyPath string) (*SslConfig, error) {
+	rootCA, err := openAndReadFile(rootCAPath)
+	if err != nil {
+		return nil, err
+	}
+	cert, err := openAndReadFile(certPath)
+	if err != nil {
+		return nil, err
+	}
+	privateKey, err := openAndReadFile(priKeyPath)
+	if err != nil {
+		return nil, err
+	}
+
+	// Generate the client certificate
+	clientCert, err := tls.X509KeyPair(cert, privateKey)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse root CA pem and add into CA pool
+	rootCAPool := x509.NewCertPool()
+	ok := rootCAPool.AppendCertsFromPEM(rootCA)
+	if !ok {
+		return nil, fmt.Errorf("unable to append supplied cert into tls.Config, are you sure it is a valid certificate")
+	}
+
+	return &SslConfig{
+		SslConf: tls.Config{
+			Certificates: []tls.Certificate{clientCert},
+			RootCAs:      rootCAPool,
+		},
+		IsCaSigned: true,
+	}, nil
+}
+
+// NewSelfSignedSslConf reads the given file path and generate SslConfig for self-signed SSL connection
+func NewSelfSignedSslConf(certPath string, priKeyPath string, passwordPath string) (*SslConfig, error) {
+	cert, err := openAndReadFile(certPath)
+	if err != nil {
+		return nil, err
+	}
+	// For self-signed cert, use the local cert as the root ca
+	rootCA := cert
+
+	privateKey, err := openAndReadFile(priKeyPath)
+	if err != nil {
+		return nil, err
+	}
+	password, err := openAndReadFile(passwordPath)
+	if err != nil {
+		return nil, err
+	}
+	keyBlock, rest := pem.Decode(privateKey)
+	if keyBlock == nil {
+		return nil, fmt.Errorf("failed to decode pem, content: %s", rest)
+	}
+	// Decrypt private key using password
+	// Remove the newline after the password
+	keyDER, err := x509.DecryptPEMBlock(keyBlock, []byte(strings.TrimRight(string(password), "\n")))
+	if err != nil {
+		return nil, fmt.Errorf("failed to DecryptPEMBlock: %s", err.Error())
+	}
+	keyBlock.Bytes = keyDER
+	keyPEM := pem.EncodeToMemory(keyBlock)
+
+	// Generate the client certificate
+	clientCert, err := tls.X509KeyPair(cert, keyPEM)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate the client certificate: %s", err.Error())
+	}
+
+	// Parse root CA pem and add into CA pool
+	rootCAPool := x509.NewCertPool()
+	ok := rootCAPool.AppendCertsFromPEM(rootCA)
+	if !ok {
+		return nil, fmt.Errorf("unable to append supplied cert into tls.Config, are you sure it is a valid certificate")
+	}
+
+	return &SslConfig{
+		SslConf: tls.Config{
+			Certificates: []tls.Certificate{clientCert},
+			RootCAs:      rootCAPool,
+		},
+		IsCaSigned: true,
+	}, nil
+}
+
+func (s *SslConfig) SetConfig(conf tls.Config) {
+	s.SslConf = conf
+}
+
 // GetDefaultConf returns the default config
 func GetDefaultConf() PoolConfig {
 	return PoolConfig{
@@ -52,4 +161,18 @@ func GetDefaultConf() PoolConfig {
 		MaxConnPoolSize: 10,
 		MinConnPoolSize: 0,
 	}
+}
+
+func openAndReadFile(path string) ([]byte, error) {
+	// open file
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf(fmt.Sprintf("unable to open test file %s: %s", path, err))
+	}
+	// read file
+	out, err := ioutil.ReadAll(f)
+	if err != nil {
+		return nil, fmt.Errorf(fmt.Sprintf("unable to ReadAll of test file %s: %s", path, err))
+	}
+	return out, nil
 }

@@ -8,7 +8,6 @@ package nebula_go
 
 import (
 	"container/list"
-	"crypto/tls"
 	"fmt"
 	"sync"
 	"time"
@@ -26,7 +25,7 @@ type ConnectionPool struct {
 	rwLock                sync.RWMutex
 	cleanerChan           chan struct{} //notify when pool is close
 	closed                bool
-	sslConfig             *tls.Config
+	sslConfig             *SslConfig
 }
 
 // NewConnectionPool constructs a new connection pool using the given addresses and configs
@@ -35,7 +34,7 @@ func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*C
 }
 
 // NewConnectionPool constructs a new SSL connection pool using the given addresses and configs
-func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *tls.Config, log Logger) (*ConnectionPool, error) {
+func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *SslConfig, log Logger) (*ConnectionPool, error) {
 	// Process domain to IP
 	convAddress, err := DomainToIP(addresses)
 	if err != nil {

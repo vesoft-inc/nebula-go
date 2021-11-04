@@ -7,7 +7,6 @@
 package nebula_go
 
 import (
-	"crypto/tls"
 	"fmt"
 	"math"
 	"time"
@@ -37,7 +36,7 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error
 	return cn.openSSL(hostAddress, timeout, nil)
 }
 
-func (cn *connection) openSSL(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config) error {
+func (cn *connection) openSSL(hostAddress HostAddress, timeout time.Duration, sslConfig *SslConfig) error {
 	ip := hostAddress.Host
 	port := hostAddress.Port
 	newAdd := fmt.Sprintf("%s:%d", ip, port)
@@ -48,7 +47,15 @@ func (cn *connection) openSSL(hostAddress HostAddress, timeout time.Duration, ss
 	var err error
 	var sock thrift.Transport
 	if sslConfig != nil {
-		sock, err = thrift.NewSSLSocketTimeout(newAdd, sslConfig, timeout)
+		if sslConfig.IsCaSigned {
+			sock, err = thrift.NewSSLSocketTimeout(newAdd, &sslConfig.SslConf, timeout)
+		} else {
+			// Decrypt private key with passphrase
+			if len(sslConfig.Password) == 0 {
+				return fmt.Errorf("password is required in self-signed mode")
+			}
+
+		}
 	} else {
 		sock, err = thrift.NewSocket(thrift.SocketAddr(newAdd), thrift.SocketTimeout(timeout))
 	}

@@ -15,9 +15,9 @@ jobs:
           go-version: '1.13'
       - name: Test with GO test
         run: make ci
-      - name: Test SSL connection with CA
-        run: make ssl-test
-      - name: Test SSL connection self-signed
+      - name: Test SSL connection with CA-signed cert
+        run: make ssl-test-ca-signed
+      - name: Test SSL connection with self-signed cert
         run: make ssl-test-self-signed
       - name: Run examples
         run: make run-examples

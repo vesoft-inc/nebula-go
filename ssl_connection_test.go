@@ -7,16 +7,12 @@
 package nebula_go
 
 import (
-	"crypto/tls"
-	"crypto/x509"
-	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 	"time"
 )
 
-func TestSslConnection(t *testing.T) {
+func TestSslConnectionCaSigned(t *testing.T) {
 	// skip test when ssl_test is not set to true
 	skipSsl(t)
 
@@ -31,35 +27,17 @@ func TestSslConnection(t *testing.T) {
 		MinConnPoolSize: 1,
 	}
 
-	var (
-		rootCA     = openAndReadFile(t, "./nebula-docker-compose/secrets/test.ca.pem")
-		cert       = openAndReadFile(t, "./nebula-docker-compose/secrets/test.client.crt")
-		privateKey = openAndReadFile(t, "./nebula-docker-compose/secrets/test.client.key")
-	)
-
-	// generate the client certificate
-	clientCert, err := tls.X509KeyPair(cert, privateKey)
+	sslConf, err := NewCaSignedSslConf("./nebula-docker-compose/secrets/test.ca.pem",
+		"./nebula-docker-compose/secrets/test.client.crt",
+		"./nebula-docker-compose/secrets/test.client.key")
 	if err != nil {
-		panic(err)
+		t.Fatalf(err.Error())
 	}
-
-	// parse root CA pem and add into CA pool
-	rootCAPool := x509.NewCertPool()
-	ok := rootCAPool.AppendCertsFromPEM(rootCA)
-	if !ok {
-		t.Fatal("unable to append supplied cert into tls.Config, are you sure it is a valid certificate")
-	}
-
-	// set tls config
 	// InsecureSkipVerify is set to true for test purpose ONLY. DO NOT use it in production.
-	sslConfig := &tls.Config{
-		Certificates:       []tls.Certificate{clientCert},
-		RootCAs:            rootCAPool,
-		InsecureSkipVerify: true, // This is only used for testing
-	}
+	sslConf.SslConf.InsecureSkipVerify = true
 
 	// Initialize connection pool
-	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConfig, nebulaLog)
+	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConf, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -112,37 +90,18 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 		MinConnPoolSize: 1,
 	}
 
-	var (
-		// for self-signed cert, use the local cert as the root ca
-		rootCA     = openAndReadFile(t, "./nebula-docker-compose/secrets/test.self-signed.pem")
-		cert       = openAndReadFile(t, "./nebula-docker-compose/secrets/test.self-signed.pem")
-		privateKey = openAndReadFile(t, "./nebula-docker-compose/secrets/test.self-signed.key")
-	)
-
-	// generate the client certificate
-	clientCert, err := tls.X509KeyPair(cert, privateKey)
+	sslConf, err := NewSelfSignedSslConf(
+		"./nebula-docker-compose/secrets/test.self-signed.pem",
+		"./nebula-docker-compose/secrets/test.self-signed.key",
+		"./nebula-docker-compose/secrets/test.self-signed.password")
 	if err != nil {
-		panic(err)
+		t.Fatalf(err.Error())
 	}
-
-	// parse root CA pem and add into CA pool
-	// for self-signed cert, use the local cert as the root ca
-	rootCAPool := x509.NewCertPool()
-	ok := rootCAPool.AppendCertsFromPEM(rootCA)
-	if !ok {
-		t.Fatal("unable to append supplied cert into tls.Config, are you sure it is a valid certificate")
-	}
-
-	// set tls config
 	// InsecureSkipVerify is set to true for test purpose ONLY. DO NOT use it in production.
-	sslConfig := &tls.Config{
-		Certificates:       []tls.Certificate{clientCert},
-		RootCAs:            rootCAPool,
-		InsecureSkipVerify: true, // This is only used for testing
-	}
+	sslConf.SslConf.InsecureSkipVerify = true
 
 	// Initialize connection pool
-	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConfig, nebulaLog)
+	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConf, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -179,28 +138,14 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	checkResultSet(t, "drop space", resp)
 }
 
-func openAndReadFile(t *testing.T, path string) []byte {
-	// open file
-	f, err := os.Open(path)
-	if err != nil {
-		t.Fatalf(fmt.Sprintf("unable to open test file %s: %s", path, err))
-	}
-	// read file
-	b, err := ioutil.ReadAll(f)
-	if err != nil {
-		t.Fatalf(fmt.Sprintf("unable to ReadAll of test file %s: %s", path, err))
-	}
-	return b
-}
-
 func skipSsl(t *testing.T) {
-	if os.Getenv("ssl_test") != "true" {
-		t.Skip("Skipping SSL testing in CI environment")
+	if os.Getenv("ca_signed") != "true" {
+		t.Skip("Skipping CA-signed SSL testing in CI environment")
 	}
 }
 
 func skipSslSelfSigned(t *testing.T) {
 	if os.Getenv("self_signed") != "true" {
-		t.Skip("Skipping SSL testing in CI environment")
+		t.Skip("Skipping self-signed SSL testing in CI environment")
 	}
 }
