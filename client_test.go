@@ -257,7 +257,7 @@ func TestServiceDataIO(t *testing.T) {
 	// test base type
 	{
 		query :=
-			"FETCH PROP ON person \"Bob\" YIELD person.name, person.age, person.grade," +
+			"FETCH PROP ON person \"Bob\" YIELD vertex as VertexID, person.name, person.age, person.grade," +
 				"person.friends, person.book_num, person.birthday, " +
 				"person.start_school, person.morning, " +
 				"person.property, person.is_girl, person.child_name, " +
