@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -120,7 +121,7 @@ func NewSelfSignedSslConf(certPath string, priKeyPath string, passwordPath strin
 		return nil, fmt.Errorf("failed to decode pem, content: %s", rest)
 	}
 	// Remove the newline after the password
-	// password = []byte(strings.TrimRight(string(password), "\n"))
+	password = []byte(strings.TrimRight(string(password), "\n"))
 	// Decrypt private key using password
 	keyDER, err := x509.DecryptPEMBlock(keyBlock, password)
 	if err != nil {
