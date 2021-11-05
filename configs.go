@@ -1,7 +1,9 @@
-/* Copyright (c) 2020 vesoft inc. All rights reserved.
+/*
  *
- * This source code is licensed under Apache 2.0 License,
- * attached with Common Clause Condition 1.0, found in the LICENSES directory.
+ * Copyright (c) 2020 vesoft inc. All rights reserved.
+ *
+ * This source code is licensed under Apache 2.0 License.
+ *
  */
 
 package nebula_go
@@ -13,7 +15,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -120,7 +121,8 @@ func NewSelfSignedSslConf(certPath string, priKeyPath string, passwordPath strin
 	}
 	// Decrypt private key using password
 	// Remove the newline after the password
-	keyDER, err := x509.DecryptPEMBlock(keyBlock, []byte(strings.TrimRight(string(password), "\n")))
+	keyDER, err := x509.DecryptPEMBlock(keyBlock, password)
+	// keyDER, err := x509.DecryptPEMBlock(keyBlock, []byte(strings.TrimRight(string(password), "\n")))
 	if err != nil {
 		return nil, fmt.Errorf("failed to DecryptPEMBlock: %s", err.Error())
 	}

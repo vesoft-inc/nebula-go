@@ -1,7 +1,9 @@
-/* Copyright (c) 2020 vesoft inc. All rights reserved.
+/*
  *
- * This source code is licensed under Apache 2.0 License,
- * attached with Common Clause Condition 1.0, found in the LICENSES directory.
+ * Copyright (c) 2020 vesoft inc. All rights reserved.
+ *
+ * This source code is licensed under Apache 2.0 License.
+ *
  */
 
 package nebula_go
@@ -14,7 +16,7 @@ import (
 
 func TestSslConnectionCaSigned(t *testing.T) {
 	// skip test when ssl_test is not set to true
-	skipSsl(t)
+	skipSslCaSigned(t)
 
 	hostAdress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
@@ -138,7 +140,7 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	checkResultSet(t, "drop space", resp)
 }
 
-func skipSsl(t *testing.T) {
+func skipSslCaSigned(t *testing.T) {
 	if os.Getenv("ca_signed") != "true" {
 		t.Skip("Skipping CA-signed SSL testing in CI environment")
 	}
