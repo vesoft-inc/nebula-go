@@ -14,10 +14,16 @@ jobs:
         with:
           go-version: '1.13'
       - name: Test with GO test
-        run: make ci
+        run: |
+          make up
+          make test
+          make down
       - name: Test SSL connection with CA-signed cert
         run: make ssl-test-ca-signed
       - name: Test SSL connection with self-signed cert
         run: make ssl-test-self-signed
       - name: Run examples
-        run: make run-examples
+        run: |
+          make up
+          make run-examples
+          make down

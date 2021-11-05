@@ -119,10 +119,10 @@ func NewSelfSignedSslConf(certPath string, priKeyPath string, passwordPath strin
 	if keyBlock == nil {
 		return nil, fmt.Errorf("failed to decode pem, content: %s", rest)
 	}
-	// Decrypt private key using password
 	// Remove the newline after the password
+	// password = []byte(strings.TrimRight(string(password), "\n"))
+	// Decrypt private key using password
 	keyDER, err := x509.DecryptPEMBlock(keyBlock, password)
-	// keyDER, err := x509.DecryptPEMBlock(keyBlock, []byte(strings.TrimRight(string(password), "\n")))
 	if err != nil {
 		return nil, fmt.Errorf("failed to DecryptPEMBlock: %s", err.Error())
 	}
