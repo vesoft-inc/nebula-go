@@ -383,7 +383,7 @@ func (valWrap ValueWrapper) String() string {
 		for _, val := range uval.Values {
 			strs = append(strs, ValueWrapper{val, valWrap.timezoneInfo}.String())
 		}
-		return fmt.Sprintf("[%s]", strings.Join(strs, ", "))
+		return fmt.Sprintf("{%s}", strings.Join(strs, ", "))
 	} else if value.IsSetGgVal() {
 		ggval := value.GetGgVal()
 		return toWKT(ggval)
