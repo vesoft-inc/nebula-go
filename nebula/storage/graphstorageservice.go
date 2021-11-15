@@ -73,6 +73,15 @@ type GraphStorageService interface {
   // Parameters:
   //  - Req
   ChainAddEdges(ctx context.Context, req *AddEdgesRequest) (_r *ExecResponse, err error)
+  // Parameters:
+  //  - Req
+  Get(ctx context.Context, req *KVGetRequest) (_r *KVGetResponse, err error)
+  // Parameters:
+  //  - Req
+  Put(ctx context.Context, req *KVPutRequest) (_r *ExecResponse, err error)
+  // Parameters:
+  //  - Req
+  Remove(ctx context.Context, req *KVRemoveRequest) (_r *ExecResponse, err error)
 }
 
 type GraphStorageServiceClientInterface interface {
@@ -125,6 +134,15 @@ type GraphStorageServiceClientInterface interface {
   // Parameters:
   //  - Req
   ChainAddEdges(req *AddEdgesRequest) (_r *ExecResponse, err error)
+  // Parameters:
+  //  - Req
+  Get(req *KVGetRequest) (_r *KVGetResponse, err error)
+  // Parameters:
+  //  - Req
+  Put(req *KVPutRequest) (_r *ExecResponse, err error)
+  // Parameters:
+  //  - Req
+  Remove(req *KVRemoveRequest) (_r *ExecResponse, err error)
 }
 
 type GraphStorageServiceClient struct {
@@ -471,6 +489,66 @@ func (p *GraphStorageServiceClient) ChainAddEdges(req *AddEdgesRequest) (_r *Exe
 func (p *GraphStorageServiceClient) recvChainAddEdges() (value *ExecResponse, err error) {
   var result GraphStorageServiceChainAddEdgesResult
   err = p.CC.RecvMsg("chainAddEdges", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceClient) Get(req *KVGetRequest) (_r *KVGetResponse, err error) {
+  args := GraphStorageServiceGetArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("get", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGet()
+}
+
+
+func (p *GraphStorageServiceClient) recvGet() (value *KVGetResponse, err error) {
+  var result GraphStorageServiceGetResult
+  err = p.CC.RecvMsg("get", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceClient) Put(req *KVPutRequest) (_r *ExecResponse, err error) {
+  args := GraphStorageServicePutArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("put", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvPut()
+}
+
+
+func (p *GraphStorageServiceClient) recvPut() (value *ExecResponse, err error) {
+  var result GraphStorageServicePutResult
+  err = p.CC.RecvMsg("put", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceClient) Remove(req *KVRemoveRequest) (_r *ExecResponse, err error) {
+  args := GraphStorageServiceRemoveArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("remove", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemove()
+}
+
+
+func (p *GraphStorageServiceClient) recvRemove() (value *ExecResponse, err error) {
+  var result GraphStorageServiceRemoveResult
+  err = p.CC.RecvMsg("remove", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -865,6 +943,72 @@ func (p *GraphStorageServiceThreadsafeClient) recvChainAddEdges() (value *ExecRe
   return result.GetSuccess(), nil
 }
 
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceThreadsafeClient) Get(req *KVGetRequest) (_r *KVGetResponse, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := GraphStorageServiceGetArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("get", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGet()
+}
+
+
+func (p *GraphStorageServiceThreadsafeClient) recvGet() (value *KVGetResponse, err error) {
+  var result GraphStorageServiceGetResult
+  err = p.CC.RecvMsg("get", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceThreadsafeClient) Put(req *KVPutRequest) (_r *ExecResponse, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := GraphStorageServicePutArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("put", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvPut()
+}
+
+
+func (p *GraphStorageServiceThreadsafeClient) recvPut() (value *ExecResponse, err error) {
+  var result GraphStorageServicePutResult
+  err = p.CC.RecvMsg("put", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceThreadsafeClient) Remove(req *KVRemoveRequest) (_r *ExecResponse, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := GraphStorageServiceRemoveArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("remove", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRemove()
+}
+
+
+func (p *GraphStorageServiceThreadsafeClient) recvRemove() (value *ExecResponse, err error) {
+  var result GraphStorageServiceRemoveResult
+  err = p.CC.RecvMsg("remove", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
 
 type GraphStorageServiceChannelClient struct {
   RequestChannel thrift.RequestChannel
@@ -1094,6 +1238,45 @@ func (p *GraphStorageServiceChannelClient) ChainAddEdges(ctx context.Context, re
   return result.GetSuccess(), nil
 }
 
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceChannelClient) Get(ctx context.Context, req *KVGetRequest) (_r *KVGetResponse, err error) {
+  args := GraphStorageServiceGetArgs{
+    Req : req,
+  }
+  var result GraphStorageServiceGetResult
+  err = p.RequestChannel.Call(ctx, "get", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceChannelClient) Put(ctx context.Context, req *KVPutRequest) (_r *ExecResponse, err error) {
+  args := GraphStorageServicePutArgs{
+    Req : req,
+  }
+  var result GraphStorageServicePutResult
+  err = p.RequestChannel.Call(ctx, "put", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceChannelClient) Remove(ctx context.Context, req *KVRemoveRequest) (_r *ExecResponse, err error) {
+  args := GraphStorageServiceRemoveArgs{
+    Req : req,
+  }
+  var result GraphStorageServiceRemoveResult
+  err = p.RequestChannel.Call(ctx, "remove", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
 
 type GraphStorageServiceProcessor struct {
   processorMap map[string]thrift.ProcessorFunctionContext
@@ -1133,6 +1316,9 @@ func NewGraphStorageServiceProcessor(handler GraphStorageService) *GraphStorageS
   self86.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
   self86.processorMap["chainUpdateEdge"] = &graphStorageServiceProcessorChainUpdateEdge{handler:handler}
   self86.processorMap["chainAddEdges"] = &graphStorageServiceProcessorChainAddEdges{handler:handler}
+  self86.processorMap["get"] = &graphStorageServiceProcessorGet{handler:handler}
+  self86.processorMap["put"] = &graphStorageServiceProcessorPut{handler:handler}
+  self86.processorMap["remove"] = &graphStorageServiceProcessorRemove{handler:handler}
   return self86
 }
 
@@ -1928,6 +2114,156 @@ func (p *graphStorageServiceProcessorChainAddEdges) RunContext(ctx context.Conte
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing chainAddEdges: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type graphStorageServiceProcessorGet struct {
+  handler GraphStorageService
+}
+
+func (p *graphStorageServiceProcessorGet) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := GraphStorageServiceGetArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *graphStorageServiceProcessorGet) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("get", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *graphStorageServiceProcessorGet) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*GraphStorageServiceGetArgs)
+  var result GraphStorageServiceGetResult
+  if retval, err := p.handler.Get(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing get: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type graphStorageServiceProcessorPut struct {
+  handler GraphStorageService
+}
+
+func (p *graphStorageServiceProcessorPut) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := GraphStorageServicePutArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *graphStorageServiceProcessorPut) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("put", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *graphStorageServiceProcessorPut) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*GraphStorageServicePutArgs)
+  var result GraphStorageServicePutResult
+  if retval, err := p.handler.Put(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing put: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type graphStorageServiceProcessorRemove struct {
+  handler GraphStorageService
+}
+
+func (p *graphStorageServiceProcessorRemove) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := GraphStorageServiceRemoveArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *graphStorageServiceProcessorRemove) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("remove", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *graphStorageServiceProcessorRemove) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*GraphStorageServiceRemoveArgs)
+  var result GraphStorageServiceRemoveResult
+  if retval, err := p.handler.Remove(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing remove: " + err.Error())
       return x, x
     }
   } else {
@@ -5137,6 +5473,606 @@ func (p *GraphStorageServiceChainAddEdgesResult) String() string {
     successVal = fmt.Sprintf("%v", p.Success)
   }
   return fmt.Sprintf("GraphStorageServiceChainAddEdgesResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type GraphStorageServiceGetArgs struct {
+  thrift.IRequest
+  Req *KVGetRequest `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewGraphStorageServiceGetArgs() *GraphStorageServiceGetArgs {
+  return &GraphStorageServiceGetArgs{
+    Req: NewKVGetRequest(),
+  }
+}
+
+var GraphStorageServiceGetArgs_Req_DEFAULT *KVGetRequest
+func (p *GraphStorageServiceGetArgs) GetReq() *KVGetRequest {
+  if !p.IsSetReq() {
+    return GraphStorageServiceGetArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *GraphStorageServiceGetArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *GraphStorageServiceGetArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceGetArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewKVGetRequest()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceGetArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("get_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServiceGetArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *GraphStorageServiceGetArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("GraphStorageServiceGetArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type GraphStorageServiceGetResult struct {
+  thrift.IResponse
+  Success *KVGetResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewGraphStorageServiceGetResult() *GraphStorageServiceGetResult {
+  return &GraphStorageServiceGetResult{}
+}
+
+var GraphStorageServiceGetResult_Success_DEFAULT *KVGetResponse
+func (p *GraphStorageServiceGetResult) GetSuccess() *KVGetResponse {
+  if !p.IsSetSuccess() {
+    return GraphStorageServiceGetResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *GraphStorageServiceGetResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *GraphStorageServiceGetResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceGetResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewKVGetResponse()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceGetResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("get_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServiceGetResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *GraphStorageServiceGetResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GraphStorageServiceGetResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type GraphStorageServicePutArgs struct {
+  thrift.IRequest
+  Req *KVPutRequest `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewGraphStorageServicePutArgs() *GraphStorageServicePutArgs {
+  return &GraphStorageServicePutArgs{
+    Req: NewKVPutRequest(),
+  }
+}
+
+var GraphStorageServicePutArgs_Req_DEFAULT *KVPutRequest
+func (p *GraphStorageServicePutArgs) GetReq() *KVPutRequest {
+  if !p.IsSetReq() {
+    return GraphStorageServicePutArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *GraphStorageServicePutArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *GraphStorageServicePutArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServicePutArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewKVPutRequest()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServicePutArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("put_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServicePutArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *GraphStorageServicePutArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("GraphStorageServicePutArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type GraphStorageServicePutResult struct {
+  thrift.IResponse
+  Success *ExecResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewGraphStorageServicePutResult() *GraphStorageServicePutResult {
+  return &GraphStorageServicePutResult{}
+}
+
+var GraphStorageServicePutResult_Success_DEFAULT *ExecResponse
+func (p *GraphStorageServicePutResult) GetSuccess() *ExecResponse {
+  if !p.IsSetSuccess() {
+    return GraphStorageServicePutResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *GraphStorageServicePutResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *GraphStorageServicePutResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServicePutResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecResponse()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServicePutResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("put_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServicePutResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *GraphStorageServicePutResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GraphStorageServicePutResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type GraphStorageServiceRemoveArgs struct {
+  thrift.IRequest
+  Req *KVRemoveRequest `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewGraphStorageServiceRemoveArgs() *GraphStorageServiceRemoveArgs {
+  return &GraphStorageServiceRemoveArgs{
+    Req: NewKVRemoveRequest(),
+  }
+}
+
+var GraphStorageServiceRemoveArgs_Req_DEFAULT *KVRemoveRequest
+func (p *GraphStorageServiceRemoveArgs) GetReq() *KVRemoveRequest {
+  if !p.IsSetReq() {
+    return GraphStorageServiceRemoveArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *GraphStorageServiceRemoveArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *GraphStorageServiceRemoveArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceRemoveArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewKVRemoveRequest()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceRemoveArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("remove_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServiceRemoveArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *GraphStorageServiceRemoveArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("GraphStorageServiceRemoveArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type GraphStorageServiceRemoveResult struct {
+  thrift.IResponse
+  Success *ExecResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewGraphStorageServiceRemoveResult() *GraphStorageServiceRemoveResult {
+  return &GraphStorageServiceRemoveResult{}
+}
+
+var GraphStorageServiceRemoveResult_Success_DEFAULT *ExecResponse
+func (p *GraphStorageServiceRemoveResult) GetSuccess() *ExecResponse {
+  if !p.IsSetSuccess() {
+    return GraphStorageServiceRemoveResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *GraphStorageServiceRemoveResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *GraphStorageServiceRemoveResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceRemoveResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecResponse()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceRemoveResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("remove_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServiceRemoveResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *GraphStorageServiceRemoveResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GraphStorageServiceRemoveResult({Success:%s})", successVal)
 }
 
 

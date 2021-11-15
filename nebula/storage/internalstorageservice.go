@@ -262,10 +262,10 @@ func (p *InternalStorageServiceProcessor) ProcessorMap() map[string]thrift.Proce
 }
 
 func NewInternalStorageServiceProcessor(handler InternalStorageService) *InternalStorageServiceProcessor {
-  self302 := &InternalStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self302.processorMap["chainAddEdges"] = &internalStorageServiceProcessorChainAddEdges{handler:handler}
-  self302.processorMap["chainUpdateEdge"] = &internalStorageServiceProcessorChainUpdateEdge{handler:handler}
-  return self302
+  self300 := &InternalStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self300.processorMap["chainAddEdges"] = &internalStorageServiceProcessorChainAddEdges{handler:handler}
+  self300.processorMap["chainUpdateEdge"] = &internalStorageServiceProcessorChainUpdateEdge{handler:handler}
+  return self300
 }
 
 type internalStorageServiceProcessorChainAddEdges struct {

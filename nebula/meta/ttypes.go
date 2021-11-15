@@ -133,112 +133,57 @@ func RoleTypeFromString(s string) (RoleType, error) {
 
 func RoleTypePtr(v RoleType) *RoleType { return &v }
 
-type PropertyType int64
+type GeoShape int64
 const (
-  PropertyType_UNKNOWN PropertyType = 0
-  PropertyType_BOOL PropertyType = 1
-  PropertyType_INT64 PropertyType = 2
-  PropertyType_VID PropertyType = 3
-  PropertyType_FLOAT PropertyType = 4
-  PropertyType_DOUBLE PropertyType = 5
-  PropertyType_STRING PropertyType = 6
-  PropertyType_FIXED_STRING PropertyType = 7
-  PropertyType_INT8 PropertyType = 8
-  PropertyType_INT16 PropertyType = 9
-  PropertyType_INT32 PropertyType = 10
-  PropertyType_TIMESTAMP PropertyType = 21
-  PropertyType_DATE PropertyType = 24
-  PropertyType_DATETIME PropertyType = 25
-  PropertyType_TIME PropertyType = 26
+  GeoShape_ANY GeoShape = 0
+  GeoShape_POINT GeoShape = 1
+  GeoShape_LINESTRING GeoShape = 2
+  GeoShape_POLYGON GeoShape = 3
 )
 
-var PropertyTypeToName = map[PropertyType]string {
-  PropertyType_UNKNOWN: "UNKNOWN",
-  PropertyType_BOOL: "BOOL",
-  PropertyType_INT64: "INT64",
-  PropertyType_VID: "VID",
-  PropertyType_FLOAT: "FLOAT",
-  PropertyType_DOUBLE: "DOUBLE",
-  PropertyType_STRING: "STRING",
-  PropertyType_FIXED_STRING: "FIXED_STRING",
-  PropertyType_INT8: "INT8",
-  PropertyType_INT16: "INT16",
-  PropertyType_INT32: "INT32",
-  PropertyType_TIMESTAMP: "TIMESTAMP",
-  PropertyType_DATE: "DATE",
-  PropertyType_DATETIME: "DATETIME",
-  PropertyType_TIME: "TIME",
+var GeoShapeToName = map[GeoShape]string {
+  GeoShape_ANY: "ANY",
+  GeoShape_POINT: "POINT",
+  GeoShape_LINESTRING: "LINESTRING",
+  GeoShape_POLYGON: "POLYGON",
 }
 
-var PropertyTypeToValue = map[string]PropertyType {
-  "UNKNOWN": PropertyType_UNKNOWN,
-  "BOOL": PropertyType_BOOL,
-  "INT64": PropertyType_INT64,
-  "VID": PropertyType_VID,
-  "FLOAT": PropertyType_FLOAT,
-  "DOUBLE": PropertyType_DOUBLE,
-  "STRING": PropertyType_STRING,
-  "FIXED_STRING": PropertyType_FIXED_STRING,
-  "INT8": PropertyType_INT8,
-  "INT16": PropertyType_INT16,
-  "INT32": PropertyType_INT32,
-  "TIMESTAMP": PropertyType_TIMESTAMP,
-  "DATE": PropertyType_DATE,
-  "DATETIME": PropertyType_DATETIME,
-  "TIME": PropertyType_TIME,
+var GeoShapeToValue = map[string]GeoShape {
+  "ANY": GeoShape_ANY,
+  "POINT": GeoShape_POINT,
+  "LINESTRING": GeoShape_LINESTRING,
+  "POLYGON": GeoShape_POLYGON,
 }
 
-var PropertyTypeNames = []string {
-  "UNKNOWN",
-  "BOOL",
-  "INT64",
-  "VID",
-  "FLOAT",
-  "DOUBLE",
-  "STRING",
-  "FIXED_STRING",
-  "INT8",
-  "INT16",
-  "INT32",
-  "TIMESTAMP",
-  "DATE",
-  "DATETIME",
-  "TIME",
+var GeoShapeNames = []string {
+  "ANY",
+  "POINT",
+  "LINESTRING",
+  "POLYGON",
 }
 
-var PropertyTypeValues = []PropertyType {
-  PropertyType_UNKNOWN,
-  PropertyType_BOOL,
-  PropertyType_INT64,
-  PropertyType_VID,
-  PropertyType_FLOAT,
-  PropertyType_DOUBLE,
-  PropertyType_STRING,
-  PropertyType_FIXED_STRING,
-  PropertyType_INT8,
-  PropertyType_INT16,
-  PropertyType_INT32,
-  PropertyType_TIMESTAMP,
-  PropertyType_DATE,
-  PropertyType_DATETIME,
-  PropertyType_TIME,
+var GeoShapeValues = []GeoShape {
+  GeoShape_ANY,
+  GeoShape_POINT,
+  GeoShape_LINESTRING,
+  GeoShape_POLYGON,
 }
 
-func (p PropertyType) String() string {
-  if v, ok := PropertyTypeToName[p]; ok {
+func (p GeoShape) String() string {
+  if v, ok := GeoShapeToName[p]; ok {
     return v
   }
   return "<UNSET>"
 }
 
-func PropertyTypeFromString(s string) (PropertyType, error) {
-  if v, ok := PropertyTypeToValue[s]; ok {
+func GeoShapeFromString(s string) (GeoShape, error) {
+  if v, ok := GeoShapeToValue[s]; ok {
     return v, nil
   }
-  return PropertyType(0), fmt.Errorf("not a valid PropertyType string")
+  return GeoShape(0), fmt.Errorf("not a valid GeoShape string")
 }
 
-func PropertyTypePtr(v PropertyType) *PropertyType { return &v }
+func GeoShapePtr(v GeoShape) *GeoShape { return &v }
 
 type IsolationLevel int64
 const (
@@ -1282,9 +1227,11 @@ func (p *ID) String() string {
 // Attributes:
 //  - Type
 //  - TypeLength
+//  - GeoShape
 type ColumnTypeDef struct {
-  Type PropertyType `thrift:"type,1,required" db:"type" json:"type"`
+  Type nebula0.PropertyType `thrift:"type,1,required" db:"type" json:"type"`
   TypeLength int16 `thrift:"type_length,2" db:"type_length" json:"type_length,omitempty"`
+  GeoShape *GeoShape `thrift:"geo_shape,3" db:"geo_shape" json:"geo_shape,omitempty"`
 }
 
 func NewColumnTypeDef() *ColumnTypeDef {
@@ -1292,7 +1239,7 @@ func NewColumnTypeDef() *ColumnTypeDef {
 }
 
 
-func (p *ColumnTypeDef) GetType() PropertyType {
+func (p *ColumnTypeDef) GetType() nebula0.PropertyType {
   return p.Type
 }
 var ColumnTypeDef_TypeLength_DEFAULT int16 = 0
@@ -1300,8 +1247,19 @@ var ColumnTypeDef_TypeLength_DEFAULT int16 = 0
 func (p *ColumnTypeDef) GetTypeLength() int16 {
   return p.TypeLength
 }
+var ColumnTypeDef_GeoShape_DEFAULT GeoShape
+func (p *ColumnTypeDef) GetGeoShape() GeoShape {
+  if !p.IsSetGeoShape() {
+    return ColumnTypeDef_GeoShape_DEFAULT
+  }
+return *p.GeoShape
+}
 func (p *ColumnTypeDef) IsSetTypeLength() bool {
   return p != nil && p.TypeLength != ColumnTypeDef_TypeLength_DEFAULT
+}
+
+func (p *ColumnTypeDef) IsSetGeoShape() bool {
+  return p != nil && p.GeoShape != nil
 }
 
 func (p *ColumnTypeDef) Read(iprot thrift.Protocol) error {
@@ -1327,6 +1285,10 @@ func (p *ColumnTypeDef) Read(iprot thrift.Protocol) error {
       if err := p.ReadField2(iprot); err != nil {
         return err
       }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
     default:
       if err := iprot.Skip(fieldTypeId); err != nil {
         return err
@@ -1349,7 +1311,7 @@ func (p *ColumnTypeDef)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
-  temp := PropertyType(v)
+  temp := nebula0.PropertyType(v)
   p.Type = temp
 }
   return nil
@@ -1364,11 +1326,22 @@ func (p *ColumnTypeDef)  ReadField2(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *ColumnTypeDef)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  temp := GeoShape(v)
+  p.GeoShape = &temp
+}
+  return nil
+}
+
 func (p *ColumnTypeDef) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("ColumnTypeDef"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -1398,6 +1371,18 @@ func (p *ColumnTypeDef) writeField2(oprot thrift.Protocol) (err error) {
   return err
 }
 
+func (p *ColumnTypeDef) writeField3(oprot thrift.Protocol) (err error) {
+  if p.IsSetGeoShape() {
+    if err := oprot.WriteFieldBegin("geo_shape", thrift.I32, 3); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:geo_shape: ", p), err) }
+    if err := oprot.WriteI32(int32(*p.GeoShape)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.geo_shape (3) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 3:geo_shape: ", p), err) }
+  }
+  return err
+}
+
 func (p *ColumnTypeDef) String() string {
   if p == nil {
     return "<nil>"
@@ -1405,7 +1390,13 @@ func (p *ColumnTypeDef) String() string {
 
   typeVal := fmt.Sprintf("%v", p.Type)
   typeLengthVal := fmt.Sprintf("%v", p.TypeLength)
-  return fmt.Sprintf("ColumnTypeDef({Type:%s TypeLength:%s})", typeVal, typeLengthVal)
+  var geoShapeVal string
+  if p.GeoShape == nil {
+    geoShapeVal = "<nil>"
+  } else {
+    geoShapeVal = fmt.Sprintf("%v", *p.GeoShape)
+  }
+  return fmt.Sprintf("ColumnTypeDef({Type:%s TypeLength:%s GeoShape:%s})", typeVal, typeLengthVal, geoShapeVal)
 }
 
 // Attributes:
@@ -2165,7 +2156,7 @@ func (p *SpaceDesc) GetCollateName() []byte {
 }
 var SpaceDesc_VidType_DEFAULT *ColumnTypeDef = &ColumnTypeDef{
   Type:   7,
-  TypeLength: const_lit_vid_type_type_length,
+  TypeLength: &const_lit_vid_type_type_length,
 }
 func (p *SpaceDesc) GetVidType() *ColumnTypeDef {
   if !p.IsSetVidType() {
@@ -6215,6 +6206,122 @@ func (p *CreateSpaceReq) String() string {
   }
   ifNotExistsVal := fmt.Sprintf("%v", p.IfNotExists)
   return fmt.Sprintf("CreateSpaceReq({Properties:%s IfNotExists:%s})", propertiesVal, ifNotExistsVal)
+}
+
+// Attributes:
+//  - OldSpaceName
+//  - NewSpaceName_
+type CreateSpaceAsReq struct {
+  OldSpaceName []byte `thrift:"old_space_name,1" db:"old_space_name" json:"old_space_name"`
+  NewSpaceName_ []byte `thrift:"new_space_name,2" db:"new_space_name" json:"new_space_name"`
+}
+
+func NewCreateSpaceAsReq() *CreateSpaceAsReq {
+  return &CreateSpaceAsReq{}
+}
+
+
+func (p *CreateSpaceAsReq) GetOldSpaceName() []byte {
+  return p.OldSpaceName
+}
+
+func (p *CreateSpaceAsReq) GetNewSpaceName_() []byte {
+  return p.NewSpaceName_
+}
+func (p *CreateSpaceAsReq) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CreateSpaceAsReq)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.OldSpaceName = v
+}
+  return nil
+}
+
+func (p *CreateSpaceAsReq)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.NewSpaceName_ = v
+}
+  return nil
+}
+
+func (p *CreateSpaceAsReq) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("CreateSpaceAsReq"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CreateSpaceAsReq) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("old_space_name", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:old_space_name: ", p), err) }
+  if err := oprot.WriteBinary(p.OldSpaceName); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.old_space_name (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:old_space_name: ", p), err) }
+  return err
+}
+
+func (p *CreateSpaceAsReq) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("new_space_name", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:new_space_name: ", p), err) }
+  if err := oprot.WriteBinary(p.NewSpaceName_); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.new_space_name (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:new_space_name: ", p), err) }
+  return err
+}
+
+func (p *CreateSpaceAsReq) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  oldSpaceNameVal := fmt.Sprintf("%v", p.OldSpaceName)
+  newSpaceNameVal := fmt.Sprintf("%v", p.NewSpaceName_)
+  return fmt.Sprintf("CreateSpaceAsReq({OldSpaceName:%s NewSpaceName_:%s})", oldSpaceNameVal, newSpaceNameVal)
 }
 
 // Attributes:
@@ -26741,5 +26848,266 @@ func (p *GetMetaDirInfoReq) String() string {
   }
 
   return fmt.Sprintf("GetMetaDirInfoReq({})")
+}
+
+// Attributes:
+//  - Code
+//  - Leader
+//  - ErrorMsg
+type VerifyClientVersionResp struct {
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
+  ErrorMsg []byte `thrift:"error_msg,3" db:"error_msg" json:"error_msg,omitempty"`
+}
+
+func NewVerifyClientVersionResp() *VerifyClientVersionResp {
+  return &VerifyClientVersionResp{
+    Leader: nebula0.NewHostAddr(),
+  }
+}
+
+
+func (p *VerifyClientVersionResp) GetCode() nebula0.ErrorCode {
+  return p.Code
+}
+var VerifyClientVersionResp_Leader_DEFAULT *nebula0.HostAddr
+func (p *VerifyClientVersionResp) GetLeader() *nebula0.HostAddr {
+  if !p.IsSetLeader() {
+    return VerifyClientVersionResp_Leader_DEFAULT
+  }
+return p.Leader
+}
+var VerifyClientVersionResp_ErrorMsg_DEFAULT []byte
+
+func (p *VerifyClientVersionResp) GetErrorMsg() []byte {
+  return p.ErrorMsg
+}
+func (p *VerifyClientVersionResp) IsSetLeader() bool {
+  return p != nil && p.Leader != nil
+}
+
+func (p *VerifyClientVersionResp) IsSetErrorMsg() bool {
+  return p != nil && p.ErrorMsg != nil
+}
+
+func (p *VerifyClientVersionResp) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *VerifyClientVersionResp)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  temp := nebula0.ErrorCode(v)
+  p.Code = temp
+}
+  return nil
+}
+
+func (p *VerifyClientVersionResp)  ReadField2(iprot thrift.Protocol) error {
+  p.Leader = nebula0.NewHostAddr()
+  if err := p.Leader.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Leader), err)
+  }
+  return nil
+}
+
+func (p *VerifyClientVersionResp)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  p.ErrorMsg = v
+}
+  return nil
+}
+
+func (p *VerifyClientVersionResp) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("VerifyClientVersionResp"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *VerifyClientVersionResp) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("code", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:code: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Code)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.code (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:code: ", p), err) }
+  return err
+}
+
+func (p *VerifyClientVersionResp) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("leader", thrift.STRUCT, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:leader: ", p), err) }
+  if err := p.Leader.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Leader), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:leader: ", p), err) }
+  return err
+}
+
+func (p *VerifyClientVersionResp) writeField3(oprot thrift.Protocol) (err error) {
+  if p.IsSetErrorMsg() {
+    if err := oprot.WriteFieldBegin("error_msg", thrift.STRING, 3); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:error_msg: ", p), err) }
+    if err := oprot.WriteBinary(p.ErrorMsg); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.error_msg (3) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 3:error_msg: ", p), err) }
+  }
+  return err
+}
+
+func (p *VerifyClientVersionResp) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  codeVal := fmt.Sprintf("%v", p.Code)
+  var leaderVal string
+  if p.Leader == nil {
+    leaderVal = "<nil>"
+  } else {
+    leaderVal = fmt.Sprintf("%v", p.Leader)
+  }
+  errorMsgVal := fmt.Sprintf("%v", p.ErrorMsg)
+  return fmt.Sprintf("VerifyClientVersionResp({Code:%s Leader:%s ErrorMsg:%s})", codeVal, leaderVal, errorMsgVal)
+}
+
+// Attributes:
+//  - Version
+type VerifyClientVersionReq struct {
+  Version []byte `thrift:"version,1,required" db:"version" json:"version"`
+}
+
+func NewVerifyClientVersionReq() *VerifyClientVersionReq {
+  return &VerifyClientVersionReq{
+    Version: []byte("2.6.0"),
+  }
+}
+
+
+func (p *VerifyClientVersionReq) GetVersion() []byte {
+  return p.Version
+}
+func (p *VerifyClientVersionReq) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+  var issetVersion bool = false;
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+      issetVersion = true
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  if !issetVersion{
+    return thrift.NewProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field Version is not set"));
+  }
+  return nil
+}
+
+func (p *VerifyClientVersionReq)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.Version = v
+}
+  return nil
+}
+
+func (p *VerifyClientVersionReq) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("VerifyClientVersionReq"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *VerifyClientVersionReq) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("version", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:version: ", p), err) }
+  if err := oprot.WriteBinary(p.Version); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.version (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:version: ", p), err) }
+  return err
+}
+
+func (p *VerifyClientVersionReq) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  versionVal := fmt.Sprintf("%v", p.Version)
+  return fmt.Sprintf("VerifyClientVersionReq({Version:%s})", versionVal)
 }
 

@@ -122,19 +122,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "ChainAddEdges requires 1 args")
       flag.Usage()
     }
-    arg304 := flag.Arg(1)
-    mbTrans305 := thrift.NewMemoryBufferLen(len(arg304))
-    defer mbTrans305.Close()
-    _, err306 := mbTrans305.WriteString(arg304)
-    if err306 != nil {
+    arg302 := flag.Arg(1)
+    mbTrans303 := thrift.NewMemoryBufferLen(len(arg302))
+    defer mbTrans303.Close()
+    _, err304 := mbTrans303.WriteString(arg302)
+    if err304 != nil {
       Usage()
       return
     }
-    factory307 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt308 := factory307.GetProtocol(mbTrans305)
+    factory305 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt306 := factory305.GetProtocol(mbTrans303)
     argvalue0 := storage.NewChainAddEdgesRequest()
-    err309 := argvalue0.Read(jsProt308)
-    if err309 != nil {
+    err307 := argvalue0.Read(jsProt306)
+    if err307 != nil {
       Usage()
       return
     }
@@ -147,19 +147,19 @@ func main() {
       fmt.Fprintln(os.Stderr, "ChainUpdateEdge requires 1 args")
       flag.Usage()
     }
-    arg310 := flag.Arg(1)
-    mbTrans311 := thrift.NewMemoryBufferLen(len(arg310))
-    defer mbTrans311.Close()
-    _, err312 := mbTrans311.WriteString(arg310)
-    if err312 != nil {
+    arg308 := flag.Arg(1)
+    mbTrans309 := thrift.NewMemoryBufferLen(len(arg308))
+    defer mbTrans309.Close()
+    _, err310 := mbTrans309.WriteString(arg308)
+    if err310 != nil {
       Usage()
       return
     }
-    factory313 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt314 := factory313.GetProtocol(mbTrans311)
+    factory311 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt312 := factory311.GetProtocol(mbTrans309)
     argvalue0 := storage.NewChainUpdateEdgeRequest()
-    err315 := argvalue0.Read(jsProt314)
-    if err315 != nil {
+    err313 := argvalue0.Read(jsProt312)
+    if err313 != nil {
       Usage()
       return
     }
