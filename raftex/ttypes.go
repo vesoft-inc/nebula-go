@@ -24,6 +24,58 @@ var _ = context.Background
 var _ = nebula0.GoUnusedProtection__
 var GoUnusedProtection__ int;
 
+type Role int64
+const (
+  Role_LEADER Role = 1
+  Role_FOLLOWER Role = 2
+  Role_CANDIDATE Role = 3
+  Role_LEARNER Role = 4
+)
+
+var RoleToName = map[Role]string {
+  Role_LEADER: "LEADER",
+  Role_FOLLOWER: "FOLLOWER",
+  Role_CANDIDATE: "CANDIDATE",
+  Role_LEARNER: "LEARNER",
+}
+
+var RoleToValue = map[string]Role {
+  "LEADER": Role_LEADER,
+  "FOLLOWER": Role_FOLLOWER,
+  "CANDIDATE": Role_CANDIDATE,
+  "LEARNER": Role_LEARNER,
+}
+
+var RoleNames = []string {
+  "LEADER",
+  "FOLLOWER",
+  "CANDIDATE",
+  "LEARNER",
+}
+
+var RoleValues = []Role {
+  Role_LEADER,
+  Role_FOLLOWER,
+  Role_CANDIDATE,
+  Role_LEARNER,
+}
+
+func (p Role) String() string {
+  if v, ok := RoleToName[p]; ok {
+    return v
+  }
+  return "<UNSET>"
+}
+
+func RoleFromString(s string) (Role, error) {
+  if v, ok := RoleToValue[s]; ok {
+    return v, nil
+  }
+  return Role(0), fmt.Errorf("not a valid Role string")
+}
+
+func RolePtr(v Role) *Role { return &v }
+
 type ErrorCode int64
 const (
   ErrorCode_SUCCEEDED ErrorCode = 0
@@ -2501,10 +2553,14 @@ func (p *GetStateRequest) String() string {
 
 // Attributes:
 //  - ErrorCode
+//  - Role
+//  - Term
 //  - IsLeader
 type GetStateResponse struct {
   ErrorCode ErrorCode `thrift:"error_code,1" db:"error_code" json:"error_code"`
-  IsLeader bool `thrift:"is_leader,2" db:"is_leader" json:"is_leader"`
+  Role Role `thrift:"role,2" db:"role" json:"role"`
+  Term TermID `thrift:"term,3" db:"term" json:"term"`
+  IsLeader bool `thrift:"is_leader,4" db:"is_leader" json:"is_leader"`
 }
 
 func NewGetStateResponse() *GetStateResponse {
@@ -2514,6 +2570,14 @@ func NewGetStateResponse() *GetStateResponse {
 
 func (p *GetStateResponse) GetErrorCode() ErrorCode {
   return p.ErrorCode
+}
+
+func (p *GetStateResponse) GetRole() Role {
+  return p.Role
+}
+
+func (p *GetStateResponse) GetTerm() TermID {
+  return p.Term
 }
 
 func (p *GetStateResponse) GetIsLeader() bool {
@@ -2538,6 +2602,14 @@ func (p *GetStateResponse) Read(iprot thrift.Protocol) error {
       }
     case 2:
       if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    case 4:
+      if err := p.ReadField4(iprot); err != nil {
         return err
       }
     default:
@@ -2566,8 +2638,28 @@ func (p *GetStateResponse)  ReadField1(iprot thrift.Protocol) error {
 }
 
 func (p *GetStateResponse)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBool(); err != nil {
+  if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 2: ", err)
+} else {
+  temp := Role(v)
+  p.Role = temp
+}
+  return nil
+}
+
+func (p *GetStateResponse)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  temp := TermID(v)
+  p.Term = temp
+}
+  return nil
+}
+
+func (p *GetStateResponse)  ReadField4(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBool(); err != nil {
+  return thrift.PrependError("error reading field 4: ", err)
 } else {
   p.IsLeader = v
 }
@@ -2579,6 +2671,8 @@ func (p *GetStateResponse) Write(oprot thrift.Protocol) error {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := p.writeField4(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -2597,12 +2691,32 @@ func (p *GetStateResponse) writeField1(oprot thrift.Protocol) (err error) {
 }
 
 func (p *GetStateResponse) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("is_leader", thrift.BOOL, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:is_leader: ", p), err) }
-  if err := oprot.WriteBool(bool(p.IsLeader)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.is_leader (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("role", thrift.I32, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:role: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Role)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.role (2) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:is_leader: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:role: ", p), err) }
+  return err
+}
+
+func (p *GetStateResponse) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("term", thrift.I64, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:term: ", p), err) }
+  if err := oprot.WriteI64(int64(p.Term)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.term (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:term: ", p), err) }
+  return err
+}
+
+func (p *GetStateResponse) writeField4(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("is_leader", thrift.BOOL, 4); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:is_leader: ", p), err) }
+  if err := oprot.WriteBool(bool(p.IsLeader)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.is_leader (4) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:is_leader: ", p), err) }
   return err
 }
 
@@ -2612,7 +2726,9 @@ func (p *GetStateResponse) String() string {
   }
 
   errorCodeVal := fmt.Sprintf("%v", p.ErrorCode)
+  roleVal := fmt.Sprintf("%v", p.Role)
+  termVal := fmt.Sprintf("%v", p.Term)
   isLeaderVal := fmt.Sprintf("%v", p.IsLeader)
-  return fmt.Sprintf("GetStateResponse({ErrorCode:%s IsLeader:%s})", errorCodeVal, isLeaderVal)
+  return fmt.Sprintf("GetStateResponse({ErrorCode:%s Role:%s Term:%s IsLeader:%s})", errorCodeVal, roleVal, termVal, isLeaderVal)
 }
 
