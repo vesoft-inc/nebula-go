@@ -163,12 +163,6 @@ type MetaService interface {
   HeartBeat(ctx context.Context, req *HBReq) (_r *HBResp, err error)
   // Parameters:
   //  - Req
-  Balance(ctx context.Context, req *BalanceReq) (_r *BalanceResp, err error)
-  // Parameters:
-  //  - Req
-  LeaderBalance(ctx context.Context, req *LeaderBalanceReq) (_r *ExecResp, err error)
-  // Parameters:
-  //  - Req
   RegConfig(ctx context.Context, req *RegConfigReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
@@ -435,12 +429,6 @@ type MetaServiceClientInterface interface {
   // Parameters:
   //  - Req
   HeartBeat(req *HBReq) (_r *HBResp, err error)
-  // Parameters:
-  //  - Req
-  Balance(req *BalanceReq) (_r *BalanceResp, err error)
-  // Parameters:
-  //  - Req
-  LeaderBalance(req *LeaderBalanceReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
   RegConfig(req *RegConfigReq) (_r *ExecResp, err error)
@@ -1513,46 +1501,6 @@ func (p *MetaServiceClient) HeartBeat(req *HBReq) (_r *HBResp, err error) {
 func (p *MetaServiceClient) recvHeartBeat() (value *HBResp, err error) {
   var result MetaServiceHeartBeatResult
   err = p.CC.RecvMsg("heartBeat", &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
-func (p *MetaServiceClient) Balance(req *BalanceReq) (_r *BalanceResp, err error) {
-  args := MetaServiceBalanceArgs{
-    Req : req,
-  }
-  err = p.CC.SendMsg("balance", &args, thrift.CALL)
-  if err != nil { return }
-  return p.recvBalance()
-}
-
-
-func (p *MetaServiceClient) recvBalance() (value *BalanceResp, err error) {
-  var result MetaServiceBalanceResult
-  err = p.CC.RecvMsg("balance", &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
-func (p *MetaServiceClient) LeaderBalance(req *LeaderBalanceReq) (_r *ExecResp, err error) {
-  args := MetaServiceLeaderBalanceArgs{
-    Req : req,
-  }
-  err = p.CC.SendMsg("leaderBalance", &args, thrift.CALL)
-  if err != nil { return }
-  return p.recvLeaderBalance()
-}
-
-
-func (p *MetaServiceClient) recvLeaderBalance() (value *ExecResp, err error) {
-  var result MetaServiceLeaderBalanceResult
-  err = p.CC.RecvMsg("leaderBalance", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -3449,50 +3397,6 @@ func (p *MetaServiceThreadsafeClient) recvHeartBeat() (value *HBResp, err error)
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) Balance(req *BalanceReq) (_r *BalanceResp, err error) {
-  p.Mu.Lock()
-  defer p.Mu.Unlock()
-  args := MetaServiceBalanceArgs{
-    Req : req,
-  }
-  err = p.CC.SendMsg("balance", &args, thrift.CALL)
-  if err != nil { return }
-  return p.recvBalance()
-}
-
-
-func (p *MetaServiceThreadsafeClient) recvBalance() (value *BalanceResp, err error) {
-  var result MetaServiceBalanceResult
-  err = p.CC.RecvMsg("balance", &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
-func (p *MetaServiceThreadsafeClient) LeaderBalance(req *LeaderBalanceReq) (_r *ExecResp, err error) {
-  p.Mu.Lock()
-  defer p.Mu.Unlock()
-  args := MetaServiceLeaderBalanceArgs{
-    Req : req,
-  }
-  err = p.CC.SendMsg("leaderBalance", &args, thrift.CALL)
-  if err != nil { return }
-  return p.recvLeaderBalance()
-}
-
-
-func (p *MetaServiceThreadsafeClient) recvLeaderBalance() (value *ExecResp, err error) {
-  var result MetaServiceLeaderBalanceResult
-  err = p.CC.RecvMsg("leaderBalance", &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
 func (p *MetaServiceThreadsafeClient) RegConfig(req *RegConfigReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
@@ -5036,32 +4940,6 @@ func (p *MetaServiceChannelClient) HeartBeat(ctx context.Context, req *HBReq) (_
 
 // Parameters:
 //  - Req
-func (p *MetaServiceChannelClient) Balance(ctx context.Context, req *BalanceReq) (_r *BalanceResp, err error) {
-  args := MetaServiceBalanceArgs{
-    Req : req,
-  }
-  var result MetaServiceBalanceResult
-  err = p.RequestChannel.Call(ctx, "balance", &args, &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
-func (p *MetaServiceChannelClient) LeaderBalance(ctx context.Context, req *LeaderBalanceReq) (_r *ExecResp, err error) {
-  args := MetaServiceLeaderBalanceArgs{
-    Req : req,
-  }
-  var result MetaServiceLeaderBalanceResult
-  err = p.RequestChannel.Call(ctx, "leaderBalance", &args, &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
 func (p *MetaServiceChannelClient) RegConfig(ctx context.Context, req *RegConfigReq) (_r *ExecResp, err error) {
   args := MetaServiceRegConfigArgs{
     Req : req,
@@ -5628,98 +5506,96 @@ func (p *MetaServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunctio
 }
 
 func NewMetaServiceProcessor(handler MetaService) *MetaServiceProcessor {
-  self97 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self97.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
-  self97.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
-  self97.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
-  self97.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
-  self97.processorMap["createSpaceAs"] = &metaServiceProcessorCreateSpaceAs{handler:handler}
-  self97.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
-  self97.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
-  self97.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
-  self97.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
-  self97.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
-  self97.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
-  self97.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
-  self97.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
-  self97.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
-  self97.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
-  self97.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
-  self97.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
-  self97.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
-  self97.processorMap["multiPut"] = &metaServiceProcessorMultiPut{handler:handler}
-  self97.processorMap["get"] = &metaServiceProcessorGet{handler:handler}
-  self97.processorMap["multiGet"] = &metaServiceProcessorMultiGet{handler:handler}
-  self97.processorMap["remove"] = &metaServiceProcessorRemove{handler:handler}
-  self97.processorMap["removeRange"] = &metaServiceProcessorRemoveRange{handler:handler}
-  self97.processorMap["scan"] = &metaServiceProcessorScan{handler:handler}
-  self97.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
-  self97.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
-  self97.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
-  self97.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
-  self97.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
-  self97.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
-  self97.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
-  self97.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
-  self97.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
-  self97.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
-  self97.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
-  self97.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
-  self97.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
-  self97.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
-  self97.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
-  self97.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
-  self97.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
-  self97.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
-  self97.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
-  self97.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
-  self97.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
-  self97.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
-  self97.processorMap["balance"] = &metaServiceProcessorBalance{handler:handler}
-  self97.processorMap["leaderBalance"] = &metaServiceProcessorLeaderBalance{handler:handler}
-  self97.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
-  self97.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
-  self97.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
-  self97.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
-  self97.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
-  self97.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
-  self97.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
-  self97.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
-  self97.processorMap["addZone"] = &metaServiceProcessorAddZone{handler:handler}
-  self97.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
-  self97.processorMap["addHostIntoZone"] = &metaServiceProcessorAddHostIntoZone{handler:handler}
-  self97.processorMap["dropHostFromZone"] = &metaServiceProcessorDropHostFromZone{handler:handler}
-  self97.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
-  self97.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
-  self97.processorMap["addGroup"] = &metaServiceProcessorAddGroup{handler:handler}
-  self97.processorMap["dropGroup"] = &metaServiceProcessorDropGroup{handler:handler}
-  self97.processorMap["addZoneIntoGroup"] = &metaServiceProcessorAddZoneIntoGroup{handler:handler}
-  self97.processorMap["dropZoneFromGroup"] = &metaServiceProcessorDropZoneFromGroup{handler:handler}
-  self97.processorMap["getGroup"] = &metaServiceProcessorGetGroup{handler:handler}
-  self97.processorMap["listGroups"] = &metaServiceProcessorListGroups{handler:handler}
-  self97.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
-  self97.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
-  self97.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
-  self97.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
-  self97.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
-  self97.processorMap["getStats"] = &metaServiceProcessorGetStats{handler:handler}
-  self97.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
-  self97.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
-  self97.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
-  self97.processorMap["createFTIndex"] = &metaServiceProcessorCreateFTIndex{handler:handler}
-  self97.processorMap["dropFTIndex"] = &metaServiceProcessorDropFTIndex{handler:handler}
-  self97.processorMap["listFTIndexes"] = &metaServiceProcessorListFTIndexes{handler:handler}
-  self97.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
-  self97.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
-  self97.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
-  self97.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
-  self97.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
-  self97.processorMap["killQuery"] = &metaServiceProcessorKillQuery{handler:handler}
-  self97.processorMap["reportTaskFinish"] = &metaServiceProcessorReportTaskFinish{handler:handler}
-  self97.processorMap["listCluster"] = &metaServiceProcessorListCluster{handler:handler}
-  self97.processorMap["getMetaDirInfo"] = &metaServiceProcessorGetMetaDirInfo{handler:handler}
-  self97.processorMap["verifyClientVersion"] = &metaServiceProcessorVerifyClientVersion{handler:handler}
-  return self97
+  self95 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self95.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
+  self95.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
+  self95.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
+  self95.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
+  self95.processorMap["createSpaceAs"] = &metaServiceProcessorCreateSpaceAs{handler:handler}
+  self95.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
+  self95.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
+  self95.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
+  self95.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
+  self95.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
+  self95.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
+  self95.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
+  self95.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
+  self95.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
+  self95.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
+  self95.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
+  self95.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
+  self95.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
+  self95.processorMap["multiPut"] = &metaServiceProcessorMultiPut{handler:handler}
+  self95.processorMap["get"] = &metaServiceProcessorGet{handler:handler}
+  self95.processorMap["multiGet"] = &metaServiceProcessorMultiGet{handler:handler}
+  self95.processorMap["remove"] = &metaServiceProcessorRemove{handler:handler}
+  self95.processorMap["removeRange"] = &metaServiceProcessorRemoveRange{handler:handler}
+  self95.processorMap["scan"] = &metaServiceProcessorScan{handler:handler}
+  self95.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
+  self95.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
+  self95.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
+  self95.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
+  self95.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
+  self95.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
+  self95.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
+  self95.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
+  self95.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
+  self95.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
+  self95.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
+  self95.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
+  self95.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
+  self95.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
+  self95.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
+  self95.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
+  self95.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
+  self95.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
+  self95.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
+  self95.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
+  self95.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
+  self95.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
+  self95.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
+  self95.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
+  self95.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
+  self95.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
+  self95.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
+  self95.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
+  self95.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
+  self95.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
+  self95.processorMap["addZone"] = &metaServiceProcessorAddZone{handler:handler}
+  self95.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
+  self95.processorMap["addHostIntoZone"] = &metaServiceProcessorAddHostIntoZone{handler:handler}
+  self95.processorMap["dropHostFromZone"] = &metaServiceProcessorDropHostFromZone{handler:handler}
+  self95.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
+  self95.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
+  self95.processorMap["addGroup"] = &metaServiceProcessorAddGroup{handler:handler}
+  self95.processorMap["dropGroup"] = &metaServiceProcessorDropGroup{handler:handler}
+  self95.processorMap["addZoneIntoGroup"] = &metaServiceProcessorAddZoneIntoGroup{handler:handler}
+  self95.processorMap["dropZoneFromGroup"] = &metaServiceProcessorDropZoneFromGroup{handler:handler}
+  self95.processorMap["getGroup"] = &metaServiceProcessorGetGroup{handler:handler}
+  self95.processorMap["listGroups"] = &metaServiceProcessorListGroups{handler:handler}
+  self95.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
+  self95.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
+  self95.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
+  self95.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
+  self95.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
+  self95.processorMap["getStats"] = &metaServiceProcessorGetStats{handler:handler}
+  self95.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
+  self95.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
+  self95.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
+  self95.processorMap["createFTIndex"] = &metaServiceProcessorCreateFTIndex{handler:handler}
+  self95.processorMap["dropFTIndex"] = &metaServiceProcessorDropFTIndex{handler:handler}
+  self95.processorMap["listFTIndexes"] = &metaServiceProcessorListFTIndexes{handler:handler}
+  self95.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
+  self95.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
+  self95.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
+  self95.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
+  self95.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
+  self95.processorMap["killQuery"] = &metaServiceProcessorKillQuery{handler:handler}
+  self95.processorMap["reportTaskFinish"] = &metaServiceProcessorReportTaskFinish{handler:handler}
+  self95.processorMap["listCluster"] = &metaServiceProcessorListCluster{handler:handler}
+  self95.processorMap["getMetaDirInfo"] = &metaServiceProcessorGetMetaDirInfo{handler:handler}
+  self95.processorMap["verifyClientVersion"] = &metaServiceProcessorVerifyClientVersion{handler:handler}
+  return self95
 }
 
 type metaServiceProcessorCreateSpace struct {
@@ -8014,106 +7890,6 @@ func (p *metaServiceProcessorHeartBeat) RunContext(ctx context.Context, argStruc
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing heartBeat: " + err.Error())
-      return x, x
-    }
-  } else {
-    result.Success = retval
-  }
-  return &result, nil
-}
-
-type metaServiceProcessorBalance struct {
-  handler MetaService
-}
-
-func (p *metaServiceProcessorBalance) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
-  args := MetaServiceBalanceArgs{}
-  if err := args.Read(iprot); err != nil {
-    return nil, err
-  }
-  iprot.ReadMessageEnd()
-  return &args, nil
-}
-
-func (p *metaServiceProcessorBalance) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
-  var err2 error
-  messageType := thrift.REPLY
-  switch result.(type) {
-  case thrift.ApplicationException:
-    messageType = thrift.EXCEPTION
-  }
-  if err2 = oprot.WriteMessageBegin("balance", messageType, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 = result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.Flush(); err == nil && err2 != nil {
-    err = err2
-  }
-  return err
-}
-
-func (p *metaServiceProcessorBalance) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
-  args := argStruct.(*MetaServiceBalanceArgs)
-  var result MetaServiceBalanceResult
-  if retval, err := p.handler.Balance(ctx, args.Req); err != nil {
-    switch err.(type) {
-    default:
-      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing balance: " + err.Error())
-      return x, x
-    }
-  } else {
-    result.Success = retval
-  }
-  return &result, nil
-}
-
-type metaServiceProcessorLeaderBalance struct {
-  handler MetaService
-}
-
-func (p *metaServiceProcessorLeaderBalance) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
-  args := MetaServiceLeaderBalanceArgs{}
-  if err := args.Read(iprot); err != nil {
-    return nil, err
-  }
-  iprot.ReadMessageEnd()
-  return &args, nil
-}
-
-func (p *metaServiceProcessorLeaderBalance) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
-  var err2 error
-  messageType := thrift.REPLY
-  switch result.(type) {
-  case thrift.ApplicationException:
-    messageType = thrift.EXCEPTION
-  }
-  if err2 = oprot.WriteMessageBegin("leaderBalance", messageType, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 = result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.Flush(); err == nil && err2 != nil {
-    err = err2
-  }
-  return err
-}
-
-func (p *metaServiceProcessorLeaderBalance) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
-  args := argStruct.(*MetaServiceLeaderBalanceArgs)
-  var result MetaServiceLeaderBalanceResult
-  if retval, err := p.handler.LeaderBalance(ctx, args.Req); err != nil {
-    switch err.(type) {
-    default:
-      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing leaderBalance: " + err.Error())
       return x, x
     }
   } else {
@@ -19423,406 +19199,6 @@ func (p *MetaServiceHeartBeatResult) String() string {
     successVal = fmt.Sprintf("%v", p.Success)
   }
   return fmt.Sprintf("MetaServiceHeartBeatResult({Success:%s})", successVal)
-}
-
-// Attributes:
-//  - Req
-type MetaServiceBalanceArgs struct {
-  thrift.IRequest
-  Req *BalanceReq `thrift:"req,1" db:"req" json:"req"`
-}
-
-func NewMetaServiceBalanceArgs() *MetaServiceBalanceArgs {
-  return &MetaServiceBalanceArgs{
-    Req: NewBalanceReq(),
-  }
-}
-
-var MetaServiceBalanceArgs_Req_DEFAULT *BalanceReq
-func (p *MetaServiceBalanceArgs) GetReq() *BalanceReq {
-  if !p.IsSetReq() {
-    return MetaServiceBalanceArgs_Req_DEFAULT
-  }
-return p.Req
-}
-func (p *MetaServiceBalanceArgs) IsSetReq() bool {
-  return p != nil && p.Req != nil
-}
-
-func (p *MetaServiceBalanceArgs) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceBalanceArgs)  ReadField1(iprot thrift.Protocol) error {
-  p.Req = NewBalanceReq()
-  if err := p.Req.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceBalanceArgs) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("balance_args"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *MetaServiceBalanceArgs) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
-  if err := p.Req.Write(oprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
-  return err
-}
-
-func (p *MetaServiceBalanceArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var reqVal string
-  if p.Req == nil {
-    reqVal = "<nil>"
-  } else {
-    reqVal = fmt.Sprintf("%v", p.Req)
-  }
-  return fmt.Sprintf("MetaServiceBalanceArgs({Req:%s})", reqVal)
-}
-
-// Attributes:
-//  - Success
-type MetaServiceBalanceResult struct {
-  thrift.IResponse
-  Success *BalanceResp `thrift:"success,0" db:"success" json:"success,omitempty"`
-}
-
-func NewMetaServiceBalanceResult() *MetaServiceBalanceResult {
-  return &MetaServiceBalanceResult{}
-}
-
-var MetaServiceBalanceResult_Success_DEFAULT *BalanceResp
-func (p *MetaServiceBalanceResult) GetSuccess() *BalanceResp {
-  if !p.IsSetSuccess() {
-    return MetaServiceBalanceResult_Success_DEFAULT
-  }
-return p.Success
-}
-func (p *MetaServiceBalanceResult) IsSetSuccess() bool {
-  return p != nil && p.Success != nil
-}
-
-func (p *MetaServiceBalanceResult) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 0:
-      if err := p.ReadField0(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceBalanceResult)  ReadField0(iprot thrift.Protocol) error {
-  p.Success = NewBalanceResp()
-  if err := p.Success.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceBalanceResult) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("balance_result"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField0(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *MetaServiceBalanceResult) writeField0(oprot thrift.Protocol) (err error) {
-  if p.IsSetSuccess() {
-    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
-    if err := p.Success.Write(oprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
-    }
-    if err := oprot.WriteFieldEnd(); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
-  }
-  return err
-}
-
-func (p *MetaServiceBalanceResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var successVal string
-  if p.Success == nil {
-    successVal = "<nil>"
-  } else {
-    successVal = fmt.Sprintf("%v", p.Success)
-  }
-  return fmt.Sprintf("MetaServiceBalanceResult({Success:%s})", successVal)
-}
-
-// Attributes:
-//  - Req
-type MetaServiceLeaderBalanceArgs struct {
-  thrift.IRequest
-  Req *LeaderBalanceReq `thrift:"req,1" db:"req" json:"req"`
-}
-
-func NewMetaServiceLeaderBalanceArgs() *MetaServiceLeaderBalanceArgs {
-  return &MetaServiceLeaderBalanceArgs{
-    Req: NewLeaderBalanceReq(),
-  }
-}
-
-var MetaServiceLeaderBalanceArgs_Req_DEFAULT *LeaderBalanceReq
-func (p *MetaServiceLeaderBalanceArgs) GetReq() *LeaderBalanceReq {
-  if !p.IsSetReq() {
-    return MetaServiceLeaderBalanceArgs_Req_DEFAULT
-  }
-return p.Req
-}
-func (p *MetaServiceLeaderBalanceArgs) IsSetReq() bool {
-  return p != nil && p.Req != nil
-}
-
-func (p *MetaServiceLeaderBalanceArgs) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceLeaderBalanceArgs)  ReadField1(iprot thrift.Protocol) error {
-  p.Req = NewLeaderBalanceReq()
-  if err := p.Req.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceLeaderBalanceArgs) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("leaderBalance_args"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *MetaServiceLeaderBalanceArgs) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
-  if err := p.Req.Write(oprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
-  return err
-}
-
-func (p *MetaServiceLeaderBalanceArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var reqVal string
-  if p.Req == nil {
-    reqVal = "<nil>"
-  } else {
-    reqVal = fmt.Sprintf("%v", p.Req)
-  }
-  return fmt.Sprintf("MetaServiceLeaderBalanceArgs({Req:%s})", reqVal)
-}
-
-// Attributes:
-//  - Success
-type MetaServiceLeaderBalanceResult struct {
-  thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
-}
-
-func NewMetaServiceLeaderBalanceResult() *MetaServiceLeaderBalanceResult {
-  return &MetaServiceLeaderBalanceResult{}
-}
-
-var MetaServiceLeaderBalanceResult_Success_DEFAULT *ExecResp
-func (p *MetaServiceLeaderBalanceResult) GetSuccess() *ExecResp {
-  if !p.IsSetSuccess() {
-    return MetaServiceLeaderBalanceResult_Success_DEFAULT
-  }
-return p.Success
-}
-func (p *MetaServiceLeaderBalanceResult) IsSetSuccess() bool {
-  return p != nil && p.Success != nil
-}
-
-func (p *MetaServiceLeaderBalanceResult) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 0:
-      if err := p.ReadField0(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceLeaderBalanceResult)  ReadField0(iprot thrift.Protocol) error {
-  p.Success = NewExecResp()
-  if err := p.Success.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceLeaderBalanceResult) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("leaderBalance_result"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField0(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *MetaServiceLeaderBalanceResult) writeField0(oprot thrift.Protocol) (err error) {
-  if p.IsSetSuccess() {
-    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
-    if err := p.Success.Write(oprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
-    }
-    if err := oprot.WriteFieldEnd(); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
-  }
-  return err
-}
-
-func (p *MetaServiceLeaderBalanceResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var successVal string
-  if p.Success == nil {
-    successVal = "<nil>"
-  } else {
-    successVal = fmt.Sprintf("%v", p.Success)
-  }
-  return fmt.Sprintf("MetaServiceLeaderBalanceResult({Success:%s})", successVal)
 }
 
 // Attributes:
