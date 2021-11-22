@@ -76,6 +76,58 @@ func RoleFromString(s string) (Role, error) {
 
 func RolePtr(v Role) *Role { return &v }
 
+type Status int64
+const (
+  Status_STARTING Status = 0
+  Status_RUNNING Status = 1
+  Status_STOPPED Status = 2
+  Status_WAITING_SNAPSHOT Status = 3
+)
+
+var StatusToName = map[Status]string {
+  Status_STARTING: "STARTING",
+  Status_RUNNING: "RUNNING",
+  Status_STOPPED: "STOPPED",
+  Status_WAITING_SNAPSHOT: "WAITING_SNAPSHOT",
+}
+
+var StatusToValue = map[string]Status {
+  "STARTING": Status_STARTING,
+  "RUNNING": Status_RUNNING,
+  "STOPPED": Status_STOPPED,
+  "WAITING_SNAPSHOT": Status_WAITING_SNAPSHOT,
+}
+
+var StatusNames = []string {
+  "STARTING",
+  "RUNNING",
+  "STOPPED",
+  "WAITING_SNAPSHOT",
+}
+
+var StatusValues = []Status {
+  Status_STARTING,
+  Status_RUNNING,
+  Status_STOPPED,
+  Status_WAITING_SNAPSHOT,
+}
+
+func (p Status) String() string {
+  if v, ok := StatusToName[p]; ok {
+    return v
+  }
+  return "<UNSET>"
+}
+
+func StatusFromString(s string) (Status, error) {
+  if v, ok := StatusToValue[s]; ok {
+    return v, nil
+  }
+  return Status(0), fmt.Errorf("not a valid Status string")
+}
+
+func StatusPtr(v Status) *Status { return &v }
+
 type ErrorCode int64
 const (
   ErrorCode_SUCCEEDED ErrorCode = 0
@@ -220,7 +272,6 @@ func PortPtr(v Port) *Port { return &v }
 //  - Term
 //  - LastLogID
 //  - LastLogTerm
-//  - IsPreVote
 type AskForVoteRequest struct {
   Space GraphSpaceID `thrift:"space,1" db:"space" json:"space"`
   Part PartitionID `thrift:"part,2" db:"part" json:"part"`
@@ -229,7 +280,6 @@ type AskForVoteRequest struct {
   Term TermID `thrift:"term,5" db:"term" json:"term"`
   LastLogID LogID `thrift:"last_log_id,6" db:"last_log_id" json:"last_log_id"`
   LastLogTerm TermID `thrift:"last_log_term,7" db:"last_log_term" json:"last_log_term"`
-  IsPreVote bool `thrift:"is_pre_vote,8" db:"is_pre_vote" json:"is_pre_vote"`
 }
 
 func NewAskForVoteRequest() *AskForVoteRequest {
@@ -263,10 +313,6 @@ func (p *AskForVoteRequest) GetLastLogID() LogID {
 
 func (p *AskForVoteRequest) GetLastLogTerm() TermID {
   return p.LastLogTerm
-}
-
-func (p *AskForVoteRequest) GetIsPreVote() bool {
-  return p.IsPreVote
 }
 func (p *AskForVoteRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
@@ -307,10 +353,6 @@ func (p *AskForVoteRequest) Read(iprot thrift.Protocol) error {
       }
     case 7:
       if err := p.ReadField7(iprot); err != nil {
-        return err
-      }
-    case 8:
-      if err := p.ReadField8(iprot); err != nil {
         return err
       }
     default:
@@ -397,15 +439,6 @@ func (p *AskForVoteRequest)  ReadField7(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *AskForVoteRequest)  ReadField8(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 8: ", err)
-} else {
-  p.IsPreVote = v
-}
-  return nil
-}
-
 func (p *AskForVoteRequest) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("AskForVoteRequest"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
@@ -416,7 +449,6 @@ func (p *AskForVoteRequest) Write(oprot thrift.Protocol) error {
   if err := p.writeField5(oprot); err != nil { return err }
   if err := p.writeField6(oprot); err != nil { return err }
   if err := p.writeField7(oprot); err != nil { return err }
-  if err := p.writeField8(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -494,16 +526,6 @@ func (p *AskForVoteRequest) writeField7(oprot thrift.Protocol) (err error) {
   return err
 }
 
-func (p *AskForVoteRequest) writeField8(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("is_pre_vote", thrift.BOOL, 8); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 8:is_pre_vote: ", p), err) }
-  if err := oprot.WriteBool(bool(p.IsPreVote)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.is_pre_vote (8) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 8:is_pre_vote: ", p), err) }
-  return err
-}
-
 func (p *AskForVoteRequest) String() string {
   if p == nil {
     return "<nil>"
@@ -516,8 +538,7 @@ func (p *AskForVoteRequest) String() string {
   termVal := fmt.Sprintf("%v", p.Term)
   lastLogIDVal := fmt.Sprintf("%v", p.LastLogID)
   lastLogTermVal := fmt.Sprintf("%v", p.LastLogTerm)
-  isPreVoteVal := fmt.Sprintf("%v", p.IsPreVote)
-  return fmt.Sprintf("AskForVoteRequest({Space:%s Part:%s CandidateAddr:%s CandidatePort:%s Term:%s LastLogID:%s LastLogTerm:%s IsPreVote:%s})", spaceVal, partVal, candidateAddrVal, candidatePortVal, termVal, lastLogIDVal, lastLogTermVal, isPreVoteVal)
+  return fmt.Sprintf("AskForVoteRequest({Space:%s Part:%s CandidateAddr:%s CandidatePort:%s Term:%s LastLogID:%s LastLogTerm:%s})", spaceVal, partVal, candidateAddrVal, candidatePortVal, termVal, lastLogIDVal, lastLogTermVal)
 }
 
 // Attributes:
@@ -2556,11 +2577,19 @@ func (p *GetStateRequest) String() string {
 //  - Role
 //  - Term
 //  - IsLeader
+//  - CommittedLogID
+//  - LastLogID
+//  - LastLogTerm
+//  - Status
 type GetStateResponse struct {
   ErrorCode ErrorCode `thrift:"error_code,1" db:"error_code" json:"error_code"`
   Role Role `thrift:"role,2" db:"role" json:"role"`
   Term TermID `thrift:"term,3" db:"term" json:"term"`
   IsLeader bool `thrift:"is_leader,4" db:"is_leader" json:"is_leader"`
+  CommittedLogID LogID `thrift:"committed_log_id,5" db:"committed_log_id" json:"committed_log_id"`
+  LastLogID LogID `thrift:"last_log_id,6" db:"last_log_id" json:"last_log_id"`
+  LastLogTerm TermID `thrift:"last_log_term,7" db:"last_log_term" json:"last_log_term"`
+  Status Status `thrift:"status,8" db:"status" json:"status"`
 }
 
 func NewGetStateResponse() *GetStateResponse {
@@ -2582,6 +2611,22 @@ func (p *GetStateResponse) GetTerm() TermID {
 
 func (p *GetStateResponse) GetIsLeader() bool {
   return p.IsLeader
+}
+
+func (p *GetStateResponse) GetCommittedLogID() LogID {
+  return p.CommittedLogID
+}
+
+func (p *GetStateResponse) GetLastLogID() LogID {
+  return p.LastLogID
+}
+
+func (p *GetStateResponse) GetLastLogTerm() TermID {
+  return p.LastLogTerm
+}
+
+func (p *GetStateResponse) GetStatus() Status {
+  return p.Status
 }
 func (p *GetStateResponse) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
@@ -2610,6 +2655,22 @@ func (p *GetStateResponse) Read(iprot thrift.Protocol) error {
       }
     case 4:
       if err := p.ReadField4(iprot); err != nil {
+        return err
+      }
+    case 5:
+      if err := p.ReadField5(iprot); err != nil {
+        return err
+      }
+    case 6:
+      if err := p.ReadField6(iprot); err != nil {
+        return err
+      }
+    case 7:
+      if err := p.ReadField7(iprot); err != nil {
+        return err
+      }
+    case 8:
+      if err := p.ReadField8(iprot); err != nil {
         return err
       }
     default:
@@ -2666,6 +2727,46 @@ func (p *GetStateResponse)  ReadField4(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *GetStateResponse)  ReadField5(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 5: ", err)
+} else {
+  temp := LogID(v)
+  p.CommittedLogID = temp
+}
+  return nil
+}
+
+func (p *GetStateResponse)  ReadField6(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 6: ", err)
+} else {
+  temp := LogID(v)
+  p.LastLogID = temp
+}
+  return nil
+}
+
+func (p *GetStateResponse)  ReadField7(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 7: ", err)
+} else {
+  temp := TermID(v)
+  p.LastLogTerm = temp
+}
+  return nil
+}
+
+func (p *GetStateResponse)  ReadField8(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 8: ", err)
+} else {
+  temp := Status(v)
+  p.Status = temp
+}
+  return nil
+}
+
 func (p *GetStateResponse) Write(oprot thrift.Protocol) error {
   if err := oprot.WriteStructBegin("GetStateResponse"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
@@ -2673,6 +2774,10 @@ func (p *GetStateResponse) Write(oprot thrift.Protocol) error {
   if err := p.writeField2(oprot); err != nil { return err }
   if err := p.writeField3(oprot); err != nil { return err }
   if err := p.writeField4(oprot); err != nil { return err }
+  if err := p.writeField5(oprot); err != nil { return err }
+  if err := p.writeField6(oprot); err != nil { return err }
+  if err := p.writeField7(oprot); err != nil { return err }
+  if err := p.writeField8(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -2720,6 +2825,46 @@ func (p *GetStateResponse) writeField4(oprot thrift.Protocol) (err error) {
   return err
 }
 
+func (p *GetStateResponse) writeField5(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("committed_log_id", thrift.I64, 5); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:committed_log_id: ", p), err) }
+  if err := oprot.WriteI64(int64(p.CommittedLogID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.committed_log_id (5) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 5:committed_log_id: ", p), err) }
+  return err
+}
+
+func (p *GetStateResponse) writeField6(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("last_log_id", thrift.I64, 6); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 6:last_log_id: ", p), err) }
+  if err := oprot.WriteI64(int64(p.LastLogID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.last_log_id (6) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 6:last_log_id: ", p), err) }
+  return err
+}
+
+func (p *GetStateResponse) writeField7(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("last_log_term", thrift.I64, 7); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 7:last_log_term: ", p), err) }
+  if err := oprot.WriteI64(int64(p.LastLogTerm)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.last_log_term (7) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 7:last_log_term: ", p), err) }
+  return err
+}
+
+func (p *GetStateResponse) writeField8(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("status", thrift.I32, 8); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 8:status: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Status)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.status (8) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 8:status: ", p), err) }
+  return err
+}
+
 func (p *GetStateResponse) String() string {
   if p == nil {
     return "<nil>"
@@ -2729,6 +2874,10 @@ func (p *GetStateResponse) String() string {
   roleVal := fmt.Sprintf("%v", p.Role)
   termVal := fmt.Sprintf("%v", p.Term)
   isLeaderVal := fmt.Sprintf("%v", p.IsLeader)
-  return fmt.Sprintf("GetStateResponse({ErrorCode:%s Role:%s Term:%s IsLeader:%s})", errorCodeVal, roleVal, termVal, isLeaderVal)
+  committedLogIDVal := fmt.Sprintf("%v", p.CommittedLogID)
+  lastLogIDVal := fmt.Sprintf("%v", p.LastLogID)
+  lastLogTermVal := fmt.Sprintf("%v", p.LastLogTerm)
+  statusVal := fmt.Sprintf("%v", p.Status)
+  return fmt.Sprintf("GetStateResponse({ErrorCode:%s Role:%s Term:%s IsLeader:%s CommittedLogID:%s LastLogID:%s LastLogTerm:%s Status:%s})", errorCodeVal, roleVal, termVal, isLeaderVal, committedLogIDVal, lastLogIDVal, lastLogTermVal, statusVal)
 }
 

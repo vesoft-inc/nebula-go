@@ -1144,7 +1144,7 @@ func (p *PlanDescription) String() string {
 //  - Comment
 type ExecutionResponse struct {
   ErrorCode nebula0.ErrorCode `thrift:"error_code,1,required" db:"error_code" json:"error_code"`
-  LatencyInUs int32 `thrift:"latency_in_us,2,required" db:"latency_in_us" json:"latency_in_us"`
+  LatencyInUs int64 `thrift:"latency_in_us,2,required" db:"latency_in_us" json:"latency_in_us"`
   Data *nebula0.DataSet `thrift:"data,3" db:"data" json:"data,omitempty"`
   SpaceName []byte `thrift:"space_name,4" db:"space_name" json:"space_name,omitempty"`
   ErrorMsg []byte `thrift:"error_msg,5" db:"error_msg" json:"error_msg,omitempty"`
@@ -1161,7 +1161,7 @@ func (p *ExecutionResponse) GetErrorCode() nebula0.ErrorCode {
   return p.ErrorCode
 }
 
-func (p *ExecutionResponse) GetLatencyInUs() int32 {
+func (p *ExecutionResponse) GetLatencyInUs() int64 {
   return p.LatencyInUs
 }
 var ExecutionResponse_Data_DEFAULT *nebula0.DataSet
@@ -1290,7 +1290,7 @@ func (p *ExecutionResponse)  ReadField1(iprot thrift.Protocol) error {
 }
 
 func (p *ExecutionResponse)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
+  if v, err := iprot.ReadI64(); err != nil {
   return thrift.PrependError("error reading field 2: ", err)
 } else {
   p.LatencyInUs = v
@@ -1369,9 +1369,9 @@ func (p *ExecutionResponse) writeField1(oprot thrift.Protocol) (err error) {
 }
 
 func (p *ExecutionResponse) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("latency_in_us", thrift.I32, 2); err != nil {
+  if err := oprot.WriteFieldBegin("latency_in_us", thrift.I64, 2); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:latency_in_us: ", p), err) }
-  if err := oprot.WriteI32(int32(p.LatencyInUs)); err != nil {
+  if err := oprot.WriteI64(int64(p.LatencyInUs)); err != nil {
   return thrift.PrependError(fmt.Sprintf("%T.latency_in_us (2) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 2:latency_in_us: ", p), err) }
