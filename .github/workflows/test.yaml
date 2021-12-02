@@ -5,9 +5,6 @@ on:
   pull_request:
     branches: [ master ]
 
-concurrency:
-  cancel-in-progress: true
-
 jobs:
   go-client:
     runs-on: ubuntu-latest
@@ -62,4 +59,4 @@ jobs:
       - name: down
         if: always()
         run: |
-          make down  
+          make down

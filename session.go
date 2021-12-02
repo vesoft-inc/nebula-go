@@ -10,6 +10,7 @@ package nebula_go
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
 	"github.com/vesoft-inc/nebula-go/v2/nebula"
@@ -26,11 +27,14 @@ type Session struct {
 	connection *connection
 	connPool   *ConnectionPool
 	log        Logger
+	mu         sync.Mutex
 	timezoneInfo
 }
 
 // Execute returns the result of the given query as a ResultSet
 func (session *Session) Execute(stmt string) (*ResultSet, error) {
+	session.mu.Lock()
+	defer session.mu.Unlock()
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
 	}
@@ -130,6 +134,8 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 //     ]
 // }
 func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
+	session.mu.Lock()
+	defer session.mu.Unlock()
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
 	}
@@ -182,6 +188,8 @@ func (session *Session) Release() {
 	if session == nil {
 		return
 	}
+	session.mu.Lock()
+	defer session.mu.Unlock()
 	if session.connection == nil {
 		session.log.Warn("Session has been released")
 		return
