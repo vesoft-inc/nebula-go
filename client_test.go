@@ -276,8 +276,7 @@ func TestServiceDataIO(t *testing.T) {
 		assert.Equal(t, "test_data", resp.GetSpaceName())
 		assert.False(t, resp.IsEmpty())
 		assert.Equal(t, 1, resp.GetRowSize())
-		names := []string{"VertexID",
-			"person.name",
+		names := []string{"person.name",
 			"person.age",
 			"person.grade",
 			"person.friends",
