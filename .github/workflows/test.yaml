@@ -4,6 +4,11 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   go-client:
     runs-on: ubuntu-latest
@@ -14,10 +19,50 @@ jobs:
         with:
           go-version: '1.13'
       - name: Test with GO test
-        run: make ci
+        run: |
+          make up
+          sleep 10
+          make ci
+      - name: down
+        if: always()
+        run: |
+          make down
+  go-client-ssl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: '1.13'
       - name: Test SSL connection with CA
-        run: make ssl-test
+        run: |
+          make up
+          sleep 10
+          make ssl-test
       - name: Test SSL connection self-signed
-        run: make ssl-test-self-signed
+        run: |
+          make up
+          sleep 10
+          make ssl-test-self-signed
+      - name: down
+        if: always()
+        run: |
+          make down
+  go-client-example:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: '1.13'
       - name: Run examples
-        run: make run-examples
+        run: |
+          make up
+          sleep 10
+          make run-examples
+      - name: down
+        if: always()
+        run: |
+          make down  

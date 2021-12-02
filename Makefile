@@ -1,4 +1,4 @@
-.PHONY: build test fmt ci ssl-test run-examples
+.PHONY: build test fmt up down ci ssl-test run-examples
 
 default: build
 
@@ -12,33 +12,25 @@ test:
 
 fmt:
 	go fmt
+up:
+	cd ./nebula-docker-compose && docker-compose up -d
+
+down:
+	cd ./nebula-docker-compose && docker-compose down -v
 
 ci:
-	cd ./nebula-docker-compose && docker-compose up -d && \
-	sleep 10 && \
-	cd .. && \
-	go test -v -race; \
-	cd ./nebula-docker-compose && docker-compose down -v
+	go test -v -race;
 
 ssl-test:
-	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d && \
-	sleep 10 && \
-	cd .. && \
-	go test -v -run TestSslConnection; \
-	cd ./nebula-docker-compose && docker-compose down -v
+	go test -v -run TestSslConnection;
 
 ssl-test-self-signed:
 	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d && \
 	sleep 10 && \
 	cd .. && \
-	ssl_test=true go test -v -run TestSslConnection; \
-	cd ./nebula-docker-compose && docker-compose down -v
+	ssl_test=true go test -v -run TestSslConnection;
 
 run-examples:
-	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d && \
-	sleep 10 && \
-	cd .. && \
 	go run basic_example/graph_client_basic_example.go && \
 	go run gorountines_example/graph_client_goroutines_example.go && \
-	go run json_example/parse_json_example.go && \
-	cd ./nebula-docker-compose && docker-compose down -v
+	go run json_example/parse_json_example.go
