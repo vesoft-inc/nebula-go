@@ -117,7 +117,7 @@ func TestAsDedupList(t *testing.T) {
 		UVal: &nebula.NSet{Values: valList},
 	}
 	valWrap := ValueWrapper{&value, testTimezone}
-	assert.Equal(t, "[\"elem1\", \"elem2\", \"elem3\"]", valWrap.String())
+	assert.Equal(t, "{\"elem1\", \"elem2\", \"elem3\"}", valWrap.String())
 	assert.Equal(t, true, valWrap.IsSet())
 
 	res, _ := valWrap.AsList()
