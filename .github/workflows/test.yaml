@@ -22,7 +22,7 @@ jobs:
         run: |
           make up
           sleep 10
-          make ci
+          make test
       - name: down
         if: always()
         run: |
@@ -37,13 +37,11 @@ jobs:
           go-version: '1.13'
       - name: Test SSL connection with CA
         run: |
-          make up
-          sleep 10
+          make up-ssl
           make ssl-test
       - name: Test SSL connection self-signed
         run: |
-          make up
-          sleep 10
+          make up-ssl
           make ssl-test-self-signed
       - name: down
         if: always()

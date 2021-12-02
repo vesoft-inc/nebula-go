@@ -1,4 +1,4 @@
-.PHONY: build test fmt up down ci ssl-test run-examples
+.PHONY: build test fmt up up-ssl down ssl-test run-examples
 
 default: build
 
@@ -15,20 +15,20 @@ fmt:
 up:
 	cd ./nebula-docker-compose && docker-compose up -d
 
+up-ssl:
+	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d
+
 down:
 	cd ./nebula-docker-compose && docker-compose down -v
 
-ci:
-	go test -v -race;
-
 ssl-test:
-	go test -v -run TestSslConnection;
+	ssl_test=true go test -v -run TestSslConnection;
 
 ssl-test-self-signed:
 	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d && \
 	sleep 10 && \
 	cd .. && \
-	ssl_test=true go test -v -run TestSslConnection;
+	self_signed=true go test -v -run TestSslConnection;
 
 run-examples:
 	go run basic_example/graph_client_basic_example.go && \
