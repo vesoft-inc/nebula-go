@@ -6218,6 +6218,122 @@ func (p *CreateSpaceReq) String() string {
 }
 
 // Attributes:
+//  - OldSpaceName
+//  - NewSpaceName_
+type CreateSpaceAsReq struct {
+  OldSpaceName []byte `thrift:"old_space_name,1" db:"old_space_name" json:"old_space_name"`
+  NewSpaceName_ []byte `thrift:"new_space_name,2" db:"new_space_name" json:"new_space_name"`
+}
+
+func NewCreateSpaceAsReq() *CreateSpaceAsReq {
+  return &CreateSpaceAsReq{}
+}
+
+
+func (p *CreateSpaceAsReq) GetOldSpaceName() []byte {
+  return p.OldSpaceName
+}
+
+func (p *CreateSpaceAsReq) GetNewSpaceName_() []byte {
+  return p.NewSpaceName_
+}
+func (p *CreateSpaceAsReq) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CreateSpaceAsReq)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.OldSpaceName = v
+}
+  return nil
+}
+
+func (p *CreateSpaceAsReq)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.NewSpaceName_ = v
+}
+  return nil
+}
+
+func (p *CreateSpaceAsReq) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("CreateSpaceAsReq"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CreateSpaceAsReq) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("old_space_name", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:old_space_name: ", p), err) }
+  if err := oprot.WriteBinary(p.OldSpaceName); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.old_space_name (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:old_space_name: ", p), err) }
+  return err
+}
+
+func (p *CreateSpaceAsReq) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("new_space_name", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:new_space_name: ", p), err) }
+  if err := oprot.WriteBinary(p.NewSpaceName_); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.new_space_name (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:new_space_name: ", p), err) }
+  return err
+}
+
+func (p *CreateSpaceAsReq) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  oldSpaceNameVal := fmt.Sprintf("%v", p.OldSpaceName)
+  newSpaceNameVal := fmt.Sprintf("%v", p.NewSpaceName_)
+  return fmt.Sprintf("CreateSpaceAsReq({OldSpaceName:%s NewSpaceName_:%s})", oldSpaceNameVal, newSpaceNameVal)
+}
+
+// Attributes:
 //  - SpaceName
 //  - IfExists
 type DropSpaceReq struct {

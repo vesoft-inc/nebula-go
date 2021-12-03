@@ -25,6 +25,7 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "  ExecResp dropSpace(DropSpaceReq req)")
   fmt.Fprintln(os.Stderr, "  GetSpaceResp getSpace(GetSpaceReq req)")
   fmt.Fprintln(os.Stderr, "  ListSpacesResp listSpaces(ListSpacesReq req)")
+  fmt.Fprintln(os.Stderr, "  ExecResp createSpaceAs(CreateSpaceAsReq req)")
   fmt.Fprintln(os.Stderr, "  ExecResp createTag(CreateTagReq req)")
   fmt.Fprintln(os.Stderr, "  ExecResp alterTag(AlterTagReq req)")
   fmt.Fprintln(os.Stderr, "  ExecResp dropTag(DropTagReq req)")
@@ -303,9 +304,9 @@ func main() {
     fmt.Print(client.ListSpaces(value0))
     fmt.Print("\n")
     break
-  case "createTag":
+  case "createSpaceAs":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "CreateTag requires 1 args")
+      fmt.Fprintln(os.Stderr, "CreateSpaceAs requires 1 args")
       flag.Usage()
     }
     arg123 := flag.Arg(1)
@@ -318,19 +319,19 @@ func main() {
     }
     factory126 := thrift.NewSimpleJSONProtocolFactory()
     jsProt127 := factory126.GetProtocol(mbTrans124)
-    argvalue0 := meta.NewCreateTagReq()
+    argvalue0 := meta.NewCreateSpaceAsReq()
     err128 := argvalue0.Read(jsProt127)
     if err128 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.CreateTag(value0))
+    fmt.Print(client.CreateSpaceAs(value0))
     fmt.Print("\n")
     break
-  case "alterTag":
+  case "createTag":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "AlterTag requires 1 args")
+      fmt.Fprintln(os.Stderr, "CreateTag requires 1 args")
       flag.Usage()
     }
     arg129 := flag.Arg(1)
@@ -343,19 +344,19 @@ func main() {
     }
     factory132 := thrift.NewSimpleJSONProtocolFactory()
     jsProt133 := factory132.GetProtocol(mbTrans130)
-    argvalue0 := meta.NewAlterTagReq()
+    argvalue0 := meta.NewCreateTagReq()
     err134 := argvalue0.Read(jsProt133)
     if err134 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.AlterTag(value0))
+    fmt.Print(client.CreateTag(value0))
     fmt.Print("\n")
     break
-  case "dropTag":
+  case "alterTag":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "DropTag requires 1 args")
+      fmt.Fprintln(os.Stderr, "AlterTag requires 1 args")
       flag.Usage()
     }
     arg135 := flag.Arg(1)
@@ -368,19 +369,19 @@ func main() {
     }
     factory138 := thrift.NewSimpleJSONProtocolFactory()
     jsProt139 := factory138.GetProtocol(mbTrans136)
-    argvalue0 := meta.NewDropTagReq()
+    argvalue0 := meta.NewAlterTagReq()
     err140 := argvalue0.Read(jsProt139)
     if err140 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.DropTag(value0))
+    fmt.Print(client.AlterTag(value0))
     fmt.Print("\n")
     break
-  case "getTag":
+  case "dropTag":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetTag requires 1 args")
+      fmt.Fprintln(os.Stderr, "DropTag requires 1 args")
       flag.Usage()
     }
     arg141 := flag.Arg(1)
@@ -393,19 +394,19 @@ func main() {
     }
     factory144 := thrift.NewSimpleJSONProtocolFactory()
     jsProt145 := factory144.GetProtocol(mbTrans142)
-    argvalue0 := meta.NewGetTagReq()
+    argvalue0 := meta.NewDropTagReq()
     err146 := argvalue0.Read(jsProt145)
     if err146 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetTag(value0))
+    fmt.Print(client.DropTag(value0))
     fmt.Print("\n")
     break
-  case "listTags":
+  case "getTag":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListTags requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetTag requires 1 args")
       flag.Usage()
     }
     arg147 := flag.Arg(1)
@@ -418,19 +419,19 @@ func main() {
     }
     factory150 := thrift.NewSimpleJSONProtocolFactory()
     jsProt151 := factory150.GetProtocol(mbTrans148)
-    argvalue0 := meta.NewListTagsReq()
+    argvalue0 := meta.NewGetTagReq()
     err152 := argvalue0.Read(jsProt151)
     if err152 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListTags(value0))
+    fmt.Print(client.GetTag(value0))
     fmt.Print("\n")
     break
-  case "createEdge":
+  case "listTags":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "CreateEdge requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListTags requires 1 args")
       flag.Usage()
     }
     arg153 := flag.Arg(1)
@@ -443,19 +444,19 @@ func main() {
     }
     factory156 := thrift.NewSimpleJSONProtocolFactory()
     jsProt157 := factory156.GetProtocol(mbTrans154)
-    argvalue0 := meta.NewCreateEdgeReq()
+    argvalue0 := meta.NewListTagsReq()
     err158 := argvalue0.Read(jsProt157)
     if err158 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.CreateEdge(value0))
+    fmt.Print(client.ListTags(value0))
     fmt.Print("\n")
     break
-  case "alterEdge":
+  case "createEdge":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "AlterEdge requires 1 args")
+      fmt.Fprintln(os.Stderr, "CreateEdge requires 1 args")
       flag.Usage()
     }
     arg159 := flag.Arg(1)
@@ -468,19 +469,19 @@ func main() {
     }
     factory162 := thrift.NewSimpleJSONProtocolFactory()
     jsProt163 := factory162.GetProtocol(mbTrans160)
-    argvalue0 := meta.NewAlterEdgeReq()
+    argvalue0 := meta.NewCreateEdgeReq()
     err164 := argvalue0.Read(jsProt163)
     if err164 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.AlterEdge(value0))
+    fmt.Print(client.CreateEdge(value0))
     fmt.Print("\n")
     break
-  case "dropEdge":
+  case "alterEdge":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "DropEdge requires 1 args")
+      fmt.Fprintln(os.Stderr, "AlterEdge requires 1 args")
       flag.Usage()
     }
     arg165 := flag.Arg(1)
@@ -493,19 +494,19 @@ func main() {
     }
     factory168 := thrift.NewSimpleJSONProtocolFactory()
     jsProt169 := factory168.GetProtocol(mbTrans166)
-    argvalue0 := meta.NewDropEdgeReq()
+    argvalue0 := meta.NewAlterEdgeReq()
     err170 := argvalue0.Read(jsProt169)
     if err170 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.DropEdge(value0))
+    fmt.Print(client.AlterEdge(value0))
     fmt.Print("\n")
     break
-  case "getEdge":
+  case "dropEdge":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetEdge requires 1 args")
+      fmt.Fprintln(os.Stderr, "DropEdge requires 1 args")
       flag.Usage()
     }
     arg171 := flag.Arg(1)
@@ -518,19 +519,19 @@ func main() {
     }
     factory174 := thrift.NewSimpleJSONProtocolFactory()
     jsProt175 := factory174.GetProtocol(mbTrans172)
-    argvalue0 := meta.NewGetEdgeReq()
+    argvalue0 := meta.NewDropEdgeReq()
     err176 := argvalue0.Read(jsProt175)
     if err176 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetEdge(value0))
+    fmt.Print(client.DropEdge(value0))
     fmt.Print("\n")
     break
-  case "listEdges":
+  case "getEdge":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListEdges requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetEdge requires 1 args")
       flag.Usage()
     }
     arg177 := flag.Arg(1)
@@ -543,19 +544,19 @@ func main() {
     }
     factory180 := thrift.NewSimpleJSONProtocolFactory()
     jsProt181 := factory180.GetProtocol(mbTrans178)
-    argvalue0 := meta.NewListEdgesReq()
+    argvalue0 := meta.NewGetEdgeReq()
     err182 := argvalue0.Read(jsProt181)
     if err182 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListEdges(value0))
+    fmt.Print(client.GetEdge(value0))
     fmt.Print("\n")
     break
-  case "listHosts":
+  case "listEdges":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListHosts requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListEdges requires 1 args")
       flag.Usage()
     }
     arg183 := flag.Arg(1)
@@ -568,19 +569,19 @@ func main() {
     }
     factory186 := thrift.NewSimpleJSONProtocolFactory()
     jsProt187 := factory186.GetProtocol(mbTrans184)
-    argvalue0 := meta.NewListHostsReq()
+    argvalue0 := meta.NewListEdgesReq()
     err188 := argvalue0.Read(jsProt187)
     if err188 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListHosts(value0))
+    fmt.Print(client.ListEdges(value0))
     fmt.Print("\n")
     break
-  case "getPartsAlloc":
+  case "listHosts":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetPartsAlloc requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListHosts requires 1 args")
       flag.Usage()
     }
     arg189 := flag.Arg(1)
@@ -593,19 +594,19 @@ func main() {
     }
     factory192 := thrift.NewSimpleJSONProtocolFactory()
     jsProt193 := factory192.GetProtocol(mbTrans190)
-    argvalue0 := meta.NewGetPartsAllocReq()
+    argvalue0 := meta.NewListHostsReq()
     err194 := argvalue0.Read(jsProt193)
     if err194 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetPartsAlloc(value0))
+    fmt.Print(client.ListHosts(value0))
     fmt.Print("\n")
     break
-  case "listParts":
+  case "getPartsAlloc":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListParts requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetPartsAlloc requires 1 args")
       flag.Usage()
     }
     arg195 := flag.Arg(1)
@@ -618,19 +619,19 @@ func main() {
     }
     factory198 := thrift.NewSimpleJSONProtocolFactory()
     jsProt199 := factory198.GetProtocol(mbTrans196)
-    argvalue0 := meta.NewListPartsReq()
+    argvalue0 := meta.NewGetPartsAllocReq()
     err200 := argvalue0.Read(jsProt199)
     if err200 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListParts(value0))
+    fmt.Print(client.GetPartsAlloc(value0))
     fmt.Print("\n")
     break
-  case "multiPut":
+  case "listParts":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "MultiPut requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListParts requires 1 args")
       flag.Usage()
     }
     arg201 := flag.Arg(1)
@@ -643,19 +644,19 @@ func main() {
     }
     factory204 := thrift.NewSimpleJSONProtocolFactory()
     jsProt205 := factory204.GetProtocol(mbTrans202)
-    argvalue0 := meta.NewMultiPutReq()
+    argvalue0 := meta.NewListPartsReq()
     err206 := argvalue0.Read(jsProt205)
     if err206 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.MultiPut(value0))
+    fmt.Print(client.ListParts(value0))
     fmt.Print("\n")
     break
-  case "get":
+  case "multiPut":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Get requires 1 args")
+      fmt.Fprintln(os.Stderr, "MultiPut requires 1 args")
       flag.Usage()
     }
     arg207 := flag.Arg(1)
@@ -668,19 +669,19 @@ func main() {
     }
     factory210 := thrift.NewSimpleJSONProtocolFactory()
     jsProt211 := factory210.GetProtocol(mbTrans208)
-    argvalue0 := meta.NewGetReq()
+    argvalue0 := meta.NewMultiPutReq()
     err212 := argvalue0.Read(jsProt211)
     if err212 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.Get(value0))
+    fmt.Print(client.MultiPut(value0))
     fmt.Print("\n")
     break
-  case "multiGet":
+  case "get":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "MultiGet requires 1 args")
+      fmt.Fprintln(os.Stderr, "Get requires 1 args")
       flag.Usage()
     }
     arg213 := flag.Arg(1)
@@ -693,19 +694,19 @@ func main() {
     }
     factory216 := thrift.NewSimpleJSONProtocolFactory()
     jsProt217 := factory216.GetProtocol(mbTrans214)
-    argvalue0 := meta.NewMultiGetReq()
+    argvalue0 := meta.NewGetReq()
     err218 := argvalue0.Read(jsProt217)
     if err218 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.MultiGet(value0))
+    fmt.Print(client.Get(value0))
     fmt.Print("\n")
     break
-  case "remove":
+  case "multiGet":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Remove requires 1 args")
+      fmt.Fprintln(os.Stderr, "MultiGet requires 1 args")
       flag.Usage()
     }
     arg219 := flag.Arg(1)
@@ -718,19 +719,19 @@ func main() {
     }
     factory222 := thrift.NewSimpleJSONProtocolFactory()
     jsProt223 := factory222.GetProtocol(mbTrans220)
-    argvalue0 := meta.NewRemoveReq()
+    argvalue0 := meta.NewMultiGetReq()
     err224 := argvalue0.Read(jsProt223)
     if err224 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.Remove(value0))
+    fmt.Print(client.MultiGet(value0))
     fmt.Print("\n")
     break
-  case "removeRange":
+  case "remove":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "RemoveRange requires 1 args")
+      fmt.Fprintln(os.Stderr, "Remove requires 1 args")
       flag.Usage()
     }
     arg225 := flag.Arg(1)
@@ -743,19 +744,19 @@ func main() {
     }
     factory228 := thrift.NewSimpleJSONProtocolFactory()
     jsProt229 := factory228.GetProtocol(mbTrans226)
-    argvalue0 := meta.NewRemoveRangeReq()
+    argvalue0 := meta.NewRemoveReq()
     err230 := argvalue0.Read(jsProt229)
     if err230 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.RemoveRange(value0))
+    fmt.Print(client.Remove(value0))
     fmt.Print("\n")
     break
-  case "scan":
+  case "removeRange":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Scan requires 1 args")
+      fmt.Fprintln(os.Stderr, "RemoveRange requires 1 args")
       flag.Usage()
     }
     arg231 := flag.Arg(1)
@@ -768,19 +769,19 @@ func main() {
     }
     factory234 := thrift.NewSimpleJSONProtocolFactory()
     jsProt235 := factory234.GetProtocol(mbTrans232)
-    argvalue0 := meta.NewScanReq()
+    argvalue0 := meta.NewRemoveRangeReq()
     err236 := argvalue0.Read(jsProt235)
     if err236 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.Scan(value0))
+    fmt.Print(client.RemoveRange(value0))
     fmt.Print("\n")
     break
-  case "createTagIndex":
+  case "scan":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "CreateTagIndex requires 1 args")
+      fmt.Fprintln(os.Stderr, "Scan requires 1 args")
       flag.Usage()
     }
     arg237 := flag.Arg(1)
@@ -793,19 +794,19 @@ func main() {
     }
     factory240 := thrift.NewSimpleJSONProtocolFactory()
     jsProt241 := factory240.GetProtocol(mbTrans238)
-    argvalue0 := meta.NewCreateTagIndexReq()
+    argvalue0 := meta.NewScanReq()
     err242 := argvalue0.Read(jsProt241)
     if err242 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.CreateTagIndex(value0))
+    fmt.Print(client.Scan(value0))
     fmt.Print("\n")
     break
-  case "dropTagIndex":
+  case "createTagIndex":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "DropTagIndex requires 1 args")
+      fmt.Fprintln(os.Stderr, "CreateTagIndex requires 1 args")
       flag.Usage()
     }
     arg243 := flag.Arg(1)
@@ -818,19 +819,19 @@ func main() {
     }
     factory246 := thrift.NewSimpleJSONProtocolFactory()
     jsProt247 := factory246.GetProtocol(mbTrans244)
-    argvalue0 := meta.NewDropTagIndexReq()
+    argvalue0 := meta.NewCreateTagIndexReq()
     err248 := argvalue0.Read(jsProt247)
     if err248 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.DropTagIndex(value0))
+    fmt.Print(client.CreateTagIndex(value0))
     fmt.Print("\n")
     break
-  case "getTagIndex":
+  case "dropTagIndex":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetTagIndex requires 1 args")
+      fmt.Fprintln(os.Stderr, "DropTagIndex requires 1 args")
       flag.Usage()
     }
     arg249 := flag.Arg(1)
@@ -843,19 +844,19 @@ func main() {
     }
     factory252 := thrift.NewSimpleJSONProtocolFactory()
     jsProt253 := factory252.GetProtocol(mbTrans250)
-    argvalue0 := meta.NewGetTagIndexReq()
+    argvalue0 := meta.NewDropTagIndexReq()
     err254 := argvalue0.Read(jsProt253)
     if err254 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetTagIndex(value0))
+    fmt.Print(client.DropTagIndex(value0))
     fmt.Print("\n")
     break
-  case "listTagIndexes":
+  case "getTagIndex":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListTagIndexes requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetTagIndex requires 1 args")
       flag.Usage()
     }
     arg255 := flag.Arg(1)
@@ -868,19 +869,19 @@ func main() {
     }
     factory258 := thrift.NewSimpleJSONProtocolFactory()
     jsProt259 := factory258.GetProtocol(mbTrans256)
-    argvalue0 := meta.NewListTagIndexesReq()
+    argvalue0 := meta.NewGetTagIndexReq()
     err260 := argvalue0.Read(jsProt259)
     if err260 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListTagIndexes(value0))
+    fmt.Print(client.GetTagIndex(value0))
     fmt.Print("\n")
     break
-  case "rebuildTagIndex":
+  case "listTagIndexes":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "RebuildTagIndex requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListTagIndexes requires 1 args")
       flag.Usage()
     }
     arg261 := flag.Arg(1)
@@ -893,19 +894,19 @@ func main() {
     }
     factory264 := thrift.NewSimpleJSONProtocolFactory()
     jsProt265 := factory264.GetProtocol(mbTrans262)
-    argvalue0 := meta.NewRebuildIndexReq()
+    argvalue0 := meta.NewListTagIndexesReq()
     err266 := argvalue0.Read(jsProt265)
     if err266 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.RebuildTagIndex(value0))
+    fmt.Print(client.ListTagIndexes(value0))
     fmt.Print("\n")
     break
-  case "listTagIndexStatus":
+  case "rebuildTagIndex":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListTagIndexStatus requires 1 args")
+      fmt.Fprintln(os.Stderr, "RebuildTagIndex requires 1 args")
       flag.Usage()
     }
     arg267 := flag.Arg(1)
@@ -918,19 +919,19 @@ func main() {
     }
     factory270 := thrift.NewSimpleJSONProtocolFactory()
     jsProt271 := factory270.GetProtocol(mbTrans268)
-    argvalue0 := meta.NewListIndexStatusReq()
+    argvalue0 := meta.NewRebuildIndexReq()
     err272 := argvalue0.Read(jsProt271)
     if err272 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListTagIndexStatus(value0))
+    fmt.Print(client.RebuildTagIndex(value0))
     fmt.Print("\n")
     break
-  case "createEdgeIndex":
+  case "listTagIndexStatus":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "CreateEdgeIndex requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListTagIndexStatus requires 1 args")
       flag.Usage()
     }
     arg273 := flag.Arg(1)
@@ -943,19 +944,19 @@ func main() {
     }
     factory276 := thrift.NewSimpleJSONProtocolFactory()
     jsProt277 := factory276.GetProtocol(mbTrans274)
-    argvalue0 := meta.NewCreateEdgeIndexReq()
+    argvalue0 := meta.NewListIndexStatusReq()
     err278 := argvalue0.Read(jsProt277)
     if err278 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.CreateEdgeIndex(value0))
+    fmt.Print(client.ListTagIndexStatus(value0))
     fmt.Print("\n")
     break
-  case "dropEdgeIndex":
+  case "createEdgeIndex":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "DropEdgeIndex requires 1 args")
+      fmt.Fprintln(os.Stderr, "CreateEdgeIndex requires 1 args")
       flag.Usage()
     }
     arg279 := flag.Arg(1)
@@ -968,19 +969,19 @@ func main() {
     }
     factory282 := thrift.NewSimpleJSONProtocolFactory()
     jsProt283 := factory282.GetProtocol(mbTrans280)
-    argvalue0 := meta.NewDropEdgeIndexReq()
+    argvalue0 := meta.NewCreateEdgeIndexReq()
     err284 := argvalue0.Read(jsProt283)
     if err284 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.DropEdgeIndex(value0))
+    fmt.Print(client.CreateEdgeIndex(value0))
     fmt.Print("\n")
     break
-  case "getEdgeIndex":
+  case "dropEdgeIndex":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetEdgeIndex requires 1 args")
+      fmt.Fprintln(os.Stderr, "DropEdgeIndex requires 1 args")
       flag.Usage()
     }
     arg285 := flag.Arg(1)
@@ -993,19 +994,19 @@ func main() {
     }
     factory288 := thrift.NewSimpleJSONProtocolFactory()
     jsProt289 := factory288.GetProtocol(mbTrans286)
-    argvalue0 := meta.NewGetEdgeIndexReq()
+    argvalue0 := meta.NewDropEdgeIndexReq()
     err290 := argvalue0.Read(jsProt289)
     if err290 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetEdgeIndex(value0))
+    fmt.Print(client.DropEdgeIndex(value0))
     fmt.Print("\n")
     break
-  case "listEdgeIndexes":
+  case "getEdgeIndex":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListEdgeIndexes requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetEdgeIndex requires 1 args")
       flag.Usage()
     }
     arg291 := flag.Arg(1)
@@ -1018,19 +1019,19 @@ func main() {
     }
     factory294 := thrift.NewSimpleJSONProtocolFactory()
     jsProt295 := factory294.GetProtocol(mbTrans292)
-    argvalue0 := meta.NewListEdgeIndexesReq()
+    argvalue0 := meta.NewGetEdgeIndexReq()
     err296 := argvalue0.Read(jsProt295)
     if err296 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListEdgeIndexes(value0))
+    fmt.Print(client.GetEdgeIndex(value0))
     fmt.Print("\n")
     break
-  case "rebuildEdgeIndex":
+  case "listEdgeIndexes":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "RebuildEdgeIndex requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListEdgeIndexes requires 1 args")
       flag.Usage()
     }
     arg297 := flag.Arg(1)
@@ -1043,19 +1044,19 @@ func main() {
     }
     factory300 := thrift.NewSimpleJSONProtocolFactory()
     jsProt301 := factory300.GetProtocol(mbTrans298)
-    argvalue0 := meta.NewRebuildIndexReq()
+    argvalue0 := meta.NewListEdgeIndexesReq()
     err302 := argvalue0.Read(jsProt301)
     if err302 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.RebuildEdgeIndex(value0))
+    fmt.Print(client.ListEdgeIndexes(value0))
     fmt.Print("\n")
     break
-  case "listEdgeIndexStatus":
+  case "rebuildEdgeIndex":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListEdgeIndexStatus requires 1 args")
+      fmt.Fprintln(os.Stderr, "RebuildEdgeIndex requires 1 args")
       flag.Usage()
     }
     arg303 := flag.Arg(1)
@@ -1068,19 +1069,19 @@ func main() {
     }
     factory306 := thrift.NewSimpleJSONProtocolFactory()
     jsProt307 := factory306.GetProtocol(mbTrans304)
-    argvalue0 := meta.NewListIndexStatusReq()
+    argvalue0 := meta.NewRebuildIndexReq()
     err308 := argvalue0.Read(jsProt307)
     if err308 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListEdgeIndexStatus(value0))
+    fmt.Print(client.RebuildEdgeIndex(value0))
     fmt.Print("\n")
     break
-  case "createUser":
+  case "listEdgeIndexStatus":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "CreateUser requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListEdgeIndexStatus requires 1 args")
       flag.Usage()
     }
     arg309 := flag.Arg(1)
@@ -1093,19 +1094,19 @@ func main() {
     }
     factory312 := thrift.NewSimpleJSONProtocolFactory()
     jsProt313 := factory312.GetProtocol(mbTrans310)
-    argvalue0 := meta.NewCreateUserReq()
+    argvalue0 := meta.NewListIndexStatusReq()
     err314 := argvalue0.Read(jsProt313)
     if err314 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.CreateUser(value0))
+    fmt.Print(client.ListEdgeIndexStatus(value0))
     fmt.Print("\n")
     break
-  case "dropUser":
+  case "createUser":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "DropUser requires 1 args")
+      fmt.Fprintln(os.Stderr, "CreateUser requires 1 args")
       flag.Usage()
     }
     arg315 := flag.Arg(1)
@@ -1118,19 +1119,19 @@ func main() {
     }
     factory318 := thrift.NewSimpleJSONProtocolFactory()
     jsProt319 := factory318.GetProtocol(mbTrans316)
-    argvalue0 := meta.NewDropUserReq()
+    argvalue0 := meta.NewCreateUserReq()
     err320 := argvalue0.Read(jsProt319)
     if err320 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.DropUser(value0))
+    fmt.Print(client.CreateUser(value0))
     fmt.Print("\n")
     break
-  case "alterUser":
+  case "dropUser":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "AlterUser requires 1 args")
+      fmt.Fprintln(os.Stderr, "DropUser requires 1 args")
       flag.Usage()
     }
     arg321 := flag.Arg(1)
@@ -1143,19 +1144,19 @@ func main() {
     }
     factory324 := thrift.NewSimpleJSONProtocolFactory()
     jsProt325 := factory324.GetProtocol(mbTrans322)
-    argvalue0 := meta.NewAlterUserReq()
+    argvalue0 := meta.NewDropUserReq()
     err326 := argvalue0.Read(jsProt325)
     if err326 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.AlterUser(value0))
+    fmt.Print(client.DropUser(value0))
     fmt.Print("\n")
     break
-  case "grantRole":
+  case "alterUser":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GrantRole requires 1 args")
+      fmt.Fprintln(os.Stderr, "AlterUser requires 1 args")
       flag.Usage()
     }
     arg327 := flag.Arg(1)
@@ -1168,19 +1169,19 @@ func main() {
     }
     factory330 := thrift.NewSimpleJSONProtocolFactory()
     jsProt331 := factory330.GetProtocol(mbTrans328)
-    argvalue0 := meta.NewGrantRoleReq()
+    argvalue0 := meta.NewAlterUserReq()
     err332 := argvalue0.Read(jsProt331)
     if err332 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GrantRole(value0))
+    fmt.Print(client.AlterUser(value0))
     fmt.Print("\n")
     break
-  case "revokeRole":
+  case "grantRole":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "RevokeRole requires 1 args")
+      fmt.Fprintln(os.Stderr, "GrantRole requires 1 args")
       flag.Usage()
     }
     arg333 := flag.Arg(1)
@@ -1193,19 +1194,19 @@ func main() {
     }
     factory336 := thrift.NewSimpleJSONProtocolFactory()
     jsProt337 := factory336.GetProtocol(mbTrans334)
-    argvalue0 := meta.NewRevokeRoleReq()
+    argvalue0 := meta.NewGrantRoleReq()
     err338 := argvalue0.Read(jsProt337)
     if err338 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.RevokeRole(value0))
+    fmt.Print(client.GrantRole(value0))
     fmt.Print("\n")
     break
-  case "listUsers":
+  case "revokeRole":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListUsers requires 1 args")
+      fmt.Fprintln(os.Stderr, "RevokeRole requires 1 args")
       flag.Usage()
     }
     arg339 := flag.Arg(1)
@@ -1218,19 +1219,19 @@ func main() {
     }
     factory342 := thrift.NewSimpleJSONProtocolFactory()
     jsProt343 := factory342.GetProtocol(mbTrans340)
-    argvalue0 := meta.NewListUsersReq()
+    argvalue0 := meta.NewRevokeRoleReq()
     err344 := argvalue0.Read(jsProt343)
     if err344 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListUsers(value0))
+    fmt.Print(client.RevokeRole(value0))
     fmt.Print("\n")
     break
-  case "listRoles":
+  case "listUsers":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListRoles requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListUsers requires 1 args")
       flag.Usage()
     }
     arg345 := flag.Arg(1)
@@ -1243,19 +1244,19 @@ func main() {
     }
     factory348 := thrift.NewSimpleJSONProtocolFactory()
     jsProt349 := factory348.GetProtocol(mbTrans346)
-    argvalue0 := meta.NewListRolesReq()
+    argvalue0 := meta.NewListUsersReq()
     err350 := argvalue0.Read(jsProt349)
     if err350 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListRoles(value0))
+    fmt.Print(client.ListUsers(value0))
     fmt.Print("\n")
     break
-  case "getUserRoles":
+  case "listRoles":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetUserRoles requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListRoles requires 1 args")
       flag.Usage()
     }
     arg351 := flag.Arg(1)
@@ -1268,19 +1269,19 @@ func main() {
     }
     factory354 := thrift.NewSimpleJSONProtocolFactory()
     jsProt355 := factory354.GetProtocol(mbTrans352)
-    argvalue0 := meta.NewGetUserRolesReq()
+    argvalue0 := meta.NewListRolesReq()
     err356 := argvalue0.Read(jsProt355)
     if err356 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetUserRoles(value0))
+    fmt.Print(client.ListRoles(value0))
     fmt.Print("\n")
     break
-  case "changePassword":
+  case "getUserRoles":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ChangePassword requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetUserRoles requires 1 args")
       flag.Usage()
     }
     arg357 := flag.Arg(1)
@@ -1293,19 +1294,19 @@ func main() {
     }
     factory360 := thrift.NewSimpleJSONProtocolFactory()
     jsProt361 := factory360.GetProtocol(mbTrans358)
-    argvalue0 := meta.NewChangePasswordReq()
+    argvalue0 := meta.NewGetUserRolesReq()
     err362 := argvalue0.Read(jsProt361)
     if err362 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ChangePassword(value0))
+    fmt.Print(client.GetUserRoles(value0))
     fmt.Print("\n")
     break
-  case "heartBeat":
+  case "changePassword":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "HeartBeat requires 1 args")
+      fmt.Fprintln(os.Stderr, "ChangePassword requires 1 args")
       flag.Usage()
     }
     arg363 := flag.Arg(1)
@@ -1318,19 +1319,19 @@ func main() {
     }
     factory366 := thrift.NewSimpleJSONProtocolFactory()
     jsProt367 := factory366.GetProtocol(mbTrans364)
-    argvalue0 := meta.NewHBReq()
+    argvalue0 := meta.NewChangePasswordReq()
     err368 := argvalue0.Read(jsProt367)
     if err368 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.HeartBeat(value0))
+    fmt.Print(client.ChangePassword(value0))
     fmt.Print("\n")
     break
-  case "balance":
+  case "heartBeat":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Balance requires 1 args")
+      fmt.Fprintln(os.Stderr, "HeartBeat requires 1 args")
       flag.Usage()
     }
     arg369 := flag.Arg(1)
@@ -1343,19 +1344,19 @@ func main() {
     }
     factory372 := thrift.NewSimpleJSONProtocolFactory()
     jsProt373 := factory372.GetProtocol(mbTrans370)
-    argvalue0 := meta.NewBalanceReq()
+    argvalue0 := meta.NewHBReq()
     err374 := argvalue0.Read(jsProt373)
     if err374 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.Balance(value0))
+    fmt.Print(client.HeartBeat(value0))
     fmt.Print("\n")
     break
-  case "leaderBalance":
+  case "balance":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "LeaderBalance requires 1 args")
+      fmt.Fprintln(os.Stderr, "Balance requires 1 args")
       flag.Usage()
     }
     arg375 := flag.Arg(1)
@@ -1368,19 +1369,19 @@ func main() {
     }
     factory378 := thrift.NewSimpleJSONProtocolFactory()
     jsProt379 := factory378.GetProtocol(mbTrans376)
-    argvalue0 := meta.NewLeaderBalanceReq()
+    argvalue0 := meta.NewBalanceReq()
     err380 := argvalue0.Read(jsProt379)
     if err380 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.LeaderBalance(value0))
+    fmt.Print(client.Balance(value0))
     fmt.Print("\n")
     break
-  case "regConfig":
+  case "leaderBalance":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "RegConfig requires 1 args")
+      fmt.Fprintln(os.Stderr, "LeaderBalance requires 1 args")
       flag.Usage()
     }
     arg381 := flag.Arg(1)
@@ -1393,19 +1394,19 @@ func main() {
     }
     factory384 := thrift.NewSimpleJSONProtocolFactory()
     jsProt385 := factory384.GetProtocol(mbTrans382)
-    argvalue0 := meta.NewRegConfigReq()
+    argvalue0 := meta.NewLeaderBalanceReq()
     err386 := argvalue0.Read(jsProt385)
     if err386 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.RegConfig(value0))
+    fmt.Print(client.LeaderBalance(value0))
     fmt.Print("\n")
     break
-  case "getConfig":
+  case "regConfig":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetConfig requires 1 args")
+      fmt.Fprintln(os.Stderr, "RegConfig requires 1 args")
       flag.Usage()
     }
     arg387 := flag.Arg(1)
@@ -1418,19 +1419,19 @@ func main() {
     }
     factory390 := thrift.NewSimpleJSONProtocolFactory()
     jsProt391 := factory390.GetProtocol(mbTrans388)
-    argvalue0 := meta.NewGetConfigReq()
+    argvalue0 := meta.NewRegConfigReq()
     err392 := argvalue0.Read(jsProt391)
     if err392 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetConfig(value0))
+    fmt.Print(client.RegConfig(value0))
     fmt.Print("\n")
     break
-  case "setConfig":
+  case "getConfig":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "SetConfig requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetConfig requires 1 args")
       flag.Usage()
     }
     arg393 := flag.Arg(1)
@@ -1443,19 +1444,19 @@ func main() {
     }
     factory396 := thrift.NewSimpleJSONProtocolFactory()
     jsProt397 := factory396.GetProtocol(mbTrans394)
-    argvalue0 := meta.NewSetConfigReq()
+    argvalue0 := meta.NewGetConfigReq()
     err398 := argvalue0.Read(jsProt397)
     if err398 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.SetConfig(value0))
+    fmt.Print(client.GetConfig(value0))
     fmt.Print("\n")
     break
-  case "listConfigs":
+  case "setConfig":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListConfigs requires 1 args")
+      fmt.Fprintln(os.Stderr, "SetConfig requires 1 args")
       flag.Usage()
     }
     arg399 := flag.Arg(1)
@@ -1468,19 +1469,19 @@ func main() {
     }
     factory402 := thrift.NewSimpleJSONProtocolFactory()
     jsProt403 := factory402.GetProtocol(mbTrans400)
-    argvalue0 := meta.NewListConfigsReq()
+    argvalue0 := meta.NewSetConfigReq()
     err404 := argvalue0.Read(jsProt403)
     if err404 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListConfigs(value0))
+    fmt.Print(client.SetConfig(value0))
     fmt.Print("\n")
     break
-  case "createSnapshot":
+  case "listConfigs":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "CreateSnapshot requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListConfigs requires 1 args")
       flag.Usage()
     }
     arg405 := flag.Arg(1)
@@ -1493,19 +1494,19 @@ func main() {
     }
     factory408 := thrift.NewSimpleJSONProtocolFactory()
     jsProt409 := factory408.GetProtocol(mbTrans406)
-    argvalue0 := meta.NewCreateSnapshotReq()
+    argvalue0 := meta.NewListConfigsReq()
     err410 := argvalue0.Read(jsProt409)
     if err410 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.CreateSnapshot(value0))
+    fmt.Print(client.ListConfigs(value0))
     fmt.Print("\n")
     break
-  case "dropSnapshot":
+  case "createSnapshot":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "DropSnapshot requires 1 args")
+      fmt.Fprintln(os.Stderr, "CreateSnapshot requires 1 args")
       flag.Usage()
     }
     arg411 := flag.Arg(1)
@@ -1518,19 +1519,19 @@ func main() {
     }
     factory414 := thrift.NewSimpleJSONProtocolFactory()
     jsProt415 := factory414.GetProtocol(mbTrans412)
-    argvalue0 := meta.NewDropSnapshotReq()
+    argvalue0 := meta.NewCreateSnapshotReq()
     err416 := argvalue0.Read(jsProt415)
     if err416 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.DropSnapshot(value0))
+    fmt.Print(client.CreateSnapshot(value0))
     fmt.Print("\n")
     break
-  case "listSnapshots":
+  case "dropSnapshot":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListSnapshots requires 1 args")
+      fmt.Fprintln(os.Stderr, "DropSnapshot requires 1 args")
       flag.Usage()
     }
     arg417 := flag.Arg(1)
@@ -1543,19 +1544,19 @@ func main() {
     }
     factory420 := thrift.NewSimpleJSONProtocolFactory()
     jsProt421 := factory420.GetProtocol(mbTrans418)
-    argvalue0 := meta.NewListSnapshotsReq()
+    argvalue0 := meta.NewDropSnapshotReq()
     err422 := argvalue0.Read(jsProt421)
     if err422 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListSnapshots(value0))
+    fmt.Print(client.DropSnapshot(value0))
     fmt.Print("\n")
     break
-  case "runAdminJob":
+  case "listSnapshots":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "RunAdminJob requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListSnapshots requires 1 args")
       flag.Usage()
     }
     arg423 := flag.Arg(1)
@@ -1568,19 +1569,19 @@ func main() {
     }
     factory426 := thrift.NewSimpleJSONProtocolFactory()
     jsProt427 := factory426.GetProtocol(mbTrans424)
-    argvalue0 := meta.NewAdminJobReq()
+    argvalue0 := meta.NewListSnapshotsReq()
     err428 := argvalue0.Read(jsProt427)
     if err428 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.RunAdminJob(value0))
+    fmt.Print(client.ListSnapshots(value0))
     fmt.Print("\n")
     break
-  case "addZone":
+  case "runAdminJob":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "AddZone requires 1 args")
+      fmt.Fprintln(os.Stderr, "RunAdminJob requires 1 args")
       flag.Usage()
     }
     arg429 := flag.Arg(1)
@@ -1593,19 +1594,19 @@ func main() {
     }
     factory432 := thrift.NewSimpleJSONProtocolFactory()
     jsProt433 := factory432.GetProtocol(mbTrans430)
-    argvalue0 := meta.NewAddZoneReq()
+    argvalue0 := meta.NewAdminJobReq()
     err434 := argvalue0.Read(jsProt433)
     if err434 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.AddZone(value0))
+    fmt.Print(client.RunAdminJob(value0))
     fmt.Print("\n")
     break
-  case "dropZone":
+  case "addZone":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "DropZone requires 1 args")
+      fmt.Fprintln(os.Stderr, "AddZone requires 1 args")
       flag.Usage()
     }
     arg435 := flag.Arg(1)
@@ -1618,19 +1619,19 @@ func main() {
     }
     factory438 := thrift.NewSimpleJSONProtocolFactory()
     jsProt439 := factory438.GetProtocol(mbTrans436)
-    argvalue0 := meta.NewDropZoneReq()
+    argvalue0 := meta.NewAddZoneReq()
     err440 := argvalue0.Read(jsProt439)
     if err440 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.DropZone(value0))
+    fmt.Print(client.AddZone(value0))
     fmt.Print("\n")
     break
-  case "addHostIntoZone":
+  case "dropZone":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "AddHostIntoZone requires 1 args")
+      fmt.Fprintln(os.Stderr, "DropZone requires 1 args")
       flag.Usage()
     }
     arg441 := flag.Arg(1)
@@ -1643,19 +1644,19 @@ func main() {
     }
     factory444 := thrift.NewSimpleJSONProtocolFactory()
     jsProt445 := factory444.GetProtocol(mbTrans442)
-    argvalue0 := meta.NewAddHostIntoZoneReq()
+    argvalue0 := meta.NewDropZoneReq()
     err446 := argvalue0.Read(jsProt445)
     if err446 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.AddHostIntoZone(value0))
+    fmt.Print(client.DropZone(value0))
     fmt.Print("\n")
     break
-  case "dropHostFromZone":
+  case "addHostIntoZone":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "DropHostFromZone requires 1 args")
+      fmt.Fprintln(os.Stderr, "AddHostIntoZone requires 1 args")
       flag.Usage()
     }
     arg447 := flag.Arg(1)
@@ -1668,19 +1669,19 @@ func main() {
     }
     factory450 := thrift.NewSimpleJSONProtocolFactory()
     jsProt451 := factory450.GetProtocol(mbTrans448)
-    argvalue0 := meta.NewDropHostFromZoneReq()
+    argvalue0 := meta.NewAddHostIntoZoneReq()
     err452 := argvalue0.Read(jsProt451)
     if err452 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.DropHostFromZone(value0))
+    fmt.Print(client.AddHostIntoZone(value0))
     fmt.Print("\n")
     break
-  case "getZone":
+  case "dropHostFromZone":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetZone requires 1 args")
+      fmt.Fprintln(os.Stderr, "DropHostFromZone requires 1 args")
       flag.Usage()
     }
     arg453 := flag.Arg(1)
@@ -1693,19 +1694,19 @@ func main() {
     }
     factory456 := thrift.NewSimpleJSONProtocolFactory()
     jsProt457 := factory456.GetProtocol(mbTrans454)
-    argvalue0 := meta.NewGetZoneReq()
+    argvalue0 := meta.NewDropHostFromZoneReq()
     err458 := argvalue0.Read(jsProt457)
     if err458 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetZone(value0))
+    fmt.Print(client.DropHostFromZone(value0))
     fmt.Print("\n")
     break
-  case "listZones":
+  case "getZone":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListZones requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetZone requires 1 args")
       flag.Usage()
     }
     arg459 := flag.Arg(1)
@@ -1718,19 +1719,19 @@ func main() {
     }
     factory462 := thrift.NewSimpleJSONProtocolFactory()
     jsProt463 := factory462.GetProtocol(mbTrans460)
-    argvalue0 := meta.NewListZonesReq()
+    argvalue0 := meta.NewGetZoneReq()
     err464 := argvalue0.Read(jsProt463)
     if err464 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListZones(value0))
+    fmt.Print(client.GetZone(value0))
     fmt.Print("\n")
     break
-  case "addGroup":
+  case "listZones":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "AddGroup requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListZones requires 1 args")
       flag.Usage()
     }
     arg465 := flag.Arg(1)
@@ -1743,19 +1744,19 @@ func main() {
     }
     factory468 := thrift.NewSimpleJSONProtocolFactory()
     jsProt469 := factory468.GetProtocol(mbTrans466)
-    argvalue0 := meta.NewAddGroupReq()
+    argvalue0 := meta.NewListZonesReq()
     err470 := argvalue0.Read(jsProt469)
     if err470 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.AddGroup(value0))
+    fmt.Print(client.ListZones(value0))
     fmt.Print("\n")
     break
-  case "dropGroup":
+  case "addGroup":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "DropGroup requires 1 args")
+      fmt.Fprintln(os.Stderr, "AddGroup requires 1 args")
       flag.Usage()
     }
     arg471 := flag.Arg(1)
@@ -1768,19 +1769,19 @@ func main() {
     }
     factory474 := thrift.NewSimpleJSONProtocolFactory()
     jsProt475 := factory474.GetProtocol(mbTrans472)
-    argvalue0 := meta.NewDropGroupReq()
+    argvalue0 := meta.NewAddGroupReq()
     err476 := argvalue0.Read(jsProt475)
     if err476 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.DropGroup(value0))
+    fmt.Print(client.AddGroup(value0))
     fmt.Print("\n")
     break
-  case "addZoneIntoGroup":
+  case "dropGroup":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "AddZoneIntoGroup requires 1 args")
+      fmt.Fprintln(os.Stderr, "DropGroup requires 1 args")
       flag.Usage()
     }
     arg477 := flag.Arg(1)
@@ -1793,19 +1794,19 @@ func main() {
     }
     factory480 := thrift.NewSimpleJSONProtocolFactory()
     jsProt481 := factory480.GetProtocol(mbTrans478)
-    argvalue0 := meta.NewAddZoneIntoGroupReq()
+    argvalue0 := meta.NewDropGroupReq()
     err482 := argvalue0.Read(jsProt481)
     if err482 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.AddZoneIntoGroup(value0))
+    fmt.Print(client.DropGroup(value0))
     fmt.Print("\n")
     break
-  case "dropZoneFromGroup":
+  case "addZoneIntoGroup":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "DropZoneFromGroup requires 1 args")
+      fmt.Fprintln(os.Stderr, "AddZoneIntoGroup requires 1 args")
       flag.Usage()
     }
     arg483 := flag.Arg(1)
@@ -1818,19 +1819,19 @@ func main() {
     }
     factory486 := thrift.NewSimpleJSONProtocolFactory()
     jsProt487 := factory486.GetProtocol(mbTrans484)
-    argvalue0 := meta.NewDropZoneFromGroupReq()
+    argvalue0 := meta.NewAddZoneIntoGroupReq()
     err488 := argvalue0.Read(jsProt487)
     if err488 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.DropZoneFromGroup(value0))
+    fmt.Print(client.AddZoneIntoGroup(value0))
     fmt.Print("\n")
     break
-  case "getGroup":
+  case "dropZoneFromGroup":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetGroup requires 1 args")
+      fmt.Fprintln(os.Stderr, "DropZoneFromGroup requires 1 args")
       flag.Usage()
     }
     arg489 := flag.Arg(1)
@@ -1843,19 +1844,19 @@ func main() {
     }
     factory492 := thrift.NewSimpleJSONProtocolFactory()
     jsProt493 := factory492.GetProtocol(mbTrans490)
-    argvalue0 := meta.NewGetGroupReq()
+    argvalue0 := meta.NewDropZoneFromGroupReq()
     err494 := argvalue0.Read(jsProt493)
     if err494 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetGroup(value0))
+    fmt.Print(client.DropZoneFromGroup(value0))
     fmt.Print("\n")
     break
-  case "listGroups":
+  case "getGroup":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListGroups requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetGroup requires 1 args")
       flag.Usage()
     }
     arg495 := flag.Arg(1)
@@ -1868,19 +1869,19 @@ func main() {
     }
     factory498 := thrift.NewSimpleJSONProtocolFactory()
     jsProt499 := factory498.GetProtocol(mbTrans496)
-    argvalue0 := meta.NewListGroupsReq()
+    argvalue0 := meta.NewGetGroupReq()
     err500 := argvalue0.Read(jsProt499)
     if err500 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListGroups(value0))
+    fmt.Print(client.GetGroup(value0))
     fmt.Print("\n")
     break
-  case "createBackup":
+  case "listGroups":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "CreateBackup requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListGroups requires 1 args")
       flag.Usage()
     }
     arg501 := flag.Arg(1)
@@ -1893,19 +1894,19 @@ func main() {
     }
     factory504 := thrift.NewSimpleJSONProtocolFactory()
     jsProt505 := factory504.GetProtocol(mbTrans502)
-    argvalue0 := meta.NewCreateBackupReq()
+    argvalue0 := meta.NewListGroupsReq()
     err506 := argvalue0.Read(jsProt505)
     if err506 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.CreateBackup(value0))
+    fmt.Print(client.ListGroups(value0))
     fmt.Print("\n")
     break
-  case "restoreMeta":
+  case "createBackup":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "RestoreMeta requires 1 args")
+      fmt.Fprintln(os.Stderr, "CreateBackup requires 1 args")
       flag.Usage()
     }
     arg507 := flag.Arg(1)
@@ -1918,19 +1919,19 @@ func main() {
     }
     factory510 := thrift.NewSimpleJSONProtocolFactory()
     jsProt511 := factory510.GetProtocol(mbTrans508)
-    argvalue0 := meta.NewRestoreMetaReq()
+    argvalue0 := meta.NewCreateBackupReq()
     err512 := argvalue0.Read(jsProt511)
     if err512 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.RestoreMeta(value0))
+    fmt.Print(client.CreateBackup(value0))
     fmt.Print("\n")
     break
-  case "addListener":
+  case "restoreMeta":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "AddListener requires 1 args")
+      fmt.Fprintln(os.Stderr, "RestoreMeta requires 1 args")
       flag.Usage()
     }
     arg513 := flag.Arg(1)
@@ -1943,19 +1944,19 @@ func main() {
     }
     factory516 := thrift.NewSimpleJSONProtocolFactory()
     jsProt517 := factory516.GetProtocol(mbTrans514)
-    argvalue0 := meta.NewAddListenerReq()
+    argvalue0 := meta.NewRestoreMetaReq()
     err518 := argvalue0.Read(jsProt517)
     if err518 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.AddListener(value0))
+    fmt.Print(client.RestoreMeta(value0))
     fmt.Print("\n")
     break
-  case "removeListener":
+  case "addListener":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "RemoveListener requires 1 args")
+      fmt.Fprintln(os.Stderr, "AddListener requires 1 args")
       flag.Usage()
     }
     arg519 := flag.Arg(1)
@@ -1968,19 +1969,19 @@ func main() {
     }
     factory522 := thrift.NewSimpleJSONProtocolFactory()
     jsProt523 := factory522.GetProtocol(mbTrans520)
-    argvalue0 := meta.NewRemoveListenerReq()
+    argvalue0 := meta.NewAddListenerReq()
     err524 := argvalue0.Read(jsProt523)
     if err524 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.RemoveListener(value0))
+    fmt.Print(client.AddListener(value0))
     fmt.Print("\n")
     break
-  case "listListener":
+  case "removeListener":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListListener requires 1 args")
+      fmt.Fprintln(os.Stderr, "RemoveListener requires 1 args")
       flag.Usage()
     }
     arg525 := flag.Arg(1)
@@ -1993,19 +1994,19 @@ func main() {
     }
     factory528 := thrift.NewSimpleJSONProtocolFactory()
     jsProt529 := factory528.GetProtocol(mbTrans526)
-    argvalue0 := meta.NewListListenerReq()
+    argvalue0 := meta.NewRemoveListenerReq()
     err530 := argvalue0.Read(jsProt529)
     if err530 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListListener(value0))
+    fmt.Print(client.RemoveListener(value0))
     fmt.Print("\n")
     break
-  case "getStats":
+  case "listListener":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetStats requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListListener requires 1 args")
       flag.Usage()
     }
     arg531 := flag.Arg(1)
@@ -2018,19 +2019,19 @@ func main() {
     }
     factory534 := thrift.NewSimpleJSONProtocolFactory()
     jsProt535 := factory534.GetProtocol(mbTrans532)
-    argvalue0 := meta.NewGetStatsReq()
+    argvalue0 := meta.NewListListenerReq()
     err536 := argvalue0.Read(jsProt535)
     if err536 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetStats(value0))
+    fmt.Print(client.ListListener(value0))
     fmt.Print("\n")
     break
-  case "signInFTService":
+  case "getStats":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "SignInFTService requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetStats requires 1 args")
       flag.Usage()
     }
     arg537 := flag.Arg(1)
@@ -2043,19 +2044,19 @@ func main() {
     }
     factory540 := thrift.NewSimpleJSONProtocolFactory()
     jsProt541 := factory540.GetProtocol(mbTrans538)
-    argvalue0 := meta.NewSignInFTServiceReq()
+    argvalue0 := meta.NewGetStatsReq()
     err542 := argvalue0.Read(jsProt541)
     if err542 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.SignInFTService(value0))
+    fmt.Print(client.GetStats(value0))
     fmt.Print("\n")
     break
-  case "signOutFTService":
+  case "signInFTService":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "SignOutFTService requires 1 args")
+      fmt.Fprintln(os.Stderr, "SignInFTService requires 1 args")
       flag.Usage()
     }
     arg543 := flag.Arg(1)
@@ -2068,19 +2069,19 @@ func main() {
     }
     factory546 := thrift.NewSimpleJSONProtocolFactory()
     jsProt547 := factory546.GetProtocol(mbTrans544)
-    argvalue0 := meta.NewSignOutFTServiceReq()
+    argvalue0 := meta.NewSignInFTServiceReq()
     err548 := argvalue0.Read(jsProt547)
     if err548 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.SignOutFTService(value0))
+    fmt.Print(client.SignInFTService(value0))
     fmt.Print("\n")
     break
-  case "listFTClients":
+  case "signOutFTService":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListFTClients requires 1 args")
+      fmt.Fprintln(os.Stderr, "SignOutFTService requires 1 args")
       flag.Usage()
     }
     arg549 := flag.Arg(1)
@@ -2093,19 +2094,19 @@ func main() {
     }
     factory552 := thrift.NewSimpleJSONProtocolFactory()
     jsProt553 := factory552.GetProtocol(mbTrans550)
-    argvalue0 := meta.NewListFTClientsReq()
+    argvalue0 := meta.NewSignOutFTServiceReq()
     err554 := argvalue0.Read(jsProt553)
     if err554 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListFTClients(value0))
+    fmt.Print(client.SignOutFTService(value0))
     fmt.Print("\n")
     break
-  case "createFTIndex":
+  case "listFTClients":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "CreateFTIndex requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListFTClients requires 1 args")
       flag.Usage()
     }
     arg555 := flag.Arg(1)
@@ -2118,19 +2119,19 @@ func main() {
     }
     factory558 := thrift.NewSimpleJSONProtocolFactory()
     jsProt559 := factory558.GetProtocol(mbTrans556)
-    argvalue0 := meta.NewCreateFTIndexReq()
+    argvalue0 := meta.NewListFTClientsReq()
     err560 := argvalue0.Read(jsProt559)
     if err560 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.CreateFTIndex(value0))
+    fmt.Print(client.ListFTClients(value0))
     fmt.Print("\n")
     break
-  case "dropFTIndex":
+  case "createFTIndex":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "DropFTIndex requires 1 args")
+      fmt.Fprintln(os.Stderr, "CreateFTIndex requires 1 args")
       flag.Usage()
     }
     arg561 := flag.Arg(1)
@@ -2143,19 +2144,19 @@ func main() {
     }
     factory564 := thrift.NewSimpleJSONProtocolFactory()
     jsProt565 := factory564.GetProtocol(mbTrans562)
-    argvalue0 := meta.NewDropFTIndexReq()
+    argvalue0 := meta.NewCreateFTIndexReq()
     err566 := argvalue0.Read(jsProt565)
     if err566 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.DropFTIndex(value0))
+    fmt.Print(client.CreateFTIndex(value0))
     fmt.Print("\n")
     break
-  case "listFTIndexes":
+  case "dropFTIndex":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListFTIndexes requires 1 args")
+      fmt.Fprintln(os.Stderr, "DropFTIndex requires 1 args")
       flag.Usage()
     }
     arg567 := flag.Arg(1)
@@ -2168,19 +2169,19 @@ func main() {
     }
     factory570 := thrift.NewSimpleJSONProtocolFactory()
     jsProt571 := factory570.GetProtocol(mbTrans568)
-    argvalue0 := meta.NewListFTIndexesReq()
+    argvalue0 := meta.NewDropFTIndexReq()
     err572 := argvalue0.Read(jsProt571)
     if err572 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListFTIndexes(value0))
+    fmt.Print(client.DropFTIndex(value0))
     fmt.Print("\n")
     break
-  case "createSession":
+  case "listFTIndexes":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "CreateSession requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListFTIndexes requires 1 args")
       flag.Usage()
     }
     arg573 := flag.Arg(1)
@@ -2193,19 +2194,19 @@ func main() {
     }
     factory576 := thrift.NewSimpleJSONProtocolFactory()
     jsProt577 := factory576.GetProtocol(mbTrans574)
-    argvalue0 := meta.NewCreateSessionReq()
+    argvalue0 := meta.NewListFTIndexesReq()
     err578 := argvalue0.Read(jsProt577)
     if err578 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.CreateSession(value0))
+    fmt.Print(client.ListFTIndexes(value0))
     fmt.Print("\n")
     break
-  case "updateSessions":
+  case "createSession":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "UpdateSessions requires 1 args")
+      fmt.Fprintln(os.Stderr, "CreateSession requires 1 args")
       flag.Usage()
     }
     arg579 := flag.Arg(1)
@@ -2218,19 +2219,19 @@ func main() {
     }
     factory582 := thrift.NewSimpleJSONProtocolFactory()
     jsProt583 := factory582.GetProtocol(mbTrans580)
-    argvalue0 := meta.NewUpdateSessionsReq()
+    argvalue0 := meta.NewCreateSessionReq()
     err584 := argvalue0.Read(jsProt583)
     if err584 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.UpdateSessions(value0))
+    fmt.Print(client.CreateSession(value0))
     fmt.Print("\n")
     break
-  case "listSessions":
+  case "updateSessions":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListSessions requires 1 args")
+      fmt.Fprintln(os.Stderr, "UpdateSessions requires 1 args")
       flag.Usage()
     }
     arg585 := flag.Arg(1)
@@ -2243,19 +2244,19 @@ func main() {
     }
     factory588 := thrift.NewSimpleJSONProtocolFactory()
     jsProt589 := factory588.GetProtocol(mbTrans586)
-    argvalue0 := meta.NewListSessionsReq()
+    argvalue0 := meta.NewUpdateSessionsReq()
     err590 := argvalue0.Read(jsProt589)
     if err590 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListSessions(value0))
+    fmt.Print(client.UpdateSessions(value0))
     fmt.Print("\n")
     break
-  case "getSession":
+  case "listSessions":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetSession requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListSessions requires 1 args")
       flag.Usage()
     }
     arg591 := flag.Arg(1)
@@ -2268,19 +2269,19 @@ func main() {
     }
     factory594 := thrift.NewSimpleJSONProtocolFactory()
     jsProt595 := factory594.GetProtocol(mbTrans592)
-    argvalue0 := meta.NewGetSessionReq()
+    argvalue0 := meta.NewListSessionsReq()
     err596 := argvalue0.Read(jsProt595)
     if err596 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetSession(value0))
+    fmt.Print(client.ListSessions(value0))
     fmt.Print("\n")
     break
-  case "removeSession":
+  case "getSession":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "RemoveSession requires 1 args")
+      fmt.Fprintln(os.Stderr, "GetSession requires 1 args")
       flag.Usage()
     }
     arg597 := flag.Arg(1)
@@ -2293,19 +2294,19 @@ func main() {
     }
     factory600 := thrift.NewSimpleJSONProtocolFactory()
     jsProt601 := factory600.GetProtocol(mbTrans598)
-    argvalue0 := meta.NewRemoveSessionReq()
+    argvalue0 := meta.NewGetSessionReq()
     err602 := argvalue0.Read(jsProt601)
     if err602 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.RemoveSession(value0))
+    fmt.Print(client.GetSession(value0))
     fmt.Print("\n")
     break
-  case "killQuery":
+  case "removeSession":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "KillQuery requires 1 args")
+      fmt.Fprintln(os.Stderr, "RemoveSession requires 1 args")
       flag.Usage()
     }
     arg603 := flag.Arg(1)
@@ -2318,19 +2319,19 @@ func main() {
     }
     factory606 := thrift.NewSimpleJSONProtocolFactory()
     jsProt607 := factory606.GetProtocol(mbTrans604)
-    argvalue0 := meta.NewKillQueryReq()
+    argvalue0 := meta.NewRemoveSessionReq()
     err608 := argvalue0.Read(jsProt607)
     if err608 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.KillQuery(value0))
+    fmt.Print(client.RemoveSession(value0))
     fmt.Print("\n")
     break
-  case "reportTaskFinish":
+  case "killQuery":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ReportTaskFinish requires 1 args")
+      fmt.Fprintln(os.Stderr, "KillQuery requires 1 args")
       flag.Usage()
     }
     arg609 := flag.Arg(1)
@@ -2343,19 +2344,19 @@ func main() {
     }
     factory612 := thrift.NewSimpleJSONProtocolFactory()
     jsProt613 := factory612.GetProtocol(mbTrans610)
-    argvalue0 := meta.NewReportTaskReq()
+    argvalue0 := meta.NewKillQueryReq()
     err614 := argvalue0.Read(jsProt613)
     if err614 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ReportTaskFinish(value0))
+    fmt.Print(client.KillQuery(value0))
     fmt.Print("\n")
     break
-  case "listCluster":
+  case "reportTaskFinish":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ListCluster requires 1 args")
+      fmt.Fprintln(os.Stderr, "ReportTaskFinish requires 1 args")
       flag.Usage()
     }
     arg615 := flag.Arg(1)
@@ -2368,19 +2369,19 @@ func main() {
     }
     factory618 := thrift.NewSimpleJSONProtocolFactory()
     jsProt619 := factory618.GetProtocol(mbTrans616)
-    argvalue0 := meta.NewListClusterInfoReq()
+    argvalue0 := meta.NewReportTaskReq()
     err620 := argvalue0.Read(jsProt619)
     if err620 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ListCluster(value0))
+    fmt.Print(client.ReportTaskFinish(value0))
     fmt.Print("\n")
     break
-  case "getMetaDirInfo":
+  case "listCluster":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetMetaDirInfo requires 1 args")
+      fmt.Fprintln(os.Stderr, "ListCluster requires 1 args")
       flag.Usage()
     }
     arg621 := flag.Arg(1)
@@ -2393,9 +2394,34 @@ func main() {
     }
     factory624 := thrift.NewSimpleJSONProtocolFactory()
     jsProt625 := factory624.GetProtocol(mbTrans622)
-    argvalue0 := meta.NewGetMetaDirInfoReq()
+    argvalue0 := meta.NewListClusterInfoReq()
     err626 := argvalue0.Read(jsProt625)
     if err626 != nil {
+      Usage()
+      return
+    }
+    value0 := argvalue0
+    fmt.Print(client.ListCluster(value0))
+    fmt.Print("\n")
+    break
+  case "getMetaDirInfo":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "GetMetaDirInfo requires 1 args")
+      flag.Usage()
+    }
+    arg627 := flag.Arg(1)
+    mbTrans628 := thrift.NewMemoryBufferLen(len(arg627))
+    defer mbTrans628.Close()
+    _, err629 := mbTrans628.WriteString(arg627)
+    if err629 != nil {
+      Usage()
+      return
+    }
+    factory630 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt631 := factory630.GetProtocol(mbTrans628)
+    argvalue0 := meta.NewGetMetaDirInfoReq()
+    err632 := argvalue0.Read(jsProt631)
+    if err632 != nil {
       Usage()
       return
     }

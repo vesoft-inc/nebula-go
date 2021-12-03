@@ -21,8 +21,8 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "Usage of ", os.Args[0], " [-h host:port] [-u url] [-f[ramed]] function [arg1 [arg2...]]:")
   flag.PrintDefaults()
   fmt.Fprintln(os.Stderr, "\nFunctions:")
-  fmt.Fprintln(os.Stderr, "  GetValueResponse getValue(GetValueRequest req)")
-  fmt.Fprintln(os.Stderr, "  ExecResponse forwardTransaction(InternalTxnRequest req)")
+  fmt.Fprintln(os.Stderr, "  ExecResponse chainAddEdges(ChainAddEdgesRequest req)")
+  fmt.Fprintln(os.Stderr, "  UpdateResponse chainUpdateEdge(ChainUpdateEdgeRequest req)")
   fmt.Fprintln(os.Stderr)
   os.Exit(0)
 }
@@ -117,54 +117,54 @@ func main() {
   }
   
   switch cmd {
-  case "getValue":
+  case "chainAddEdges":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "GetValue requires 1 args")
+      fmt.Fprintln(os.Stderr, "ChainAddEdges requires 1 args")
       flag.Usage()
     }
-    arg290 := flag.Arg(1)
-    mbTrans291 := thrift.NewMemoryBufferLen(len(arg290))
-    defer mbTrans291.Close()
-    _, err292 := mbTrans291.WriteString(arg290)
-    if err292 != nil {
+    arg304 := flag.Arg(1)
+    mbTrans305 := thrift.NewMemoryBufferLen(len(arg304))
+    defer mbTrans305.Close()
+    _, err306 := mbTrans305.WriteString(arg304)
+    if err306 != nil {
       Usage()
       return
     }
-    factory293 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt294 := factory293.GetProtocol(mbTrans291)
-    argvalue0 := storage.NewGetValueRequest()
-    err295 := argvalue0.Read(jsProt294)
-    if err295 != nil {
+    factory307 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt308 := factory307.GetProtocol(mbTrans305)
+    argvalue0 := storage.NewChainAddEdgesRequest()
+    err309 := argvalue0.Read(jsProt308)
+    if err309 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.GetValue(value0))
+    fmt.Print(client.ChainAddEdges(value0))
     fmt.Print("\n")
     break
-  case "forwardTransaction":
+  case "chainUpdateEdge":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "ForwardTransaction requires 1 args")
+      fmt.Fprintln(os.Stderr, "ChainUpdateEdge requires 1 args")
       flag.Usage()
     }
-    arg296 := flag.Arg(1)
-    mbTrans297 := thrift.NewMemoryBufferLen(len(arg296))
-    defer mbTrans297.Close()
-    _, err298 := mbTrans297.WriteString(arg296)
-    if err298 != nil {
+    arg310 := flag.Arg(1)
+    mbTrans311 := thrift.NewMemoryBufferLen(len(arg310))
+    defer mbTrans311.Close()
+    _, err312 := mbTrans311.WriteString(arg310)
+    if err312 != nil {
       Usage()
       return
     }
-    factory299 := thrift.NewSimpleJSONProtocolFactory()
-    jsProt300 := factory299.GetProtocol(mbTrans297)
-    argvalue0 := storage.NewInternalTxnRequest()
-    err301 := argvalue0.Read(jsProt300)
-    if err301 != nil {
+    factory313 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt314 := factory313.GetProtocol(mbTrans311)
+    argvalue0 := storage.NewChainUpdateEdgeRequest()
+    err315 := argvalue0.Read(jsProt314)
+    if err315 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.ForwardTransaction(value0))
+    fmt.Print(client.ChainUpdateEdge(value0))
     fmt.Print("\n")
     break
   case "":

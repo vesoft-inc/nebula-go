@@ -27,20 +27,20 @@ var _ = meta1.GoUnusedProtection__
 type InternalStorageService interface {
   // Parameters:
   //  - Req
-  GetValue(ctx context.Context, req *GetValueRequest) (_r *GetValueResponse, err error)
+  ChainAddEdges(ctx context.Context, req *ChainAddEdgesRequest) (_r *ExecResponse, err error)
   // Parameters:
   //  - Req
-  ForwardTransaction(ctx context.Context, req *InternalTxnRequest) (_r *ExecResponse, err error)
+  ChainUpdateEdge(ctx context.Context, req *ChainUpdateEdgeRequest) (_r *UpdateResponse, err error)
 }
 
 type InternalStorageServiceClientInterface interface {
   thrift.ClientInterface
   // Parameters:
   //  - Req
-  GetValue(req *GetValueRequest) (_r *GetValueResponse, err error)
+  ChainAddEdges(req *ChainAddEdgesRequest) (_r *ExecResponse, err error)
   // Parameters:
   //  - Req
-  ForwardTransaction(req *InternalTxnRequest) (_r *ExecResponse, err error)
+  ChainUpdateEdge(req *ChainUpdateEdgeRequest) (_r *UpdateResponse, err error)
 }
 
 type InternalStorageServiceClient struct {
@@ -74,19 +74,19 @@ func NewInternalStorageServiceClientProtocol(prot thrift.Protocol) *InternalStor
 
 // Parameters:
 //  - Req
-func (p *InternalStorageServiceClient) GetValue(req *GetValueRequest) (_r *GetValueResponse, err error) {
-  args := InternalStorageServiceGetValueArgs{
+func (p *InternalStorageServiceClient) ChainAddEdges(req *ChainAddEdgesRequest) (_r *ExecResponse, err error) {
+  args := InternalStorageServiceChainAddEdgesArgs{
     Req : req,
   }
-  err = p.CC.SendMsg("getValue", &args, thrift.CALL)
+  err = p.CC.SendMsg("chainAddEdges", &args, thrift.CALL)
   if err != nil { return }
-  return p.recvGetValue()
+  return p.recvChainAddEdges()
 }
 
 
-func (p *InternalStorageServiceClient) recvGetValue() (value *GetValueResponse, err error) {
-  var result InternalStorageServiceGetValueResult
-  err = p.CC.RecvMsg("getValue", &result)
+func (p *InternalStorageServiceClient) recvChainAddEdges() (value *ExecResponse, err error) {
+  var result InternalStorageServiceChainAddEdgesResult
+  err = p.CC.RecvMsg("chainAddEdges", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -94,19 +94,19 @@ func (p *InternalStorageServiceClient) recvGetValue() (value *GetValueResponse, 
 
 // Parameters:
 //  - Req
-func (p *InternalStorageServiceClient) ForwardTransaction(req *InternalTxnRequest) (_r *ExecResponse, err error) {
-  args := InternalStorageServiceForwardTransactionArgs{
+func (p *InternalStorageServiceClient) ChainUpdateEdge(req *ChainUpdateEdgeRequest) (_r *UpdateResponse, err error) {
+  args := InternalStorageServiceChainUpdateEdgeArgs{
     Req : req,
   }
-  err = p.CC.SendMsg("forwardTransaction", &args, thrift.CALL)
+  err = p.CC.SendMsg("chainUpdateEdge", &args, thrift.CALL)
   if err != nil { return }
-  return p.recvForwardTransaction()
+  return p.recvChainUpdateEdge()
 }
 
 
-func (p *InternalStorageServiceClient) recvForwardTransaction() (value *ExecResponse, err error) {
-  var result InternalStorageServiceForwardTransactionResult
-  err = p.CC.RecvMsg("forwardTransaction", &result)
+func (p *InternalStorageServiceClient) recvChainUpdateEdge() (value *UpdateResponse, err error) {
+  var result InternalStorageServiceChainUpdateEdgeResult
+  err = p.CC.RecvMsg("chainUpdateEdge", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -151,21 +151,21 @@ func NewInternalStorageServiceThreadsafeClientProtocol(prot thrift.Protocol) *In
 
 // Parameters:
 //  - Req
-func (p *InternalStorageServiceThreadsafeClient) GetValue(req *GetValueRequest) (_r *GetValueResponse, err error) {
+func (p *InternalStorageServiceThreadsafeClient) ChainAddEdges(req *ChainAddEdgesRequest) (_r *ExecResponse, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  args := InternalStorageServiceGetValueArgs{
+  args := InternalStorageServiceChainAddEdgesArgs{
     Req : req,
   }
-  err = p.CC.SendMsg("getValue", &args, thrift.CALL)
+  err = p.CC.SendMsg("chainAddEdges", &args, thrift.CALL)
   if err != nil { return }
-  return p.recvGetValue()
+  return p.recvChainAddEdges()
 }
 
 
-func (p *InternalStorageServiceThreadsafeClient) recvGetValue() (value *GetValueResponse, err error) {
-  var result InternalStorageServiceGetValueResult
-  err = p.CC.RecvMsg("getValue", &result)
+func (p *InternalStorageServiceThreadsafeClient) recvChainAddEdges() (value *ExecResponse, err error) {
+  var result InternalStorageServiceChainAddEdgesResult
+  err = p.CC.RecvMsg("chainAddEdges", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -173,21 +173,21 @@ func (p *InternalStorageServiceThreadsafeClient) recvGetValue() (value *GetValue
 
 // Parameters:
 //  - Req
-func (p *InternalStorageServiceThreadsafeClient) ForwardTransaction(req *InternalTxnRequest) (_r *ExecResponse, err error) {
+func (p *InternalStorageServiceThreadsafeClient) ChainUpdateEdge(req *ChainUpdateEdgeRequest) (_r *UpdateResponse, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  args := InternalStorageServiceForwardTransactionArgs{
+  args := InternalStorageServiceChainUpdateEdgeArgs{
     Req : req,
   }
-  err = p.CC.SendMsg("forwardTransaction", &args, thrift.CALL)
+  err = p.CC.SendMsg("chainUpdateEdge", &args, thrift.CALL)
   if err != nil { return }
-  return p.recvForwardTransaction()
+  return p.recvChainUpdateEdge()
 }
 
 
-func (p *InternalStorageServiceThreadsafeClient) recvForwardTransaction() (value *ExecResponse, err error) {
-  var result InternalStorageServiceForwardTransactionResult
-  err = p.CC.RecvMsg("forwardTransaction", &result)
+func (p *InternalStorageServiceThreadsafeClient) recvChainUpdateEdge() (value *UpdateResponse, err error) {
+  var result InternalStorageServiceChainUpdateEdgeResult
+  err = p.CC.RecvMsg("chainUpdateEdge", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -216,12 +216,12 @@ func NewInternalStorageServiceChannelClient(channel thrift.RequestChannel) *Inte
 
 // Parameters:
 //  - Req
-func (p *InternalStorageServiceChannelClient) GetValue(ctx context.Context, req *GetValueRequest) (_r *GetValueResponse, err error) {
-  args := InternalStorageServiceGetValueArgs{
+func (p *InternalStorageServiceChannelClient) ChainAddEdges(ctx context.Context, req *ChainAddEdgesRequest) (_r *ExecResponse, err error) {
+  args := InternalStorageServiceChainAddEdgesArgs{
     Req : req,
   }
-  var result InternalStorageServiceGetValueResult
-  err = p.RequestChannel.Call(ctx, "getValue", &args, &result)
+  var result InternalStorageServiceChainAddEdgesResult
+  err = p.RequestChannel.Call(ctx, "chainAddEdges", &args, &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -229,12 +229,12 @@ func (p *InternalStorageServiceChannelClient) GetValue(ctx context.Context, req 
 
 // Parameters:
 //  - Req
-func (p *InternalStorageServiceChannelClient) ForwardTransaction(ctx context.Context, req *InternalTxnRequest) (_r *ExecResponse, err error) {
-  args := InternalStorageServiceForwardTransactionArgs{
+func (p *InternalStorageServiceChannelClient) ChainUpdateEdge(ctx context.Context, req *ChainUpdateEdgeRequest) (_r *UpdateResponse, err error) {
+  args := InternalStorageServiceChainUpdateEdgeArgs{
     Req : req,
   }
-  var result InternalStorageServiceForwardTransactionResult
-  err = p.RequestChannel.Call(ctx, "forwardTransaction", &args, &result)
+  var result InternalStorageServiceChainUpdateEdgeResult
+  err = p.RequestChannel.Call(ctx, "chainUpdateEdge", &args, &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -262,18 +262,18 @@ func (p *InternalStorageServiceProcessor) ProcessorMap() map[string]thrift.Proce
 }
 
 func NewInternalStorageServiceProcessor(handler InternalStorageService) *InternalStorageServiceProcessor {
-  self288 := &InternalStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self288.processorMap["getValue"] = &internalStorageServiceProcessorGetValue{handler:handler}
-  self288.processorMap["forwardTransaction"] = &internalStorageServiceProcessorForwardTransaction{handler:handler}
-  return self288
+  self302 := &InternalStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self302.processorMap["chainAddEdges"] = &internalStorageServiceProcessorChainAddEdges{handler:handler}
+  self302.processorMap["chainUpdateEdge"] = &internalStorageServiceProcessorChainUpdateEdge{handler:handler}
+  return self302
 }
 
-type internalStorageServiceProcessorGetValue struct {
+type internalStorageServiceProcessorChainAddEdges struct {
   handler InternalStorageService
 }
 
-func (p *internalStorageServiceProcessorGetValue) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
-  args := InternalStorageServiceGetValueArgs{}
+func (p *internalStorageServiceProcessorChainAddEdges) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := InternalStorageServiceChainAddEdgesArgs{}
   if err := args.Read(iprot); err != nil {
     return nil, err
   }
@@ -281,14 +281,14 @@ func (p *internalStorageServiceProcessorGetValue) Read(iprot thrift.Protocol) (t
   return &args, nil
 }
 
-func (p *internalStorageServiceProcessorGetValue) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+func (p *internalStorageServiceProcessorChainAddEdges) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
   var err2 error
   messageType := thrift.REPLY
   switch result.(type) {
   case thrift.ApplicationException:
     messageType = thrift.EXCEPTION
   }
-  if err2 = oprot.WriteMessageBegin("getValue", messageType, seqId); err2 != nil {
+  if err2 = oprot.WriteMessageBegin("chainAddEdges", messageType, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -303,13 +303,13 @@ func (p *internalStorageServiceProcessorGetValue) Write(seqId int32, result thri
   return err
 }
 
-func (p *internalStorageServiceProcessorGetValue) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
-  args := argStruct.(*InternalStorageServiceGetValueArgs)
-  var result InternalStorageServiceGetValueResult
-  if retval, err := p.handler.GetValue(ctx, args.Req); err != nil {
+func (p *internalStorageServiceProcessorChainAddEdges) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*InternalStorageServiceChainAddEdgesArgs)
+  var result InternalStorageServiceChainAddEdgesResult
+  if retval, err := p.handler.ChainAddEdges(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
-      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getValue: " + err.Error())
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing chainAddEdges: " + err.Error())
       return x, x
     }
   } else {
@@ -318,12 +318,12 @@ func (p *internalStorageServiceProcessorGetValue) RunContext(ctx context.Context
   return &result, nil
 }
 
-type internalStorageServiceProcessorForwardTransaction struct {
+type internalStorageServiceProcessorChainUpdateEdge struct {
   handler InternalStorageService
 }
 
-func (p *internalStorageServiceProcessorForwardTransaction) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
-  args := InternalStorageServiceForwardTransactionArgs{}
+func (p *internalStorageServiceProcessorChainUpdateEdge) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := InternalStorageServiceChainUpdateEdgeArgs{}
   if err := args.Read(iprot); err != nil {
     return nil, err
   }
@@ -331,14 +331,14 @@ func (p *internalStorageServiceProcessorForwardTransaction) Read(iprot thrift.Pr
   return &args, nil
 }
 
-func (p *internalStorageServiceProcessorForwardTransaction) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+func (p *internalStorageServiceProcessorChainUpdateEdge) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
   var err2 error
   messageType := thrift.REPLY
   switch result.(type) {
   case thrift.ApplicationException:
     messageType = thrift.EXCEPTION
   }
-  if err2 = oprot.WriteMessageBegin("forwardTransaction", messageType, seqId); err2 != nil {
+  if err2 = oprot.WriteMessageBegin("chainUpdateEdge", messageType, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -353,13 +353,13 @@ func (p *internalStorageServiceProcessorForwardTransaction) Write(seqId int32, r
   return err
 }
 
-func (p *internalStorageServiceProcessorForwardTransaction) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
-  args := argStruct.(*InternalStorageServiceForwardTransactionArgs)
-  var result InternalStorageServiceForwardTransactionResult
-  if retval, err := p.handler.ForwardTransaction(ctx, args.Req); err != nil {
+func (p *internalStorageServiceProcessorChainUpdateEdge) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*InternalStorageServiceChainUpdateEdgeArgs)
+  var result InternalStorageServiceChainUpdateEdgeResult
+  if retval, err := p.handler.ChainUpdateEdge(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
-      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing forwardTransaction: " + err.Error())
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing chainUpdateEdge: " + err.Error())
       return x, x
     }
   } else {
@@ -373,29 +373,29 @@ func (p *internalStorageServiceProcessorForwardTransaction) RunContext(ctx conte
 
 // Attributes:
 //  - Req
-type InternalStorageServiceGetValueArgs struct {
+type InternalStorageServiceChainAddEdgesArgs struct {
   thrift.IRequest
-  Req *GetValueRequest `thrift:"req,1" db:"req" json:"req"`
+  Req *ChainAddEdgesRequest `thrift:"req,1" db:"req" json:"req"`
 }
 
-func NewInternalStorageServiceGetValueArgs() *InternalStorageServiceGetValueArgs {
-  return &InternalStorageServiceGetValueArgs{
-    Req: NewGetValueRequest(),
+func NewInternalStorageServiceChainAddEdgesArgs() *InternalStorageServiceChainAddEdgesArgs {
+  return &InternalStorageServiceChainAddEdgesArgs{
+    Req: NewChainAddEdgesRequest(),
   }
 }
 
-var InternalStorageServiceGetValueArgs_Req_DEFAULT *GetValueRequest
-func (p *InternalStorageServiceGetValueArgs) GetReq() *GetValueRequest {
+var InternalStorageServiceChainAddEdgesArgs_Req_DEFAULT *ChainAddEdgesRequest
+func (p *InternalStorageServiceChainAddEdgesArgs) GetReq() *ChainAddEdgesRequest {
   if !p.IsSetReq() {
-    return InternalStorageServiceGetValueArgs_Req_DEFAULT
+    return InternalStorageServiceChainAddEdgesArgs_Req_DEFAULT
   }
 return p.Req
 }
-func (p *InternalStorageServiceGetValueArgs) IsSetReq() bool {
+func (p *InternalStorageServiceChainAddEdgesArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
-func (p *InternalStorageServiceGetValueArgs) Read(iprot thrift.Protocol) error {
+func (p *InternalStorageServiceChainAddEdgesArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -427,16 +427,16 @@ func (p *InternalStorageServiceGetValueArgs) Read(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *InternalStorageServiceGetValueArgs)  ReadField1(iprot thrift.Protocol) error {
-  p.Req = NewGetValueRequest()
+func (p *InternalStorageServiceChainAddEdgesArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewChainAddEdgesRequest()
   if err := p.Req.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
   }
   return nil
 }
 
-func (p *InternalStorageServiceGetValueArgs) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("getValue_args"); err != nil {
+func (p *InternalStorageServiceChainAddEdgesArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("chainAddEdges_args"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
@@ -446,7 +446,7 @@ func (p *InternalStorageServiceGetValueArgs) Write(oprot thrift.Protocol) error 
   return nil
 }
 
-func (p *InternalStorageServiceGetValueArgs) writeField1(oprot thrift.Protocol) (err error) {
+func (p *InternalStorageServiceChainAddEdgesArgs) writeField1(oprot thrift.Protocol) (err error) {
   if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
   if err := p.Req.Write(oprot); err != nil {
@@ -457,7 +457,7 @@ func (p *InternalStorageServiceGetValueArgs) writeField1(oprot thrift.Protocol) 
   return err
 }
 
-func (p *InternalStorageServiceGetValueArgs) String() string {
+func (p *InternalStorageServiceChainAddEdgesArgs) String() string {
   if p == nil {
     return "<nil>"
   }
@@ -468,232 +468,32 @@ func (p *InternalStorageServiceGetValueArgs) String() string {
   } else {
     reqVal = fmt.Sprintf("%v", p.Req)
   }
-  return fmt.Sprintf("InternalStorageServiceGetValueArgs({Req:%s})", reqVal)
+  return fmt.Sprintf("InternalStorageServiceChainAddEdgesArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
-type InternalStorageServiceGetValueResult struct {
-  thrift.IResponse
-  Success *GetValueResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
-}
-
-func NewInternalStorageServiceGetValueResult() *InternalStorageServiceGetValueResult {
-  return &InternalStorageServiceGetValueResult{}
-}
-
-var InternalStorageServiceGetValueResult_Success_DEFAULT *GetValueResponse
-func (p *InternalStorageServiceGetValueResult) GetSuccess() *GetValueResponse {
-  if !p.IsSetSuccess() {
-    return InternalStorageServiceGetValueResult_Success_DEFAULT
-  }
-return p.Success
-}
-func (p *InternalStorageServiceGetValueResult) IsSetSuccess() bool {
-  return p != nil && p.Success != nil
-}
-
-func (p *InternalStorageServiceGetValueResult) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 0:
-      if err := p.ReadField0(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *InternalStorageServiceGetValueResult)  ReadField0(iprot thrift.Protocol) error {
-  p.Success = NewGetValueResponse()
-  if err := p.Success.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
-  }
-  return nil
-}
-
-func (p *InternalStorageServiceGetValueResult) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("getValue_result"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField0(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *InternalStorageServiceGetValueResult) writeField0(oprot thrift.Protocol) (err error) {
-  if p.IsSetSuccess() {
-    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
-    if err := p.Success.Write(oprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
-    }
-    if err := oprot.WriteFieldEnd(); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
-  }
-  return err
-}
-
-func (p *InternalStorageServiceGetValueResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var successVal string
-  if p.Success == nil {
-    successVal = "<nil>"
-  } else {
-    successVal = fmt.Sprintf("%v", p.Success)
-  }
-  return fmt.Sprintf("InternalStorageServiceGetValueResult({Success:%s})", successVal)
-}
-
-// Attributes:
-//  - Req
-type InternalStorageServiceForwardTransactionArgs struct {
-  thrift.IRequest
-  Req *InternalTxnRequest `thrift:"req,1" db:"req" json:"req"`
-}
-
-func NewInternalStorageServiceForwardTransactionArgs() *InternalStorageServiceForwardTransactionArgs {
-  return &InternalStorageServiceForwardTransactionArgs{
-    Req: NewInternalTxnRequest(),
-  }
-}
-
-var InternalStorageServiceForwardTransactionArgs_Req_DEFAULT *InternalTxnRequest
-func (p *InternalStorageServiceForwardTransactionArgs) GetReq() *InternalTxnRequest {
-  if !p.IsSetReq() {
-    return InternalStorageServiceForwardTransactionArgs_Req_DEFAULT
-  }
-return p.Req
-}
-func (p *InternalStorageServiceForwardTransactionArgs) IsSetReq() bool {
-  return p != nil && p.Req != nil
-}
-
-func (p *InternalStorageServiceForwardTransactionArgs) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *InternalStorageServiceForwardTransactionArgs)  ReadField1(iprot thrift.Protocol) error {
-  p.Req = NewInternalTxnRequest()
-  if err := p.Req.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
-  }
-  return nil
-}
-
-func (p *InternalStorageServiceForwardTransactionArgs) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("forwardTransaction_args"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *InternalStorageServiceForwardTransactionArgs) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
-  if err := p.Req.Write(oprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
-  return err
-}
-
-func (p *InternalStorageServiceForwardTransactionArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var reqVal string
-  if p.Req == nil {
-    reqVal = "<nil>"
-  } else {
-    reqVal = fmt.Sprintf("%v", p.Req)
-  }
-  return fmt.Sprintf("InternalStorageServiceForwardTransactionArgs({Req:%s})", reqVal)
-}
-
-// Attributes:
-//  - Success
-type InternalStorageServiceForwardTransactionResult struct {
+type InternalStorageServiceChainAddEdgesResult struct {
   thrift.IResponse
   Success *ExecResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
-func NewInternalStorageServiceForwardTransactionResult() *InternalStorageServiceForwardTransactionResult {
-  return &InternalStorageServiceForwardTransactionResult{}
+func NewInternalStorageServiceChainAddEdgesResult() *InternalStorageServiceChainAddEdgesResult {
+  return &InternalStorageServiceChainAddEdgesResult{}
 }
 
-var InternalStorageServiceForwardTransactionResult_Success_DEFAULT *ExecResponse
-func (p *InternalStorageServiceForwardTransactionResult) GetSuccess() *ExecResponse {
+var InternalStorageServiceChainAddEdgesResult_Success_DEFAULT *ExecResponse
+func (p *InternalStorageServiceChainAddEdgesResult) GetSuccess() *ExecResponse {
   if !p.IsSetSuccess() {
-    return InternalStorageServiceForwardTransactionResult_Success_DEFAULT
+    return InternalStorageServiceChainAddEdgesResult_Success_DEFAULT
   }
 return p.Success
 }
-func (p *InternalStorageServiceForwardTransactionResult) IsSetSuccess() bool {
+func (p *InternalStorageServiceChainAddEdgesResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
 }
 
-func (p *InternalStorageServiceForwardTransactionResult) Read(iprot thrift.Protocol) error {
+func (p *InternalStorageServiceChainAddEdgesResult) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -725,7 +525,7 @@ func (p *InternalStorageServiceForwardTransactionResult) Read(iprot thrift.Proto
   return nil
 }
 
-func (p *InternalStorageServiceForwardTransactionResult)  ReadField0(iprot thrift.Protocol) error {
+func (p *InternalStorageServiceChainAddEdgesResult)  ReadField0(iprot thrift.Protocol) error {
   p.Success = NewExecResponse()
   if err := p.Success.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
@@ -733,8 +533,8 @@ func (p *InternalStorageServiceForwardTransactionResult)  ReadField0(iprot thrif
   return nil
 }
 
-func (p *InternalStorageServiceForwardTransactionResult) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("forwardTransaction_result"); err != nil {
+func (p *InternalStorageServiceChainAddEdgesResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("chainAddEdges_result"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField0(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
@@ -744,7 +544,7 @@ func (p *InternalStorageServiceForwardTransactionResult) Write(oprot thrift.Prot
   return nil
 }
 
-func (p *InternalStorageServiceForwardTransactionResult) writeField0(oprot thrift.Protocol) (err error) {
+func (p *InternalStorageServiceChainAddEdgesResult) writeField0(oprot thrift.Protocol) (err error) {
   if p.IsSetSuccess() {
     if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
@@ -757,7 +557,7 @@ func (p *InternalStorageServiceForwardTransactionResult) writeField0(oprot thrif
   return err
 }
 
-func (p *InternalStorageServiceForwardTransactionResult) String() string {
+func (p *InternalStorageServiceChainAddEdgesResult) String() string {
   if p == nil {
     return "<nil>"
   }
@@ -768,7 +568,207 @@ func (p *InternalStorageServiceForwardTransactionResult) String() string {
   } else {
     successVal = fmt.Sprintf("%v", p.Success)
   }
-  return fmt.Sprintf("InternalStorageServiceForwardTransactionResult({Success:%s})", successVal)
+  return fmt.Sprintf("InternalStorageServiceChainAddEdgesResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type InternalStorageServiceChainUpdateEdgeArgs struct {
+  thrift.IRequest
+  Req *ChainUpdateEdgeRequest `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewInternalStorageServiceChainUpdateEdgeArgs() *InternalStorageServiceChainUpdateEdgeArgs {
+  return &InternalStorageServiceChainUpdateEdgeArgs{
+    Req: NewChainUpdateEdgeRequest(),
+  }
+}
+
+var InternalStorageServiceChainUpdateEdgeArgs_Req_DEFAULT *ChainUpdateEdgeRequest
+func (p *InternalStorageServiceChainUpdateEdgeArgs) GetReq() *ChainUpdateEdgeRequest {
+  if !p.IsSetReq() {
+    return InternalStorageServiceChainUpdateEdgeArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *InternalStorageServiceChainUpdateEdgeArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *InternalStorageServiceChainUpdateEdgeArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *InternalStorageServiceChainUpdateEdgeArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewChainUpdateEdgeRequest()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *InternalStorageServiceChainUpdateEdgeArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("chainUpdateEdge_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *InternalStorageServiceChainUpdateEdgeArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *InternalStorageServiceChainUpdateEdgeArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("InternalStorageServiceChainUpdateEdgeArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type InternalStorageServiceChainUpdateEdgeResult struct {
+  thrift.IResponse
+  Success *UpdateResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewInternalStorageServiceChainUpdateEdgeResult() *InternalStorageServiceChainUpdateEdgeResult {
+  return &InternalStorageServiceChainUpdateEdgeResult{}
+}
+
+var InternalStorageServiceChainUpdateEdgeResult_Success_DEFAULT *UpdateResponse
+func (p *InternalStorageServiceChainUpdateEdgeResult) GetSuccess() *UpdateResponse {
+  if !p.IsSetSuccess() {
+    return InternalStorageServiceChainUpdateEdgeResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *InternalStorageServiceChainUpdateEdgeResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *InternalStorageServiceChainUpdateEdgeResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *InternalStorageServiceChainUpdateEdgeResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewUpdateResponse()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *InternalStorageServiceChainUpdateEdgeResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("chainUpdateEdge_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *InternalStorageServiceChainUpdateEdgeResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *InternalStorageServiceChainUpdateEdgeResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("InternalStorageServiceChainUpdateEdgeResult({Success:%s})", successVal)
 }
 
 

@@ -37,6 +37,9 @@ type MetaService interface {
   ListSpaces(ctx context.Context, req *ListSpacesReq) (_r *ListSpacesResp, err error)
   // Parameters:
   //  - Req
+  CreateSpaceAs(ctx context.Context, req *CreateSpaceAsReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
   CreateTag(ctx context.Context, req *CreateTagReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
@@ -303,6 +306,9 @@ type MetaServiceClientInterface interface {
   // Parameters:
   //  - Req
   ListSpaces(req *ListSpacesReq) (_r *ListSpacesResp, err error)
+  // Parameters:
+  //  - Req
+  CreateSpaceAs(req *CreateSpaceAsReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
   CreateTag(req *CreateTagReq) (_r *ExecResp, err error)
@@ -661,6 +667,26 @@ func (p *MetaServiceClient) ListSpaces(req *ListSpacesReq) (_r *ListSpacesResp, 
 func (p *MetaServiceClient) recvListSpaces() (value *ListSpacesResp, err error) {
   var result MetaServiceListSpacesResult
   err = p.CC.RecvMsg("listSpaces", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) CreateSpaceAs(req *CreateSpaceAsReq) (_r *ExecResp, err error) {
+  args := MetaServiceCreateSpaceAsArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("createSpaceAs", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateSpaceAs()
+}
+
+
+func (p *MetaServiceClient) recvCreateSpaceAs() (value *ExecResp, err error) {
+  var result MetaServiceCreateSpaceAsResult
+  err = p.CC.RecvMsg("createSpaceAs", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -2466,6 +2492,28 @@ func (p *MetaServiceThreadsafeClient) ListSpaces(req *ListSpacesReq) (_r *ListSp
 func (p *MetaServiceThreadsafeClient) recvListSpaces() (value *ListSpacesResp, err error) {
   var result MetaServiceListSpacesResult
   err = p.CC.RecvMsg("listSpaces", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) CreateSpaceAs(req *CreateSpaceAsReq) (_r *ExecResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := MetaServiceCreateSpaceAsArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("createSpaceAs", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateSpaceAs()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvCreateSpaceAs() (value *ExecResp, err error) {
+  var result MetaServiceCreateSpaceAsResult
+  err = p.CC.RecvMsg("createSpaceAs", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -4394,6 +4442,19 @@ func (p *MetaServiceChannelClient) ListSpaces(ctx context.Context, req *ListSpac
 
 // Parameters:
 //  - Req
+func (p *MetaServiceChannelClient) CreateSpaceAs(ctx context.Context, req *CreateSpaceAsReq) (_r *ExecResp, err error) {
+  args := MetaServiceCreateSpaceAsArgs{
+    Req : req,
+  }
+  var result MetaServiceCreateSpaceAsResult
+  err = p.RequestChannel.Call(ctx, "createSpaceAs", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
 func (p *MetaServiceChannelClient) CreateTag(ctx context.Context, req *CreateTagReq) (_r *ExecResp, err error) {
   args := MetaServiceCreateTagArgs{
     Req : req,
@@ -5511,6 +5572,7 @@ func NewMetaServiceProcessor(handler MetaService) *MetaServiceProcessor {
   self97.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
   self97.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
   self97.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
+  self97.processorMap["createSpaceAs"] = &metaServiceProcessorCreateSpaceAs{handler:handler}
   self97.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
   self97.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
   self97.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
@@ -5790,6 +5852,56 @@ func (p *metaServiceProcessorListSpaces) RunContext(ctx context.Context, argStru
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listSpaces: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorCreateSpaceAs struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorCreateSpaceAs) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceCreateSpaceAsArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorCreateSpaceAs) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("createSpaceAs", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorCreateSpaceAs) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceCreateSpaceAsArgs)
+  var result MetaServiceCreateSpaceAsResult
+  if retval, err := p.handler.CreateSpaceAs(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createSpaceAs: " + err.Error())
       return x, x
     }
   } else {
@@ -10799,6 +10911,206 @@ func (p *MetaServiceListSpacesResult) String() string {
     successVal = fmt.Sprintf("%v", p.Success)
   }
   return fmt.Sprintf("MetaServiceListSpacesResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceCreateSpaceAsArgs struct {
+  thrift.IRequest
+  Req *CreateSpaceAsReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceCreateSpaceAsArgs() *MetaServiceCreateSpaceAsArgs {
+  return &MetaServiceCreateSpaceAsArgs{
+    Req: NewCreateSpaceAsReq(),
+  }
+}
+
+var MetaServiceCreateSpaceAsArgs_Req_DEFAULT *CreateSpaceAsReq
+func (p *MetaServiceCreateSpaceAsArgs) GetReq() *CreateSpaceAsReq {
+  if !p.IsSetReq() {
+    return MetaServiceCreateSpaceAsArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceCreateSpaceAsArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *MetaServiceCreateSpaceAsArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateSpaceAsArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewCreateSpaceAsReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateSpaceAsArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("createSpaceAs_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceCreateSpaceAsArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceCreateSpaceAsArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceCreateSpaceAsArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceCreateSpaceAsResult struct {
+  thrift.IResponse
+  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceCreateSpaceAsResult() *MetaServiceCreateSpaceAsResult {
+  return &MetaServiceCreateSpaceAsResult{}
+}
+
+var MetaServiceCreateSpaceAsResult_Success_DEFAULT *ExecResp
+func (p *MetaServiceCreateSpaceAsResult) GetSuccess() *ExecResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceCreateSpaceAsResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceCreateSpaceAsResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *MetaServiceCreateSpaceAsResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateSpaceAsResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateSpaceAsResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("createSpaceAs_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceCreateSpaceAsResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceCreateSpaceAsResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceCreateSpaceAsResult({Success:%s})", successVal)
 }
 
 // Attributes:

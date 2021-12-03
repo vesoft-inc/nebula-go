@@ -166,6 +166,7 @@ const (
   ErrorCode_E_BALANCER_FAILURE ErrorCode = -2047
   ErrorCode_E_JOB_NOT_FINISHED ErrorCode = -2048
   ErrorCode_E_TASK_REPORT_OUT_DATE ErrorCode = -2049
+  ErrorCode_E_JOB_NOT_IN_SPACE ErrorCode = -2050
   ErrorCode_E_INVALID_JOB ErrorCode = -2065
   ErrorCode_E_BACKUP_BUILDING_INDEX ErrorCode = -2066
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND ErrorCode = -2067
@@ -209,6 +210,10 @@ const (
   ErrorCode_E_USER_CANCEL ErrorCode = -3052
   ErrorCode_E_TASK_EXECUTION_FAILED ErrorCode = -3053
   ErrorCode_E_PLAN_IS_KILLED ErrorCode = -3060
+  ErrorCode_E_NO_TERM ErrorCode = -3070
+  ErrorCode_E_OUTDATED_TERM ErrorCode = -3071
+  ErrorCode_E_OUTDATED_EDGE ErrorCode = -3072
+  ErrorCode_E_WRITE_WRITE_CONFLICT ErrorCode = -3073
   ErrorCode_E_UNKNOWN ErrorCode = -8000
 )
 
@@ -284,6 +289,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_BALANCER_FAILURE: "E_BALANCER_FAILURE",
   ErrorCode_E_JOB_NOT_FINISHED: "E_JOB_NOT_FINISHED",
   ErrorCode_E_TASK_REPORT_OUT_DATE: "E_TASK_REPORT_OUT_DATE",
+  ErrorCode_E_JOB_NOT_IN_SPACE: "E_JOB_NOT_IN_SPACE",
   ErrorCode_E_INVALID_JOB: "E_INVALID_JOB",
   ErrorCode_E_BACKUP_BUILDING_INDEX: "E_BACKUP_BUILDING_INDEX",
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND: "E_BACKUP_SPACE_NOT_FOUND",
@@ -327,6 +333,10 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_USER_CANCEL: "E_USER_CANCEL",
   ErrorCode_E_TASK_EXECUTION_FAILED: "E_TASK_EXECUTION_FAILED",
   ErrorCode_E_PLAN_IS_KILLED: "E_PLAN_IS_KILLED",
+  ErrorCode_E_NO_TERM: "E_NO_TERM",
+  ErrorCode_E_OUTDATED_TERM: "E_OUTDATED_TERM",
+  ErrorCode_E_OUTDATED_EDGE: "E_OUTDATED_EDGE",
+  ErrorCode_E_WRITE_WRITE_CONFLICT: "E_WRITE_WRITE_CONFLICT",
   ErrorCode_E_UNKNOWN: "E_UNKNOWN",
 }
 
@@ -402,6 +412,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_BALANCER_FAILURE": ErrorCode_E_BALANCER_FAILURE,
   "E_JOB_NOT_FINISHED": ErrorCode_E_JOB_NOT_FINISHED,
   "E_TASK_REPORT_OUT_DATE": ErrorCode_E_TASK_REPORT_OUT_DATE,
+  "E_JOB_NOT_IN_SPACE": ErrorCode_E_JOB_NOT_IN_SPACE,
   "E_INVALID_JOB": ErrorCode_E_INVALID_JOB,
   "E_BACKUP_BUILDING_INDEX": ErrorCode_E_BACKUP_BUILDING_INDEX,
   "E_BACKUP_SPACE_NOT_FOUND": ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
@@ -445,6 +456,10 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_USER_CANCEL": ErrorCode_E_USER_CANCEL,
   "E_TASK_EXECUTION_FAILED": ErrorCode_E_TASK_EXECUTION_FAILED,
   "E_PLAN_IS_KILLED": ErrorCode_E_PLAN_IS_KILLED,
+  "E_NO_TERM": ErrorCode_E_NO_TERM,
+  "E_OUTDATED_TERM": ErrorCode_E_OUTDATED_TERM,
+  "E_OUTDATED_EDGE": ErrorCode_E_OUTDATED_EDGE,
+  "E_WRITE_WRITE_CONFLICT": ErrorCode_E_WRITE_WRITE_CONFLICT,
   "E_UNKNOWN": ErrorCode_E_UNKNOWN,
 }
 
@@ -520,6 +535,7 @@ var ErrorCodeNames = []string {
   "E_BALANCER_FAILURE",
   "E_JOB_NOT_FINISHED",
   "E_TASK_REPORT_OUT_DATE",
+  "E_JOB_NOT_IN_SPACE",
   "E_INVALID_JOB",
   "E_BACKUP_BUILDING_INDEX",
   "E_BACKUP_SPACE_NOT_FOUND",
@@ -563,6 +579,10 @@ var ErrorCodeNames = []string {
   "E_USER_CANCEL",
   "E_TASK_EXECUTION_FAILED",
   "E_PLAN_IS_KILLED",
+  "E_NO_TERM",
+  "E_OUTDATED_TERM",
+  "E_OUTDATED_EDGE",
+  "E_WRITE_WRITE_CONFLICT",
   "E_UNKNOWN",
 }
 
@@ -638,6 +658,7 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_BALANCER_FAILURE,
   ErrorCode_E_JOB_NOT_FINISHED,
   ErrorCode_E_TASK_REPORT_OUT_DATE,
+  ErrorCode_E_JOB_NOT_IN_SPACE,
   ErrorCode_E_INVALID_JOB,
   ErrorCode_E_BACKUP_BUILDING_INDEX,
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
@@ -681,6 +702,10 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_USER_CANCEL,
   ErrorCode_E_TASK_EXECUTION_FAILED,
   ErrorCode_E_PLAN_IS_KILLED,
+  ErrorCode_E_NO_TERM,
+  ErrorCode_E_OUTDATED_TERM,
+  ErrorCode_E_OUTDATED_EDGE,
+  ErrorCode_E_WRITE_WRITE_CONFLICT,
   ErrorCode_E_UNKNOWN,
 }
 
