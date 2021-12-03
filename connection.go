@@ -127,6 +127,23 @@ func (cn *connection) execute(sessionID int64, stmt string) (*graph.ExecutionRes
 	return resp, err
 }
 
+func (cn *connection) executeWithParameter(sessionID int64, stmt string, params map[string]*nebula.Value) (*graph.ExecutionResponse, error) {
+	resp, err := cn.graph.ExecuteWithParameter(sessionID, []byte(stmt), params)
+	if err != nil {
+		// reopen the connection if timeout
+		if _, ok := err.(thrift.TransportException); ok {
+			if err.(thrift.TransportException).TypeID() == thrift.TIMED_OUT {
+				reopenErr := cn.reopen()
+				if reopenErr != nil {
+					return nil, reopenErr
+				}
+				return cn.graph.ExecuteWithParameter(sessionID, []byte(stmt), params)
+			}
+		}
+	}
+
+	return resp, err
+}
 func (cn *connection) executeJson(sessionID int64, stmt string) ([]byte, error) {
 	jsonResp, err := cn.graph.ExecuteJson(sessionID, []byte(stmt))
 	if err != nil {
@@ -148,6 +165,12 @@ func (cn *connection) executeJson(sessionID int64, stmt string) ([]byte, error) 
 // Check connection to host address
 func (cn *connection) ping() bool {
 	_, err := cn.execute(0, "YIELD 1")
+	return err == nil
+}
+
+// Check connection to host address
+func (cn *connection) pingWithParameter() bool {
+	_, err := cn.executeWithParameter(0, "YIELD 1", nil)
 	return err == nil
 }
 
