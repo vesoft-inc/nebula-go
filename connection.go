@@ -23,6 +23,7 @@ type connection struct {
 	severAddress HostAddress
 	timeout      time.Duration
 	returnedAt   time.Time // the connection was created or returned.
+	sslConfig    *tls.Config
 	graph        *graph.GraphServiceClient
 }
 
@@ -31,15 +32,14 @@ func newConnection(severAddress HostAddress) *connection {
 		severAddress: severAddress,
 		timeout:      0 * time.Millisecond,
 		returnedAt:   time.Now(),
+		sslConfig:    nil,
 		graph:        nil,
 	}
 }
 
-func (cn *connection) open(hostAddress HostAddress, timeout time.Duration) error {
-	return cn.openSSL(hostAddress, timeout, nil)
-}
-
-func (cn *connection) openSSL(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config) error {
+// open opens a transport for the connection
+// if sslConfig is not nil, an SSL transport will be created
+func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config) error {
 	ip := hostAddress.Host
 	port := hostAddress.Port
 	newAdd := fmt.Sprintf("%s:%d", ip, port)
@@ -79,7 +79,7 @@ func (cn *connection) verifyClientVersion() error {
 		return fmt.Errorf("failed to verify client version: %s", err.Error())
 	}
 	if resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
-		return fmt.Errorf("incompatible version between client and server: %s.", string(resp.GetErrorMsg()))
+		return fmt.Errorf("incompatible version between client and server: %s", string(resp.GetErrorMsg()))
 	}
 	return nil
 }
@@ -90,7 +90,7 @@ func (cn *connection) verifyClientVersion() error {
 // When the timeout occurs, the connection will be reopened to avoid the impact of the message.
 func (cn *connection) reopen() error {
 	cn.close()
-	return cn.open(cn.severAddress, cn.timeout)
+	return cn.open(cn.severAddress, cn.timeout, cn.sslConfig)
 }
 
 // Authenticate
