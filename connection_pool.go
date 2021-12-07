@@ -79,7 +79,7 @@ func (pool *ConnectionPool) initPool() error {
 		newConn := newConnection(pool.addresses[i%len(pool.addresses)])
 
 		// Open connection to host
-		if err := newConn.openSSL(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig); err != nil {
+		if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig); err != nil {
 			// If initialization failed, clean idle queue
 			idleLen := pool.idleConnectionQueue.Len()
 			for i := 0; i < idleLen; i++ {
@@ -181,14 +181,8 @@ func (pool *ConnectionPool) release(conn *connection) {
 func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error {
 	newConn := newConnection(host)
 	// Open connection to host
-	if pool.sslConfig == nil {
-		if err := newConn.open(newConn.severAddress, timeout); err != nil {
-			return err
-		}
-	} else {
-		if err := newConn.openSSL(newConn.severAddress, timeout, pool.sslConfig); err != nil {
-			return err
-		}
+	if err := newConn.open(newConn.severAddress, timeout, pool.sslConfig); err != nil {
+		return err
 	}
 	newConn.close()
 	return nil
@@ -240,14 +234,8 @@ func (pool *ConnectionPool) newConnToHost() (*connection, error) {
 	host := pool.getHost()
 	newConn := newConnection(host)
 	// Open connection to host
-	if pool.sslConfig == nil {
-		if err := newConn.open(newConn.severAddress, pool.conf.TimeOut); err != nil {
-			return nil, err
-		}
-	} else {
-		if err := newConn.openSSL(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig); err != nil {
-			return nil, err
-		}
+	if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig); err != nil {
+		return nil, err
 	}
 	// Add connection to active queue
 	pool.activeConnectionQueue.PushBack(newConn)
