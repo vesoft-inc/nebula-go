@@ -61,7 +61,7 @@ func logoutAndClose(conn *connection, sessionID int64) {
 func TestConnection(t *testing.T) {
 	hostAdress := HostAddress{Host: address, Port: port}
 	conn := newConnection(hostAdress)
-	err := conn.open(hostAdress, testPoolConfig.TimeOut)
+	err := conn.open(hostAdress, testPoolConfig.TimeOut, nil)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -186,7 +186,7 @@ func TestAuthentication(t *testing.T) {
 	hostAdress := HostAddress{Host: address, Port: port}
 
 	conn := newConnection(hostAdress)
-	err := conn.open(hostAdress, testPoolConfig.TimeOut)
+	err := conn.open(hostAdress, testPoolConfig.TimeOut, nil)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
