@@ -93,6 +93,118 @@ func NullTypeFromString(s string) (NullType, error) {
 
 func NullTypePtr(v NullType) *NullType { return &v }
 
+type PropertyType int64
+const (
+  PropertyType_UNKNOWN PropertyType = 0
+  PropertyType_BOOL PropertyType = 1
+  PropertyType_INT64 PropertyType = 2
+  PropertyType_VID PropertyType = 3
+  PropertyType_FLOAT PropertyType = 4
+  PropertyType_DOUBLE PropertyType = 5
+  PropertyType_STRING PropertyType = 6
+  PropertyType_FIXED_STRING PropertyType = 7
+  PropertyType_INT8 PropertyType = 8
+  PropertyType_INT16 PropertyType = 9
+  PropertyType_INT32 PropertyType = 10
+  PropertyType_TIMESTAMP PropertyType = 21
+  PropertyType_DATE PropertyType = 24
+  PropertyType_DATETIME PropertyType = 25
+  PropertyType_TIME PropertyType = 26
+  PropertyType_GEOGRAPHY PropertyType = 31
+)
+
+var PropertyTypeToName = map[PropertyType]string {
+  PropertyType_UNKNOWN: "UNKNOWN",
+  PropertyType_BOOL: "BOOL",
+  PropertyType_INT64: "INT64",
+  PropertyType_VID: "VID",
+  PropertyType_FLOAT: "FLOAT",
+  PropertyType_DOUBLE: "DOUBLE",
+  PropertyType_STRING: "STRING",
+  PropertyType_FIXED_STRING: "FIXED_STRING",
+  PropertyType_INT8: "INT8",
+  PropertyType_INT16: "INT16",
+  PropertyType_INT32: "INT32",
+  PropertyType_TIMESTAMP: "TIMESTAMP",
+  PropertyType_DATE: "DATE",
+  PropertyType_DATETIME: "DATETIME",
+  PropertyType_TIME: "TIME",
+  PropertyType_GEOGRAPHY: "GEOGRAPHY",
+}
+
+var PropertyTypeToValue = map[string]PropertyType {
+  "UNKNOWN": PropertyType_UNKNOWN,
+  "BOOL": PropertyType_BOOL,
+  "INT64": PropertyType_INT64,
+  "VID": PropertyType_VID,
+  "FLOAT": PropertyType_FLOAT,
+  "DOUBLE": PropertyType_DOUBLE,
+  "STRING": PropertyType_STRING,
+  "FIXED_STRING": PropertyType_FIXED_STRING,
+  "INT8": PropertyType_INT8,
+  "INT16": PropertyType_INT16,
+  "INT32": PropertyType_INT32,
+  "TIMESTAMP": PropertyType_TIMESTAMP,
+  "DATE": PropertyType_DATE,
+  "DATETIME": PropertyType_DATETIME,
+  "TIME": PropertyType_TIME,
+  "GEOGRAPHY": PropertyType_GEOGRAPHY,
+}
+
+var PropertyTypeNames = []string {
+  "UNKNOWN",
+  "BOOL",
+  "INT64",
+  "VID",
+  "FLOAT",
+  "DOUBLE",
+  "STRING",
+  "FIXED_STRING",
+  "INT8",
+  "INT16",
+  "INT32",
+  "TIMESTAMP",
+  "DATE",
+  "DATETIME",
+  "TIME",
+  "GEOGRAPHY",
+}
+
+var PropertyTypeValues = []PropertyType {
+  PropertyType_UNKNOWN,
+  PropertyType_BOOL,
+  PropertyType_INT64,
+  PropertyType_VID,
+  PropertyType_FLOAT,
+  PropertyType_DOUBLE,
+  PropertyType_STRING,
+  PropertyType_FIXED_STRING,
+  PropertyType_INT8,
+  PropertyType_INT16,
+  PropertyType_INT32,
+  PropertyType_TIMESTAMP,
+  PropertyType_DATE,
+  PropertyType_DATETIME,
+  PropertyType_TIME,
+  PropertyType_GEOGRAPHY,
+}
+
+func (p PropertyType) String() string {
+  if v, ok := PropertyTypeToName[p]; ok {
+    return v
+  }
+  return "<UNSET>"
+}
+
+func PropertyTypeFromString(s string) (PropertyType, error) {
+  if v, ok := PropertyTypeToValue[s]; ok {
+    return v, nil
+  }
+  return PropertyType(0), fmt.Errorf("not a valid PropertyType string")
+}
+
+func PropertyTypePtr(v PropertyType) *PropertyType { return &v }
+
 type ErrorCode int64
 const (
   ErrorCode_SUCCEEDED ErrorCode = 0
@@ -148,7 +260,7 @@ const (
   ErrorCode_E_BALANCED ErrorCode = -2024
   ErrorCode_E_NO_RUNNING_BALANCE_PLAN ErrorCode = -2025
   ErrorCode_E_NO_VALID_HOST ErrorCode = -2026
-  ErrorCode_E_CORRUPTTED_BALANCE_PLAN ErrorCode = -2027
+  ErrorCode_E_CORRUPTED_BALANCE_PLAN ErrorCode = -2027
   ErrorCode_E_NO_INVALID_BALANCE_PLAN ErrorCode = -2028
   ErrorCode_E_IMPROPER_ROLE ErrorCode = -2030
   ErrorCode_E_INVALID_PARTITION_NUM ErrorCode = -2031
@@ -272,7 +384,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_BALANCED: "E_BALANCED",
   ErrorCode_E_NO_RUNNING_BALANCE_PLAN: "E_NO_RUNNING_BALANCE_PLAN",
   ErrorCode_E_NO_VALID_HOST: "E_NO_VALID_HOST",
-  ErrorCode_E_CORRUPTTED_BALANCE_PLAN: "E_CORRUPTTED_BALANCE_PLAN",
+  ErrorCode_E_CORRUPTED_BALANCE_PLAN: "E_CORRUPTED_BALANCE_PLAN",
   ErrorCode_E_NO_INVALID_BALANCE_PLAN: "E_NO_INVALID_BALANCE_PLAN",
   ErrorCode_E_IMPROPER_ROLE: "E_IMPROPER_ROLE",
   ErrorCode_E_INVALID_PARTITION_NUM: "E_INVALID_PARTITION_NUM",
@@ -396,7 +508,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_BALANCED": ErrorCode_E_BALANCED,
   "E_NO_RUNNING_BALANCE_PLAN": ErrorCode_E_NO_RUNNING_BALANCE_PLAN,
   "E_NO_VALID_HOST": ErrorCode_E_NO_VALID_HOST,
-  "E_CORRUPTTED_BALANCE_PLAN": ErrorCode_E_CORRUPTTED_BALANCE_PLAN,
+  "E_CORRUPTED_BALANCE_PLAN": ErrorCode_E_CORRUPTED_BALANCE_PLAN,
   "E_NO_INVALID_BALANCE_PLAN": ErrorCode_E_NO_INVALID_BALANCE_PLAN,
   "E_IMPROPER_ROLE": ErrorCode_E_IMPROPER_ROLE,
   "E_INVALID_PARTITION_NUM": ErrorCode_E_INVALID_PARTITION_NUM,
@@ -520,7 +632,7 @@ var ErrorCodeNames = []string {
   "E_BALANCED",
   "E_NO_RUNNING_BALANCE_PLAN",
   "E_NO_VALID_HOST",
-  "E_CORRUPTTED_BALANCE_PLAN",
+  "E_CORRUPTED_BALANCE_PLAN",
   "E_NO_INVALID_BALANCE_PLAN",
   "E_IMPROPER_ROLE",
   "E_INVALID_PARTITION_NUM",
@@ -644,7 +756,7 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_BALANCED,
   ErrorCode_E_NO_RUNNING_BALANCE_PLAN,
   ErrorCode_E_NO_VALID_HOST,
-  ErrorCode_E_CORRUPTTED_BALANCE_PLAN,
+  ErrorCode_E_CORRUPTED_BALANCE_PLAN,
   ErrorCode_E_NO_INVALID_BALANCE_PLAN,
   ErrorCode_E_IMPROPER_ROLE,
   ErrorCode_E_INVALID_PARTITION_NUM,
@@ -729,6 +841,10 @@ func ErrorCodeFromString(s string) (ErrorCode, error) {
 }
 
 func ErrorCodePtr(v ErrorCode) *ErrorCode { return &v }
+
+type ClusterID = int64
+
+func ClusterIDPtr(v ClusterID) *ClusterID { return &v }
 
 type GraphSpaceID = int32
 
@@ -5476,5 +5592,122 @@ func (p *CheckpointInfo) String() string {
   }
   pathVal := fmt.Sprintf("%v", p.Path)
   return fmt.Sprintf("CheckpointInfo({PartitionInfo:%s Path:%s})", partitionInfoVal, pathVal)
+}
+
+// Attributes:
+//  - Cluster
+//  - LogStr
+type LogEntry struct {
+  Cluster ClusterID `thrift:"cluster,1" db:"cluster" json:"cluster"`
+  LogStr []byte `thrift:"log_str,2" db:"log_str" json:"log_str"`
+}
+
+func NewLogEntry() *LogEntry {
+  return &LogEntry{}
+}
+
+
+func (p *LogEntry) GetCluster() ClusterID {
+  return p.Cluster
+}
+
+func (p *LogEntry) GetLogStr() []byte {
+  return p.LogStr
+}
+func (p *LogEntry) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *LogEntry)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  temp := ClusterID(v)
+  p.Cluster = temp
+}
+  return nil
+}
+
+func (p *LogEntry)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.LogStr = v
+}
+  return nil
+}
+
+func (p *LogEntry) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("LogEntry"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *LogEntry) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("cluster", thrift.I64, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:cluster: ", p), err) }
+  if err := oprot.WriteI64(int64(p.Cluster)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.cluster (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:cluster: ", p), err) }
+  return err
+}
+
+func (p *LogEntry) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("log_str", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:log_str: ", p), err) }
+  if err := oprot.WriteBinary(p.LogStr); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.log_str (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:log_str: ", p), err) }
+  return err
+}
+
+func (p *LogEntry) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  clusterVal := fmt.Sprintf("%v", p.Cluster)
+  logStrVal := fmt.Sprintf("%v", p.LogStr)
+  return fmt.Sprintf("LogEntry({Cluster:%s LogStr:%s})", clusterVal, logStrVal)
 }
 
