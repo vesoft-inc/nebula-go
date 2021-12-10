@@ -7,9 +7,9 @@ package nebula
 import (
 	"bytes"
 	"context"
-	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
+	"sync"
 )
 
 // (needed to ensure safety because of naive import list construction.)
@@ -23,4 +23,3 @@ const Version = "2.6.0"
 
 func init() {
 }
-

@@ -335,7 +335,7 @@ func (res ResultSet) GetErrorCode() ErrorCode {
 	return ErrorCode(res.resp.ErrorCode)
 }
 
-func (res ResultSet) GetLatency() int32 {
+func (res ResultSet) GetLatency() int64 {
 	return res.resp.LatencyInUs
 }
 
