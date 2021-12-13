@@ -11,7 +11,7 @@ import (
 )
 
 func TestSession_Execute(t *testing.T) {
-	config := PoolConfig{}
+	config := GetDefaultConf()
 	host := HostAddress{address, port}
 	pool, err := NewConnectionPool([]HostAddress{host}, config, DefaultLogger{})
 	if err != nil {
