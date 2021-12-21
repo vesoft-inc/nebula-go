@@ -1019,6 +1019,9 @@ func TestReconnect(t *testing.T) {
 	for i := 0; i < len(sessionList); i++ {
 		sessionList[i].Release()
 	}
+
+	// Wait for graphd to be up
+	time.Sleep(5 * time.Second)
 }
 
 func TestIpLookup(t *testing.T) {
