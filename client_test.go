@@ -49,6 +49,8 @@ var nebulaLog = DefaultLogger{}
 // Create default configs
 var testPoolConfig = GetDefaultConf()
 
+var params map[string]*nebula.Value
+
 // Before run `go test -v`, you should start a nebula server listening on 3699 port.
 // Using docker-compose is the easiest way and you can reference this file:
 //   https://github.com/vesoft-inc/nebula/blob/master/docker/docker-compose.yaml
@@ -506,7 +508,6 @@ func TestServiceDataIO(t *testing.T) {
 		}
 		assert.Equal(t, int8(sessionCreatedTime.Hour()), localTime.GetHour())
 	}
-
 	dropSpace(t, session, "client_test")
 }
 
@@ -960,6 +961,139 @@ func TestExecuteJson(t *testing.T) {
 	}
 }
 
+func TestExecuteWithParameter(t *testing.T) {
+	hostList := []HostAddress{{Host: address, Port: port}}
+
+	testPoolConfig = PoolConfig{
+		TimeOut:         0 * time.Millisecond,
+		IdleTime:        0 * time.Millisecond,
+		MaxConnPoolSize: 10,
+		MinConnPoolSize: 1,
+	}
+
+	// Initialize connection pool
+	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+	if err != nil {
+		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
+	}
+	// close all connections in the pool
+	defer pool.Close()
+
+	// Create session
+	session, err := pool.GetSession(username, password)
+	if err != nil {
+		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
+			username, password, err.Error())
+	}
+	defer session.Release()
+
+	// Create schemas
+	createTestDataSchema(t, session)
+	// Load data
+	loadTestData(t, session)
+	// p1:true  p2:3  p3:[true,3]  p4:{"a":true,"b":"Bob"}
+	prepareParameter()
+	// Simple result
+	{
+		resp, err := tryToExecuteWithParameter(session, "RETURN toBoolean($p1) and false, $p2+3, $p3[1]>3", params)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, 1, resp.GetRowSize())
+		record, err := resp.GetRowValuesByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		valWrap, err := record.GetValueByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		col1, err := valWrap.AsBool()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t,
+			false,
+			col1)
+		valWrap, err = record.GetValueByIndex(1)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		col2, err := valWrap.AsInt()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t,
+			int64(6),
+			col2)
+		valWrap, err = record.GetValueByIndex(2)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		col3, err := valWrap.AsBool()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t,
+			false,
+			col3)
+		valWrap, err = record.GetValueByIndex(2)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		col3, err = valWrap.AsBool()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t,
+			false,
+			col3)
+	}
+	// Complex result
+	{
+		resp, err := tryToExecuteWithParameter(session, "MATCH (v:person {name: $p4.b}) WHERE v.age>$p2-3 and $p1==true RETURN v ORDER BY $p3[0] LIMIT $p2", params)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, 1, resp.GetRowSize())
+		record, err := resp.GetRowValuesByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		valWrap, err := record.GetValueByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		node, err := valWrap.AsNode()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t,
+			"(\"Bob\" :student{name: \"Bob\"} "+
+				":person{age: 10, birthday: 2010-09-10T10:08:02.000000, book_num: 100, "+
+				"child_name: \"Hello Worl\", expend: 100.0, "+
+				"first_out_city: 1111, friends: 10, grade: 3, "+
+				"hobby: __NULL__, is_girl: false, "+
+				"morning: 07:10:00.000000, name: \"Bob\", "+
+				"property: 1000.0, start_school: 2017-09-10})",
+			node.String())
+	}
+}
+
 func TestReconnect(t *testing.T) {
 	hostList := poolAddress
 
@@ -1073,6 +1207,17 @@ func tryToExecute(session *Session, query string) (resp *ResultSet, err error) {
 	return
 }
 
+func tryToExecuteWithParameter(session *Session, query string, params map[string]*nebula.Value) (resp *ResultSet, err error) {
+	for i := 3; i > 0; i-- {
+		resp, err = session.ExecuteWithParameter(query, params)
+		if err == nil && resp.IsSucceed() {
+			return
+		}
+		time.Sleep(2 * time.Second)
+	}
+	return
+}
+
 // creates schema
 func createTestDataSchema(t *testing.T, session *Session) {
 	createSchema := "CREATE SPACE IF NOT EXISTS test_data(vid_type = FIXED_STRING(30));" +
@@ -1161,6 +1306,28 @@ func loadTestData(t *testing.T, session *Session) {
 		return
 	}
 	checkResultSet(t, query, resultSet)
+}
+
+func prepareParameter() {
+	// p1:true  p2:3  p3:[true,3]  p4:{"a":true,"b":"Bob"}
+	params = make(map[string]*nebula.Value)
+	var bVal bool = true
+	var iVal int64 = 3
+	p1 := nebula.Value{BVal: &bVal}
+	p2 := nebula.Value{IVal: &iVal}
+	p5 := nebula.Value{SVal: []byte("Bob")}
+	lSlice := []*nebula.Value{&p1, &p2}
+	var lVal nebula.NList
+	lVal.Values = lSlice
+	p3 := nebula.Value{LVal: &lVal}
+	var nmap map[string]*nebula.Value = map[string]*nebula.Value{"a": &p1, "b": &p5}
+	var mVal nebula.NMap
+	mVal.Kvs = nmap
+	p4 := nebula.Value{MVal: &mVal}
+	params["p1"] = &p1
+	params["p2"] = &p2
+	params["p3"] = &p3
+	params["p4"] = &p4
 }
 
 func dropSpace(t *testing.T, session *Session, spaceName string) {
