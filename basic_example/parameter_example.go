@@ -70,7 +70,7 @@ func main() {
 		// int
 		p2 := nebula.Value{IVal: &iVal}
 		// list
-		lSlice := []*nebula.Value{&p1,&p2}
+		lSlice := []*nebula.Value{&p1, &p2}
 		var lVal nebula.NList
 		lVal.Values = lSlice
 		p3 := nebula.Value{LVal: &lVal}
@@ -85,13 +85,12 @@ func main() {
 		params["p3"] = &p3
 		params["p4"] = &p4
 
-
 		// Extract data from the resultSet
 		{
 			query := "RETURN abs($p2)+1 AS col1, toBoolean($p1) and false AS col2, $p3, $p4.a"
 			// Send query
 			// resultSet, err := session.ExecuteWithParameter(query, params)
-			resultSet, err := session.ExecuteWithParameter(query,params)
+			resultSet, err := session.ExecuteWithParameter(query, params)
 			if err != nil {
 				fmt.Print(err.Error())
 				return
@@ -114,5 +113,5 @@ func main() {
 	wg.Wait()
 
 	fmt.Print("\n")
-	log.Info("Nebula Go Client Gorountines Example Finished")
+	log.Info("Nebula Go Parameter Example Finished")
 }
