@@ -1116,24 +1116,24 @@ func (p *StorageAdminServiceProcessor) ProcessorMap() map[string]thrift.Processo
 }
 
 func NewStorageAdminServiceProcessor(handler StorageAdminService) *StorageAdminServiceProcessor {
-  self211 := &StorageAdminServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self211.processorMap["transLeader"] = &storageAdminServiceProcessorTransLeader{handler:handler}
-  self211.processorMap["addPart"] = &storageAdminServiceProcessorAddPart{handler:handler}
-  self211.processorMap["addLearner"] = &storageAdminServiceProcessorAddLearner{handler:handler}
-  self211.processorMap["removePart"] = &storageAdminServiceProcessorRemovePart{handler:handler}
-  self211.processorMap["memberChange"] = &storageAdminServiceProcessorMemberChange{handler:handler}
-  self211.processorMap["waitingForCatchUpData"] = &storageAdminServiceProcessorWaitingForCatchUpData{handler:handler}
-  self211.processorMap["createCheckpoint"] = &storageAdminServiceProcessorCreateCheckpoint{handler:handler}
-  self211.processorMap["dropCheckpoint"] = &storageAdminServiceProcessorDropCheckpoint{handler:handler}
-  self211.processorMap["blockingWrites"] = &storageAdminServiceProcessorBlockingWrites{handler:handler}
-  self211.processorMap["rebuildTagIndex"] = &storageAdminServiceProcessorRebuildTagIndex{handler:handler}
-  self211.processorMap["rebuildEdgeIndex"] = &storageAdminServiceProcessorRebuildEdgeIndex{handler:handler}
-  self211.processorMap["getLeaderParts"] = &storageAdminServiceProcessorGetLeaderParts{handler:handler}
-  self211.processorMap["checkPeers"] = &storageAdminServiceProcessorCheckPeers{handler:handler}
-  self211.processorMap["addAdminTask"] = &storageAdminServiceProcessorAddAdminTask{handler:handler}
-  self211.processorMap["stopAdminTask"] = &storageAdminServiceProcessorStopAdminTask{handler:handler}
-  self211.processorMap["listClusterInfo"] = &storageAdminServiceProcessorListClusterInfo{handler:handler}
-  return self211
+  self210 := &StorageAdminServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self210.processorMap["transLeader"] = &storageAdminServiceProcessorTransLeader{handler:handler}
+  self210.processorMap["addPart"] = &storageAdminServiceProcessorAddPart{handler:handler}
+  self210.processorMap["addLearner"] = &storageAdminServiceProcessorAddLearner{handler:handler}
+  self210.processorMap["removePart"] = &storageAdminServiceProcessorRemovePart{handler:handler}
+  self210.processorMap["memberChange"] = &storageAdminServiceProcessorMemberChange{handler:handler}
+  self210.processorMap["waitingForCatchUpData"] = &storageAdminServiceProcessorWaitingForCatchUpData{handler:handler}
+  self210.processorMap["createCheckpoint"] = &storageAdminServiceProcessorCreateCheckpoint{handler:handler}
+  self210.processorMap["dropCheckpoint"] = &storageAdminServiceProcessorDropCheckpoint{handler:handler}
+  self210.processorMap["blockingWrites"] = &storageAdminServiceProcessorBlockingWrites{handler:handler}
+  self210.processorMap["rebuildTagIndex"] = &storageAdminServiceProcessorRebuildTagIndex{handler:handler}
+  self210.processorMap["rebuildEdgeIndex"] = &storageAdminServiceProcessorRebuildEdgeIndex{handler:handler}
+  self210.processorMap["getLeaderParts"] = &storageAdminServiceProcessorGetLeaderParts{handler:handler}
+  self210.processorMap["checkPeers"] = &storageAdminServiceProcessorCheckPeers{handler:handler}
+  self210.processorMap["addAdminTask"] = &storageAdminServiceProcessorAddAdminTask{handler:handler}
+  self210.processorMap["stopAdminTask"] = &storageAdminServiceProcessorStopAdminTask{handler:handler}
+  self210.processorMap["listClusterInfo"] = &storageAdminServiceProcessorListClusterInfo{handler:handler}
+  return self210
 }
 
 type storageAdminServiceProcessorTransLeader struct {
