@@ -31,6 +31,36 @@ type Session struct {
 	timezoneInfo
 }
 
+func (session *Session) reconnectWithExecuteErr(err error) error {
+	// Reconnect only if the tranport is closed
+	err2, ok := err.(thrift.TransportException)
+	if !ok {
+		return err
+	}
+	if err2.TypeID() != thrift.END_OF_FILE {
+		return err
+	}
+	if _err := session.reConnect(); _err != nil {
+		return fmt.Errorf("failed to reconnect, %s", _err.Error())
+	}
+	session.log.Info(fmt.Sprintf("Successfully reconnect to host: %s, port: %d",
+		session.connection.severAddress.Host, session.connection.severAddress.Port))
+	return nil
+}
+
+func (session *Session) executeWithReconnect(f func() (interface{}, error)) (interface{}, error) {
+	resp, err := f()
+	if err == nil {
+		return resp, nil
+	}
+	if err2 := session.reconnectWithExecuteErr(err); err2 != nil {
+		return nil, err2
+	}
+	// Execute with the new connetion
+	return f()
+
+}
+
 // Execute returns the result of the given query as a ResultSet
 func (session *Session) Execute(stmt string) (*ResultSet, error) {
 	session.mu.Lock()
@@ -38,28 +68,8 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
 	}
-	resp, err := session.connection.execute(session.sessionID, stmt)
-	if err == nil {
-		resSet, err := genResultSet(resp, session.timezoneInfo)
-		if err != nil {
-			return nil, err
-		}
-		return resSet, nil
-	}
-	// Reconnect only if the tranport is closed
-	err2, ok := err.(thrift.TransportException)
-	if !ok {
-		return nil, err
-	}
-	if err2.TypeID() == thrift.END_OF_FILE {
-		_err := session.reConnect()
-		if _err != nil {
-			session.log.Error(fmt.Sprintf("Failed to reconnect, %s", _err.Error()))
-			return nil, _err
-		}
-		session.log.Info(fmt.Sprintf("Successfully reconnect to host: %s, port: %d",
-			session.connection.severAddress.Host, session.connection.severAddress.Port))
-		// Execute with the new connetion
+
+	execFunc := func() (interface{}, error) {
 		resp, err := session.connection.execute(session.sessionID, stmt)
 		if err != nil {
 			return nil, err
@@ -69,39 +79,22 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 			return nil, err
 		}
 		return resSet, nil
-	} else { // No need to reconnect
-		session.log.Error(fmt.Sprintf("Error info: %s", err2.Error()))
-		return nil, err2
 	}
+	resp, err := session.executeWithReconnect(execFunc)
+	if err != nil {
+		return nil, err
+	}
+	return resp.(*ResultSet), err
 }
 
 // Execute returns the result of given query as a ResultSet
 func (session *Session) ExecuteWithParameter(stmt string, params map[string]*nebula.Value) (*ResultSet, error) {
+	session.mu.Lock()
+	defer session.mu.Unlock()
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
 	}
-	resp, err := session.connection.executeWithParameter(session.sessionID, stmt, params)
-	if err == nil {
-		resSet, err := genResultSet(resp, session.timezoneInfo)
-		if err != nil {
-			return nil, err
-		}
-		return resSet, nil
-	}
-	// Reconnect only if the tranport is closed
-	err2, ok := err.(thrift.TransportException)
-	if !ok {
-		return nil, err
-	}
-	if err2.TypeID() == thrift.END_OF_FILE {
-		_err := session.reConnect()
-		if _err != nil {
-			session.log.Error(fmt.Sprintf("Failed to reconnect, %s", _err.Error()))
-			return nil, _err
-		}
-		session.log.Info(fmt.Sprintf("Successfully reconnect to host: %s, port: %d",
-			session.connection.severAddress.Host, session.connection.severAddress.Port))
-		// Execute with the new connetion
+	execFunc := func() (interface{}, error) {
 		resp, err := session.connection.executeWithParameter(session.sessionID, stmt, params)
 		if err != nil {
 			return nil, err
@@ -111,10 +104,14 @@ func (session *Session) ExecuteWithParameter(stmt string, params map[string]*neb
 			return nil, err
 		}
 		return resSet, nil
-	} else { // No need to reconnect
-		session.log.Error(fmt.Sprintf("Error info: %s", err2.Error()))
-		return nil, err2
 	}
+
+	resp, err := session.executeWithReconnect(execFunc)
+	if err != nil {
+		return nil, err
+	}
+	return resp.(*ResultSet), err
+
 }
 
 // ExecuteJson returns the result of the given query as a json string
@@ -181,33 +178,19 @@ func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
 	}
-	resp, err := session.connection.executeJson(session.sessionID, stmt)
-	if err == nil {
-		return resp, nil
-	}
-	// Reconnect only if the tranport is closed
-	err2, ok := err.(thrift.TransportException)
-	if !ok {
-		return nil, err
-	}
-	if err2.TypeID() == thrift.END_OF_FILE {
-		_err := session.reConnect()
-		if _err != nil {
-			session.log.Error(fmt.Sprintf("Failed to reconnect, %s", _err.Error()))
-			return nil, _err
-		}
-		session.log.Info(fmt.Sprintf("Successfully reconnect to host: %s, port: %d",
-			session.connection.severAddress.Host, session.connection.severAddress.Port))
-		// Execute with the new connetion
+
+	execFunc := func() (interface{}, error) {
 		resp, err := session.connection.executeJson(session.sessionID, stmt)
 		if err != nil {
 			return nil, err
 		}
 		return resp, nil
-	} else { // No need to reconnect
-		session.log.Error(fmt.Sprintf("Error info: %s", err2.Error()))
-		return nil, err2
 	}
+	resp, err := session.executeWithReconnect(execFunc)
+	if err != nil {
+		return nil, err
+	}
+	return resp.([]byte), err
 }
 
 func (session *Session) reConnect() error {

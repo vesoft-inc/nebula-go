@@ -124,7 +124,7 @@ func main() {
 	}
 	// With error
 	{
-		jsonStrResult, err := session.ExecuteJson("MAT (v:person {name: \"Bob\"}) RETURN v")
+		jsonStrResult, err := session.ExecuteJson("MATCH (v:person {name: \"Bob\"}) RETURN v")
 		if err != nil {
 			log.Fatal(fmt.Sprintf("fail to get the result in json format, %s", err.Error()))
 		}
