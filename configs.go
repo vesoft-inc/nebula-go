@@ -61,7 +61,7 @@ func GetDefaultConf() PoolConfig {
 	}
 }
 
-// GetDefaultSSLConfig return the default tls.Config with path
+// GetDefaultSSLConfig reads the files in the given path and returns a tls.Config object
 func GetDefaultSSLConfig(rootCAPath, certPath, privateKeyPath string) (*tls.Config, error) {
 	rootCA, err := openAndReadFile(rootCAPath)
 	if err != nil {
