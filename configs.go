@@ -67,7 +67,7 @@ func GetDefaultSSLConfig(rootCAPath, certPath, privateKeyPath string) (*tls.Conf
 	if err != nil {
 		return nil, err
 	}
-	cert, err := openAndReadFile(privateKeyPath)
+	cert, err := openAndReadFile(certPath)
 	if err != nil {
 		return nil, err
 	}

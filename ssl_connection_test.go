@@ -34,6 +34,9 @@ func TestSslConnection(t *testing.T) {
 		"./nebula-docker-compose/secrets/test.client.crt",
 		"./nebula-docker-compose/secrets/test.client.key",
 	)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	sslConfig.InsecureSkipVerify = true // This is only used for testing
 
@@ -96,6 +99,9 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 		"./nebula-docker-compose/secrets/test.self-signed.pem",
 		"./nebula-docker-compose/secrets/test.self-signed.key",
 	)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	sslConfig.InsecureSkipVerify = true // This is only used for testing
 
