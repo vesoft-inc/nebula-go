@@ -9,10 +9,6 @@
 package nebula_go
 
 import (
-	"crypto/tls"
-	"crypto/x509"
-	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 	"time"
@@ -33,32 +29,13 @@ func TestSslConnection(t *testing.T) {
 		MinConnPoolSize: 1,
 	}
 
-	var (
-		rootCA     = openAndReadFile(t, "./nebula-docker-compose/secrets/test.ca.pem")
-		cert       = openAndReadFile(t, "./nebula-docker-compose/secrets/test.client.crt")
-		privateKey = openAndReadFile(t, "./nebula-docker-compose/secrets/test.client.key")
+	sslConfig, err := GetDefaultSSLConfig(
+		"./nebula-docker-compose/secrets/test.ca.pem",
+		"./nebula-docker-compose/secrets/test.client.crt",
+		"./nebula-docker-compose/secrets/test.client.key",
 	)
 
-	// generate the client certificate
-	clientCert, err := tls.X509KeyPair(cert, privateKey)
-	if err != nil {
-		panic(err)
-	}
-
-	// parse root CA pem and add into CA pool
-	rootCAPool := x509.NewCertPool()
-	ok := rootCAPool.AppendCertsFromPEM(rootCA)
-	if !ok {
-		t.Fatal("unable to append supplied cert into tls.Config, are you sure it is a valid certificate")
-	}
-
-	// set tls config
-	// InsecureSkipVerify is set to true for test purpose ONLY. DO NOT use it in production.
-	sslConfig := &tls.Config{
-		Certificates:       []tls.Certificate{clientCert},
-		RootCAs:            rootCAPool,
-		InsecureSkipVerify: true, // This is only used for testing
-	}
+	sslConfig.InsecureSkipVerify = true // This is only used for testing
 
 	// Initialize connection pool
 	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConfig, nebulaLog)
@@ -114,34 +91,13 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 		MinConnPoolSize: 1,
 	}
 
-	var (
-		// for self-signed cert, use the local cert as the root ca
-		rootCA     = openAndReadFile(t, "./nebula-docker-compose/secrets/test.self-signed.pem")
-		cert       = openAndReadFile(t, "./nebula-docker-compose/secrets/test.self-signed.pem")
-		privateKey = openAndReadFile(t, "./nebula-docker-compose/secrets/test.self-signed.key")
+	sslConfig, err := GetDefaultSSLConfig(
+		"./nebula-docker-compose/secrets/test.self-signed.pem",
+		"./nebula-docker-compose/secrets/test.self-signed.pem",
+		"./nebula-docker-compose/secrets/test.self-signed.key",
 	)
 
-	// generate the client certificate
-	clientCert, err := tls.X509KeyPair(cert, privateKey)
-	if err != nil {
-		panic(err)
-	}
-
-	// parse root CA pem and add into CA pool
-	// for self-signed cert, use the local cert as the root ca
-	rootCAPool := x509.NewCertPool()
-	ok := rootCAPool.AppendCertsFromPEM(rootCA)
-	if !ok {
-		t.Fatal("unable to append supplied cert into tls.Config, are you sure it is a valid certificate")
-	}
-
-	// set tls config
-	// InsecureSkipVerify is set to true for test purpose ONLY. DO NOT use it in production.
-	sslConfig := &tls.Config{
-		Certificates:       []tls.Certificate{clientCert},
-		RootCAs:            rootCAPool,
-		InsecureSkipVerify: true, // This is only used for testing
-	}
+	sslConfig.InsecureSkipVerify = true // This is only used for testing
 
 	// Initialize connection pool
 	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConfig, nebulaLog)
@@ -181,16 +137,10 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	checkResultSet(t, "drop space", resp)
 }
 
-func openAndReadFile(t *testing.T, path string) []byte {
-	// open file
-	f, err := os.Open(path)
+func openAndReadFileTest(t *testing.T, path string) []byte {
+	b, err := openAndReadFile(path)
 	if err != nil {
-		t.Fatalf(fmt.Sprintf("unable to open test file %s: %s", path, err))
-	}
-	// read file
-	b, err := ioutil.ReadAll(f)
-	if err != nil {
-		t.Fatalf(fmt.Sprintf("unable to ReadAll of test file %s: %s", path, err))
+		t.Fatal(err)
 	}
 	return b
 }
