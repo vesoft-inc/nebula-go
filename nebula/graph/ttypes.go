@@ -33,7 +33,7 @@ type ProfilingStats struct {
   Rows int64 `thrift:"rows,1,required" db:"rows" json:"rows"`
   ExecDurationInUs int64 `thrift:"exec_duration_in_us,2,required" db:"exec_duration_in_us" json:"exec_duration_in_us"`
   TotalDurationInUs int64 `thrift:"total_duration_in_us,3,required" db:"total_duration_in_us" json:"total_duration_in_us"`
-  OtherStats map[string][]byte `thrift:"other_stats,4" db:"other_stats" json:"other_stats,omitempty"`
+  OtherStats map[string][]byte `thrift:"other_stats,4,optional" db:"other_stats" json:"other_stats,omitempty"`
 }
 
 func NewProfilingStats() *ProfilingStats {
@@ -59,6 +59,65 @@ func (p *ProfilingStats) GetOtherStats() map[string][]byte {
 }
 func (p *ProfilingStats) IsSetOtherStats() bool {
   return p != nil && p.OtherStats != nil
+}
+
+type ProfilingStatsBuilder struct {
+  obj *ProfilingStats
+}
+
+func NewProfilingStatsBuilder() *ProfilingStatsBuilder{
+  return &ProfilingStatsBuilder{
+    obj: NewProfilingStats(),
+  }
+}
+
+func (p ProfilingStatsBuilder) Emit() *ProfilingStats{
+  return &ProfilingStats{
+    Rows: p.obj.Rows,
+    ExecDurationInUs: p.obj.ExecDurationInUs,
+    TotalDurationInUs: p.obj.TotalDurationInUs,
+    OtherStats: p.obj.OtherStats,
+  }
+}
+
+func (p *ProfilingStatsBuilder) Rows(rows int64) *ProfilingStatsBuilder {
+  p.obj.Rows = rows
+  return p
+}
+
+func (p *ProfilingStatsBuilder) ExecDurationInUs(execDurationInUs int64) *ProfilingStatsBuilder {
+  p.obj.ExecDurationInUs = execDurationInUs
+  return p
+}
+
+func (p *ProfilingStatsBuilder) TotalDurationInUs(totalDurationInUs int64) *ProfilingStatsBuilder {
+  p.obj.TotalDurationInUs = totalDurationInUs
+  return p
+}
+
+func (p *ProfilingStatsBuilder) OtherStats(otherStats map[string][]byte) *ProfilingStatsBuilder {
+  p.obj.OtherStats = otherStats
+  return p
+}
+
+func (p *ProfilingStats) SetRows(rows int64) *ProfilingStats {
+  p.Rows = rows
+  return p
+}
+
+func (p *ProfilingStats) SetExecDurationInUs(execDurationInUs int64) *ProfilingStats {
+  p.ExecDurationInUs = execDurationInUs
+  return p
+}
+
+func (p *ProfilingStats) SetTotalDurationInUs(totalDurationInUs int64) *ProfilingStats {
+  p.TotalDurationInUs = totalDurationInUs
+  return p
+}
+
+func (p *ProfilingStats) SetOtherStats(otherStats map[string][]byte) *ProfilingStats {
+  p.OtherStats = otherStats
+  return p
 }
 
 func (p *ProfilingStats) Read(iprot thrift.Protocol) error {
@@ -122,28 +181,28 @@ func (p *ProfilingStats) Read(iprot thrift.Protocol) error {
 
 func (p *ProfilingStats)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Rows = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.Rows = v
+  }
   return nil
 }
 
 func (p *ProfilingStats)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.ExecDurationInUs = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.ExecDurationInUs = v
+  }
   return nil
 }
 
 func (p *ProfilingStats)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  p.TotalDurationInUs = v
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.TotalDurationInUs = v
+  }
   return nil
 }
 
@@ -155,18 +214,18 @@ func (p *ProfilingStats)  ReadField4(iprot thrift.Protocol) error {
   tMap := make(map[string][]byte, size)
   p.OtherStats =  tMap
   for i := 0; i < size; i ++ {
-var _key1 string
+    var _key1 string
     if v, err := iprot.ReadString(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _key1 = v
-}
-var _val2 []byte
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _key1 = v
+    }
+    var _val2 []byte
     if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _val2 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _val2 = v
+    }
     p.OtherStats[_key1] = _val2
   }
   if err := iprot.ReadMapEnd(); err != nil {
@@ -273,6 +332,43 @@ func (p *PlanNodeBranchInfo) GetIsDoBranch() bool {
 func (p *PlanNodeBranchInfo) GetConditionNodeID() int64 {
   return p.ConditionNodeID
 }
+type PlanNodeBranchInfoBuilder struct {
+  obj *PlanNodeBranchInfo
+}
+
+func NewPlanNodeBranchInfoBuilder() *PlanNodeBranchInfoBuilder{
+  return &PlanNodeBranchInfoBuilder{
+    obj: NewPlanNodeBranchInfo(),
+  }
+}
+
+func (p PlanNodeBranchInfoBuilder) Emit() *PlanNodeBranchInfo{
+  return &PlanNodeBranchInfo{
+    IsDoBranch: p.obj.IsDoBranch,
+    ConditionNodeID: p.obj.ConditionNodeID,
+  }
+}
+
+func (p *PlanNodeBranchInfoBuilder) IsDoBranch(isDoBranch bool) *PlanNodeBranchInfoBuilder {
+  p.obj.IsDoBranch = isDoBranch
+  return p
+}
+
+func (p *PlanNodeBranchInfoBuilder) ConditionNodeID(conditionNodeID int64) *PlanNodeBranchInfoBuilder {
+  p.obj.ConditionNodeID = conditionNodeID
+  return p
+}
+
+func (p *PlanNodeBranchInfo) SetIsDoBranch(isDoBranch bool) *PlanNodeBranchInfo {
+  p.IsDoBranch = isDoBranch
+  return p
+}
+
+func (p *PlanNodeBranchInfo) SetConditionNodeID(conditionNodeID int64) *PlanNodeBranchInfo {
+  p.ConditionNodeID = conditionNodeID
+  return p
+}
+
 func (p *PlanNodeBranchInfo) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -321,19 +417,19 @@ func (p *PlanNodeBranchInfo) Read(iprot thrift.Protocol) error {
 
 func (p *PlanNodeBranchInfo)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.IsDoBranch = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.IsDoBranch = v
+  }
   return nil
 }
 
 func (p *PlanNodeBranchInfo)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.ConditionNodeID = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.ConditionNodeID = v
+  }
   return nil
 }
 
@@ -399,6 +495,43 @@ func (p *Pair) GetKey() []byte {
 func (p *Pair) GetValue() []byte {
   return p.Value
 }
+type PairBuilder struct {
+  obj *Pair
+}
+
+func NewPairBuilder() *PairBuilder{
+  return &PairBuilder{
+    obj: NewPair(),
+  }
+}
+
+func (p PairBuilder) Emit() *Pair{
+  return &Pair{
+    Key: p.obj.Key,
+    Value: p.obj.Value,
+  }
+}
+
+func (p *PairBuilder) Key(key []byte) *PairBuilder {
+  p.obj.Key = key
+  return p
+}
+
+func (p *PairBuilder) Value(value []byte) *PairBuilder {
+  p.obj.Value = value
+  return p
+}
+
+func (p *Pair) SetKey(key []byte) *Pair {
+  p.Key = key
+  return p
+}
+
+func (p *Pair) SetValue(value []byte) *Pair {
+  p.Value = value
+  return p
+}
+
 func (p *Pair) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -447,19 +580,19 @@ func (p *Pair) Read(iprot thrift.Protocol) error {
 
 func (p *Pair)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Key = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.Key = v
+  }
   return nil
 }
 
 func (p *Pair)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Value = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Value = v
+  }
   return nil
 }
 
@@ -517,10 +650,10 @@ type PlanNodeDescription struct {
   Name []byte `thrift:"name,1,required" db:"name" json:"name"`
   Id int64 `thrift:"id,2,required" db:"id" json:"id"`
   OutputVar []byte `thrift:"output_var,3,required" db:"output_var" json:"output_var"`
-  Description []*Pair `thrift:"description,4" db:"description" json:"description,omitempty"`
-  Profiles []*ProfilingStats `thrift:"profiles,5" db:"profiles" json:"profiles,omitempty"`
-  BranchInfo *PlanNodeBranchInfo `thrift:"branch_info,6" db:"branch_info" json:"branch_info,omitempty"`
-  Dependencies []int64 `thrift:"dependencies,7" db:"dependencies" json:"dependencies,omitempty"`
+  Description []*Pair `thrift:"description,4,optional" db:"description" json:"description,omitempty"`
+  Profiles []*ProfilingStats `thrift:"profiles,5,optional" db:"profiles" json:"profiles,omitempty"`
+  BranchInfo *PlanNodeBranchInfo `thrift:"branch_info,6,optional" db:"branch_info" json:"branch_info,omitempty"`
+  Dependencies []int64 `thrift:"dependencies,7,optional" db:"dependencies" json:"dependencies,omitempty"`
 }
 
 func NewPlanNodeDescription() *PlanNodeDescription {
@@ -575,6 +708,98 @@ func (p *PlanNodeDescription) IsSetBranchInfo() bool {
 
 func (p *PlanNodeDescription) IsSetDependencies() bool {
   return p != nil && p.Dependencies != nil
+}
+
+type PlanNodeDescriptionBuilder struct {
+  obj *PlanNodeDescription
+}
+
+func NewPlanNodeDescriptionBuilder() *PlanNodeDescriptionBuilder{
+  return &PlanNodeDescriptionBuilder{
+    obj: NewPlanNodeDescription(),
+  }
+}
+
+func (p PlanNodeDescriptionBuilder) Emit() *PlanNodeDescription{
+  return &PlanNodeDescription{
+    Name: p.obj.Name,
+    Id: p.obj.Id,
+    OutputVar: p.obj.OutputVar,
+    Description: p.obj.Description,
+    Profiles: p.obj.Profiles,
+    BranchInfo: p.obj.BranchInfo,
+    Dependencies: p.obj.Dependencies,
+  }
+}
+
+func (p *PlanNodeDescriptionBuilder) Name(name []byte) *PlanNodeDescriptionBuilder {
+  p.obj.Name = name
+  return p
+}
+
+func (p *PlanNodeDescriptionBuilder) Id(id int64) *PlanNodeDescriptionBuilder {
+  p.obj.Id = id
+  return p
+}
+
+func (p *PlanNodeDescriptionBuilder) OutputVar(outputVar []byte) *PlanNodeDescriptionBuilder {
+  p.obj.OutputVar = outputVar
+  return p
+}
+
+func (p *PlanNodeDescriptionBuilder) Description(description []*Pair) *PlanNodeDescriptionBuilder {
+  p.obj.Description = description
+  return p
+}
+
+func (p *PlanNodeDescriptionBuilder) Profiles(profiles []*ProfilingStats) *PlanNodeDescriptionBuilder {
+  p.obj.Profiles = profiles
+  return p
+}
+
+func (p *PlanNodeDescriptionBuilder) BranchInfo(branchInfo *PlanNodeBranchInfo) *PlanNodeDescriptionBuilder {
+  p.obj.BranchInfo = branchInfo
+  return p
+}
+
+func (p *PlanNodeDescriptionBuilder) Dependencies(dependencies []int64) *PlanNodeDescriptionBuilder {
+  p.obj.Dependencies = dependencies
+  return p
+}
+
+func (p *PlanNodeDescription) SetName(name []byte) *PlanNodeDescription {
+  p.Name = name
+  return p
+}
+
+func (p *PlanNodeDescription) SetId(id int64) *PlanNodeDescription {
+  p.Id = id
+  return p
+}
+
+func (p *PlanNodeDescription) SetOutputVar(outputVar []byte) *PlanNodeDescription {
+  p.OutputVar = outputVar
+  return p
+}
+
+func (p *PlanNodeDescription) SetDescription(description []*Pair) *PlanNodeDescription {
+  p.Description = description
+  return p
+}
+
+func (p *PlanNodeDescription) SetProfiles(profiles []*ProfilingStats) *PlanNodeDescription {
+  p.Profiles = profiles
+  return p
+}
+
+func (p *PlanNodeDescription) SetBranchInfo(branchInfo *PlanNodeBranchInfo) *PlanNodeDescription {
+  p.BranchInfo = branchInfo
+  return p
+}
+
+func (p *PlanNodeDescription) SetDependencies(dependencies []int64) *PlanNodeDescription {
+  p.Dependencies = dependencies
+  return p
 }
 
 func (p *PlanNodeDescription) Read(iprot thrift.Protocol) error {
@@ -650,28 +875,28 @@ func (p *PlanNodeDescription) Read(iprot thrift.Protocol) error {
 
 func (p *PlanNodeDescription)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Name = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.Name = v
+  }
   return nil
 }
 
 func (p *PlanNodeDescription)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Id = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Id = v
+  }
   return nil
 }
 
 func (p *PlanNodeDescription)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  p.OutputVar = v
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.OutputVar = v
+  }
   return nil
 }
 
@@ -731,12 +956,12 @@ func (p *PlanNodeDescription)  ReadField7(iprot thrift.Protocol) error {
   tSlice := make([]int64, 0, size)
   p.Dependencies =  tSlice
   for i := 0; i < size; i ++ {
-var _elem5 int64
+    var _elem5 int64
     if v, err := iprot.ReadI64(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _elem5 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _elem5 = v
+    }
     p.Dependencies = append(p.Dependencies, _elem5)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -919,6 +1144,65 @@ func (p *PlanDescription) GetFormat() []byte {
 func (p *PlanDescription) GetOptimizeTimeInUs() int32 {
   return p.OptimizeTimeInUs
 }
+type PlanDescriptionBuilder struct {
+  obj *PlanDescription
+}
+
+func NewPlanDescriptionBuilder() *PlanDescriptionBuilder{
+  return &PlanDescriptionBuilder{
+    obj: NewPlanDescription(),
+  }
+}
+
+func (p PlanDescriptionBuilder) Emit() *PlanDescription{
+  return &PlanDescription{
+    PlanNodeDescs: p.obj.PlanNodeDescs,
+    NodeIndexMap: p.obj.NodeIndexMap,
+    Format: p.obj.Format,
+    OptimizeTimeInUs: p.obj.OptimizeTimeInUs,
+  }
+}
+
+func (p *PlanDescriptionBuilder) PlanNodeDescs(planNodeDescs []*PlanNodeDescription) *PlanDescriptionBuilder {
+  p.obj.PlanNodeDescs = planNodeDescs
+  return p
+}
+
+func (p *PlanDescriptionBuilder) NodeIndexMap(nodeIndexMap map[int64]int64) *PlanDescriptionBuilder {
+  p.obj.NodeIndexMap = nodeIndexMap
+  return p
+}
+
+func (p *PlanDescriptionBuilder) Format(format []byte) *PlanDescriptionBuilder {
+  p.obj.Format = format
+  return p
+}
+
+func (p *PlanDescriptionBuilder) OptimizeTimeInUs(optimizeTimeInUs int32) *PlanDescriptionBuilder {
+  p.obj.OptimizeTimeInUs = optimizeTimeInUs
+  return p
+}
+
+func (p *PlanDescription) SetPlanNodeDescs(planNodeDescs []*PlanNodeDescription) *PlanDescription {
+  p.PlanNodeDescs = planNodeDescs
+  return p
+}
+
+func (p *PlanDescription) SetNodeIndexMap(nodeIndexMap map[int64]int64) *PlanDescription {
+  p.NodeIndexMap = nodeIndexMap
+  return p
+}
+
+func (p *PlanDescription) SetFormat(format []byte) *PlanDescription {
+  p.Format = format
+  return p
+}
+
+func (p *PlanDescription) SetOptimizeTimeInUs(optimizeTimeInUs int32) *PlanDescription {
+  p.OptimizeTimeInUs = optimizeTimeInUs
+  return p
+}
+
 func (p *PlanDescription) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1011,18 +1295,18 @@ func (p *PlanDescription)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[int64]int64, size)
   p.NodeIndexMap =  tMap
   for i := 0; i < size; i ++ {
-var _key7 int64
+    var _key7 int64
     if v, err := iprot.ReadI64(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _key7 = v
-}
-var _val8 int64
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _key7 = v
+    }
+    var _val8 int64
     if v, err := iprot.ReadI64(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _val8 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _val8 = v
+    }
     p.NodeIndexMap[_key7] = _val8
   }
   if err := iprot.ReadMapEnd(); err != nil {
@@ -1033,19 +1317,19 @@ var _val8 int64
 
 func (p *PlanDescription)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  p.Format = v
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.Format = v
+  }
   return nil
 }
 
 func (p *PlanDescription)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  p.OptimizeTimeInUs = v
-}
+    return thrift.PrependError("error reading field 4: ", err)
+  } else {
+    p.OptimizeTimeInUs = v
+  }
   return nil
 }
 
@@ -1145,11 +1429,11 @@ func (p *PlanDescription) String() string {
 type ExecutionResponse struct {
   ErrorCode nebula0.ErrorCode `thrift:"error_code,1,required" db:"error_code" json:"error_code"`
   LatencyInUs int64 `thrift:"latency_in_us,2,required" db:"latency_in_us" json:"latency_in_us"`
-  Data *nebula0.DataSet `thrift:"data,3" db:"data" json:"data,omitempty"`
-  SpaceName []byte `thrift:"space_name,4" db:"space_name" json:"space_name,omitempty"`
-  ErrorMsg []byte `thrift:"error_msg,5" db:"error_msg" json:"error_msg,omitempty"`
-  PlanDesc *PlanDescription `thrift:"plan_desc,6" db:"plan_desc" json:"plan_desc,omitempty"`
-  Comment []byte `thrift:"comment,7" db:"comment" json:"comment,omitempty"`
+  Data *nebula0.DataSet `thrift:"data,3,optional" db:"data" json:"data,omitempty"`
+  SpaceName []byte `thrift:"space_name,4,optional" db:"space_name" json:"space_name,omitempty"`
+  ErrorMsg []byte `thrift:"error_msg,5,optional" db:"error_msg" json:"error_msg,omitempty"`
+  PlanDesc *PlanDescription `thrift:"plan_desc,6,optional" db:"plan_desc" json:"plan_desc,omitempty"`
+  Comment []byte `thrift:"comment,7,optional" db:"comment" json:"comment,omitempty"`
 }
 
 func NewExecutionResponse() *ExecutionResponse {
@@ -1211,6 +1495,98 @@ func (p *ExecutionResponse) IsSetPlanDesc() bool {
 
 func (p *ExecutionResponse) IsSetComment() bool {
   return p != nil && p.Comment != nil
+}
+
+type ExecutionResponseBuilder struct {
+  obj *ExecutionResponse
+}
+
+func NewExecutionResponseBuilder() *ExecutionResponseBuilder{
+  return &ExecutionResponseBuilder{
+    obj: NewExecutionResponse(),
+  }
+}
+
+func (p ExecutionResponseBuilder) Emit() *ExecutionResponse{
+  return &ExecutionResponse{
+    ErrorCode: p.obj.ErrorCode,
+    LatencyInUs: p.obj.LatencyInUs,
+    Data: p.obj.Data,
+    SpaceName: p.obj.SpaceName,
+    ErrorMsg: p.obj.ErrorMsg,
+    PlanDesc: p.obj.PlanDesc,
+    Comment: p.obj.Comment,
+  }
+}
+
+func (e *ExecutionResponseBuilder) ErrorCode(errorCode nebula0.ErrorCode) *ExecutionResponseBuilder {
+  e.obj.ErrorCode = errorCode
+  return e
+}
+
+func (e *ExecutionResponseBuilder) LatencyInUs(latencyInUs int64) *ExecutionResponseBuilder {
+  e.obj.LatencyInUs = latencyInUs
+  return e
+}
+
+func (e *ExecutionResponseBuilder) Data(data *nebula0.DataSet) *ExecutionResponseBuilder {
+  e.obj.Data = data
+  return e
+}
+
+func (e *ExecutionResponseBuilder) SpaceName(spaceName []byte) *ExecutionResponseBuilder {
+  e.obj.SpaceName = spaceName
+  return e
+}
+
+func (e *ExecutionResponseBuilder) ErrorMsg(errorMsg []byte) *ExecutionResponseBuilder {
+  e.obj.ErrorMsg = errorMsg
+  return e
+}
+
+func (e *ExecutionResponseBuilder) PlanDesc(planDesc *PlanDescription) *ExecutionResponseBuilder {
+  e.obj.PlanDesc = planDesc
+  return e
+}
+
+func (e *ExecutionResponseBuilder) Comment(comment []byte) *ExecutionResponseBuilder {
+  e.obj.Comment = comment
+  return e
+}
+
+func (e *ExecutionResponse) SetErrorCode(errorCode nebula0.ErrorCode) *ExecutionResponse {
+  e.ErrorCode = errorCode
+  return e
+}
+
+func (e *ExecutionResponse) SetLatencyInUs(latencyInUs int64) *ExecutionResponse {
+  e.LatencyInUs = latencyInUs
+  return e
+}
+
+func (e *ExecutionResponse) SetData(data *nebula0.DataSet) *ExecutionResponse {
+  e.Data = data
+  return e
+}
+
+func (e *ExecutionResponse) SetSpaceName(spaceName []byte) *ExecutionResponse {
+  e.SpaceName = spaceName
+  return e
+}
+
+func (e *ExecutionResponse) SetErrorMsg(errorMsg []byte) *ExecutionResponse {
+  e.ErrorMsg = errorMsg
+  return e
+}
+
+func (e *ExecutionResponse) SetPlanDesc(planDesc *PlanDescription) *ExecutionResponse {
+  e.PlanDesc = planDesc
+  return e
+}
+
+func (e *ExecutionResponse) SetComment(comment []byte) *ExecutionResponse {
+  e.Comment = comment
+  return e
 }
 
 func (p *ExecutionResponse) Read(iprot thrift.Protocol) error {
@@ -1281,20 +1657,20 @@ func (p *ExecutionResponse) Read(iprot thrift.Protocol) error {
 
 func (p *ExecutionResponse)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.ErrorCode(v)
-  p.ErrorCode = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.ErrorCode(v)
+    p.ErrorCode = temp
+  }
   return nil
 }
 
 func (p *ExecutionResponse)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.LatencyInUs = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.LatencyInUs = v
+  }
   return nil
 }
 
@@ -1308,19 +1684,19 @@ func (p *ExecutionResponse)  ReadField3(iprot thrift.Protocol) error {
 
 func (p *ExecutionResponse)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  p.SpaceName = v
-}
+    return thrift.PrependError("error reading field 4: ", err)
+  } else {
+    p.SpaceName = v
+  }
   return nil
 }
 
 func (p *ExecutionResponse)  ReadField5(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 5: ", err)
-} else {
-  p.ErrorMsg = v
-}
+    return thrift.PrependError("error reading field 5: ", err)
+  } else {
+    p.ErrorMsg = v
+  }
   return nil
 }
 
@@ -1334,10 +1710,10 @@ func (p *ExecutionResponse)  ReadField6(iprot thrift.Protocol) error {
 
 func (p *ExecutionResponse)  ReadField7(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 7: ", err)
-} else {
-  p.Comment = v
-}
+    return thrift.PrependError("error reading field 7: ", err)
+  } else {
+    p.Comment = v
+  }
   return nil
 }
 
@@ -1473,10 +1849,10 @@ func (p *ExecutionResponse) String() string {
 //  - TimeZoneName
 type AuthResponse struct {
   ErrorCode nebula0.ErrorCode `thrift:"error_code,1,required" db:"error_code" json:"error_code"`
-  ErrorMsg []byte `thrift:"error_msg,2" db:"error_msg" json:"error_msg,omitempty"`
-  SessionID *int64 `thrift:"session_id,3" db:"session_id" json:"session_id,omitempty"`
-  TimeZoneOffsetSeconds *int32 `thrift:"time_zone_offset_seconds,4" db:"time_zone_offset_seconds" json:"time_zone_offset_seconds,omitempty"`
-  TimeZoneName []byte `thrift:"time_zone_name,5" db:"time_zone_name" json:"time_zone_name,omitempty"`
+  ErrorMsg []byte `thrift:"error_msg,2,optional" db:"error_msg" json:"error_msg,omitempty"`
+  SessionID *int64 `thrift:"session_id,3,optional" db:"session_id" json:"session_id,omitempty"`
+  TimeZoneOffsetSeconds *int32 `thrift:"time_zone_offset_seconds,4,optional" db:"time_zone_offset_seconds" json:"time_zone_offset_seconds,omitempty"`
+  TimeZoneName []byte `thrift:"time_zone_name,5,optional" db:"time_zone_name" json:"time_zone_name,omitempty"`
 }
 
 func NewAuthResponse() *AuthResponse {
@@ -1525,6 +1901,76 @@ func (p *AuthResponse) IsSetTimeZoneOffsetSeconds() bool {
 
 func (p *AuthResponse) IsSetTimeZoneName() bool {
   return p != nil && p.TimeZoneName != nil
+}
+
+type AuthResponseBuilder struct {
+  obj *AuthResponse
+}
+
+func NewAuthResponseBuilder() *AuthResponseBuilder{
+  return &AuthResponseBuilder{
+    obj: NewAuthResponse(),
+  }
+}
+
+func (p AuthResponseBuilder) Emit() *AuthResponse{
+  return &AuthResponse{
+    ErrorCode: p.obj.ErrorCode,
+    ErrorMsg: p.obj.ErrorMsg,
+    SessionID: p.obj.SessionID,
+    TimeZoneOffsetSeconds: p.obj.TimeZoneOffsetSeconds,
+    TimeZoneName: p.obj.TimeZoneName,
+  }
+}
+
+func (a *AuthResponseBuilder) ErrorCode(errorCode nebula0.ErrorCode) *AuthResponseBuilder {
+  a.obj.ErrorCode = errorCode
+  return a
+}
+
+func (a *AuthResponseBuilder) ErrorMsg(errorMsg []byte) *AuthResponseBuilder {
+  a.obj.ErrorMsg = errorMsg
+  return a
+}
+
+func (a *AuthResponseBuilder) SessionID(sessionID *int64) *AuthResponseBuilder {
+  a.obj.SessionID = sessionID
+  return a
+}
+
+func (a *AuthResponseBuilder) TimeZoneOffsetSeconds(timeZoneOffsetSeconds *int32) *AuthResponseBuilder {
+  a.obj.TimeZoneOffsetSeconds = timeZoneOffsetSeconds
+  return a
+}
+
+func (a *AuthResponseBuilder) TimeZoneName(timeZoneName []byte) *AuthResponseBuilder {
+  a.obj.TimeZoneName = timeZoneName
+  return a
+}
+
+func (a *AuthResponse) SetErrorCode(errorCode nebula0.ErrorCode) *AuthResponse {
+  a.ErrorCode = errorCode
+  return a
+}
+
+func (a *AuthResponse) SetErrorMsg(errorMsg []byte) *AuthResponse {
+  a.ErrorMsg = errorMsg
+  return a
+}
+
+func (a *AuthResponse) SetSessionID(sessionID *int64) *AuthResponse {
+  a.SessionID = sessionID
+  return a
+}
+
+func (a *AuthResponse) SetTimeZoneOffsetSeconds(timeZoneOffsetSeconds *int32) *AuthResponse {
+  a.TimeZoneOffsetSeconds = timeZoneOffsetSeconds
+  return a
+}
+
+func (a *AuthResponse) SetTimeZoneName(timeZoneName []byte) *AuthResponse {
+  a.TimeZoneName = timeZoneName
+  return a
 }
 
 func (p *AuthResponse) Read(iprot thrift.Protocol) error {
@@ -1582,47 +2028,47 @@ func (p *AuthResponse) Read(iprot thrift.Protocol) error {
 
 func (p *AuthResponse)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.ErrorCode(v)
-  p.ErrorCode = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.ErrorCode(v)
+    p.ErrorCode = temp
+  }
   return nil
 }
 
 func (p *AuthResponse)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.ErrorMsg = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.ErrorMsg = v
+  }
   return nil
 }
 
 func (p *AuthResponse)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  p.SessionID = &v
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.SessionID = &v
+  }
   return nil
 }
 
 func (p *AuthResponse)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  p.TimeZoneOffsetSeconds = &v
-}
+    return thrift.PrependError("error reading field 4: ", err)
+  } else {
+    p.TimeZoneOffsetSeconds = &v
+  }
   return nil
 }
 
 func (p *AuthResponse)  ReadField5(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 5: ", err)
-} else {
-  p.TimeZoneName = v
-}
+    return thrift.PrependError("error reading field 5: ", err)
+  } else {
+    p.TimeZoneName = v
+  }
   return nil
 }
 
@@ -1727,7 +2173,7 @@ func (p *AuthResponse) String() string {
 //  - ErrorMsg
 type VerifyClientVersionResp struct {
   ErrorCode nebula0.ErrorCode `thrift:"error_code,1,required" db:"error_code" json:"error_code"`
-  ErrorMsg []byte `thrift:"error_msg,2" db:"error_msg" json:"error_msg,omitempty"`
+  ErrorMsg []byte `thrift:"error_msg,2,optional" db:"error_msg" json:"error_msg,omitempty"`
 }
 
 func NewVerifyClientVersionResp() *VerifyClientVersionResp {
@@ -1745,6 +2191,43 @@ func (p *VerifyClientVersionResp) GetErrorMsg() []byte {
 }
 func (p *VerifyClientVersionResp) IsSetErrorMsg() bool {
   return p != nil && p.ErrorMsg != nil
+}
+
+type VerifyClientVersionRespBuilder struct {
+  obj *VerifyClientVersionResp
+}
+
+func NewVerifyClientVersionRespBuilder() *VerifyClientVersionRespBuilder{
+  return &VerifyClientVersionRespBuilder{
+    obj: NewVerifyClientVersionResp(),
+  }
+}
+
+func (p VerifyClientVersionRespBuilder) Emit() *VerifyClientVersionResp{
+  return &VerifyClientVersionResp{
+    ErrorCode: p.obj.ErrorCode,
+    ErrorMsg: p.obj.ErrorMsg,
+  }
+}
+
+func (v *VerifyClientVersionRespBuilder) ErrorCode(errorCode nebula0.ErrorCode) *VerifyClientVersionRespBuilder {
+  v.obj.ErrorCode = errorCode
+  return v
+}
+
+func (v *VerifyClientVersionRespBuilder) ErrorMsg(errorMsg []byte) *VerifyClientVersionRespBuilder {
+  v.obj.ErrorMsg = errorMsg
+  return v
+}
+
+func (v *VerifyClientVersionResp) SetErrorCode(errorCode nebula0.ErrorCode) *VerifyClientVersionResp {
+  v.ErrorCode = errorCode
+  return v
+}
+
+func (v *VerifyClientVersionResp) SetErrorMsg(errorMsg []byte) *VerifyClientVersionResp {
+  v.ErrorMsg = errorMsg
+  return v
 }
 
 func (p *VerifyClientVersionResp) Read(iprot thrift.Protocol) error {
@@ -1790,20 +2273,20 @@ func (p *VerifyClientVersionResp) Read(iprot thrift.Protocol) error {
 
 func (p *VerifyClientVersionResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.ErrorCode(v)
-  p.ErrorCode = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.ErrorCode(v)
+    p.ErrorCode = temp
+  }
   return nil
 }
 
 func (p *VerifyClientVersionResp)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.ErrorMsg = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.ErrorMsg = v
+  }
   return nil
 }
 
@@ -1867,6 +2350,32 @@ func NewVerifyClientVersionReq() *VerifyClientVersionReq {
 func (p *VerifyClientVersionReq) GetVersion() []byte {
   return p.Version
 }
+type VerifyClientVersionReqBuilder struct {
+  obj *VerifyClientVersionReq
+}
+
+func NewVerifyClientVersionReqBuilder() *VerifyClientVersionReqBuilder{
+  return &VerifyClientVersionReqBuilder{
+    obj: NewVerifyClientVersionReq(),
+  }
+}
+
+func (p VerifyClientVersionReqBuilder) Emit() *VerifyClientVersionReq{
+  return &VerifyClientVersionReq{
+    Version: p.obj.Version,
+  }
+}
+
+func (v *VerifyClientVersionReqBuilder) Version(version []byte) *VerifyClientVersionReqBuilder {
+  v.obj.Version = version
+  return v
+}
+
+func (v *VerifyClientVersionReq) SetVersion(version []byte) *VerifyClientVersionReq {
+  v.Version = version
+  return v
+}
+
 func (p *VerifyClientVersionReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1906,10 +2415,10 @@ func (p *VerifyClientVersionReq) Read(iprot thrift.Protocol) error {
 
 func (p *VerifyClientVersionReq)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Version = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.Version = v
+  }
   return nil
 }
 

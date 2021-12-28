@@ -172,6 +172,9 @@ type MetaService interface {
   HeartBeat(ctx context.Context, req *HBReq) (_r *HBResp, err error)
   // Parameters:
   //  - Req
+  AgentHeartbeat(ctx context.Context, req *AgentHBReq) (_r *AgentHBResp, err error)
+  // Parameters:
+  //  - Req
   RegConfig(ctx context.Context, req *RegConfigReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
@@ -212,12 +215,6 @@ type MetaService interface {
   // Parameters:
   //  - Req
   ListZones(ctx context.Context, req *ListZonesReq) (_r *ListZonesResp, err error)
-  // Parameters:
-  //  - Req
-  CreateBackup(ctx context.Context, req *CreateBackupReq) (_r *CreateBackupResp, err error)
-  // Parameters:
-  //  - Req
-  RestoreMeta(ctx context.Context, req *RestoreMetaReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
   AddListener(ctx context.Context, req *AddListenerReq) (_r *ExecResp, err error)
@@ -269,6 +266,12 @@ type MetaService interface {
   // Parameters:
   //  - Req
   ReportTaskFinish(ctx context.Context, req *ReportTaskReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  CreateBackup(ctx context.Context, req *CreateBackupReq) (_r *CreateBackupResp, err error)
+  // Parameters:
+  //  - Req
+  RestoreMeta(ctx context.Context, req *RestoreMetaReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
   ListCluster(ctx context.Context, req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error)
@@ -431,6 +434,9 @@ type MetaServiceClientInterface interface {
   HeartBeat(req *HBReq) (_r *HBResp, err error)
   // Parameters:
   //  - Req
+  AgentHeartbeat(req *AgentHBReq) (_r *AgentHBResp, err error)
+  // Parameters:
+  //  - Req
   RegConfig(req *RegConfigReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
@@ -471,12 +477,6 @@ type MetaServiceClientInterface interface {
   // Parameters:
   //  - Req
   ListZones(req *ListZonesReq) (_r *ListZonesResp, err error)
-  // Parameters:
-  //  - Req
-  CreateBackup(req *CreateBackupReq) (_r *CreateBackupResp, err error)
-  // Parameters:
-  //  - Req
-  RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
   AddListener(req *AddListenerReq) (_r *ExecResp, err error)
@@ -528,6 +528,12 @@ type MetaServiceClientInterface interface {
   // Parameters:
   //  - Req
   ReportTaskFinish(req *ReportTaskReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  CreateBackup(req *CreateBackupReq) (_r *CreateBackupResp, err error)
+  // Parameters:
+  //  - Req
+  RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
   ListCluster(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error)
@@ -1550,6 +1556,26 @@ func (p *MetaServiceClient) recvHeartBeat() (value *HBResp, err error) {
 
 // Parameters:
 //  - Req
+func (p *MetaServiceClient) AgentHeartbeat(req *AgentHBReq) (_r *AgentHBResp, err error) {
+  args := MetaServiceAgentHeartbeatArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("agentHeartbeat", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAgentHeartbeat()
+}
+
+
+func (p *MetaServiceClient) recvAgentHeartbeat() (value *AgentHBResp, err error) {
+  var result MetaServiceAgentHeartbeatResult
+  err = p.CC.RecvMsg("agentHeartbeat", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
 func (p *MetaServiceClient) RegConfig(req *RegConfigReq) (_r *ExecResp, err error) {
   args := MetaServiceRegConfigArgs{
     Req : req,
@@ -1823,46 +1849,6 @@ func (p *MetaServiceClient) ListZones(req *ListZonesReq) (_r *ListZonesResp, err
 func (p *MetaServiceClient) recvListZones() (value *ListZonesResp, err error) {
   var result MetaServiceListZonesResult
   err = p.CC.RecvMsg("listZones", &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
-func (p *MetaServiceClient) CreateBackup(req *CreateBackupReq) (_r *CreateBackupResp, err error) {
-  args := MetaServiceCreateBackupArgs{
-    Req : req,
-  }
-  err = p.CC.SendMsg("createBackup", &args, thrift.CALL)
-  if err != nil { return }
-  return p.recvCreateBackup()
-}
-
-
-func (p *MetaServiceClient) recvCreateBackup() (value *CreateBackupResp, err error) {
-  var result MetaServiceCreateBackupResult
-  err = p.CC.RecvMsg("createBackup", &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
-func (p *MetaServiceClient) RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err error) {
-  args := MetaServiceRestoreMetaArgs{
-    Req : req,
-  }
-  err = p.CC.SendMsg("restoreMeta", &args, thrift.CALL)
-  if err != nil { return }
-  return p.recvRestoreMeta()
-}
-
-
-func (p *MetaServiceClient) recvRestoreMeta() (value *ExecResp, err error) {
-  var result MetaServiceRestoreMetaResult
-  err = p.CC.RecvMsg("restoreMeta", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -2203,6 +2189,46 @@ func (p *MetaServiceClient) ReportTaskFinish(req *ReportTaskReq) (_r *ExecResp, 
 func (p *MetaServiceClient) recvReportTaskFinish() (value *ExecResp, err error) {
   var result MetaServiceReportTaskFinishResult
   err = p.CC.RecvMsg("reportTaskFinish", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) CreateBackup(req *CreateBackupReq) (_r *CreateBackupResp, err error) {
+  args := MetaServiceCreateBackupArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("createBackup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateBackup()
+}
+
+
+func (p *MetaServiceClient) recvCreateBackup() (value *CreateBackupResp, err error) {
+  var result MetaServiceCreateBackupResult
+  err = p.CC.RecvMsg("createBackup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err error) {
+  args := MetaServiceRestoreMetaArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("restoreMeta", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRestoreMeta()
+}
+
+
+func (p *MetaServiceClient) recvRestoreMeta() (value *ExecResp, err error) {
+  var result MetaServiceRestoreMetaResult
+  err = p.CC.RecvMsg("restoreMeta", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -3385,6 +3411,28 @@ func (p *MetaServiceThreadsafeClient) recvHeartBeat() (value *HBResp, err error)
 
 // Parameters:
 //  - Req
+func (p *MetaServiceThreadsafeClient) AgentHeartbeat(req *AgentHBReq) (_r *AgentHBResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := MetaServiceAgentHeartbeatArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("agentHeartbeat", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAgentHeartbeat()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvAgentHeartbeat() (value *AgentHBResp, err error) {
+  var result MetaServiceAgentHeartbeatResult
+  err = p.CC.RecvMsg("agentHeartbeat", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
 func (p *MetaServiceThreadsafeClient) RegConfig(req *RegConfigReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
@@ -3686,50 +3734,6 @@ func (p *MetaServiceThreadsafeClient) ListZones(req *ListZonesReq) (_r *ListZone
 func (p *MetaServiceThreadsafeClient) recvListZones() (value *ListZonesResp, err error) {
   var result MetaServiceListZonesResult
   err = p.CC.RecvMsg("listZones", &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
-func (p *MetaServiceThreadsafeClient) CreateBackup(req *CreateBackupReq) (_r *CreateBackupResp, err error) {
-  p.Mu.Lock()
-  defer p.Mu.Unlock()
-  args := MetaServiceCreateBackupArgs{
-    Req : req,
-  }
-  err = p.CC.SendMsg("createBackup", &args, thrift.CALL)
-  if err != nil { return }
-  return p.recvCreateBackup()
-}
-
-
-func (p *MetaServiceThreadsafeClient) recvCreateBackup() (value *CreateBackupResp, err error) {
-  var result MetaServiceCreateBackupResult
-  err = p.CC.RecvMsg("createBackup", &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
-func (p *MetaServiceThreadsafeClient) RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err error) {
-  p.Mu.Lock()
-  defer p.Mu.Unlock()
-  args := MetaServiceRestoreMetaArgs{
-    Req : req,
-  }
-  err = p.CC.SendMsg("restoreMeta", &args, thrift.CALL)
-  if err != nil { return }
-  return p.recvRestoreMeta()
-}
-
-
-func (p *MetaServiceThreadsafeClient) recvRestoreMeta() (value *ExecResp, err error) {
-  var result MetaServiceRestoreMetaResult
-  err = p.CC.RecvMsg("restoreMeta", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -4104,6 +4108,50 @@ func (p *MetaServiceThreadsafeClient) ReportTaskFinish(req *ReportTaskReq) (_r *
 func (p *MetaServiceThreadsafeClient) recvReportTaskFinish() (value *ExecResp, err error) {
   var result MetaServiceReportTaskFinishResult
   err = p.CC.RecvMsg("reportTaskFinish", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) CreateBackup(req *CreateBackupReq) (_r *CreateBackupResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := MetaServiceCreateBackupArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("createBackup", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvCreateBackup()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvCreateBackup() (value *CreateBackupResp, err error) {
+  var result MetaServiceCreateBackupResult
+  err = p.CC.RecvMsg("createBackup", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := MetaServiceRestoreMetaArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("restoreMeta", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvRestoreMeta()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvRestoreMeta() (value *ExecResp, err error) {
+  var result MetaServiceRestoreMetaResult
+  err = p.CC.RecvMsg("restoreMeta", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -4835,6 +4883,19 @@ func (p *MetaServiceChannelClient) HeartBeat(ctx context.Context, req *HBReq) (_
 
 // Parameters:
 //  - Req
+func (p *MetaServiceChannelClient) AgentHeartbeat(ctx context.Context, req *AgentHBReq) (_r *AgentHBResp, err error) {
+  args := MetaServiceAgentHeartbeatArgs{
+    Req : req,
+  }
+  var result MetaServiceAgentHeartbeatResult
+  err = p.RequestChannel.Call(ctx, "agentHeartbeat", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
 func (p *MetaServiceChannelClient) RegConfig(ctx context.Context, req *RegConfigReq) (_r *ExecResp, err error) {
   args := MetaServiceRegConfigArgs{
     Req : req,
@@ -5010,32 +5071,6 @@ func (p *MetaServiceChannelClient) ListZones(ctx context.Context, req *ListZones
   }
   var result MetaServiceListZonesResult
   err = p.RequestChannel.Call(ctx, "listZones", &args, &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
-func (p *MetaServiceChannelClient) CreateBackup(ctx context.Context, req *CreateBackupReq) (_r *CreateBackupResp, err error) {
-  args := MetaServiceCreateBackupArgs{
-    Req : req,
-  }
-  var result MetaServiceCreateBackupResult
-  err = p.RequestChannel.Call(ctx, "createBackup", &args, &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
-func (p *MetaServiceChannelClient) RestoreMeta(ctx context.Context, req *RestoreMetaReq) (_r *ExecResp, err error) {
-  args := MetaServiceRestoreMetaArgs{
-    Req : req,
-  }
-  var result MetaServiceRestoreMetaResult
-  err = p.RequestChannel.Call(ctx, "restoreMeta", &args, &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -5264,6 +5299,32 @@ func (p *MetaServiceChannelClient) ReportTaskFinish(ctx context.Context, req *Re
 
 // Parameters:
 //  - Req
+func (p *MetaServiceChannelClient) CreateBackup(ctx context.Context, req *CreateBackupReq) (_r *CreateBackupResp, err error) {
+  args := MetaServiceCreateBackupArgs{
+    Req : req,
+  }
+  var result MetaServiceCreateBackupResult
+  err = p.RequestChannel.Call(ctx, "createBackup", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) RestoreMeta(ctx context.Context, req *RestoreMetaReq) (_r *ExecResp, err error) {
+  args := MetaServiceRestoreMetaArgs{
+    Req : req,
+  }
+  var result MetaServiceRestoreMetaResult
+  err = p.RequestChannel.Call(ctx, "restoreMeta", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
 func (p *MetaServiceChannelClient) ListCluster(ctx context.Context, req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
   args := MetaServiceListClusterArgs{
     Req : req,
@@ -5304,11 +5365,16 @@ func (p *MetaServiceChannelClient) VerifyClientVersion(ctx context.Context, req 
 
 type MetaServiceProcessor struct {
   processorMap map[string]thrift.ProcessorFunctionContext
+  functionServiceMap map[string]string
   handler MetaService
 }
 
 func (p *MetaServiceProcessor) AddToProcessorMap(key string, processor thrift.ProcessorFunctionContext) {
   p.processorMap[key] = processor
+}
+
+func (p *MetaServiceProcessor) AddToFunctionServiceMap(key, service string) {
+  p.functionServiceMap[key] = service
 }
 
 func (p *MetaServiceProcessor) GetProcessorFunctionContext(key string) (processor thrift.ProcessorFunctionContext, err error) {
@@ -5322,98 +5388,194 @@ func (p *MetaServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunctio
   return p.processorMap
 }
 
+func (p *MetaServiceProcessor) FunctionServiceMap() map[string]string {
+  return p.functionServiceMap
+}
+
 func NewMetaServiceProcessor(handler MetaService) *MetaServiceProcessor {
-  self100 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self100.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
-  self100.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
-  self100.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
-  self100.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
-  self100.processorMap["createSpaceAs"] = &metaServiceProcessorCreateSpaceAs{handler:handler}
-  self100.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
-  self100.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
-  self100.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
-  self100.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
-  self100.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
-  self100.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
-  self100.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
-  self100.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
-  self100.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
-  self100.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
-  self100.processorMap["addHosts"] = &metaServiceProcessorAddHosts{handler:handler}
-  self100.processorMap["addHostsIntoZone"] = &metaServiceProcessorAddHostsIntoZone{handler:handler}
-  self100.processorMap["dropHosts"] = &metaServiceProcessorDropHosts{handler:handler}
-  self100.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
-  self100.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
-  self100.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
-  self100.processorMap["multiPut"] = &metaServiceProcessorMultiPut{handler:handler}
-  self100.processorMap["get"] = &metaServiceProcessorGet{handler:handler}
-  self100.processorMap["multiGet"] = &metaServiceProcessorMultiGet{handler:handler}
-  self100.processorMap["remove"] = &metaServiceProcessorRemove{handler:handler}
-  self100.processorMap["removeRange"] = &metaServiceProcessorRemoveRange{handler:handler}
-  self100.processorMap["scan"] = &metaServiceProcessorScan{handler:handler}
-  self100.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
-  self100.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
-  self100.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
-  self100.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
-  self100.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
-  self100.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
-  self100.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
-  self100.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
-  self100.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
-  self100.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
-  self100.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
-  self100.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
-  self100.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
-  self100.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
-  self100.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
-  self100.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
-  self100.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
-  self100.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
-  self100.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
-  self100.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
-  self100.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
-  self100.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
-  self100.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
-  self100.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
-  self100.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
-  self100.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
-  self100.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
-  self100.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
-  self100.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
-  self100.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
-  self100.processorMap["mergeZone"] = &metaServiceProcessorMergeZone{handler:handler}
-  self100.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
-  self100.processorMap["splitZone"] = &metaServiceProcessorSplitZone{handler:handler}
-  self100.processorMap["renameZone"] = &metaServiceProcessorRenameZone{handler:handler}
-  self100.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
-  self100.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
-  self100.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
-  self100.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
-  self100.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
-  self100.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
-  self100.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
-  self100.processorMap["getStats"] = &metaServiceProcessorGetStats{handler:handler}
-  self100.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
-  self100.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
-  self100.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
-  self100.processorMap["createFTIndex"] = &metaServiceProcessorCreateFTIndex{handler:handler}
-  self100.processorMap["dropFTIndex"] = &metaServiceProcessorDropFTIndex{handler:handler}
-  self100.processorMap["listFTIndexes"] = &metaServiceProcessorListFTIndexes{handler:handler}
-  self100.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
-  self100.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
-  self100.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
-  self100.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
-  self100.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
-  self100.processorMap["killQuery"] = &metaServiceProcessorKillQuery{handler:handler}
-  self100.processorMap["reportTaskFinish"] = &metaServiceProcessorReportTaskFinish{handler:handler}
-  self100.processorMap["listCluster"] = &metaServiceProcessorListCluster{handler:handler}
-  self100.processorMap["getMetaDirInfo"] = &metaServiceProcessorGetMetaDirInfo{handler:handler}
-  self100.processorMap["verifyClientVersion"] = &metaServiceProcessorVerifyClientVersion{handler:handler}
-  return self100
+  self102 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext), functionServiceMap:make(map[string]string)}
+  self102.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
+  self102.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
+  self102.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
+  self102.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
+  self102.processorMap["createSpaceAs"] = &metaServiceProcessorCreateSpaceAs{handler:handler}
+  self102.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
+  self102.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
+  self102.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
+  self102.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
+  self102.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
+  self102.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
+  self102.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
+  self102.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
+  self102.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
+  self102.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
+  self102.processorMap["addHosts"] = &metaServiceProcessorAddHosts{handler:handler}
+  self102.processorMap["addHostsIntoZone"] = &metaServiceProcessorAddHostsIntoZone{handler:handler}
+  self102.processorMap["dropHosts"] = &metaServiceProcessorDropHosts{handler:handler}
+  self102.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
+  self102.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
+  self102.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
+  self102.processorMap["multiPut"] = &metaServiceProcessorMultiPut{handler:handler}
+  self102.processorMap["get"] = &metaServiceProcessorGet{handler:handler}
+  self102.processorMap["multiGet"] = &metaServiceProcessorMultiGet{handler:handler}
+  self102.processorMap["remove"] = &metaServiceProcessorRemove{handler:handler}
+  self102.processorMap["removeRange"] = &metaServiceProcessorRemoveRange{handler:handler}
+  self102.processorMap["scan"] = &metaServiceProcessorScan{handler:handler}
+  self102.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
+  self102.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
+  self102.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
+  self102.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
+  self102.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
+  self102.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
+  self102.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
+  self102.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
+  self102.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
+  self102.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
+  self102.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
+  self102.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
+  self102.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
+  self102.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
+  self102.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
+  self102.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
+  self102.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
+  self102.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
+  self102.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
+  self102.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
+  self102.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
+  self102.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
+  self102.processorMap["agentHeartbeat"] = &metaServiceProcessorAgentHeartbeat{handler:handler}
+  self102.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
+  self102.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
+  self102.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
+  self102.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
+  self102.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
+  self102.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
+  self102.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
+  self102.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
+  self102.processorMap["mergeZone"] = &metaServiceProcessorMergeZone{handler:handler}
+  self102.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
+  self102.processorMap["splitZone"] = &metaServiceProcessorSplitZone{handler:handler}
+  self102.processorMap["renameZone"] = &metaServiceProcessorRenameZone{handler:handler}
+  self102.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
+  self102.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
+  self102.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
+  self102.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
+  self102.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
+  self102.processorMap["getStats"] = &metaServiceProcessorGetStats{handler:handler}
+  self102.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
+  self102.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
+  self102.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
+  self102.processorMap["createFTIndex"] = &metaServiceProcessorCreateFTIndex{handler:handler}
+  self102.processorMap["dropFTIndex"] = &metaServiceProcessorDropFTIndex{handler:handler}
+  self102.processorMap["listFTIndexes"] = &metaServiceProcessorListFTIndexes{handler:handler}
+  self102.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
+  self102.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
+  self102.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
+  self102.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
+  self102.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
+  self102.processorMap["killQuery"] = &metaServiceProcessorKillQuery{handler:handler}
+  self102.processorMap["reportTaskFinish"] = &metaServiceProcessorReportTaskFinish{handler:handler}
+  self102.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
+  self102.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
+  self102.processorMap["listCluster"] = &metaServiceProcessorListCluster{handler:handler}
+  self102.processorMap["getMetaDirInfo"] = &metaServiceProcessorGetMetaDirInfo{handler:handler}
+  self102.processorMap["verifyClientVersion"] = &metaServiceProcessorVerifyClientVersion{handler:handler}
+  self102.functionServiceMap["createSpace"] = "MetaService"
+  self102.functionServiceMap["dropSpace"] = "MetaService"
+  self102.functionServiceMap["getSpace"] = "MetaService"
+  self102.functionServiceMap["listSpaces"] = "MetaService"
+  self102.functionServiceMap["createSpaceAs"] = "MetaService"
+  self102.functionServiceMap["createTag"] = "MetaService"
+  self102.functionServiceMap["alterTag"] = "MetaService"
+  self102.functionServiceMap["dropTag"] = "MetaService"
+  self102.functionServiceMap["getTag"] = "MetaService"
+  self102.functionServiceMap["listTags"] = "MetaService"
+  self102.functionServiceMap["createEdge"] = "MetaService"
+  self102.functionServiceMap["alterEdge"] = "MetaService"
+  self102.functionServiceMap["dropEdge"] = "MetaService"
+  self102.functionServiceMap["getEdge"] = "MetaService"
+  self102.functionServiceMap["listEdges"] = "MetaService"
+  self102.functionServiceMap["addHosts"] = "MetaService"
+  self102.functionServiceMap["addHostsIntoZone"] = "MetaService"
+  self102.functionServiceMap["dropHosts"] = "MetaService"
+  self102.functionServiceMap["listHosts"] = "MetaService"
+  self102.functionServiceMap["getPartsAlloc"] = "MetaService"
+  self102.functionServiceMap["listParts"] = "MetaService"
+  self102.functionServiceMap["multiPut"] = "MetaService"
+  self102.functionServiceMap["get"] = "MetaService"
+  self102.functionServiceMap["multiGet"] = "MetaService"
+  self102.functionServiceMap["remove"] = "MetaService"
+  self102.functionServiceMap["removeRange"] = "MetaService"
+  self102.functionServiceMap["scan"] = "MetaService"
+  self102.functionServiceMap["createTagIndex"] = "MetaService"
+  self102.functionServiceMap["dropTagIndex"] = "MetaService"
+  self102.functionServiceMap["getTagIndex"] = "MetaService"
+  self102.functionServiceMap["listTagIndexes"] = "MetaService"
+  self102.functionServiceMap["rebuildTagIndex"] = "MetaService"
+  self102.functionServiceMap["listTagIndexStatus"] = "MetaService"
+  self102.functionServiceMap["createEdgeIndex"] = "MetaService"
+  self102.functionServiceMap["dropEdgeIndex"] = "MetaService"
+  self102.functionServiceMap["getEdgeIndex"] = "MetaService"
+  self102.functionServiceMap["listEdgeIndexes"] = "MetaService"
+  self102.functionServiceMap["rebuildEdgeIndex"] = "MetaService"
+  self102.functionServiceMap["listEdgeIndexStatus"] = "MetaService"
+  self102.functionServiceMap["createUser"] = "MetaService"
+  self102.functionServiceMap["dropUser"] = "MetaService"
+  self102.functionServiceMap["alterUser"] = "MetaService"
+  self102.functionServiceMap["grantRole"] = "MetaService"
+  self102.functionServiceMap["revokeRole"] = "MetaService"
+  self102.functionServiceMap["listUsers"] = "MetaService"
+  self102.functionServiceMap["listRoles"] = "MetaService"
+  self102.functionServiceMap["getUserRoles"] = "MetaService"
+  self102.functionServiceMap["changePassword"] = "MetaService"
+  self102.functionServiceMap["heartBeat"] = "MetaService"
+  self102.functionServiceMap["agentHeartbeat"] = "MetaService"
+  self102.functionServiceMap["regConfig"] = "MetaService"
+  self102.functionServiceMap["getConfig"] = "MetaService"
+  self102.functionServiceMap["setConfig"] = "MetaService"
+  self102.functionServiceMap["listConfigs"] = "MetaService"
+  self102.functionServiceMap["createSnapshot"] = "MetaService"
+  self102.functionServiceMap["dropSnapshot"] = "MetaService"
+  self102.functionServiceMap["listSnapshots"] = "MetaService"
+  self102.functionServiceMap["runAdminJob"] = "MetaService"
+  self102.functionServiceMap["mergeZone"] = "MetaService"
+  self102.functionServiceMap["dropZone"] = "MetaService"
+  self102.functionServiceMap["splitZone"] = "MetaService"
+  self102.functionServiceMap["renameZone"] = "MetaService"
+  self102.functionServiceMap["getZone"] = "MetaService"
+  self102.functionServiceMap["listZones"] = "MetaService"
+  self102.functionServiceMap["addListener"] = "MetaService"
+  self102.functionServiceMap["removeListener"] = "MetaService"
+  self102.functionServiceMap["listListener"] = "MetaService"
+  self102.functionServiceMap["getStats"] = "MetaService"
+  self102.functionServiceMap["signInFTService"] = "MetaService"
+  self102.functionServiceMap["signOutFTService"] = "MetaService"
+  self102.functionServiceMap["listFTClients"] = "MetaService"
+  self102.functionServiceMap["createFTIndex"] = "MetaService"
+  self102.functionServiceMap["dropFTIndex"] = "MetaService"
+  self102.functionServiceMap["listFTIndexes"] = "MetaService"
+  self102.functionServiceMap["createSession"] = "MetaService"
+  self102.functionServiceMap["updateSessions"] = "MetaService"
+  self102.functionServiceMap["listSessions"] = "MetaService"
+  self102.functionServiceMap["getSession"] = "MetaService"
+  self102.functionServiceMap["removeSession"] = "MetaService"
+  self102.functionServiceMap["killQuery"] = "MetaService"
+  self102.functionServiceMap["reportTaskFinish"] = "MetaService"
+  self102.functionServiceMap["createBackup"] = "MetaService"
+  self102.functionServiceMap["restoreMeta"] = "MetaService"
+  self102.functionServiceMap["listCluster"] = "MetaService"
+  self102.functionServiceMap["getMetaDirInfo"] = "MetaService"
+  self102.functionServiceMap["verifyClientVersion"] = "MetaService"
+  return self102
 }
 
 type metaServiceProcessorCreateSpace struct {
   handler MetaService
+}
+
+func (p *MetaServiceCreateSpaceResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorCreateSpace) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -5466,6 +5628,11 @@ type metaServiceProcessorDropSpace struct {
   handler MetaService
 }
 
+func (p *MetaServiceDropSpaceResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorDropSpace) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceDropSpaceArgs{}
   if err := args.Read(iprot); err != nil {
@@ -5514,6 +5681,11 @@ func (p *metaServiceProcessorDropSpace) RunContext(ctx context.Context, argStruc
 
 type metaServiceProcessorGetSpace struct {
   handler MetaService
+}
+
+func (p *MetaServiceGetSpaceResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorGetSpace) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -5566,6 +5738,11 @@ type metaServiceProcessorListSpaces struct {
   handler MetaService
 }
 
+func (p *MetaServiceListSpacesResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorListSpaces) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceListSpacesArgs{}
   if err := args.Read(iprot); err != nil {
@@ -5614,6 +5791,11 @@ func (p *metaServiceProcessorListSpaces) RunContext(ctx context.Context, argStru
 
 type metaServiceProcessorCreateSpaceAs struct {
   handler MetaService
+}
+
+func (p *MetaServiceCreateSpaceAsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorCreateSpaceAs) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -5666,6 +5848,11 @@ type metaServiceProcessorCreateTag struct {
   handler MetaService
 }
 
+func (p *MetaServiceCreateTagResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorCreateTag) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceCreateTagArgs{}
   if err := args.Read(iprot); err != nil {
@@ -5714,6 +5901,11 @@ func (p *metaServiceProcessorCreateTag) RunContext(ctx context.Context, argStruc
 
 type metaServiceProcessorAlterTag struct {
   handler MetaService
+}
+
+func (p *MetaServiceAlterTagResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorAlterTag) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -5766,6 +5958,11 @@ type metaServiceProcessorDropTag struct {
   handler MetaService
 }
 
+func (p *MetaServiceDropTagResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorDropTag) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceDropTagArgs{}
   if err := args.Read(iprot); err != nil {
@@ -5814,6 +6011,11 @@ func (p *metaServiceProcessorDropTag) RunContext(ctx context.Context, argStruct 
 
 type metaServiceProcessorGetTag struct {
   handler MetaService
+}
+
+func (p *MetaServiceGetTagResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorGetTag) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -5866,6 +6068,11 @@ type metaServiceProcessorListTags struct {
   handler MetaService
 }
 
+func (p *MetaServiceListTagsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorListTags) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceListTagsArgs{}
   if err := args.Read(iprot); err != nil {
@@ -5914,6 +6121,11 @@ func (p *metaServiceProcessorListTags) RunContext(ctx context.Context, argStruct
 
 type metaServiceProcessorCreateEdge struct {
   handler MetaService
+}
+
+func (p *MetaServiceCreateEdgeResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorCreateEdge) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -5966,6 +6178,11 @@ type metaServiceProcessorAlterEdge struct {
   handler MetaService
 }
 
+func (p *MetaServiceAlterEdgeResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorAlterEdge) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceAlterEdgeArgs{}
   if err := args.Read(iprot); err != nil {
@@ -6014,6 +6231,11 @@ func (p *metaServiceProcessorAlterEdge) RunContext(ctx context.Context, argStruc
 
 type metaServiceProcessorDropEdge struct {
   handler MetaService
+}
+
+func (p *MetaServiceDropEdgeResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorDropEdge) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -6066,6 +6288,11 @@ type metaServiceProcessorGetEdge struct {
   handler MetaService
 }
 
+func (p *MetaServiceGetEdgeResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorGetEdge) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceGetEdgeArgs{}
   if err := args.Read(iprot); err != nil {
@@ -6114,6 +6341,11 @@ func (p *metaServiceProcessorGetEdge) RunContext(ctx context.Context, argStruct 
 
 type metaServiceProcessorListEdges struct {
   handler MetaService
+}
+
+func (p *MetaServiceListEdgesResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListEdges) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -6166,6 +6398,11 @@ type metaServiceProcessorAddHosts struct {
   handler MetaService
 }
 
+func (p *MetaServiceAddHostsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorAddHosts) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceAddHostsArgs{}
   if err := args.Read(iprot); err != nil {
@@ -6214,6 +6451,11 @@ func (p *metaServiceProcessorAddHosts) RunContext(ctx context.Context, argStruct
 
 type metaServiceProcessorAddHostsIntoZone struct {
   handler MetaService
+}
+
+func (p *MetaServiceAddHostsIntoZoneResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorAddHostsIntoZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -6266,6 +6508,11 @@ type metaServiceProcessorDropHosts struct {
   handler MetaService
 }
 
+func (p *MetaServiceDropHostsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorDropHosts) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceDropHostsArgs{}
   if err := args.Read(iprot); err != nil {
@@ -6314,6 +6561,11 @@ func (p *metaServiceProcessorDropHosts) RunContext(ctx context.Context, argStruc
 
 type metaServiceProcessorListHosts struct {
   handler MetaService
+}
+
+func (p *MetaServiceListHostsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListHosts) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -6366,6 +6618,11 @@ type metaServiceProcessorGetPartsAlloc struct {
   handler MetaService
 }
 
+func (p *MetaServiceGetPartsAllocResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorGetPartsAlloc) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceGetPartsAllocArgs{}
   if err := args.Read(iprot); err != nil {
@@ -6414,6 +6671,11 @@ func (p *metaServiceProcessorGetPartsAlloc) RunContext(ctx context.Context, argS
 
 type metaServiceProcessorListParts struct {
   handler MetaService
+}
+
+func (p *MetaServiceListPartsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListParts) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -6466,6 +6728,11 @@ type metaServiceProcessorMultiPut struct {
   handler MetaService
 }
 
+func (p *MetaServiceMultiPutResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorMultiPut) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceMultiPutArgs{}
   if err := args.Read(iprot); err != nil {
@@ -6514,6 +6781,11 @@ func (p *metaServiceProcessorMultiPut) RunContext(ctx context.Context, argStruct
 
 type metaServiceProcessorGet struct {
   handler MetaService
+}
+
+func (p *MetaServiceGetResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorGet) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -6566,6 +6838,11 @@ type metaServiceProcessorMultiGet struct {
   handler MetaService
 }
 
+func (p *MetaServiceMultiGetResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorMultiGet) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceMultiGetArgs{}
   if err := args.Read(iprot); err != nil {
@@ -6614,6 +6891,11 @@ func (p *metaServiceProcessorMultiGet) RunContext(ctx context.Context, argStruct
 
 type metaServiceProcessorRemove struct {
   handler MetaService
+}
+
+func (p *MetaServiceRemoveResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorRemove) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -6666,6 +6948,11 @@ type metaServiceProcessorRemoveRange struct {
   handler MetaService
 }
 
+func (p *MetaServiceRemoveRangeResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorRemoveRange) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceRemoveRangeArgs{}
   if err := args.Read(iprot); err != nil {
@@ -6714,6 +7001,11 @@ func (p *metaServiceProcessorRemoveRange) RunContext(ctx context.Context, argStr
 
 type metaServiceProcessorScan struct {
   handler MetaService
+}
+
+func (p *MetaServiceScanResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorScan) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -6766,6 +7058,11 @@ type metaServiceProcessorCreateTagIndex struct {
   handler MetaService
 }
 
+func (p *MetaServiceCreateTagIndexResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorCreateTagIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceCreateTagIndexArgs{}
   if err := args.Read(iprot); err != nil {
@@ -6814,6 +7111,11 @@ func (p *metaServiceProcessorCreateTagIndex) RunContext(ctx context.Context, arg
 
 type metaServiceProcessorDropTagIndex struct {
   handler MetaService
+}
+
+func (p *MetaServiceDropTagIndexResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorDropTagIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -6866,6 +7168,11 @@ type metaServiceProcessorGetTagIndex struct {
   handler MetaService
 }
 
+func (p *MetaServiceGetTagIndexResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorGetTagIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceGetTagIndexArgs{}
   if err := args.Read(iprot); err != nil {
@@ -6914,6 +7221,11 @@ func (p *metaServiceProcessorGetTagIndex) RunContext(ctx context.Context, argStr
 
 type metaServiceProcessorListTagIndexes struct {
   handler MetaService
+}
+
+func (p *MetaServiceListTagIndexesResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListTagIndexes) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -6966,6 +7278,11 @@ type metaServiceProcessorRebuildTagIndex struct {
   handler MetaService
 }
 
+func (p *MetaServiceRebuildTagIndexResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorRebuildTagIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceRebuildTagIndexArgs{}
   if err := args.Read(iprot); err != nil {
@@ -7014,6 +7331,11 @@ func (p *metaServiceProcessorRebuildTagIndex) RunContext(ctx context.Context, ar
 
 type metaServiceProcessorListTagIndexStatus struct {
   handler MetaService
+}
+
+func (p *MetaServiceListTagIndexStatusResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListTagIndexStatus) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -7066,6 +7388,11 @@ type metaServiceProcessorCreateEdgeIndex struct {
   handler MetaService
 }
 
+func (p *MetaServiceCreateEdgeIndexResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorCreateEdgeIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceCreateEdgeIndexArgs{}
   if err := args.Read(iprot); err != nil {
@@ -7114,6 +7441,11 @@ func (p *metaServiceProcessorCreateEdgeIndex) RunContext(ctx context.Context, ar
 
 type metaServiceProcessorDropEdgeIndex struct {
   handler MetaService
+}
+
+func (p *MetaServiceDropEdgeIndexResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorDropEdgeIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -7166,6 +7498,11 @@ type metaServiceProcessorGetEdgeIndex struct {
   handler MetaService
 }
 
+func (p *MetaServiceGetEdgeIndexResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorGetEdgeIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceGetEdgeIndexArgs{}
   if err := args.Read(iprot); err != nil {
@@ -7214,6 +7551,11 @@ func (p *metaServiceProcessorGetEdgeIndex) RunContext(ctx context.Context, argSt
 
 type metaServiceProcessorListEdgeIndexes struct {
   handler MetaService
+}
+
+func (p *MetaServiceListEdgeIndexesResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListEdgeIndexes) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -7266,6 +7608,11 @@ type metaServiceProcessorRebuildEdgeIndex struct {
   handler MetaService
 }
 
+func (p *MetaServiceRebuildEdgeIndexResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorRebuildEdgeIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceRebuildEdgeIndexArgs{}
   if err := args.Read(iprot); err != nil {
@@ -7314,6 +7661,11 @@ func (p *metaServiceProcessorRebuildEdgeIndex) RunContext(ctx context.Context, a
 
 type metaServiceProcessorListEdgeIndexStatus struct {
   handler MetaService
+}
+
+func (p *MetaServiceListEdgeIndexStatusResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListEdgeIndexStatus) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -7366,6 +7718,11 @@ type metaServiceProcessorCreateUser struct {
   handler MetaService
 }
 
+func (p *MetaServiceCreateUserResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorCreateUser) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceCreateUserArgs{}
   if err := args.Read(iprot); err != nil {
@@ -7414,6 +7771,11 @@ func (p *metaServiceProcessorCreateUser) RunContext(ctx context.Context, argStru
 
 type metaServiceProcessorDropUser struct {
   handler MetaService
+}
+
+func (p *MetaServiceDropUserResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorDropUser) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -7466,6 +7828,11 @@ type metaServiceProcessorAlterUser struct {
   handler MetaService
 }
 
+func (p *MetaServiceAlterUserResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorAlterUser) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceAlterUserArgs{}
   if err := args.Read(iprot); err != nil {
@@ -7514,6 +7881,11 @@ func (p *metaServiceProcessorAlterUser) RunContext(ctx context.Context, argStruc
 
 type metaServiceProcessorGrantRole struct {
   handler MetaService
+}
+
+func (p *MetaServiceGrantRoleResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorGrantRole) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -7566,6 +7938,11 @@ type metaServiceProcessorRevokeRole struct {
   handler MetaService
 }
 
+func (p *MetaServiceRevokeRoleResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorRevokeRole) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceRevokeRoleArgs{}
   if err := args.Read(iprot); err != nil {
@@ -7614,6 +7991,11 @@ func (p *metaServiceProcessorRevokeRole) RunContext(ctx context.Context, argStru
 
 type metaServiceProcessorListUsers struct {
   handler MetaService
+}
+
+func (p *MetaServiceListUsersResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListUsers) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -7666,6 +8048,11 @@ type metaServiceProcessorListRoles struct {
   handler MetaService
 }
 
+func (p *MetaServiceListRolesResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorListRoles) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceListRolesArgs{}
   if err := args.Read(iprot); err != nil {
@@ -7714,6 +8101,11 @@ func (p *metaServiceProcessorListRoles) RunContext(ctx context.Context, argStruc
 
 type metaServiceProcessorGetUserRoles struct {
   handler MetaService
+}
+
+func (p *MetaServiceGetUserRolesResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorGetUserRoles) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -7766,6 +8158,11 @@ type metaServiceProcessorChangePassword struct {
   handler MetaService
 }
 
+func (p *MetaServiceChangePasswordResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorChangePassword) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceChangePasswordArgs{}
   if err := args.Read(iprot); err != nil {
@@ -7816,6 +8213,11 @@ type metaServiceProcessorHeartBeat struct {
   handler MetaService
 }
 
+func (p *MetaServiceHeartBeatResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorHeartBeat) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceHeartBeatArgs{}
   if err := args.Read(iprot); err != nil {
@@ -7862,8 +8264,68 @@ func (p *metaServiceProcessorHeartBeat) RunContext(ctx context.Context, argStruc
   return &result, nil
 }
 
+type metaServiceProcessorAgentHeartbeat struct {
+  handler MetaService
+}
+
+func (p *MetaServiceAgentHeartbeatResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
+func (p *metaServiceProcessorAgentHeartbeat) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceAgentHeartbeatArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorAgentHeartbeat) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("agentHeartbeat", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorAgentHeartbeat) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceAgentHeartbeatArgs)
+  var result MetaServiceAgentHeartbeatResult
+  if retval, err := p.handler.AgentHeartbeat(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing agentHeartbeat: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
 type metaServiceProcessorRegConfig struct {
   handler MetaService
+}
+
+func (p *MetaServiceRegConfigResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorRegConfig) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -7916,6 +8378,11 @@ type metaServiceProcessorGetConfig struct {
   handler MetaService
 }
 
+func (p *MetaServiceGetConfigResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorGetConfig) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceGetConfigArgs{}
   if err := args.Read(iprot); err != nil {
@@ -7964,6 +8431,11 @@ func (p *metaServiceProcessorGetConfig) RunContext(ctx context.Context, argStruc
 
 type metaServiceProcessorSetConfig struct {
   handler MetaService
+}
+
+func (p *MetaServiceSetConfigResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorSetConfig) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -8016,6 +8488,11 @@ type metaServiceProcessorListConfigs struct {
   handler MetaService
 }
 
+func (p *MetaServiceListConfigsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorListConfigs) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceListConfigsArgs{}
   if err := args.Read(iprot); err != nil {
@@ -8064,6 +8541,11 @@ func (p *metaServiceProcessorListConfigs) RunContext(ctx context.Context, argStr
 
 type metaServiceProcessorCreateSnapshot struct {
   handler MetaService
+}
+
+func (p *MetaServiceCreateSnapshotResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorCreateSnapshot) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -8116,6 +8598,11 @@ type metaServiceProcessorDropSnapshot struct {
   handler MetaService
 }
 
+func (p *MetaServiceDropSnapshotResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorDropSnapshot) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceDropSnapshotArgs{}
   if err := args.Read(iprot); err != nil {
@@ -8164,6 +8651,11 @@ func (p *metaServiceProcessorDropSnapshot) RunContext(ctx context.Context, argSt
 
 type metaServiceProcessorListSnapshots struct {
   handler MetaService
+}
+
+func (p *MetaServiceListSnapshotsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListSnapshots) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -8216,6 +8708,11 @@ type metaServiceProcessorRunAdminJob struct {
   handler MetaService
 }
 
+func (p *MetaServiceRunAdminJobResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorRunAdminJob) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceRunAdminJobArgs{}
   if err := args.Read(iprot); err != nil {
@@ -8264,6 +8761,11 @@ func (p *metaServiceProcessorRunAdminJob) RunContext(ctx context.Context, argStr
 
 type metaServiceProcessorMergeZone struct {
   handler MetaService
+}
+
+func (p *MetaServiceMergeZoneResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorMergeZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -8316,6 +8818,11 @@ type metaServiceProcessorDropZone struct {
   handler MetaService
 }
 
+func (p *MetaServiceDropZoneResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorDropZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceDropZoneArgs{}
   if err := args.Read(iprot); err != nil {
@@ -8364,6 +8871,11 @@ func (p *metaServiceProcessorDropZone) RunContext(ctx context.Context, argStruct
 
 type metaServiceProcessorSplitZone struct {
   handler MetaService
+}
+
+func (p *MetaServiceSplitZoneResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorSplitZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -8416,6 +8928,11 @@ type metaServiceProcessorRenameZone struct {
   handler MetaService
 }
 
+func (p *MetaServiceRenameZoneResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorRenameZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceRenameZoneArgs{}
   if err := args.Read(iprot); err != nil {
@@ -8464,6 +8981,11 @@ func (p *metaServiceProcessorRenameZone) RunContext(ctx context.Context, argStru
 
 type metaServiceProcessorGetZone struct {
   handler MetaService
+}
+
+func (p *MetaServiceGetZoneResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorGetZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -8516,6 +9038,11 @@ type metaServiceProcessorListZones struct {
   handler MetaService
 }
 
+func (p *MetaServiceListZonesResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorListZones) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceListZonesArgs{}
   if err := args.Read(iprot); err != nil {
@@ -8562,108 +9089,13 @@ func (p *metaServiceProcessorListZones) RunContext(ctx context.Context, argStruc
   return &result, nil
 }
 
-type metaServiceProcessorCreateBackup struct {
-  handler MetaService
-}
-
-func (p *metaServiceProcessorCreateBackup) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
-  args := MetaServiceCreateBackupArgs{}
-  if err := args.Read(iprot); err != nil {
-    return nil, err
-  }
-  iprot.ReadMessageEnd()
-  return &args, nil
-}
-
-func (p *metaServiceProcessorCreateBackup) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
-  var err2 error
-  messageType := thrift.REPLY
-  switch result.(type) {
-  case thrift.ApplicationException:
-    messageType = thrift.EXCEPTION
-  }
-  if err2 = oprot.WriteMessageBegin("createBackup", messageType, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 = result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.Flush(); err == nil && err2 != nil {
-    err = err2
-  }
-  return err
-}
-
-func (p *metaServiceProcessorCreateBackup) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
-  args := argStruct.(*MetaServiceCreateBackupArgs)
-  var result MetaServiceCreateBackupResult
-  if retval, err := p.handler.CreateBackup(ctx, args.Req); err != nil {
-    switch err.(type) {
-    default:
-      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createBackup: " + err.Error())
-      return x, x
-    }
-  } else {
-    result.Success = retval
-  }
-  return &result, nil
-}
-
-type metaServiceProcessorRestoreMeta struct {
-  handler MetaService
-}
-
-func (p *metaServiceProcessorRestoreMeta) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
-  args := MetaServiceRestoreMetaArgs{}
-  if err := args.Read(iprot); err != nil {
-    return nil, err
-  }
-  iprot.ReadMessageEnd()
-  return &args, nil
-}
-
-func (p *metaServiceProcessorRestoreMeta) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
-  var err2 error
-  messageType := thrift.REPLY
-  switch result.(type) {
-  case thrift.ApplicationException:
-    messageType = thrift.EXCEPTION
-  }
-  if err2 = oprot.WriteMessageBegin("restoreMeta", messageType, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 = result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.Flush(); err == nil && err2 != nil {
-    err = err2
-  }
-  return err
-}
-
-func (p *metaServiceProcessorRestoreMeta) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
-  args := argStruct.(*MetaServiceRestoreMetaArgs)
-  var result MetaServiceRestoreMetaResult
-  if retval, err := p.handler.RestoreMeta(ctx, args.Req); err != nil {
-    switch err.(type) {
-    default:
-      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing restoreMeta: " + err.Error())
-      return x, x
-    }
-  } else {
-    result.Success = retval
-  }
-  return &result, nil
-}
-
 type metaServiceProcessorAddListener struct {
   handler MetaService
+}
+
+func (p *MetaServiceAddListenerResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorAddListener) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -8716,6 +9148,11 @@ type metaServiceProcessorRemoveListener struct {
   handler MetaService
 }
 
+func (p *MetaServiceRemoveListenerResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorRemoveListener) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceRemoveListenerArgs{}
   if err := args.Read(iprot); err != nil {
@@ -8764,6 +9201,11 @@ func (p *metaServiceProcessorRemoveListener) RunContext(ctx context.Context, arg
 
 type metaServiceProcessorListListener struct {
   handler MetaService
+}
+
+func (p *MetaServiceListListenerResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListListener) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -8816,6 +9258,11 @@ type metaServiceProcessorGetStats struct {
   handler MetaService
 }
 
+func (p *MetaServiceGetStatsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorGetStats) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceGetStatsArgs{}
   if err := args.Read(iprot); err != nil {
@@ -8864,6 +9311,11 @@ func (p *metaServiceProcessorGetStats) RunContext(ctx context.Context, argStruct
 
 type metaServiceProcessorSignInFTService struct {
   handler MetaService
+}
+
+func (p *MetaServiceSignInFTServiceResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorSignInFTService) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -8916,6 +9368,11 @@ type metaServiceProcessorSignOutFTService struct {
   handler MetaService
 }
 
+func (p *MetaServiceSignOutFTServiceResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorSignOutFTService) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceSignOutFTServiceArgs{}
   if err := args.Read(iprot); err != nil {
@@ -8964,6 +9421,11 @@ func (p *metaServiceProcessorSignOutFTService) RunContext(ctx context.Context, a
 
 type metaServiceProcessorListFTClients struct {
   handler MetaService
+}
+
+func (p *MetaServiceListFTClientsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListFTClients) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -9016,6 +9478,11 @@ type metaServiceProcessorCreateFTIndex struct {
   handler MetaService
 }
 
+func (p *MetaServiceCreateFTIndexResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorCreateFTIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceCreateFTIndexArgs{}
   if err := args.Read(iprot); err != nil {
@@ -9064,6 +9531,11 @@ func (p *metaServiceProcessorCreateFTIndex) RunContext(ctx context.Context, argS
 
 type metaServiceProcessorDropFTIndex struct {
   handler MetaService
+}
+
+func (p *MetaServiceDropFTIndexResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorDropFTIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -9116,6 +9588,11 @@ type metaServiceProcessorListFTIndexes struct {
   handler MetaService
 }
 
+func (p *MetaServiceListFTIndexesResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorListFTIndexes) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceListFTIndexesArgs{}
   if err := args.Read(iprot); err != nil {
@@ -9164,6 +9641,11 @@ func (p *metaServiceProcessorListFTIndexes) RunContext(ctx context.Context, argS
 
 type metaServiceProcessorCreateSession struct {
   handler MetaService
+}
+
+func (p *MetaServiceCreateSessionResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorCreateSession) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -9216,6 +9698,11 @@ type metaServiceProcessorUpdateSessions struct {
   handler MetaService
 }
 
+func (p *MetaServiceUpdateSessionsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorUpdateSessions) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceUpdateSessionsArgs{}
   if err := args.Read(iprot); err != nil {
@@ -9264,6 +9751,11 @@ func (p *metaServiceProcessorUpdateSessions) RunContext(ctx context.Context, arg
 
 type metaServiceProcessorListSessions struct {
   handler MetaService
+}
+
+func (p *MetaServiceListSessionsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListSessions) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -9316,6 +9808,11 @@ type metaServiceProcessorGetSession struct {
   handler MetaService
 }
 
+func (p *MetaServiceGetSessionResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorGetSession) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceGetSessionArgs{}
   if err := args.Read(iprot); err != nil {
@@ -9364,6 +9861,11 @@ func (p *metaServiceProcessorGetSession) RunContext(ctx context.Context, argStru
 
 type metaServiceProcessorRemoveSession struct {
   handler MetaService
+}
+
+func (p *MetaServiceRemoveSessionResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorRemoveSession) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -9416,6 +9918,11 @@ type metaServiceProcessorKillQuery struct {
   handler MetaService
 }
 
+func (p *MetaServiceKillQueryResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorKillQuery) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceKillQueryArgs{}
   if err := args.Read(iprot); err != nil {
@@ -9466,6 +9973,11 @@ type metaServiceProcessorReportTaskFinish struct {
   handler MetaService
 }
 
+func (p *MetaServiceReportTaskFinishResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorReportTaskFinish) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceReportTaskFinishArgs{}
   if err := args.Read(iprot); err != nil {
@@ -9512,8 +10024,123 @@ func (p *metaServiceProcessorReportTaskFinish) RunContext(ctx context.Context, a
   return &result, nil
 }
 
+type metaServiceProcessorCreateBackup struct {
+  handler MetaService
+}
+
+func (p *MetaServiceCreateBackupResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
+func (p *metaServiceProcessorCreateBackup) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceCreateBackupArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorCreateBackup) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("createBackup", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorCreateBackup) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceCreateBackupArgs)
+  var result MetaServiceCreateBackupResult
+  if retval, err := p.handler.CreateBackup(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing createBackup: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorRestoreMeta struct {
+  handler MetaService
+}
+
+func (p *MetaServiceRestoreMetaResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
+func (p *metaServiceProcessorRestoreMeta) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceRestoreMetaArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorRestoreMeta) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("restoreMeta", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorRestoreMeta) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceRestoreMetaArgs)
+  var result MetaServiceRestoreMetaResult
+  if retval, err := p.handler.RestoreMeta(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing restoreMeta: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
 type metaServiceProcessorListCluster struct {
   handler MetaService
+}
+
+func (p *MetaServiceListClusterResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorListCluster) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -9566,6 +10193,11 @@ type metaServiceProcessorGetMetaDirInfo struct {
   handler MetaService
 }
 
+func (p *MetaServiceGetMetaDirInfoResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *metaServiceProcessorGetMetaDirInfo) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := MetaServiceGetMetaDirInfoArgs{}
   if err := args.Read(iprot); err != nil {
@@ -9614,6 +10246,11 @@ func (p *metaServiceProcessorGetMetaDirInfo) RunContext(ctx context.Context, arg
 
 type metaServiceProcessorVerifyClientVersion struct {
   handler MetaService
+}
+
+func (p *MetaServiceVerifyClientVersionResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *metaServiceProcessorVerifyClientVersion) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -9687,6 +10324,32 @@ return p.Req
 }
 func (p *MetaServiceCreateSpaceArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
+}
+
+type MetaServiceCreateSpaceArgsBuilder struct {
+  obj *MetaServiceCreateSpaceArgs
+}
+
+func NewMetaServiceCreateSpaceArgsBuilder() *MetaServiceCreateSpaceArgsBuilder{
+  return &MetaServiceCreateSpaceArgsBuilder{
+    obj: NewMetaServiceCreateSpaceArgs(),
+  }
+}
+
+func (p MetaServiceCreateSpaceArgsBuilder) Emit() *MetaServiceCreateSpaceArgs{
+  return &MetaServiceCreateSpaceArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceCreateSpaceArgsBuilder) Req(req *CreateSpaceReq) *MetaServiceCreateSpaceArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceCreateSpaceArgs) SetReq(req *CreateSpaceReq) *MetaServiceCreateSpaceArgs {
+  m.Req = req
+  return m
 }
 
 func (p *MetaServiceCreateSpaceArgs) Read(iprot thrift.Protocol) error {
@@ -9769,7 +10432,7 @@ func (p *MetaServiceCreateSpaceArgs) String() string {
 //  - Success
 type MetaServiceCreateSpaceResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceCreateSpaceResult() *MetaServiceCreateSpaceResult {
@@ -9785,6 +10448,32 @@ return p.Success
 }
 func (p *MetaServiceCreateSpaceResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceCreateSpaceResultBuilder struct {
+  obj *MetaServiceCreateSpaceResult
+}
+
+func NewMetaServiceCreateSpaceResultBuilder() *MetaServiceCreateSpaceResultBuilder{
+  return &MetaServiceCreateSpaceResultBuilder{
+    obj: NewMetaServiceCreateSpaceResult(),
+  }
+}
+
+func (p MetaServiceCreateSpaceResultBuilder) Emit() *MetaServiceCreateSpaceResult{
+  return &MetaServiceCreateSpaceResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceCreateSpaceResultBuilder) Success(success *ExecResp) *MetaServiceCreateSpaceResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceCreateSpaceResult) SetSuccess(success *ExecResp) *MetaServiceCreateSpaceResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceCreateSpaceResult) Read(iprot thrift.Protocol) error {
@@ -9889,6 +10578,32 @@ func (p *MetaServiceDropSpaceArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceDropSpaceArgsBuilder struct {
+  obj *MetaServiceDropSpaceArgs
+}
+
+func NewMetaServiceDropSpaceArgsBuilder() *MetaServiceDropSpaceArgsBuilder{
+  return &MetaServiceDropSpaceArgsBuilder{
+    obj: NewMetaServiceDropSpaceArgs(),
+  }
+}
+
+func (p MetaServiceDropSpaceArgsBuilder) Emit() *MetaServiceDropSpaceArgs{
+  return &MetaServiceDropSpaceArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceDropSpaceArgsBuilder) Req(req *DropSpaceReq) *MetaServiceDropSpaceArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceDropSpaceArgs) SetReq(req *DropSpaceReq) *MetaServiceDropSpaceArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceDropSpaceArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -9969,7 +10684,7 @@ func (p *MetaServiceDropSpaceArgs) String() string {
 //  - Success
 type MetaServiceDropSpaceResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceDropSpaceResult() *MetaServiceDropSpaceResult {
@@ -9985,6 +10700,32 @@ return p.Success
 }
 func (p *MetaServiceDropSpaceResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceDropSpaceResultBuilder struct {
+  obj *MetaServiceDropSpaceResult
+}
+
+func NewMetaServiceDropSpaceResultBuilder() *MetaServiceDropSpaceResultBuilder{
+  return &MetaServiceDropSpaceResultBuilder{
+    obj: NewMetaServiceDropSpaceResult(),
+  }
+}
+
+func (p MetaServiceDropSpaceResultBuilder) Emit() *MetaServiceDropSpaceResult{
+  return &MetaServiceDropSpaceResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceDropSpaceResultBuilder) Success(success *ExecResp) *MetaServiceDropSpaceResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceDropSpaceResult) SetSuccess(success *ExecResp) *MetaServiceDropSpaceResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceDropSpaceResult) Read(iprot thrift.Protocol) error {
@@ -10089,6 +10830,32 @@ func (p *MetaServiceGetSpaceArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetSpaceArgsBuilder struct {
+  obj *MetaServiceGetSpaceArgs
+}
+
+func NewMetaServiceGetSpaceArgsBuilder() *MetaServiceGetSpaceArgsBuilder{
+  return &MetaServiceGetSpaceArgsBuilder{
+    obj: NewMetaServiceGetSpaceArgs(),
+  }
+}
+
+func (p MetaServiceGetSpaceArgsBuilder) Emit() *MetaServiceGetSpaceArgs{
+  return &MetaServiceGetSpaceArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetSpaceArgsBuilder) Req(req *GetSpaceReq) *MetaServiceGetSpaceArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetSpaceArgs) SetReq(req *GetSpaceReq) *MetaServiceGetSpaceArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetSpaceArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -10169,7 +10936,7 @@ func (p *MetaServiceGetSpaceArgs) String() string {
 //  - Success
 type MetaServiceGetSpaceResult struct {
   thrift.IResponse
-  Success *GetSpaceResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetSpaceResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetSpaceResult() *MetaServiceGetSpaceResult {
@@ -10185,6 +10952,32 @@ return p.Success
 }
 func (p *MetaServiceGetSpaceResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetSpaceResultBuilder struct {
+  obj *MetaServiceGetSpaceResult
+}
+
+func NewMetaServiceGetSpaceResultBuilder() *MetaServiceGetSpaceResultBuilder{
+  return &MetaServiceGetSpaceResultBuilder{
+    obj: NewMetaServiceGetSpaceResult(),
+  }
+}
+
+func (p MetaServiceGetSpaceResultBuilder) Emit() *MetaServiceGetSpaceResult{
+  return &MetaServiceGetSpaceResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetSpaceResultBuilder) Success(success *GetSpaceResp) *MetaServiceGetSpaceResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetSpaceResult) SetSuccess(success *GetSpaceResp) *MetaServiceGetSpaceResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetSpaceResult) Read(iprot thrift.Protocol) error {
@@ -10289,6 +11082,32 @@ func (p *MetaServiceListSpacesArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListSpacesArgsBuilder struct {
+  obj *MetaServiceListSpacesArgs
+}
+
+func NewMetaServiceListSpacesArgsBuilder() *MetaServiceListSpacesArgsBuilder{
+  return &MetaServiceListSpacesArgsBuilder{
+    obj: NewMetaServiceListSpacesArgs(),
+  }
+}
+
+func (p MetaServiceListSpacesArgsBuilder) Emit() *MetaServiceListSpacesArgs{
+  return &MetaServiceListSpacesArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListSpacesArgsBuilder) Req(req *ListSpacesReq) *MetaServiceListSpacesArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListSpacesArgs) SetReq(req *ListSpacesReq) *MetaServiceListSpacesArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListSpacesArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -10369,7 +11188,7 @@ func (p *MetaServiceListSpacesArgs) String() string {
 //  - Success
 type MetaServiceListSpacesResult struct {
   thrift.IResponse
-  Success *ListSpacesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListSpacesResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListSpacesResult() *MetaServiceListSpacesResult {
@@ -10385,6 +11204,32 @@ return p.Success
 }
 func (p *MetaServiceListSpacesResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListSpacesResultBuilder struct {
+  obj *MetaServiceListSpacesResult
+}
+
+func NewMetaServiceListSpacesResultBuilder() *MetaServiceListSpacesResultBuilder{
+  return &MetaServiceListSpacesResultBuilder{
+    obj: NewMetaServiceListSpacesResult(),
+  }
+}
+
+func (p MetaServiceListSpacesResultBuilder) Emit() *MetaServiceListSpacesResult{
+  return &MetaServiceListSpacesResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListSpacesResultBuilder) Success(success *ListSpacesResp) *MetaServiceListSpacesResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListSpacesResult) SetSuccess(success *ListSpacesResp) *MetaServiceListSpacesResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListSpacesResult) Read(iprot thrift.Protocol) error {
@@ -10489,6 +11334,32 @@ func (p *MetaServiceCreateSpaceAsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceCreateSpaceAsArgsBuilder struct {
+  obj *MetaServiceCreateSpaceAsArgs
+}
+
+func NewMetaServiceCreateSpaceAsArgsBuilder() *MetaServiceCreateSpaceAsArgsBuilder{
+  return &MetaServiceCreateSpaceAsArgsBuilder{
+    obj: NewMetaServiceCreateSpaceAsArgs(),
+  }
+}
+
+func (p MetaServiceCreateSpaceAsArgsBuilder) Emit() *MetaServiceCreateSpaceAsArgs{
+  return &MetaServiceCreateSpaceAsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceCreateSpaceAsArgsBuilder) Req(req *CreateSpaceAsReq) *MetaServiceCreateSpaceAsArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceCreateSpaceAsArgs) SetReq(req *CreateSpaceAsReq) *MetaServiceCreateSpaceAsArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceCreateSpaceAsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -10569,7 +11440,7 @@ func (p *MetaServiceCreateSpaceAsArgs) String() string {
 //  - Success
 type MetaServiceCreateSpaceAsResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceCreateSpaceAsResult() *MetaServiceCreateSpaceAsResult {
@@ -10585,6 +11456,32 @@ return p.Success
 }
 func (p *MetaServiceCreateSpaceAsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceCreateSpaceAsResultBuilder struct {
+  obj *MetaServiceCreateSpaceAsResult
+}
+
+func NewMetaServiceCreateSpaceAsResultBuilder() *MetaServiceCreateSpaceAsResultBuilder{
+  return &MetaServiceCreateSpaceAsResultBuilder{
+    obj: NewMetaServiceCreateSpaceAsResult(),
+  }
+}
+
+func (p MetaServiceCreateSpaceAsResultBuilder) Emit() *MetaServiceCreateSpaceAsResult{
+  return &MetaServiceCreateSpaceAsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceCreateSpaceAsResultBuilder) Success(success *ExecResp) *MetaServiceCreateSpaceAsResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceCreateSpaceAsResult) SetSuccess(success *ExecResp) *MetaServiceCreateSpaceAsResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceCreateSpaceAsResult) Read(iprot thrift.Protocol) error {
@@ -10689,6 +11586,32 @@ func (p *MetaServiceCreateTagArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceCreateTagArgsBuilder struct {
+  obj *MetaServiceCreateTagArgs
+}
+
+func NewMetaServiceCreateTagArgsBuilder() *MetaServiceCreateTagArgsBuilder{
+  return &MetaServiceCreateTagArgsBuilder{
+    obj: NewMetaServiceCreateTagArgs(),
+  }
+}
+
+func (p MetaServiceCreateTagArgsBuilder) Emit() *MetaServiceCreateTagArgs{
+  return &MetaServiceCreateTagArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceCreateTagArgsBuilder) Req(req *CreateTagReq) *MetaServiceCreateTagArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceCreateTagArgs) SetReq(req *CreateTagReq) *MetaServiceCreateTagArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceCreateTagArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -10769,7 +11692,7 @@ func (p *MetaServiceCreateTagArgs) String() string {
 //  - Success
 type MetaServiceCreateTagResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceCreateTagResult() *MetaServiceCreateTagResult {
@@ -10785,6 +11708,32 @@ return p.Success
 }
 func (p *MetaServiceCreateTagResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceCreateTagResultBuilder struct {
+  obj *MetaServiceCreateTagResult
+}
+
+func NewMetaServiceCreateTagResultBuilder() *MetaServiceCreateTagResultBuilder{
+  return &MetaServiceCreateTagResultBuilder{
+    obj: NewMetaServiceCreateTagResult(),
+  }
+}
+
+func (p MetaServiceCreateTagResultBuilder) Emit() *MetaServiceCreateTagResult{
+  return &MetaServiceCreateTagResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceCreateTagResultBuilder) Success(success *ExecResp) *MetaServiceCreateTagResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceCreateTagResult) SetSuccess(success *ExecResp) *MetaServiceCreateTagResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceCreateTagResult) Read(iprot thrift.Protocol) error {
@@ -10889,6 +11838,32 @@ func (p *MetaServiceAlterTagArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceAlterTagArgsBuilder struct {
+  obj *MetaServiceAlterTagArgs
+}
+
+func NewMetaServiceAlterTagArgsBuilder() *MetaServiceAlterTagArgsBuilder{
+  return &MetaServiceAlterTagArgsBuilder{
+    obj: NewMetaServiceAlterTagArgs(),
+  }
+}
+
+func (p MetaServiceAlterTagArgsBuilder) Emit() *MetaServiceAlterTagArgs{
+  return &MetaServiceAlterTagArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceAlterTagArgsBuilder) Req(req *AlterTagReq) *MetaServiceAlterTagArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceAlterTagArgs) SetReq(req *AlterTagReq) *MetaServiceAlterTagArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceAlterTagArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -10969,7 +11944,7 @@ func (p *MetaServiceAlterTagArgs) String() string {
 //  - Success
 type MetaServiceAlterTagResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceAlterTagResult() *MetaServiceAlterTagResult {
@@ -10985,6 +11960,32 @@ return p.Success
 }
 func (p *MetaServiceAlterTagResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceAlterTagResultBuilder struct {
+  obj *MetaServiceAlterTagResult
+}
+
+func NewMetaServiceAlterTagResultBuilder() *MetaServiceAlterTagResultBuilder{
+  return &MetaServiceAlterTagResultBuilder{
+    obj: NewMetaServiceAlterTagResult(),
+  }
+}
+
+func (p MetaServiceAlterTagResultBuilder) Emit() *MetaServiceAlterTagResult{
+  return &MetaServiceAlterTagResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceAlterTagResultBuilder) Success(success *ExecResp) *MetaServiceAlterTagResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceAlterTagResult) SetSuccess(success *ExecResp) *MetaServiceAlterTagResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceAlterTagResult) Read(iprot thrift.Protocol) error {
@@ -11089,6 +12090,32 @@ func (p *MetaServiceDropTagArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceDropTagArgsBuilder struct {
+  obj *MetaServiceDropTagArgs
+}
+
+func NewMetaServiceDropTagArgsBuilder() *MetaServiceDropTagArgsBuilder{
+  return &MetaServiceDropTagArgsBuilder{
+    obj: NewMetaServiceDropTagArgs(),
+  }
+}
+
+func (p MetaServiceDropTagArgsBuilder) Emit() *MetaServiceDropTagArgs{
+  return &MetaServiceDropTagArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceDropTagArgsBuilder) Req(req *DropTagReq) *MetaServiceDropTagArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceDropTagArgs) SetReq(req *DropTagReq) *MetaServiceDropTagArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceDropTagArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -11169,7 +12196,7 @@ func (p *MetaServiceDropTagArgs) String() string {
 //  - Success
 type MetaServiceDropTagResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceDropTagResult() *MetaServiceDropTagResult {
@@ -11185,6 +12212,32 @@ return p.Success
 }
 func (p *MetaServiceDropTagResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceDropTagResultBuilder struct {
+  obj *MetaServiceDropTagResult
+}
+
+func NewMetaServiceDropTagResultBuilder() *MetaServiceDropTagResultBuilder{
+  return &MetaServiceDropTagResultBuilder{
+    obj: NewMetaServiceDropTagResult(),
+  }
+}
+
+func (p MetaServiceDropTagResultBuilder) Emit() *MetaServiceDropTagResult{
+  return &MetaServiceDropTagResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceDropTagResultBuilder) Success(success *ExecResp) *MetaServiceDropTagResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceDropTagResult) SetSuccess(success *ExecResp) *MetaServiceDropTagResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceDropTagResult) Read(iprot thrift.Protocol) error {
@@ -11289,6 +12342,32 @@ func (p *MetaServiceGetTagArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetTagArgsBuilder struct {
+  obj *MetaServiceGetTagArgs
+}
+
+func NewMetaServiceGetTagArgsBuilder() *MetaServiceGetTagArgsBuilder{
+  return &MetaServiceGetTagArgsBuilder{
+    obj: NewMetaServiceGetTagArgs(),
+  }
+}
+
+func (p MetaServiceGetTagArgsBuilder) Emit() *MetaServiceGetTagArgs{
+  return &MetaServiceGetTagArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetTagArgsBuilder) Req(req *GetTagReq) *MetaServiceGetTagArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetTagArgs) SetReq(req *GetTagReq) *MetaServiceGetTagArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetTagArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -11369,7 +12448,7 @@ func (p *MetaServiceGetTagArgs) String() string {
 //  - Success
 type MetaServiceGetTagResult struct {
   thrift.IResponse
-  Success *GetTagResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetTagResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetTagResult() *MetaServiceGetTagResult {
@@ -11385,6 +12464,32 @@ return p.Success
 }
 func (p *MetaServiceGetTagResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetTagResultBuilder struct {
+  obj *MetaServiceGetTagResult
+}
+
+func NewMetaServiceGetTagResultBuilder() *MetaServiceGetTagResultBuilder{
+  return &MetaServiceGetTagResultBuilder{
+    obj: NewMetaServiceGetTagResult(),
+  }
+}
+
+func (p MetaServiceGetTagResultBuilder) Emit() *MetaServiceGetTagResult{
+  return &MetaServiceGetTagResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetTagResultBuilder) Success(success *GetTagResp) *MetaServiceGetTagResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetTagResult) SetSuccess(success *GetTagResp) *MetaServiceGetTagResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetTagResult) Read(iprot thrift.Protocol) error {
@@ -11489,6 +12594,32 @@ func (p *MetaServiceListTagsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListTagsArgsBuilder struct {
+  obj *MetaServiceListTagsArgs
+}
+
+func NewMetaServiceListTagsArgsBuilder() *MetaServiceListTagsArgsBuilder{
+  return &MetaServiceListTagsArgsBuilder{
+    obj: NewMetaServiceListTagsArgs(),
+  }
+}
+
+func (p MetaServiceListTagsArgsBuilder) Emit() *MetaServiceListTagsArgs{
+  return &MetaServiceListTagsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListTagsArgsBuilder) Req(req *ListTagsReq) *MetaServiceListTagsArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListTagsArgs) SetReq(req *ListTagsReq) *MetaServiceListTagsArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListTagsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -11569,7 +12700,7 @@ func (p *MetaServiceListTagsArgs) String() string {
 //  - Success
 type MetaServiceListTagsResult struct {
   thrift.IResponse
-  Success *ListTagsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListTagsResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListTagsResult() *MetaServiceListTagsResult {
@@ -11585,6 +12716,32 @@ return p.Success
 }
 func (p *MetaServiceListTagsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListTagsResultBuilder struct {
+  obj *MetaServiceListTagsResult
+}
+
+func NewMetaServiceListTagsResultBuilder() *MetaServiceListTagsResultBuilder{
+  return &MetaServiceListTagsResultBuilder{
+    obj: NewMetaServiceListTagsResult(),
+  }
+}
+
+func (p MetaServiceListTagsResultBuilder) Emit() *MetaServiceListTagsResult{
+  return &MetaServiceListTagsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListTagsResultBuilder) Success(success *ListTagsResp) *MetaServiceListTagsResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListTagsResult) SetSuccess(success *ListTagsResp) *MetaServiceListTagsResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListTagsResult) Read(iprot thrift.Protocol) error {
@@ -11689,6 +12846,32 @@ func (p *MetaServiceCreateEdgeArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceCreateEdgeArgsBuilder struct {
+  obj *MetaServiceCreateEdgeArgs
+}
+
+func NewMetaServiceCreateEdgeArgsBuilder() *MetaServiceCreateEdgeArgsBuilder{
+  return &MetaServiceCreateEdgeArgsBuilder{
+    obj: NewMetaServiceCreateEdgeArgs(),
+  }
+}
+
+func (p MetaServiceCreateEdgeArgsBuilder) Emit() *MetaServiceCreateEdgeArgs{
+  return &MetaServiceCreateEdgeArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceCreateEdgeArgsBuilder) Req(req *CreateEdgeReq) *MetaServiceCreateEdgeArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceCreateEdgeArgs) SetReq(req *CreateEdgeReq) *MetaServiceCreateEdgeArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceCreateEdgeArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -11769,7 +12952,7 @@ func (p *MetaServiceCreateEdgeArgs) String() string {
 //  - Success
 type MetaServiceCreateEdgeResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceCreateEdgeResult() *MetaServiceCreateEdgeResult {
@@ -11785,6 +12968,32 @@ return p.Success
 }
 func (p *MetaServiceCreateEdgeResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceCreateEdgeResultBuilder struct {
+  obj *MetaServiceCreateEdgeResult
+}
+
+func NewMetaServiceCreateEdgeResultBuilder() *MetaServiceCreateEdgeResultBuilder{
+  return &MetaServiceCreateEdgeResultBuilder{
+    obj: NewMetaServiceCreateEdgeResult(),
+  }
+}
+
+func (p MetaServiceCreateEdgeResultBuilder) Emit() *MetaServiceCreateEdgeResult{
+  return &MetaServiceCreateEdgeResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceCreateEdgeResultBuilder) Success(success *ExecResp) *MetaServiceCreateEdgeResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceCreateEdgeResult) SetSuccess(success *ExecResp) *MetaServiceCreateEdgeResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceCreateEdgeResult) Read(iprot thrift.Protocol) error {
@@ -11889,6 +13098,32 @@ func (p *MetaServiceAlterEdgeArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceAlterEdgeArgsBuilder struct {
+  obj *MetaServiceAlterEdgeArgs
+}
+
+func NewMetaServiceAlterEdgeArgsBuilder() *MetaServiceAlterEdgeArgsBuilder{
+  return &MetaServiceAlterEdgeArgsBuilder{
+    obj: NewMetaServiceAlterEdgeArgs(),
+  }
+}
+
+func (p MetaServiceAlterEdgeArgsBuilder) Emit() *MetaServiceAlterEdgeArgs{
+  return &MetaServiceAlterEdgeArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceAlterEdgeArgsBuilder) Req(req *AlterEdgeReq) *MetaServiceAlterEdgeArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceAlterEdgeArgs) SetReq(req *AlterEdgeReq) *MetaServiceAlterEdgeArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceAlterEdgeArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -11969,7 +13204,7 @@ func (p *MetaServiceAlterEdgeArgs) String() string {
 //  - Success
 type MetaServiceAlterEdgeResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceAlterEdgeResult() *MetaServiceAlterEdgeResult {
@@ -11985,6 +13220,32 @@ return p.Success
 }
 func (p *MetaServiceAlterEdgeResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceAlterEdgeResultBuilder struct {
+  obj *MetaServiceAlterEdgeResult
+}
+
+func NewMetaServiceAlterEdgeResultBuilder() *MetaServiceAlterEdgeResultBuilder{
+  return &MetaServiceAlterEdgeResultBuilder{
+    obj: NewMetaServiceAlterEdgeResult(),
+  }
+}
+
+func (p MetaServiceAlterEdgeResultBuilder) Emit() *MetaServiceAlterEdgeResult{
+  return &MetaServiceAlterEdgeResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceAlterEdgeResultBuilder) Success(success *ExecResp) *MetaServiceAlterEdgeResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceAlterEdgeResult) SetSuccess(success *ExecResp) *MetaServiceAlterEdgeResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceAlterEdgeResult) Read(iprot thrift.Protocol) error {
@@ -12089,6 +13350,32 @@ func (p *MetaServiceDropEdgeArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceDropEdgeArgsBuilder struct {
+  obj *MetaServiceDropEdgeArgs
+}
+
+func NewMetaServiceDropEdgeArgsBuilder() *MetaServiceDropEdgeArgsBuilder{
+  return &MetaServiceDropEdgeArgsBuilder{
+    obj: NewMetaServiceDropEdgeArgs(),
+  }
+}
+
+func (p MetaServiceDropEdgeArgsBuilder) Emit() *MetaServiceDropEdgeArgs{
+  return &MetaServiceDropEdgeArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceDropEdgeArgsBuilder) Req(req *DropEdgeReq) *MetaServiceDropEdgeArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceDropEdgeArgs) SetReq(req *DropEdgeReq) *MetaServiceDropEdgeArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceDropEdgeArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -12169,7 +13456,7 @@ func (p *MetaServiceDropEdgeArgs) String() string {
 //  - Success
 type MetaServiceDropEdgeResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceDropEdgeResult() *MetaServiceDropEdgeResult {
@@ -12185,6 +13472,32 @@ return p.Success
 }
 func (p *MetaServiceDropEdgeResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceDropEdgeResultBuilder struct {
+  obj *MetaServiceDropEdgeResult
+}
+
+func NewMetaServiceDropEdgeResultBuilder() *MetaServiceDropEdgeResultBuilder{
+  return &MetaServiceDropEdgeResultBuilder{
+    obj: NewMetaServiceDropEdgeResult(),
+  }
+}
+
+func (p MetaServiceDropEdgeResultBuilder) Emit() *MetaServiceDropEdgeResult{
+  return &MetaServiceDropEdgeResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceDropEdgeResultBuilder) Success(success *ExecResp) *MetaServiceDropEdgeResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceDropEdgeResult) SetSuccess(success *ExecResp) *MetaServiceDropEdgeResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceDropEdgeResult) Read(iprot thrift.Protocol) error {
@@ -12289,6 +13602,32 @@ func (p *MetaServiceGetEdgeArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetEdgeArgsBuilder struct {
+  obj *MetaServiceGetEdgeArgs
+}
+
+func NewMetaServiceGetEdgeArgsBuilder() *MetaServiceGetEdgeArgsBuilder{
+  return &MetaServiceGetEdgeArgsBuilder{
+    obj: NewMetaServiceGetEdgeArgs(),
+  }
+}
+
+func (p MetaServiceGetEdgeArgsBuilder) Emit() *MetaServiceGetEdgeArgs{
+  return &MetaServiceGetEdgeArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetEdgeArgsBuilder) Req(req *GetEdgeReq) *MetaServiceGetEdgeArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetEdgeArgs) SetReq(req *GetEdgeReq) *MetaServiceGetEdgeArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetEdgeArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -12369,7 +13708,7 @@ func (p *MetaServiceGetEdgeArgs) String() string {
 //  - Success
 type MetaServiceGetEdgeResult struct {
   thrift.IResponse
-  Success *GetEdgeResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetEdgeResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetEdgeResult() *MetaServiceGetEdgeResult {
@@ -12385,6 +13724,32 @@ return p.Success
 }
 func (p *MetaServiceGetEdgeResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetEdgeResultBuilder struct {
+  obj *MetaServiceGetEdgeResult
+}
+
+func NewMetaServiceGetEdgeResultBuilder() *MetaServiceGetEdgeResultBuilder{
+  return &MetaServiceGetEdgeResultBuilder{
+    obj: NewMetaServiceGetEdgeResult(),
+  }
+}
+
+func (p MetaServiceGetEdgeResultBuilder) Emit() *MetaServiceGetEdgeResult{
+  return &MetaServiceGetEdgeResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetEdgeResultBuilder) Success(success *GetEdgeResp) *MetaServiceGetEdgeResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetEdgeResult) SetSuccess(success *GetEdgeResp) *MetaServiceGetEdgeResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetEdgeResult) Read(iprot thrift.Protocol) error {
@@ -12489,6 +13854,32 @@ func (p *MetaServiceListEdgesArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListEdgesArgsBuilder struct {
+  obj *MetaServiceListEdgesArgs
+}
+
+func NewMetaServiceListEdgesArgsBuilder() *MetaServiceListEdgesArgsBuilder{
+  return &MetaServiceListEdgesArgsBuilder{
+    obj: NewMetaServiceListEdgesArgs(),
+  }
+}
+
+func (p MetaServiceListEdgesArgsBuilder) Emit() *MetaServiceListEdgesArgs{
+  return &MetaServiceListEdgesArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListEdgesArgsBuilder) Req(req *ListEdgesReq) *MetaServiceListEdgesArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListEdgesArgs) SetReq(req *ListEdgesReq) *MetaServiceListEdgesArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListEdgesArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -12569,7 +13960,7 @@ func (p *MetaServiceListEdgesArgs) String() string {
 //  - Success
 type MetaServiceListEdgesResult struct {
   thrift.IResponse
-  Success *ListEdgesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListEdgesResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListEdgesResult() *MetaServiceListEdgesResult {
@@ -12585,6 +13976,32 @@ return p.Success
 }
 func (p *MetaServiceListEdgesResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListEdgesResultBuilder struct {
+  obj *MetaServiceListEdgesResult
+}
+
+func NewMetaServiceListEdgesResultBuilder() *MetaServiceListEdgesResultBuilder{
+  return &MetaServiceListEdgesResultBuilder{
+    obj: NewMetaServiceListEdgesResult(),
+  }
+}
+
+func (p MetaServiceListEdgesResultBuilder) Emit() *MetaServiceListEdgesResult{
+  return &MetaServiceListEdgesResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListEdgesResultBuilder) Success(success *ListEdgesResp) *MetaServiceListEdgesResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListEdgesResult) SetSuccess(success *ListEdgesResp) *MetaServiceListEdgesResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListEdgesResult) Read(iprot thrift.Protocol) error {
@@ -12689,6 +14106,32 @@ func (p *MetaServiceAddHostsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceAddHostsArgsBuilder struct {
+  obj *MetaServiceAddHostsArgs
+}
+
+func NewMetaServiceAddHostsArgsBuilder() *MetaServiceAddHostsArgsBuilder{
+  return &MetaServiceAddHostsArgsBuilder{
+    obj: NewMetaServiceAddHostsArgs(),
+  }
+}
+
+func (p MetaServiceAddHostsArgsBuilder) Emit() *MetaServiceAddHostsArgs{
+  return &MetaServiceAddHostsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceAddHostsArgsBuilder) Req(req *AddHostsReq) *MetaServiceAddHostsArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceAddHostsArgs) SetReq(req *AddHostsReq) *MetaServiceAddHostsArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceAddHostsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -12769,7 +14212,7 @@ func (p *MetaServiceAddHostsArgs) String() string {
 //  - Success
 type MetaServiceAddHostsResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceAddHostsResult() *MetaServiceAddHostsResult {
@@ -12785,6 +14228,32 @@ return p.Success
 }
 func (p *MetaServiceAddHostsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceAddHostsResultBuilder struct {
+  obj *MetaServiceAddHostsResult
+}
+
+func NewMetaServiceAddHostsResultBuilder() *MetaServiceAddHostsResultBuilder{
+  return &MetaServiceAddHostsResultBuilder{
+    obj: NewMetaServiceAddHostsResult(),
+  }
+}
+
+func (p MetaServiceAddHostsResultBuilder) Emit() *MetaServiceAddHostsResult{
+  return &MetaServiceAddHostsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceAddHostsResultBuilder) Success(success *ExecResp) *MetaServiceAddHostsResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceAddHostsResult) SetSuccess(success *ExecResp) *MetaServiceAddHostsResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceAddHostsResult) Read(iprot thrift.Protocol) error {
@@ -12889,6 +14358,32 @@ func (p *MetaServiceAddHostsIntoZoneArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceAddHostsIntoZoneArgsBuilder struct {
+  obj *MetaServiceAddHostsIntoZoneArgs
+}
+
+func NewMetaServiceAddHostsIntoZoneArgsBuilder() *MetaServiceAddHostsIntoZoneArgsBuilder{
+  return &MetaServiceAddHostsIntoZoneArgsBuilder{
+    obj: NewMetaServiceAddHostsIntoZoneArgs(),
+  }
+}
+
+func (p MetaServiceAddHostsIntoZoneArgsBuilder) Emit() *MetaServiceAddHostsIntoZoneArgs{
+  return &MetaServiceAddHostsIntoZoneArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceAddHostsIntoZoneArgsBuilder) Req(req *AddHostsIntoZoneReq) *MetaServiceAddHostsIntoZoneArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceAddHostsIntoZoneArgs) SetReq(req *AddHostsIntoZoneReq) *MetaServiceAddHostsIntoZoneArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceAddHostsIntoZoneArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -12969,7 +14464,7 @@ func (p *MetaServiceAddHostsIntoZoneArgs) String() string {
 //  - Success
 type MetaServiceAddHostsIntoZoneResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceAddHostsIntoZoneResult() *MetaServiceAddHostsIntoZoneResult {
@@ -12985,6 +14480,32 @@ return p.Success
 }
 func (p *MetaServiceAddHostsIntoZoneResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceAddHostsIntoZoneResultBuilder struct {
+  obj *MetaServiceAddHostsIntoZoneResult
+}
+
+func NewMetaServiceAddHostsIntoZoneResultBuilder() *MetaServiceAddHostsIntoZoneResultBuilder{
+  return &MetaServiceAddHostsIntoZoneResultBuilder{
+    obj: NewMetaServiceAddHostsIntoZoneResult(),
+  }
+}
+
+func (p MetaServiceAddHostsIntoZoneResultBuilder) Emit() *MetaServiceAddHostsIntoZoneResult{
+  return &MetaServiceAddHostsIntoZoneResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceAddHostsIntoZoneResultBuilder) Success(success *ExecResp) *MetaServiceAddHostsIntoZoneResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceAddHostsIntoZoneResult) SetSuccess(success *ExecResp) *MetaServiceAddHostsIntoZoneResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceAddHostsIntoZoneResult) Read(iprot thrift.Protocol) error {
@@ -13089,6 +14610,32 @@ func (p *MetaServiceDropHostsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceDropHostsArgsBuilder struct {
+  obj *MetaServiceDropHostsArgs
+}
+
+func NewMetaServiceDropHostsArgsBuilder() *MetaServiceDropHostsArgsBuilder{
+  return &MetaServiceDropHostsArgsBuilder{
+    obj: NewMetaServiceDropHostsArgs(),
+  }
+}
+
+func (p MetaServiceDropHostsArgsBuilder) Emit() *MetaServiceDropHostsArgs{
+  return &MetaServiceDropHostsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceDropHostsArgsBuilder) Req(req *DropHostsReq) *MetaServiceDropHostsArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceDropHostsArgs) SetReq(req *DropHostsReq) *MetaServiceDropHostsArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceDropHostsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -13169,7 +14716,7 @@ func (p *MetaServiceDropHostsArgs) String() string {
 //  - Success
 type MetaServiceDropHostsResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceDropHostsResult() *MetaServiceDropHostsResult {
@@ -13185,6 +14732,32 @@ return p.Success
 }
 func (p *MetaServiceDropHostsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceDropHostsResultBuilder struct {
+  obj *MetaServiceDropHostsResult
+}
+
+func NewMetaServiceDropHostsResultBuilder() *MetaServiceDropHostsResultBuilder{
+  return &MetaServiceDropHostsResultBuilder{
+    obj: NewMetaServiceDropHostsResult(),
+  }
+}
+
+func (p MetaServiceDropHostsResultBuilder) Emit() *MetaServiceDropHostsResult{
+  return &MetaServiceDropHostsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceDropHostsResultBuilder) Success(success *ExecResp) *MetaServiceDropHostsResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceDropHostsResult) SetSuccess(success *ExecResp) *MetaServiceDropHostsResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceDropHostsResult) Read(iprot thrift.Protocol) error {
@@ -13289,6 +14862,32 @@ func (p *MetaServiceListHostsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListHostsArgsBuilder struct {
+  obj *MetaServiceListHostsArgs
+}
+
+func NewMetaServiceListHostsArgsBuilder() *MetaServiceListHostsArgsBuilder{
+  return &MetaServiceListHostsArgsBuilder{
+    obj: NewMetaServiceListHostsArgs(),
+  }
+}
+
+func (p MetaServiceListHostsArgsBuilder) Emit() *MetaServiceListHostsArgs{
+  return &MetaServiceListHostsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListHostsArgsBuilder) Req(req *ListHostsReq) *MetaServiceListHostsArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListHostsArgs) SetReq(req *ListHostsReq) *MetaServiceListHostsArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListHostsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -13369,7 +14968,7 @@ func (p *MetaServiceListHostsArgs) String() string {
 //  - Success
 type MetaServiceListHostsResult struct {
   thrift.IResponse
-  Success *ListHostsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListHostsResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListHostsResult() *MetaServiceListHostsResult {
@@ -13385,6 +14984,32 @@ return p.Success
 }
 func (p *MetaServiceListHostsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListHostsResultBuilder struct {
+  obj *MetaServiceListHostsResult
+}
+
+func NewMetaServiceListHostsResultBuilder() *MetaServiceListHostsResultBuilder{
+  return &MetaServiceListHostsResultBuilder{
+    obj: NewMetaServiceListHostsResult(),
+  }
+}
+
+func (p MetaServiceListHostsResultBuilder) Emit() *MetaServiceListHostsResult{
+  return &MetaServiceListHostsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListHostsResultBuilder) Success(success *ListHostsResp) *MetaServiceListHostsResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListHostsResult) SetSuccess(success *ListHostsResp) *MetaServiceListHostsResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListHostsResult) Read(iprot thrift.Protocol) error {
@@ -13489,6 +15114,32 @@ func (p *MetaServiceGetPartsAllocArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetPartsAllocArgsBuilder struct {
+  obj *MetaServiceGetPartsAllocArgs
+}
+
+func NewMetaServiceGetPartsAllocArgsBuilder() *MetaServiceGetPartsAllocArgsBuilder{
+  return &MetaServiceGetPartsAllocArgsBuilder{
+    obj: NewMetaServiceGetPartsAllocArgs(),
+  }
+}
+
+func (p MetaServiceGetPartsAllocArgsBuilder) Emit() *MetaServiceGetPartsAllocArgs{
+  return &MetaServiceGetPartsAllocArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetPartsAllocArgsBuilder) Req(req *GetPartsAllocReq) *MetaServiceGetPartsAllocArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetPartsAllocArgs) SetReq(req *GetPartsAllocReq) *MetaServiceGetPartsAllocArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetPartsAllocArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -13569,7 +15220,7 @@ func (p *MetaServiceGetPartsAllocArgs) String() string {
 //  - Success
 type MetaServiceGetPartsAllocResult struct {
   thrift.IResponse
-  Success *GetPartsAllocResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetPartsAllocResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetPartsAllocResult() *MetaServiceGetPartsAllocResult {
@@ -13585,6 +15236,32 @@ return p.Success
 }
 func (p *MetaServiceGetPartsAllocResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetPartsAllocResultBuilder struct {
+  obj *MetaServiceGetPartsAllocResult
+}
+
+func NewMetaServiceGetPartsAllocResultBuilder() *MetaServiceGetPartsAllocResultBuilder{
+  return &MetaServiceGetPartsAllocResultBuilder{
+    obj: NewMetaServiceGetPartsAllocResult(),
+  }
+}
+
+func (p MetaServiceGetPartsAllocResultBuilder) Emit() *MetaServiceGetPartsAllocResult{
+  return &MetaServiceGetPartsAllocResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetPartsAllocResultBuilder) Success(success *GetPartsAllocResp) *MetaServiceGetPartsAllocResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetPartsAllocResult) SetSuccess(success *GetPartsAllocResp) *MetaServiceGetPartsAllocResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetPartsAllocResult) Read(iprot thrift.Protocol) error {
@@ -13689,6 +15366,32 @@ func (p *MetaServiceListPartsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListPartsArgsBuilder struct {
+  obj *MetaServiceListPartsArgs
+}
+
+func NewMetaServiceListPartsArgsBuilder() *MetaServiceListPartsArgsBuilder{
+  return &MetaServiceListPartsArgsBuilder{
+    obj: NewMetaServiceListPartsArgs(),
+  }
+}
+
+func (p MetaServiceListPartsArgsBuilder) Emit() *MetaServiceListPartsArgs{
+  return &MetaServiceListPartsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListPartsArgsBuilder) Req(req *ListPartsReq) *MetaServiceListPartsArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListPartsArgs) SetReq(req *ListPartsReq) *MetaServiceListPartsArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListPartsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -13769,7 +15472,7 @@ func (p *MetaServiceListPartsArgs) String() string {
 //  - Success
 type MetaServiceListPartsResult struct {
   thrift.IResponse
-  Success *ListPartsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListPartsResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListPartsResult() *MetaServiceListPartsResult {
@@ -13785,6 +15488,32 @@ return p.Success
 }
 func (p *MetaServiceListPartsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListPartsResultBuilder struct {
+  obj *MetaServiceListPartsResult
+}
+
+func NewMetaServiceListPartsResultBuilder() *MetaServiceListPartsResultBuilder{
+  return &MetaServiceListPartsResultBuilder{
+    obj: NewMetaServiceListPartsResult(),
+  }
+}
+
+func (p MetaServiceListPartsResultBuilder) Emit() *MetaServiceListPartsResult{
+  return &MetaServiceListPartsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListPartsResultBuilder) Success(success *ListPartsResp) *MetaServiceListPartsResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListPartsResult) SetSuccess(success *ListPartsResp) *MetaServiceListPartsResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListPartsResult) Read(iprot thrift.Protocol) error {
@@ -13889,6 +15618,32 @@ func (p *MetaServiceMultiPutArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceMultiPutArgsBuilder struct {
+  obj *MetaServiceMultiPutArgs
+}
+
+func NewMetaServiceMultiPutArgsBuilder() *MetaServiceMultiPutArgsBuilder{
+  return &MetaServiceMultiPutArgsBuilder{
+    obj: NewMetaServiceMultiPutArgs(),
+  }
+}
+
+func (p MetaServiceMultiPutArgsBuilder) Emit() *MetaServiceMultiPutArgs{
+  return &MetaServiceMultiPutArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceMultiPutArgsBuilder) Req(req *MultiPutReq) *MetaServiceMultiPutArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceMultiPutArgs) SetReq(req *MultiPutReq) *MetaServiceMultiPutArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceMultiPutArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -13969,7 +15724,7 @@ func (p *MetaServiceMultiPutArgs) String() string {
 //  - Success
 type MetaServiceMultiPutResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceMultiPutResult() *MetaServiceMultiPutResult {
@@ -13985,6 +15740,32 @@ return p.Success
 }
 func (p *MetaServiceMultiPutResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceMultiPutResultBuilder struct {
+  obj *MetaServiceMultiPutResult
+}
+
+func NewMetaServiceMultiPutResultBuilder() *MetaServiceMultiPutResultBuilder{
+  return &MetaServiceMultiPutResultBuilder{
+    obj: NewMetaServiceMultiPutResult(),
+  }
+}
+
+func (p MetaServiceMultiPutResultBuilder) Emit() *MetaServiceMultiPutResult{
+  return &MetaServiceMultiPutResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceMultiPutResultBuilder) Success(success *ExecResp) *MetaServiceMultiPutResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceMultiPutResult) SetSuccess(success *ExecResp) *MetaServiceMultiPutResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceMultiPutResult) Read(iprot thrift.Protocol) error {
@@ -14089,6 +15870,32 @@ func (p *MetaServiceGetArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetArgsBuilder struct {
+  obj *MetaServiceGetArgs
+}
+
+func NewMetaServiceGetArgsBuilder() *MetaServiceGetArgsBuilder{
+  return &MetaServiceGetArgsBuilder{
+    obj: NewMetaServiceGetArgs(),
+  }
+}
+
+func (p MetaServiceGetArgsBuilder) Emit() *MetaServiceGetArgs{
+  return &MetaServiceGetArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetArgsBuilder) Req(req *GetReq) *MetaServiceGetArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetArgs) SetReq(req *GetReq) *MetaServiceGetArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -14169,7 +15976,7 @@ func (p *MetaServiceGetArgs) String() string {
 //  - Success
 type MetaServiceGetResult struct {
   thrift.IResponse
-  Success *GetResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetResult() *MetaServiceGetResult {
@@ -14185,6 +15992,32 @@ return p.Success
 }
 func (p *MetaServiceGetResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetResultBuilder struct {
+  obj *MetaServiceGetResult
+}
+
+func NewMetaServiceGetResultBuilder() *MetaServiceGetResultBuilder{
+  return &MetaServiceGetResultBuilder{
+    obj: NewMetaServiceGetResult(),
+  }
+}
+
+func (p MetaServiceGetResultBuilder) Emit() *MetaServiceGetResult{
+  return &MetaServiceGetResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetResultBuilder) Success(success *GetResp) *MetaServiceGetResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetResult) SetSuccess(success *GetResp) *MetaServiceGetResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetResult) Read(iprot thrift.Protocol) error {
@@ -14289,6 +16122,32 @@ func (p *MetaServiceMultiGetArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceMultiGetArgsBuilder struct {
+  obj *MetaServiceMultiGetArgs
+}
+
+func NewMetaServiceMultiGetArgsBuilder() *MetaServiceMultiGetArgsBuilder{
+  return &MetaServiceMultiGetArgsBuilder{
+    obj: NewMetaServiceMultiGetArgs(),
+  }
+}
+
+func (p MetaServiceMultiGetArgsBuilder) Emit() *MetaServiceMultiGetArgs{
+  return &MetaServiceMultiGetArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceMultiGetArgsBuilder) Req(req *MultiGetReq) *MetaServiceMultiGetArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceMultiGetArgs) SetReq(req *MultiGetReq) *MetaServiceMultiGetArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceMultiGetArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -14369,7 +16228,7 @@ func (p *MetaServiceMultiGetArgs) String() string {
 //  - Success
 type MetaServiceMultiGetResult struct {
   thrift.IResponse
-  Success *MultiGetResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *MultiGetResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceMultiGetResult() *MetaServiceMultiGetResult {
@@ -14385,6 +16244,32 @@ return p.Success
 }
 func (p *MetaServiceMultiGetResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceMultiGetResultBuilder struct {
+  obj *MetaServiceMultiGetResult
+}
+
+func NewMetaServiceMultiGetResultBuilder() *MetaServiceMultiGetResultBuilder{
+  return &MetaServiceMultiGetResultBuilder{
+    obj: NewMetaServiceMultiGetResult(),
+  }
+}
+
+func (p MetaServiceMultiGetResultBuilder) Emit() *MetaServiceMultiGetResult{
+  return &MetaServiceMultiGetResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceMultiGetResultBuilder) Success(success *MultiGetResp) *MetaServiceMultiGetResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceMultiGetResult) SetSuccess(success *MultiGetResp) *MetaServiceMultiGetResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceMultiGetResult) Read(iprot thrift.Protocol) error {
@@ -14489,6 +16374,32 @@ func (p *MetaServiceRemoveArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceRemoveArgsBuilder struct {
+  obj *MetaServiceRemoveArgs
+}
+
+func NewMetaServiceRemoveArgsBuilder() *MetaServiceRemoveArgsBuilder{
+  return &MetaServiceRemoveArgsBuilder{
+    obj: NewMetaServiceRemoveArgs(),
+  }
+}
+
+func (p MetaServiceRemoveArgsBuilder) Emit() *MetaServiceRemoveArgs{
+  return &MetaServiceRemoveArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceRemoveArgsBuilder) Req(req *RemoveReq) *MetaServiceRemoveArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceRemoveArgs) SetReq(req *RemoveReq) *MetaServiceRemoveArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceRemoveArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -14569,7 +16480,7 @@ func (p *MetaServiceRemoveArgs) String() string {
 //  - Success
 type MetaServiceRemoveResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceRemoveResult() *MetaServiceRemoveResult {
@@ -14585,6 +16496,32 @@ return p.Success
 }
 func (p *MetaServiceRemoveResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceRemoveResultBuilder struct {
+  obj *MetaServiceRemoveResult
+}
+
+func NewMetaServiceRemoveResultBuilder() *MetaServiceRemoveResultBuilder{
+  return &MetaServiceRemoveResultBuilder{
+    obj: NewMetaServiceRemoveResult(),
+  }
+}
+
+func (p MetaServiceRemoveResultBuilder) Emit() *MetaServiceRemoveResult{
+  return &MetaServiceRemoveResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceRemoveResultBuilder) Success(success *ExecResp) *MetaServiceRemoveResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceRemoveResult) SetSuccess(success *ExecResp) *MetaServiceRemoveResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceRemoveResult) Read(iprot thrift.Protocol) error {
@@ -14689,6 +16626,32 @@ func (p *MetaServiceRemoveRangeArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceRemoveRangeArgsBuilder struct {
+  obj *MetaServiceRemoveRangeArgs
+}
+
+func NewMetaServiceRemoveRangeArgsBuilder() *MetaServiceRemoveRangeArgsBuilder{
+  return &MetaServiceRemoveRangeArgsBuilder{
+    obj: NewMetaServiceRemoveRangeArgs(),
+  }
+}
+
+func (p MetaServiceRemoveRangeArgsBuilder) Emit() *MetaServiceRemoveRangeArgs{
+  return &MetaServiceRemoveRangeArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceRemoveRangeArgsBuilder) Req(req *RemoveRangeReq) *MetaServiceRemoveRangeArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceRemoveRangeArgs) SetReq(req *RemoveRangeReq) *MetaServiceRemoveRangeArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceRemoveRangeArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -14769,7 +16732,7 @@ func (p *MetaServiceRemoveRangeArgs) String() string {
 //  - Success
 type MetaServiceRemoveRangeResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceRemoveRangeResult() *MetaServiceRemoveRangeResult {
@@ -14785,6 +16748,32 @@ return p.Success
 }
 func (p *MetaServiceRemoveRangeResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceRemoveRangeResultBuilder struct {
+  obj *MetaServiceRemoveRangeResult
+}
+
+func NewMetaServiceRemoveRangeResultBuilder() *MetaServiceRemoveRangeResultBuilder{
+  return &MetaServiceRemoveRangeResultBuilder{
+    obj: NewMetaServiceRemoveRangeResult(),
+  }
+}
+
+func (p MetaServiceRemoveRangeResultBuilder) Emit() *MetaServiceRemoveRangeResult{
+  return &MetaServiceRemoveRangeResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceRemoveRangeResultBuilder) Success(success *ExecResp) *MetaServiceRemoveRangeResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceRemoveRangeResult) SetSuccess(success *ExecResp) *MetaServiceRemoveRangeResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceRemoveRangeResult) Read(iprot thrift.Protocol) error {
@@ -14889,6 +16878,32 @@ func (p *MetaServiceScanArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceScanArgsBuilder struct {
+  obj *MetaServiceScanArgs
+}
+
+func NewMetaServiceScanArgsBuilder() *MetaServiceScanArgsBuilder{
+  return &MetaServiceScanArgsBuilder{
+    obj: NewMetaServiceScanArgs(),
+  }
+}
+
+func (p MetaServiceScanArgsBuilder) Emit() *MetaServiceScanArgs{
+  return &MetaServiceScanArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceScanArgsBuilder) Req(req *ScanReq) *MetaServiceScanArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceScanArgs) SetReq(req *ScanReq) *MetaServiceScanArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceScanArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -14969,7 +16984,7 @@ func (p *MetaServiceScanArgs) String() string {
 //  - Success
 type MetaServiceScanResult struct {
   thrift.IResponse
-  Success *ScanResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ScanResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceScanResult() *MetaServiceScanResult {
@@ -14985,6 +17000,32 @@ return p.Success
 }
 func (p *MetaServiceScanResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceScanResultBuilder struct {
+  obj *MetaServiceScanResult
+}
+
+func NewMetaServiceScanResultBuilder() *MetaServiceScanResultBuilder{
+  return &MetaServiceScanResultBuilder{
+    obj: NewMetaServiceScanResult(),
+  }
+}
+
+func (p MetaServiceScanResultBuilder) Emit() *MetaServiceScanResult{
+  return &MetaServiceScanResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceScanResultBuilder) Success(success *ScanResp) *MetaServiceScanResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceScanResult) SetSuccess(success *ScanResp) *MetaServiceScanResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceScanResult) Read(iprot thrift.Protocol) error {
@@ -15089,6 +17130,32 @@ func (p *MetaServiceCreateTagIndexArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceCreateTagIndexArgsBuilder struct {
+  obj *MetaServiceCreateTagIndexArgs
+}
+
+func NewMetaServiceCreateTagIndexArgsBuilder() *MetaServiceCreateTagIndexArgsBuilder{
+  return &MetaServiceCreateTagIndexArgsBuilder{
+    obj: NewMetaServiceCreateTagIndexArgs(),
+  }
+}
+
+func (p MetaServiceCreateTagIndexArgsBuilder) Emit() *MetaServiceCreateTagIndexArgs{
+  return &MetaServiceCreateTagIndexArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceCreateTagIndexArgsBuilder) Req(req *CreateTagIndexReq) *MetaServiceCreateTagIndexArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceCreateTagIndexArgs) SetReq(req *CreateTagIndexReq) *MetaServiceCreateTagIndexArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceCreateTagIndexArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -15169,7 +17236,7 @@ func (p *MetaServiceCreateTagIndexArgs) String() string {
 //  - Success
 type MetaServiceCreateTagIndexResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceCreateTagIndexResult() *MetaServiceCreateTagIndexResult {
@@ -15185,6 +17252,32 @@ return p.Success
 }
 func (p *MetaServiceCreateTagIndexResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceCreateTagIndexResultBuilder struct {
+  obj *MetaServiceCreateTagIndexResult
+}
+
+func NewMetaServiceCreateTagIndexResultBuilder() *MetaServiceCreateTagIndexResultBuilder{
+  return &MetaServiceCreateTagIndexResultBuilder{
+    obj: NewMetaServiceCreateTagIndexResult(),
+  }
+}
+
+func (p MetaServiceCreateTagIndexResultBuilder) Emit() *MetaServiceCreateTagIndexResult{
+  return &MetaServiceCreateTagIndexResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceCreateTagIndexResultBuilder) Success(success *ExecResp) *MetaServiceCreateTagIndexResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceCreateTagIndexResult) SetSuccess(success *ExecResp) *MetaServiceCreateTagIndexResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceCreateTagIndexResult) Read(iprot thrift.Protocol) error {
@@ -15289,6 +17382,32 @@ func (p *MetaServiceDropTagIndexArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceDropTagIndexArgsBuilder struct {
+  obj *MetaServiceDropTagIndexArgs
+}
+
+func NewMetaServiceDropTagIndexArgsBuilder() *MetaServiceDropTagIndexArgsBuilder{
+  return &MetaServiceDropTagIndexArgsBuilder{
+    obj: NewMetaServiceDropTagIndexArgs(),
+  }
+}
+
+func (p MetaServiceDropTagIndexArgsBuilder) Emit() *MetaServiceDropTagIndexArgs{
+  return &MetaServiceDropTagIndexArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceDropTagIndexArgsBuilder) Req(req *DropTagIndexReq) *MetaServiceDropTagIndexArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceDropTagIndexArgs) SetReq(req *DropTagIndexReq) *MetaServiceDropTagIndexArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceDropTagIndexArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -15369,7 +17488,7 @@ func (p *MetaServiceDropTagIndexArgs) String() string {
 //  - Success
 type MetaServiceDropTagIndexResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceDropTagIndexResult() *MetaServiceDropTagIndexResult {
@@ -15385,6 +17504,32 @@ return p.Success
 }
 func (p *MetaServiceDropTagIndexResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceDropTagIndexResultBuilder struct {
+  obj *MetaServiceDropTagIndexResult
+}
+
+func NewMetaServiceDropTagIndexResultBuilder() *MetaServiceDropTagIndexResultBuilder{
+  return &MetaServiceDropTagIndexResultBuilder{
+    obj: NewMetaServiceDropTagIndexResult(),
+  }
+}
+
+func (p MetaServiceDropTagIndexResultBuilder) Emit() *MetaServiceDropTagIndexResult{
+  return &MetaServiceDropTagIndexResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceDropTagIndexResultBuilder) Success(success *ExecResp) *MetaServiceDropTagIndexResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceDropTagIndexResult) SetSuccess(success *ExecResp) *MetaServiceDropTagIndexResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceDropTagIndexResult) Read(iprot thrift.Protocol) error {
@@ -15489,6 +17634,32 @@ func (p *MetaServiceGetTagIndexArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetTagIndexArgsBuilder struct {
+  obj *MetaServiceGetTagIndexArgs
+}
+
+func NewMetaServiceGetTagIndexArgsBuilder() *MetaServiceGetTagIndexArgsBuilder{
+  return &MetaServiceGetTagIndexArgsBuilder{
+    obj: NewMetaServiceGetTagIndexArgs(),
+  }
+}
+
+func (p MetaServiceGetTagIndexArgsBuilder) Emit() *MetaServiceGetTagIndexArgs{
+  return &MetaServiceGetTagIndexArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetTagIndexArgsBuilder) Req(req *GetTagIndexReq) *MetaServiceGetTagIndexArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetTagIndexArgs) SetReq(req *GetTagIndexReq) *MetaServiceGetTagIndexArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetTagIndexArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -15569,7 +17740,7 @@ func (p *MetaServiceGetTagIndexArgs) String() string {
 //  - Success
 type MetaServiceGetTagIndexResult struct {
   thrift.IResponse
-  Success *GetTagIndexResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetTagIndexResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetTagIndexResult() *MetaServiceGetTagIndexResult {
@@ -15585,6 +17756,32 @@ return p.Success
 }
 func (p *MetaServiceGetTagIndexResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetTagIndexResultBuilder struct {
+  obj *MetaServiceGetTagIndexResult
+}
+
+func NewMetaServiceGetTagIndexResultBuilder() *MetaServiceGetTagIndexResultBuilder{
+  return &MetaServiceGetTagIndexResultBuilder{
+    obj: NewMetaServiceGetTagIndexResult(),
+  }
+}
+
+func (p MetaServiceGetTagIndexResultBuilder) Emit() *MetaServiceGetTagIndexResult{
+  return &MetaServiceGetTagIndexResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetTagIndexResultBuilder) Success(success *GetTagIndexResp) *MetaServiceGetTagIndexResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetTagIndexResult) SetSuccess(success *GetTagIndexResp) *MetaServiceGetTagIndexResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetTagIndexResult) Read(iprot thrift.Protocol) error {
@@ -15689,6 +17886,32 @@ func (p *MetaServiceListTagIndexesArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListTagIndexesArgsBuilder struct {
+  obj *MetaServiceListTagIndexesArgs
+}
+
+func NewMetaServiceListTagIndexesArgsBuilder() *MetaServiceListTagIndexesArgsBuilder{
+  return &MetaServiceListTagIndexesArgsBuilder{
+    obj: NewMetaServiceListTagIndexesArgs(),
+  }
+}
+
+func (p MetaServiceListTagIndexesArgsBuilder) Emit() *MetaServiceListTagIndexesArgs{
+  return &MetaServiceListTagIndexesArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListTagIndexesArgsBuilder) Req(req *ListTagIndexesReq) *MetaServiceListTagIndexesArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListTagIndexesArgs) SetReq(req *ListTagIndexesReq) *MetaServiceListTagIndexesArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListTagIndexesArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -15769,7 +17992,7 @@ func (p *MetaServiceListTagIndexesArgs) String() string {
 //  - Success
 type MetaServiceListTagIndexesResult struct {
   thrift.IResponse
-  Success *ListTagIndexesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListTagIndexesResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListTagIndexesResult() *MetaServiceListTagIndexesResult {
@@ -15785,6 +18008,32 @@ return p.Success
 }
 func (p *MetaServiceListTagIndexesResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListTagIndexesResultBuilder struct {
+  obj *MetaServiceListTagIndexesResult
+}
+
+func NewMetaServiceListTagIndexesResultBuilder() *MetaServiceListTagIndexesResultBuilder{
+  return &MetaServiceListTagIndexesResultBuilder{
+    obj: NewMetaServiceListTagIndexesResult(),
+  }
+}
+
+func (p MetaServiceListTagIndexesResultBuilder) Emit() *MetaServiceListTagIndexesResult{
+  return &MetaServiceListTagIndexesResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListTagIndexesResultBuilder) Success(success *ListTagIndexesResp) *MetaServiceListTagIndexesResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListTagIndexesResult) SetSuccess(success *ListTagIndexesResp) *MetaServiceListTagIndexesResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListTagIndexesResult) Read(iprot thrift.Protocol) error {
@@ -15889,6 +18138,32 @@ func (p *MetaServiceRebuildTagIndexArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceRebuildTagIndexArgsBuilder struct {
+  obj *MetaServiceRebuildTagIndexArgs
+}
+
+func NewMetaServiceRebuildTagIndexArgsBuilder() *MetaServiceRebuildTagIndexArgsBuilder{
+  return &MetaServiceRebuildTagIndexArgsBuilder{
+    obj: NewMetaServiceRebuildTagIndexArgs(),
+  }
+}
+
+func (p MetaServiceRebuildTagIndexArgsBuilder) Emit() *MetaServiceRebuildTagIndexArgs{
+  return &MetaServiceRebuildTagIndexArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceRebuildTagIndexArgsBuilder) Req(req *RebuildIndexReq) *MetaServiceRebuildTagIndexArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceRebuildTagIndexArgs) SetReq(req *RebuildIndexReq) *MetaServiceRebuildTagIndexArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceRebuildTagIndexArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -15969,7 +18244,7 @@ func (p *MetaServiceRebuildTagIndexArgs) String() string {
 //  - Success
 type MetaServiceRebuildTagIndexResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceRebuildTagIndexResult() *MetaServiceRebuildTagIndexResult {
@@ -15985,6 +18260,32 @@ return p.Success
 }
 func (p *MetaServiceRebuildTagIndexResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceRebuildTagIndexResultBuilder struct {
+  obj *MetaServiceRebuildTagIndexResult
+}
+
+func NewMetaServiceRebuildTagIndexResultBuilder() *MetaServiceRebuildTagIndexResultBuilder{
+  return &MetaServiceRebuildTagIndexResultBuilder{
+    obj: NewMetaServiceRebuildTagIndexResult(),
+  }
+}
+
+func (p MetaServiceRebuildTagIndexResultBuilder) Emit() *MetaServiceRebuildTagIndexResult{
+  return &MetaServiceRebuildTagIndexResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceRebuildTagIndexResultBuilder) Success(success *ExecResp) *MetaServiceRebuildTagIndexResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceRebuildTagIndexResult) SetSuccess(success *ExecResp) *MetaServiceRebuildTagIndexResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceRebuildTagIndexResult) Read(iprot thrift.Protocol) error {
@@ -16089,6 +18390,32 @@ func (p *MetaServiceListTagIndexStatusArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListTagIndexStatusArgsBuilder struct {
+  obj *MetaServiceListTagIndexStatusArgs
+}
+
+func NewMetaServiceListTagIndexStatusArgsBuilder() *MetaServiceListTagIndexStatusArgsBuilder{
+  return &MetaServiceListTagIndexStatusArgsBuilder{
+    obj: NewMetaServiceListTagIndexStatusArgs(),
+  }
+}
+
+func (p MetaServiceListTagIndexStatusArgsBuilder) Emit() *MetaServiceListTagIndexStatusArgs{
+  return &MetaServiceListTagIndexStatusArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListTagIndexStatusArgsBuilder) Req(req *ListIndexStatusReq) *MetaServiceListTagIndexStatusArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListTagIndexStatusArgs) SetReq(req *ListIndexStatusReq) *MetaServiceListTagIndexStatusArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListTagIndexStatusArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -16169,7 +18496,7 @@ func (p *MetaServiceListTagIndexStatusArgs) String() string {
 //  - Success
 type MetaServiceListTagIndexStatusResult struct {
   thrift.IResponse
-  Success *ListIndexStatusResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListIndexStatusResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListTagIndexStatusResult() *MetaServiceListTagIndexStatusResult {
@@ -16185,6 +18512,32 @@ return p.Success
 }
 func (p *MetaServiceListTagIndexStatusResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListTagIndexStatusResultBuilder struct {
+  obj *MetaServiceListTagIndexStatusResult
+}
+
+func NewMetaServiceListTagIndexStatusResultBuilder() *MetaServiceListTagIndexStatusResultBuilder{
+  return &MetaServiceListTagIndexStatusResultBuilder{
+    obj: NewMetaServiceListTagIndexStatusResult(),
+  }
+}
+
+func (p MetaServiceListTagIndexStatusResultBuilder) Emit() *MetaServiceListTagIndexStatusResult{
+  return &MetaServiceListTagIndexStatusResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListTagIndexStatusResultBuilder) Success(success *ListIndexStatusResp) *MetaServiceListTagIndexStatusResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListTagIndexStatusResult) SetSuccess(success *ListIndexStatusResp) *MetaServiceListTagIndexStatusResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListTagIndexStatusResult) Read(iprot thrift.Protocol) error {
@@ -16289,6 +18642,32 @@ func (p *MetaServiceCreateEdgeIndexArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceCreateEdgeIndexArgsBuilder struct {
+  obj *MetaServiceCreateEdgeIndexArgs
+}
+
+func NewMetaServiceCreateEdgeIndexArgsBuilder() *MetaServiceCreateEdgeIndexArgsBuilder{
+  return &MetaServiceCreateEdgeIndexArgsBuilder{
+    obj: NewMetaServiceCreateEdgeIndexArgs(),
+  }
+}
+
+func (p MetaServiceCreateEdgeIndexArgsBuilder) Emit() *MetaServiceCreateEdgeIndexArgs{
+  return &MetaServiceCreateEdgeIndexArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceCreateEdgeIndexArgsBuilder) Req(req *CreateEdgeIndexReq) *MetaServiceCreateEdgeIndexArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceCreateEdgeIndexArgs) SetReq(req *CreateEdgeIndexReq) *MetaServiceCreateEdgeIndexArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceCreateEdgeIndexArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -16369,7 +18748,7 @@ func (p *MetaServiceCreateEdgeIndexArgs) String() string {
 //  - Success
 type MetaServiceCreateEdgeIndexResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceCreateEdgeIndexResult() *MetaServiceCreateEdgeIndexResult {
@@ -16385,6 +18764,32 @@ return p.Success
 }
 func (p *MetaServiceCreateEdgeIndexResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceCreateEdgeIndexResultBuilder struct {
+  obj *MetaServiceCreateEdgeIndexResult
+}
+
+func NewMetaServiceCreateEdgeIndexResultBuilder() *MetaServiceCreateEdgeIndexResultBuilder{
+  return &MetaServiceCreateEdgeIndexResultBuilder{
+    obj: NewMetaServiceCreateEdgeIndexResult(),
+  }
+}
+
+func (p MetaServiceCreateEdgeIndexResultBuilder) Emit() *MetaServiceCreateEdgeIndexResult{
+  return &MetaServiceCreateEdgeIndexResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceCreateEdgeIndexResultBuilder) Success(success *ExecResp) *MetaServiceCreateEdgeIndexResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceCreateEdgeIndexResult) SetSuccess(success *ExecResp) *MetaServiceCreateEdgeIndexResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceCreateEdgeIndexResult) Read(iprot thrift.Protocol) error {
@@ -16489,6 +18894,32 @@ func (p *MetaServiceDropEdgeIndexArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceDropEdgeIndexArgsBuilder struct {
+  obj *MetaServiceDropEdgeIndexArgs
+}
+
+func NewMetaServiceDropEdgeIndexArgsBuilder() *MetaServiceDropEdgeIndexArgsBuilder{
+  return &MetaServiceDropEdgeIndexArgsBuilder{
+    obj: NewMetaServiceDropEdgeIndexArgs(),
+  }
+}
+
+func (p MetaServiceDropEdgeIndexArgsBuilder) Emit() *MetaServiceDropEdgeIndexArgs{
+  return &MetaServiceDropEdgeIndexArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceDropEdgeIndexArgsBuilder) Req(req *DropEdgeIndexReq) *MetaServiceDropEdgeIndexArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceDropEdgeIndexArgs) SetReq(req *DropEdgeIndexReq) *MetaServiceDropEdgeIndexArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceDropEdgeIndexArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -16569,7 +19000,7 @@ func (p *MetaServiceDropEdgeIndexArgs) String() string {
 //  - Success
 type MetaServiceDropEdgeIndexResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceDropEdgeIndexResult() *MetaServiceDropEdgeIndexResult {
@@ -16585,6 +19016,32 @@ return p.Success
 }
 func (p *MetaServiceDropEdgeIndexResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceDropEdgeIndexResultBuilder struct {
+  obj *MetaServiceDropEdgeIndexResult
+}
+
+func NewMetaServiceDropEdgeIndexResultBuilder() *MetaServiceDropEdgeIndexResultBuilder{
+  return &MetaServiceDropEdgeIndexResultBuilder{
+    obj: NewMetaServiceDropEdgeIndexResult(),
+  }
+}
+
+func (p MetaServiceDropEdgeIndexResultBuilder) Emit() *MetaServiceDropEdgeIndexResult{
+  return &MetaServiceDropEdgeIndexResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceDropEdgeIndexResultBuilder) Success(success *ExecResp) *MetaServiceDropEdgeIndexResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceDropEdgeIndexResult) SetSuccess(success *ExecResp) *MetaServiceDropEdgeIndexResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceDropEdgeIndexResult) Read(iprot thrift.Protocol) error {
@@ -16689,6 +19146,32 @@ func (p *MetaServiceGetEdgeIndexArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetEdgeIndexArgsBuilder struct {
+  obj *MetaServiceGetEdgeIndexArgs
+}
+
+func NewMetaServiceGetEdgeIndexArgsBuilder() *MetaServiceGetEdgeIndexArgsBuilder{
+  return &MetaServiceGetEdgeIndexArgsBuilder{
+    obj: NewMetaServiceGetEdgeIndexArgs(),
+  }
+}
+
+func (p MetaServiceGetEdgeIndexArgsBuilder) Emit() *MetaServiceGetEdgeIndexArgs{
+  return &MetaServiceGetEdgeIndexArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetEdgeIndexArgsBuilder) Req(req *GetEdgeIndexReq) *MetaServiceGetEdgeIndexArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetEdgeIndexArgs) SetReq(req *GetEdgeIndexReq) *MetaServiceGetEdgeIndexArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetEdgeIndexArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -16769,7 +19252,7 @@ func (p *MetaServiceGetEdgeIndexArgs) String() string {
 //  - Success
 type MetaServiceGetEdgeIndexResult struct {
   thrift.IResponse
-  Success *GetEdgeIndexResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetEdgeIndexResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetEdgeIndexResult() *MetaServiceGetEdgeIndexResult {
@@ -16785,6 +19268,32 @@ return p.Success
 }
 func (p *MetaServiceGetEdgeIndexResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetEdgeIndexResultBuilder struct {
+  obj *MetaServiceGetEdgeIndexResult
+}
+
+func NewMetaServiceGetEdgeIndexResultBuilder() *MetaServiceGetEdgeIndexResultBuilder{
+  return &MetaServiceGetEdgeIndexResultBuilder{
+    obj: NewMetaServiceGetEdgeIndexResult(),
+  }
+}
+
+func (p MetaServiceGetEdgeIndexResultBuilder) Emit() *MetaServiceGetEdgeIndexResult{
+  return &MetaServiceGetEdgeIndexResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetEdgeIndexResultBuilder) Success(success *GetEdgeIndexResp) *MetaServiceGetEdgeIndexResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetEdgeIndexResult) SetSuccess(success *GetEdgeIndexResp) *MetaServiceGetEdgeIndexResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetEdgeIndexResult) Read(iprot thrift.Protocol) error {
@@ -16889,6 +19398,32 @@ func (p *MetaServiceListEdgeIndexesArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListEdgeIndexesArgsBuilder struct {
+  obj *MetaServiceListEdgeIndexesArgs
+}
+
+func NewMetaServiceListEdgeIndexesArgsBuilder() *MetaServiceListEdgeIndexesArgsBuilder{
+  return &MetaServiceListEdgeIndexesArgsBuilder{
+    obj: NewMetaServiceListEdgeIndexesArgs(),
+  }
+}
+
+func (p MetaServiceListEdgeIndexesArgsBuilder) Emit() *MetaServiceListEdgeIndexesArgs{
+  return &MetaServiceListEdgeIndexesArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListEdgeIndexesArgsBuilder) Req(req *ListEdgeIndexesReq) *MetaServiceListEdgeIndexesArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListEdgeIndexesArgs) SetReq(req *ListEdgeIndexesReq) *MetaServiceListEdgeIndexesArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListEdgeIndexesArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -16969,7 +19504,7 @@ func (p *MetaServiceListEdgeIndexesArgs) String() string {
 //  - Success
 type MetaServiceListEdgeIndexesResult struct {
   thrift.IResponse
-  Success *ListEdgeIndexesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListEdgeIndexesResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListEdgeIndexesResult() *MetaServiceListEdgeIndexesResult {
@@ -16985,6 +19520,32 @@ return p.Success
 }
 func (p *MetaServiceListEdgeIndexesResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListEdgeIndexesResultBuilder struct {
+  obj *MetaServiceListEdgeIndexesResult
+}
+
+func NewMetaServiceListEdgeIndexesResultBuilder() *MetaServiceListEdgeIndexesResultBuilder{
+  return &MetaServiceListEdgeIndexesResultBuilder{
+    obj: NewMetaServiceListEdgeIndexesResult(),
+  }
+}
+
+func (p MetaServiceListEdgeIndexesResultBuilder) Emit() *MetaServiceListEdgeIndexesResult{
+  return &MetaServiceListEdgeIndexesResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListEdgeIndexesResultBuilder) Success(success *ListEdgeIndexesResp) *MetaServiceListEdgeIndexesResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListEdgeIndexesResult) SetSuccess(success *ListEdgeIndexesResp) *MetaServiceListEdgeIndexesResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListEdgeIndexesResult) Read(iprot thrift.Protocol) error {
@@ -17089,6 +19650,32 @@ func (p *MetaServiceRebuildEdgeIndexArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceRebuildEdgeIndexArgsBuilder struct {
+  obj *MetaServiceRebuildEdgeIndexArgs
+}
+
+func NewMetaServiceRebuildEdgeIndexArgsBuilder() *MetaServiceRebuildEdgeIndexArgsBuilder{
+  return &MetaServiceRebuildEdgeIndexArgsBuilder{
+    obj: NewMetaServiceRebuildEdgeIndexArgs(),
+  }
+}
+
+func (p MetaServiceRebuildEdgeIndexArgsBuilder) Emit() *MetaServiceRebuildEdgeIndexArgs{
+  return &MetaServiceRebuildEdgeIndexArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceRebuildEdgeIndexArgsBuilder) Req(req *RebuildIndexReq) *MetaServiceRebuildEdgeIndexArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceRebuildEdgeIndexArgs) SetReq(req *RebuildIndexReq) *MetaServiceRebuildEdgeIndexArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceRebuildEdgeIndexArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -17169,7 +19756,7 @@ func (p *MetaServiceRebuildEdgeIndexArgs) String() string {
 //  - Success
 type MetaServiceRebuildEdgeIndexResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceRebuildEdgeIndexResult() *MetaServiceRebuildEdgeIndexResult {
@@ -17185,6 +19772,32 @@ return p.Success
 }
 func (p *MetaServiceRebuildEdgeIndexResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceRebuildEdgeIndexResultBuilder struct {
+  obj *MetaServiceRebuildEdgeIndexResult
+}
+
+func NewMetaServiceRebuildEdgeIndexResultBuilder() *MetaServiceRebuildEdgeIndexResultBuilder{
+  return &MetaServiceRebuildEdgeIndexResultBuilder{
+    obj: NewMetaServiceRebuildEdgeIndexResult(),
+  }
+}
+
+func (p MetaServiceRebuildEdgeIndexResultBuilder) Emit() *MetaServiceRebuildEdgeIndexResult{
+  return &MetaServiceRebuildEdgeIndexResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceRebuildEdgeIndexResultBuilder) Success(success *ExecResp) *MetaServiceRebuildEdgeIndexResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceRebuildEdgeIndexResult) SetSuccess(success *ExecResp) *MetaServiceRebuildEdgeIndexResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceRebuildEdgeIndexResult) Read(iprot thrift.Protocol) error {
@@ -17289,6 +19902,32 @@ func (p *MetaServiceListEdgeIndexStatusArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListEdgeIndexStatusArgsBuilder struct {
+  obj *MetaServiceListEdgeIndexStatusArgs
+}
+
+func NewMetaServiceListEdgeIndexStatusArgsBuilder() *MetaServiceListEdgeIndexStatusArgsBuilder{
+  return &MetaServiceListEdgeIndexStatusArgsBuilder{
+    obj: NewMetaServiceListEdgeIndexStatusArgs(),
+  }
+}
+
+func (p MetaServiceListEdgeIndexStatusArgsBuilder) Emit() *MetaServiceListEdgeIndexStatusArgs{
+  return &MetaServiceListEdgeIndexStatusArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListEdgeIndexStatusArgsBuilder) Req(req *ListIndexStatusReq) *MetaServiceListEdgeIndexStatusArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListEdgeIndexStatusArgs) SetReq(req *ListIndexStatusReq) *MetaServiceListEdgeIndexStatusArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListEdgeIndexStatusArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -17369,7 +20008,7 @@ func (p *MetaServiceListEdgeIndexStatusArgs) String() string {
 //  - Success
 type MetaServiceListEdgeIndexStatusResult struct {
   thrift.IResponse
-  Success *ListIndexStatusResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListIndexStatusResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListEdgeIndexStatusResult() *MetaServiceListEdgeIndexStatusResult {
@@ -17385,6 +20024,32 @@ return p.Success
 }
 func (p *MetaServiceListEdgeIndexStatusResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListEdgeIndexStatusResultBuilder struct {
+  obj *MetaServiceListEdgeIndexStatusResult
+}
+
+func NewMetaServiceListEdgeIndexStatusResultBuilder() *MetaServiceListEdgeIndexStatusResultBuilder{
+  return &MetaServiceListEdgeIndexStatusResultBuilder{
+    obj: NewMetaServiceListEdgeIndexStatusResult(),
+  }
+}
+
+func (p MetaServiceListEdgeIndexStatusResultBuilder) Emit() *MetaServiceListEdgeIndexStatusResult{
+  return &MetaServiceListEdgeIndexStatusResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListEdgeIndexStatusResultBuilder) Success(success *ListIndexStatusResp) *MetaServiceListEdgeIndexStatusResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListEdgeIndexStatusResult) SetSuccess(success *ListIndexStatusResp) *MetaServiceListEdgeIndexStatusResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListEdgeIndexStatusResult) Read(iprot thrift.Protocol) error {
@@ -17489,6 +20154,32 @@ func (p *MetaServiceCreateUserArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceCreateUserArgsBuilder struct {
+  obj *MetaServiceCreateUserArgs
+}
+
+func NewMetaServiceCreateUserArgsBuilder() *MetaServiceCreateUserArgsBuilder{
+  return &MetaServiceCreateUserArgsBuilder{
+    obj: NewMetaServiceCreateUserArgs(),
+  }
+}
+
+func (p MetaServiceCreateUserArgsBuilder) Emit() *MetaServiceCreateUserArgs{
+  return &MetaServiceCreateUserArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceCreateUserArgsBuilder) Req(req *CreateUserReq) *MetaServiceCreateUserArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceCreateUserArgs) SetReq(req *CreateUserReq) *MetaServiceCreateUserArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceCreateUserArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -17569,7 +20260,7 @@ func (p *MetaServiceCreateUserArgs) String() string {
 //  - Success
 type MetaServiceCreateUserResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceCreateUserResult() *MetaServiceCreateUserResult {
@@ -17585,6 +20276,32 @@ return p.Success
 }
 func (p *MetaServiceCreateUserResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceCreateUserResultBuilder struct {
+  obj *MetaServiceCreateUserResult
+}
+
+func NewMetaServiceCreateUserResultBuilder() *MetaServiceCreateUserResultBuilder{
+  return &MetaServiceCreateUserResultBuilder{
+    obj: NewMetaServiceCreateUserResult(),
+  }
+}
+
+func (p MetaServiceCreateUserResultBuilder) Emit() *MetaServiceCreateUserResult{
+  return &MetaServiceCreateUserResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceCreateUserResultBuilder) Success(success *ExecResp) *MetaServiceCreateUserResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceCreateUserResult) SetSuccess(success *ExecResp) *MetaServiceCreateUserResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceCreateUserResult) Read(iprot thrift.Protocol) error {
@@ -17689,6 +20406,32 @@ func (p *MetaServiceDropUserArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceDropUserArgsBuilder struct {
+  obj *MetaServiceDropUserArgs
+}
+
+func NewMetaServiceDropUserArgsBuilder() *MetaServiceDropUserArgsBuilder{
+  return &MetaServiceDropUserArgsBuilder{
+    obj: NewMetaServiceDropUserArgs(),
+  }
+}
+
+func (p MetaServiceDropUserArgsBuilder) Emit() *MetaServiceDropUserArgs{
+  return &MetaServiceDropUserArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceDropUserArgsBuilder) Req(req *DropUserReq) *MetaServiceDropUserArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceDropUserArgs) SetReq(req *DropUserReq) *MetaServiceDropUserArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceDropUserArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -17769,7 +20512,7 @@ func (p *MetaServiceDropUserArgs) String() string {
 //  - Success
 type MetaServiceDropUserResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceDropUserResult() *MetaServiceDropUserResult {
@@ -17785,6 +20528,32 @@ return p.Success
 }
 func (p *MetaServiceDropUserResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceDropUserResultBuilder struct {
+  obj *MetaServiceDropUserResult
+}
+
+func NewMetaServiceDropUserResultBuilder() *MetaServiceDropUserResultBuilder{
+  return &MetaServiceDropUserResultBuilder{
+    obj: NewMetaServiceDropUserResult(),
+  }
+}
+
+func (p MetaServiceDropUserResultBuilder) Emit() *MetaServiceDropUserResult{
+  return &MetaServiceDropUserResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceDropUserResultBuilder) Success(success *ExecResp) *MetaServiceDropUserResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceDropUserResult) SetSuccess(success *ExecResp) *MetaServiceDropUserResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceDropUserResult) Read(iprot thrift.Protocol) error {
@@ -17889,6 +20658,32 @@ func (p *MetaServiceAlterUserArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceAlterUserArgsBuilder struct {
+  obj *MetaServiceAlterUserArgs
+}
+
+func NewMetaServiceAlterUserArgsBuilder() *MetaServiceAlterUserArgsBuilder{
+  return &MetaServiceAlterUserArgsBuilder{
+    obj: NewMetaServiceAlterUserArgs(),
+  }
+}
+
+func (p MetaServiceAlterUserArgsBuilder) Emit() *MetaServiceAlterUserArgs{
+  return &MetaServiceAlterUserArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceAlterUserArgsBuilder) Req(req *AlterUserReq) *MetaServiceAlterUserArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceAlterUserArgs) SetReq(req *AlterUserReq) *MetaServiceAlterUserArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceAlterUserArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -17969,7 +20764,7 @@ func (p *MetaServiceAlterUserArgs) String() string {
 //  - Success
 type MetaServiceAlterUserResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceAlterUserResult() *MetaServiceAlterUserResult {
@@ -17985,6 +20780,32 @@ return p.Success
 }
 func (p *MetaServiceAlterUserResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceAlterUserResultBuilder struct {
+  obj *MetaServiceAlterUserResult
+}
+
+func NewMetaServiceAlterUserResultBuilder() *MetaServiceAlterUserResultBuilder{
+  return &MetaServiceAlterUserResultBuilder{
+    obj: NewMetaServiceAlterUserResult(),
+  }
+}
+
+func (p MetaServiceAlterUserResultBuilder) Emit() *MetaServiceAlterUserResult{
+  return &MetaServiceAlterUserResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceAlterUserResultBuilder) Success(success *ExecResp) *MetaServiceAlterUserResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceAlterUserResult) SetSuccess(success *ExecResp) *MetaServiceAlterUserResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceAlterUserResult) Read(iprot thrift.Protocol) error {
@@ -18089,6 +20910,32 @@ func (p *MetaServiceGrantRoleArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGrantRoleArgsBuilder struct {
+  obj *MetaServiceGrantRoleArgs
+}
+
+func NewMetaServiceGrantRoleArgsBuilder() *MetaServiceGrantRoleArgsBuilder{
+  return &MetaServiceGrantRoleArgsBuilder{
+    obj: NewMetaServiceGrantRoleArgs(),
+  }
+}
+
+func (p MetaServiceGrantRoleArgsBuilder) Emit() *MetaServiceGrantRoleArgs{
+  return &MetaServiceGrantRoleArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGrantRoleArgsBuilder) Req(req *GrantRoleReq) *MetaServiceGrantRoleArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGrantRoleArgs) SetReq(req *GrantRoleReq) *MetaServiceGrantRoleArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGrantRoleArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -18169,7 +21016,7 @@ func (p *MetaServiceGrantRoleArgs) String() string {
 //  - Success
 type MetaServiceGrantRoleResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGrantRoleResult() *MetaServiceGrantRoleResult {
@@ -18185,6 +21032,32 @@ return p.Success
 }
 func (p *MetaServiceGrantRoleResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGrantRoleResultBuilder struct {
+  obj *MetaServiceGrantRoleResult
+}
+
+func NewMetaServiceGrantRoleResultBuilder() *MetaServiceGrantRoleResultBuilder{
+  return &MetaServiceGrantRoleResultBuilder{
+    obj: NewMetaServiceGrantRoleResult(),
+  }
+}
+
+func (p MetaServiceGrantRoleResultBuilder) Emit() *MetaServiceGrantRoleResult{
+  return &MetaServiceGrantRoleResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGrantRoleResultBuilder) Success(success *ExecResp) *MetaServiceGrantRoleResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGrantRoleResult) SetSuccess(success *ExecResp) *MetaServiceGrantRoleResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGrantRoleResult) Read(iprot thrift.Protocol) error {
@@ -18289,6 +21162,32 @@ func (p *MetaServiceRevokeRoleArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceRevokeRoleArgsBuilder struct {
+  obj *MetaServiceRevokeRoleArgs
+}
+
+func NewMetaServiceRevokeRoleArgsBuilder() *MetaServiceRevokeRoleArgsBuilder{
+  return &MetaServiceRevokeRoleArgsBuilder{
+    obj: NewMetaServiceRevokeRoleArgs(),
+  }
+}
+
+func (p MetaServiceRevokeRoleArgsBuilder) Emit() *MetaServiceRevokeRoleArgs{
+  return &MetaServiceRevokeRoleArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceRevokeRoleArgsBuilder) Req(req *RevokeRoleReq) *MetaServiceRevokeRoleArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceRevokeRoleArgs) SetReq(req *RevokeRoleReq) *MetaServiceRevokeRoleArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceRevokeRoleArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -18369,7 +21268,7 @@ func (p *MetaServiceRevokeRoleArgs) String() string {
 //  - Success
 type MetaServiceRevokeRoleResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceRevokeRoleResult() *MetaServiceRevokeRoleResult {
@@ -18385,6 +21284,32 @@ return p.Success
 }
 func (p *MetaServiceRevokeRoleResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceRevokeRoleResultBuilder struct {
+  obj *MetaServiceRevokeRoleResult
+}
+
+func NewMetaServiceRevokeRoleResultBuilder() *MetaServiceRevokeRoleResultBuilder{
+  return &MetaServiceRevokeRoleResultBuilder{
+    obj: NewMetaServiceRevokeRoleResult(),
+  }
+}
+
+func (p MetaServiceRevokeRoleResultBuilder) Emit() *MetaServiceRevokeRoleResult{
+  return &MetaServiceRevokeRoleResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceRevokeRoleResultBuilder) Success(success *ExecResp) *MetaServiceRevokeRoleResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceRevokeRoleResult) SetSuccess(success *ExecResp) *MetaServiceRevokeRoleResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceRevokeRoleResult) Read(iprot thrift.Protocol) error {
@@ -18489,6 +21414,32 @@ func (p *MetaServiceListUsersArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListUsersArgsBuilder struct {
+  obj *MetaServiceListUsersArgs
+}
+
+func NewMetaServiceListUsersArgsBuilder() *MetaServiceListUsersArgsBuilder{
+  return &MetaServiceListUsersArgsBuilder{
+    obj: NewMetaServiceListUsersArgs(),
+  }
+}
+
+func (p MetaServiceListUsersArgsBuilder) Emit() *MetaServiceListUsersArgs{
+  return &MetaServiceListUsersArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListUsersArgsBuilder) Req(req *ListUsersReq) *MetaServiceListUsersArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListUsersArgs) SetReq(req *ListUsersReq) *MetaServiceListUsersArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListUsersArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -18569,7 +21520,7 @@ func (p *MetaServiceListUsersArgs) String() string {
 //  - Success
 type MetaServiceListUsersResult struct {
   thrift.IResponse
-  Success *ListUsersResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListUsersResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListUsersResult() *MetaServiceListUsersResult {
@@ -18585,6 +21536,32 @@ return p.Success
 }
 func (p *MetaServiceListUsersResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListUsersResultBuilder struct {
+  obj *MetaServiceListUsersResult
+}
+
+func NewMetaServiceListUsersResultBuilder() *MetaServiceListUsersResultBuilder{
+  return &MetaServiceListUsersResultBuilder{
+    obj: NewMetaServiceListUsersResult(),
+  }
+}
+
+func (p MetaServiceListUsersResultBuilder) Emit() *MetaServiceListUsersResult{
+  return &MetaServiceListUsersResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListUsersResultBuilder) Success(success *ListUsersResp) *MetaServiceListUsersResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListUsersResult) SetSuccess(success *ListUsersResp) *MetaServiceListUsersResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListUsersResult) Read(iprot thrift.Protocol) error {
@@ -18689,6 +21666,32 @@ func (p *MetaServiceListRolesArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListRolesArgsBuilder struct {
+  obj *MetaServiceListRolesArgs
+}
+
+func NewMetaServiceListRolesArgsBuilder() *MetaServiceListRolesArgsBuilder{
+  return &MetaServiceListRolesArgsBuilder{
+    obj: NewMetaServiceListRolesArgs(),
+  }
+}
+
+func (p MetaServiceListRolesArgsBuilder) Emit() *MetaServiceListRolesArgs{
+  return &MetaServiceListRolesArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListRolesArgsBuilder) Req(req *ListRolesReq) *MetaServiceListRolesArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListRolesArgs) SetReq(req *ListRolesReq) *MetaServiceListRolesArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListRolesArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -18769,7 +21772,7 @@ func (p *MetaServiceListRolesArgs) String() string {
 //  - Success
 type MetaServiceListRolesResult struct {
   thrift.IResponse
-  Success *ListRolesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListRolesResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListRolesResult() *MetaServiceListRolesResult {
@@ -18785,6 +21788,32 @@ return p.Success
 }
 func (p *MetaServiceListRolesResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListRolesResultBuilder struct {
+  obj *MetaServiceListRolesResult
+}
+
+func NewMetaServiceListRolesResultBuilder() *MetaServiceListRolesResultBuilder{
+  return &MetaServiceListRolesResultBuilder{
+    obj: NewMetaServiceListRolesResult(),
+  }
+}
+
+func (p MetaServiceListRolesResultBuilder) Emit() *MetaServiceListRolesResult{
+  return &MetaServiceListRolesResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListRolesResultBuilder) Success(success *ListRolesResp) *MetaServiceListRolesResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListRolesResult) SetSuccess(success *ListRolesResp) *MetaServiceListRolesResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListRolesResult) Read(iprot thrift.Protocol) error {
@@ -18889,6 +21918,32 @@ func (p *MetaServiceGetUserRolesArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetUserRolesArgsBuilder struct {
+  obj *MetaServiceGetUserRolesArgs
+}
+
+func NewMetaServiceGetUserRolesArgsBuilder() *MetaServiceGetUserRolesArgsBuilder{
+  return &MetaServiceGetUserRolesArgsBuilder{
+    obj: NewMetaServiceGetUserRolesArgs(),
+  }
+}
+
+func (p MetaServiceGetUserRolesArgsBuilder) Emit() *MetaServiceGetUserRolesArgs{
+  return &MetaServiceGetUserRolesArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetUserRolesArgsBuilder) Req(req *GetUserRolesReq) *MetaServiceGetUserRolesArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetUserRolesArgs) SetReq(req *GetUserRolesReq) *MetaServiceGetUserRolesArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetUserRolesArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -18969,7 +22024,7 @@ func (p *MetaServiceGetUserRolesArgs) String() string {
 //  - Success
 type MetaServiceGetUserRolesResult struct {
   thrift.IResponse
-  Success *ListRolesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListRolesResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetUserRolesResult() *MetaServiceGetUserRolesResult {
@@ -18985,6 +22040,32 @@ return p.Success
 }
 func (p *MetaServiceGetUserRolesResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetUserRolesResultBuilder struct {
+  obj *MetaServiceGetUserRolesResult
+}
+
+func NewMetaServiceGetUserRolesResultBuilder() *MetaServiceGetUserRolesResultBuilder{
+  return &MetaServiceGetUserRolesResultBuilder{
+    obj: NewMetaServiceGetUserRolesResult(),
+  }
+}
+
+func (p MetaServiceGetUserRolesResultBuilder) Emit() *MetaServiceGetUserRolesResult{
+  return &MetaServiceGetUserRolesResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetUserRolesResultBuilder) Success(success *ListRolesResp) *MetaServiceGetUserRolesResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetUserRolesResult) SetSuccess(success *ListRolesResp) *MetaServiceGetUserRolesResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetUserRolesResult) Read(iprot thrift.Protocol) error {
@@ -19089,6 +22170,32 @@ func (p *MetaServiceChangePasswordArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceChangePasswordArgsBuilder struct {
+  obj *MetaServiceChangePasswordArgs
+}
+
+func NewMetaServiceChangePasswordArgsBuilder() *MetaServiceChangePasswordArgsBuilder{
+  return &MetaServiceChangePasswordArgsBuilder{
+    obj: NewMetaServiceChangePasswordArgs(),
+  }
+}
+
+func (p MetaServiceChangePasswordArgsBuilder) Emit() *MetaServiceChangePasswordArgs{
+  return &MetaServiceChangePasswordArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceChangePasswordArgsBuilder) Req(req *ChangePasswordReq) *MetaServiceChangePasswordArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceChangePasswordArgs) SetReq(req *ChangePasswordReq) *MetaServiceChangePasswordArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceChangePasswordArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -19169,7 +22276,7 @@ func (p *MetaServiceChangePasswordArgs) String() string {
 //  - Success
 type MetaServiceChangePasswordResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceChangePasswordResult() *MetaServiceChangePasswordResult {
@@ -19185,6 +22292,32 @@ return p.Success
 }
 func (p *MetaServiceChangePasswordResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceChangePasswordResultBuilder struct {
+  obj *MetaServiceChangePasswordResult
+}
+
+func NewMetaServiceChangePasswordResultBuilder() *MetaServiceChangePasswordResultBuilder{
+  return &MetaServiceChangePasswordResultBuilder{
+    obj: NewMetaServiceChangePasswordResult(),
+  }
+}
+
+func (p MetaServiceChangePasswordResultBuilder) Emit() *MetaServiceChangePasswordResult{
+  return &MetaServiceChangePasswordResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceChangePasswordResultBuilder) Success(success *ExecResp) *MetaServiceChangePasswordResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceChangePasswordResult) SetSuccess(success *ExecResp) *MetaServiceChangePasswordResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceChangePasswordResult) Read(iprot thrift.Protocol) error {
@@ -19289,6 +22422,32 @@ func (p *MetaServiceHeartBeatArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceHeartBeatArgsBuilder struct {
+  obj *MetaServiceHeartBeatArgs
+}
+
+func NewMetaServiceHeartBeatArgsBuilder() *MetaServiceHeartBeatArgsBuilder{
+  return &MetaServiceHeartBeatArgsBuilder{
+    obj: NewMetaServiceHeartBeatArgs(),
+  }
+}
+
+func (p MetaServiceHeartBeatArgsBuilder) Emit() *MetaServiceHeartBeatArgs{
+  return &MetaServiceHeartBeatArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceHeartBeatArgsBuilder) Req(req *HBReq) *MetaServiceHeartBeatArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceHeartBeatArgs) SetReq(req *HBReq) *MetaServiceHeartBeatArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceHeartBeatArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -19369,7 +22528,7 @@ func (p *MetaServiceHeartBeatArgs) String() string {
 //  - Success
 type MetaServiceHeartBeatResult struct {
   thrift.IResponse
-  Success *HBResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *HBResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceHeartBeatResult() *MetaServiceHeartBeatResult {
@@ -19385,6 +22544,32 @@ return p.Success
 }
 func (p *MetaServiceHeartBeatResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceHeartBeatResultBuilder struct {
+  obj *MetaServiceHeartBeatResult
+}
+
+func NewMetaServiceHeartBeatResultBuilder() *MetaServiceHeartBeatResultBuilder{
+  return &MetaServiceHeartBeatResultBuilder{
+    obj: NewMetaServiceHeartBeatResult(),
+  }
+}
+
+func (p MetaServiceHeartBeatResultBuilder) Emit() *MetaServiceHeartBeatResult{
+  return &MetaServiceHeartBeatResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceHeartBeatResultBuilder) Success(success *HBResp) *MetaServiceHeartBeatResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceHeartBeatResult) SetSuccess(success *HBResp) *MetaServiceHeartBeatResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceHeartBeatResult) Read(iprot thrift.Protocol) error {
@@ -19467,6 +22652,258 @@ func (p *MetaServiceHeartBeatResult) String() string {
 
 // Attributes:
 //  - Req
+type MetaServiceAgentHeartbeatArgs struct {
+  thrift.IRequest
+  Req *AgentHBReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceAgentHeartbeatArgs() *MetaServiceAgentHeartbeatArgs {
+  return &MetaServiceAgentHeartbeatArgs{
+    Req: NewAgentHBReq(),
+  }
+}
+
+var MetaServiceAgentHeartbeatArgs_Req_DEFAULT *AgentHBReq
+func (p *MetaServiceAgentHeartbeatArgs) GetReq() *AgentHBReq {
+  if !p.IsSetReq() {
+    return MetaServiceAgentHeartbeatArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceAgentHeartbeatArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+type MetaServiceAgentHeartbeatArgsBuilder struct {
+  obj *MetaServiceAgentHeartbeatArgs
+}
+
+func NewMetaServiceAgentHeartbeatArgsBuilder() *MetaServiceAgentHeartbeatArgsBuilder{
+  return &MetaServiceAgentHeartbeatArgsBuilder{
+    obj: NewMetaServiceAgentHeartbeatArgs(),
+  }
+}
+
+func (p MetaServiceAgentHeartbeatArgsBuilder) Emit() *MetaServiceAgentHeartbeatArgs{
+  return &MetaServiceAgentHeartbeatArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceAgentHeartbeatArgsBuilder) Req(req *AgentHBReq) *MetaServiceAgentHeartbeatArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceAgentHeartbeatArgs) SetReq(req *AgentHBReq) *MetaServiceAgentHeartbeatArgs {
+  m.Req = req
+  return m
+}
+
+func (p *MetaServiceAgentHeartbeatArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceAgentHeartbeatArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewAgentHBReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceAgentHeartbeatArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("agentHeartbeat_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceAgentHeartbeatArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceAgentHeartbeatArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceAgentHeartbeatArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceAgentHeartbeatResult struct {
+  thrift.IResponse
+  Success *AgentHBResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceAgentHeartbeatResult() *MetaServiceAgentHeartbeatResult {
+  return &MetaServiceAgentHeartbeatResult{}
+}
+
+var MetaServiceAgentHeartbeatResult_Success_DEFAULT *AgentHBResp
+func (p *MetaServiceAgentHeartbeatResult) GetSuccess() *AgentHBResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceAgentHeartbeatResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceAgentHeartbeatResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+type MetaServiceAgentHeartbeatResultBuilder struct {
+  obj *MetaServiceAgentHeartbeatResult
+}
+
+func NewMetaServiceAgentHeartbeatResultBuilder() *MetaServiceAgentHeartbeatResultBuilder{
+  return &MetaServiceAgentHeartbeatResultBuilder{
+    obj: NewMetaServiceAgentHeartbeatResult(),
+  }
+}
+
+func (p MetaServiceAgentHeartbeatResultBuilder) Emit() *MetaServiceAgentHeartbeatResult{
+  return &MetaServiceAgentHeartbeatResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceAgentHeartbeatResultBuilder) Success(success *AgentHBResp) *MetaServiceAgentHeartbeatResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceAgentHeartbeatResult) SetSuccess(success *AgentHBResp) *MetaServiceAgentHeartbeatResult {
+  m.Success = success
+  return m
+}
+
+func (p *MetaServiceAgentHeartbeatResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceAgentHeartbeatResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewAgentHBResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceAgentHeartbeatResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("agentHeartbeat_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceAgentHeartbeatResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceAgentHeartbeatResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceAgentHeartbeatResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
 type MetaServiceRegConfigArgs struct {
   thrift.IRequest
   Req *RegConfigReq `thrift:"req,1" db:"req" json:"req"`
@@ -19487,6 +22924,32 @@ return p.Req
 }
 func (p *MetaServiceRegConfigArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
+}
+
+type MetaServiceRegConfigArgsBuilder struct {
+  obj *MetaServiceRegConfigArgs
+}
+
+func NewMetaServiceRegConfigArgsBuilder() *MetaServiceRegConfigArgsBuilder{
+  return &MetaServiceRegConfigArgsBuilder{
+    obj: NewMetaServiceRegConfigArgs(),
+  }
+}
+
+func (p MetaServiceRegConfigArgsBuilder) Emit() *MetaServiceRegConfigArgs{
+  return &MetaServiceRegConfigArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceRegConfigArgsBuilder) Req(req *RegConfigReq) *MetaServiceRegConfigArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceRegConfigArgs) SetReq(req *RegConfigReq) *MetaServiceRegConfigArgs {
+  m.Req = req
+  return m
 }
 
 func (p *MetaServiceRegConfigArgs) Read(iprot thrift.Protocol) error {
@@ -19569,7 +23032,7 @@ func (p *MetaServiceRegConfigArgs) String() string {
 //  - Success
 type MetaServiceRegConfigResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceRegConfigResult() *MetaServiceRegConfigResult {
@@ -19585,6 +23048,32 @@ return p.Success
 }
 func (p *MetaServiceRegConfigResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceRegConfigResultBuilder struct {
+  obj *MetaServiceRegConfigResult
+}
+
+func NewMetaServiceRegConfigResultBuilder() *MetaServiceRegConfigResultBuilder{
+  return &MetaServiceRegConfigResultBuilder{
+    obj: NewMetaServiceRegConfigResult(),
+  }
+}
+
+func (p MetaServiceRegConfigResultBuilder) Emit() *MetaServiceRegConfigResult{
+  return &MetaServiceRegConfigResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceRegConfigResultBuilder) Success(success *ExecResp) *MetaServiceRegConfigResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceRegConfigResult) SetSuccess(success *ExecResp) *MetaServiceRegConfigResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceRegConfigResult) Read(iprot thrift.Protocol) error {
@@ -19689,6 +23178,32 @@ func (p *MetaServiceGetConfigArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetConfigArgsBuilder struct {
+  obj *MetaServiceGetConfigArgs
+}
+
+func NewMetaServiceGetConfigArgsBuilder() *MetaServiceGetConfigArgsBuilder{
+  return &MetaServiceGetConfigArgsBuilder{
+    obj: NewMetaServiceGetConfigArgs(),
+  }
+}
+
+func (p MetaServiceGetConfigArgsBuilder) Emit() *MetaServiceGetConfigArgs{
+  return &MetaServiceGetConfigArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetConfigArgsBuilder) Req(req *GetConfigReq) *MetaServiceGetConfigArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetConfigArgs) SetReq(req *GetConfigReq) *MetaServiceGetConfigArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetConfigArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -19769,7 +23284,7 @@ func (p *MetaServiceGetConfigArgs) String() string {
 //  - Success
 type MetaServiceGetConfigResult struct {
   thrift.IResponse
-  Success *GetConfigResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetConfigResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetConfigResult() *MetaServiceGetConfigResult {
@@ -19785,6 +23300,32 @@ return p.Success
 }
 func (p *MetaServiceGetConfigResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetConfigResultBuilder struct {
+  obj *MetaServiceGetConfigResult
+}
+
+func NewMetaServiceGetConfigResultBuilder() *MetaServiceGetConfigResultBuilder{
+  return &MetaServiceGetConfigResultBuilder{
+    obj: NewMetaServiceGetConfigResult(),
+  }
+}
+
+func (p MetaServiceGetConfigResultBuilder) Emit() *MetaServiceGetConfigResult{
+  return &MetaServiceGetConfigResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetConfigResultBuilder) Success(success *GetConfigResp) *MetaServiceGetConfigResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetConfigResult) SetSuccess(success *GetConfigResp) *MetaServiceGetConfigResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetConfigResult) Read(iprot thrift.Protocol) error {
@@ -19889,6 +23430,32 @@ func (p *MetaServiceSetConfigArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceSetConfigArgsBuilder struct {
+  obj *MetaServiceSetConfigArgs
+}
+
+func NewMetaServiceSetConfigArgsBuilder() *MetaServiceSetConfigArgsBuilder{
+  return &MetaServiceSetConfigArgsBuilder{
+    obj: NewMetaServiceSetConfigArgs(),
+  }
+}
+
+func (p MetaServiceSetConfigArgsBuilder) Emit() *MetaServiceSetConfigArgs{
+  return &MetaServiceSetConfigArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceSetConfigArgsBuilder) Req(req *SetConfigReq) *MetaServiceSetConfigArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceSetConfigArgs) SetReq(req *SetConfigReq) *MetaServiceSetConfigArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceSetConfigArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -19969,7 +23536,7 @@ func (p *MetaServiceSetConfigArgs) String() string {
 //  - Success
 type MetaServiceSetConfigResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceSetConfigResult() *MetaServiceSetConfigResult {
@@ -19985,6 +23552,32 @@ return p.Success
 }
 func (p *MetaServiceSetConfigResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceSetConfigResultBuilder struct {
+  obj *MetaServiceSetConfigResult
+}
+
+func NewMetaServiceSetConfigResultBuilder() *MetaServiceSetConfigResultBuilder{
+  return &MetaServiceSetConfigResultBuilder{
+    obj: NewMetaServiceSetConfigResult(),
+  }
+}
+
+func (p MetaServiceSetConfigResultBuilder) Emit() *MetaServiceSetConfigResult{
+  return &MetaServiceSetConfigResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceSetConfigResultBuilder) Success(success *ExecResp) *MetaServiceSetConfigResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceSetConfigResult) SetSuccess(success *ExecResp) *MetaServiceSetConfigResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceSetConfigResult) Read(iprot thrift.Protocol) error {
@@ -20089,6 +23682,32 @@ func (p *MetaServiceListConfigsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListConfigsArgsBuilder struct {
+  obj *MetaServiceListConfigsArgs
+}
+
+func NewMetaServiceListConfigsArgsBuilder() *MetaServiceListConfigsArgsBuilder{
+  return &MetaServiceListConfigsArgsBuilder{
+    obj: NewMetaServiceListConfigsArgs(),
+  }
+}
+
+func (p MetaServiceListConfigsArgsBuilder) Emit() *MetaServiceListConfigsArgs{
+  return &MetaServiceListConfigsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListConfigsArgsBuilder) Req(req *ListConfigsReq) *MetaServiceListConfigsArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListConfigsArgs) SetReq(req *ListConfigsReq) *MetaServiceListConfigsArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListConfigsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -20169,7 +23788,7 @@ func (p *MetaServiceListConfigsArgs) String() string {
 //  - Success
 type MetaServiceListConfigsResult struct {
   thrift.IResponse
-  Success *ListConfigsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListConfigsResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListConfigsResult() *MetaServiceListConfigsResult {
@@ -20185,6 +23804,32 @@ return p.Success
 }
 func (p *MetaServiceListConfigsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListConfigsResultBuilder struct {
+  obj *MetaServiceListConfigsResult
+}
+
+func NewMetaServiceListConfigsResultBuilder() *MetaServiceListConfigsResultBuilder{
+  return &MetaServiceListConfigsResultBuilder{
+    obj: NewMetaServiceListConfigsResult(),
+  }
+}
+
+func (p MetaServiceListConfigsResultBuilder) Emit() *MetaServiceListConfigsResult{
+  return &MetaServiceListConfigsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListConfigsResultBuilder) Success(success *ListConfigsResp) *MetaServiceListConfigsResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListConfigsResult) SetSuccess(success *ListConfigsResp) *MetaServiceListConfigsResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListConfigsResult) Read(iprot thrift.Protocol) error {
@@ -20289,6 +23934,32 @@ func (p *MetaServiceCreateSnapshotArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceCreateSnapshotArgsBuilder struct {
+  obj *MetaServiceCreateSnapshotArgs
+}
+
+func NewMetaServiceCreateSnapshotArgsBuilder() *MetaServiceCreateSnapshotArgsBuilder{
+  return &MetaServiceCreateSnapshotArgsBuilder{
+    obj: NewMetaServiceCreateSnapshotArgs(),
+  }
+}
+
+func (p MetaServiceCreateSnapshotArgsBuilder) Emit() *MetaServiceCreateSnapshotArgs{
+  return &MetaServiceCreateSnapshotArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceCreateSnapshotArgsBuilder) Req(req *CreateSnapshotReq) *MetaServiceCreateSnapshotArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceCreateSnapshotArgs) SetReq(req *CreateSnapshotReq) *MetaServiceCreateSnapshotArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceCreateSnapshotArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -20369,7 +24040,7 @@ func (p *MetaServiceCreateSnapshotArgs) String() string {
 //  - Success
 type MetaServiceCreateSnapshotResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceCreateSnapshotResult() *MetaServiceCreateSnapshotResult {
@@ -20385,6 +24056,32 @@ return p.Success
 }
 func (p *MetaServiceCreateSnapshotResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceCreateSnapshotResultBuilder struct {
+  obj *MetaServiceCreateSnapshotResult
+}
+
+func NewMetaServiceCreateSnapshotResultBuilder() *MetaServiceCreateSnapshotResultBuilder{
+  return &MetaServiceCreateSnapshotResultBuilder{
+    obj: NewMetaServiceCreateSnapshotResult(),
+  }
+}
+
+func (p MetaServiceCreateSnapshotResultBuilder) Emit() *MetaServiceCreateSnapshotResult{
+  return &MetaServiceCreateSnapshotResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceCreateSnapshotResultBuilder) Success(success *ExecResp) *MetaServiceCreateSnapshotResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceCreateSnapshotResult) SetSuccess(success *ExecResp) *MetaServiceCreateSnapshotResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceCreateSnapshotResult) Read(iprot thrift.Protocol) error {
@@ -20489,6 +24186,32 @@ func (p *MetaServiceDropSnapshotArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceDropSnapshotArgsBuilder struct {
+  obj *MetaServiceDropSnapshotArgs
+}
+
+func NewMetaServiceDropSnapshotArgsBuilder() *MetaServiceDropSnapshotArgsBuilder{
+  return &MetaServiceDropSnapshotArgsBuilder{
+    obj: NewMetaServiceDropSnapshotArgs(),
+  }
+}
+
+func (p MetaServiceDropSnapshotArgsBuilder) Emit() *MetaServiceDropSnapshotArgs{
+  return &MetaServiceDropSnapshotArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceDropSnapshotArgsBuilder) Req(req *DropSnapshotReq) *MetaServiceDropSnapshotArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceDropSnapshotArgs) SetReq(req *DropSnapshotReq) *MetaServiceDropSnapshotArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceDropSnapshotArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -20569,7 +24292,7 @@ func (p *MetaServiceDropSnapshotArgs) String() string {
 //  - Success
 type MetaServiceDropSnapshotResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceDropSnapshotResult() *MetaServiceDropSnapshotResult {
@@ -20585,6 +24308,32 @@ return p.Success
 }
 func (p *MetaServiceDropSnapshotResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceDropSnapshotResultBuilder struct {
+  obj *MetaServiceDropSnapshotResult
+}
+
+func NewMetaServiceDropSnapshotResultBuilder() *MetaServiceDropSnapshotResultBuilder{
+  return &MetaServiceDropSnapshotResultBuilder{
+    obj: NewMetaServiceDropSnapshotResult(),
+  }
+}
+
+func (p MetaServiceDropSnapshotResultBuilder) Emit() *MetaServiceDropSnapshotResult{
+  return &MetaServiceDropSnapshotResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceDropSnapshotResultBuilder) Success(success *ExecResp) *MetaServiceDropSnapshotResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceDropSnapshotResult) SetSuccess(success *ExecResp) *MetaServiceDropSnapshotResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceDropSnapshotResult) Read(iprot thrift.Protocol) error {
@@ -20689,6 +24438,32 @@ func (p *MetaServiceListSnapshotsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListSnapshotsArgsBuilder struct {
+  obj *MetaServiceListSnapshotsArgs
+}
+
+func NewMetaServiceListSnapshotsArgsBuilder() *MetaServiceListSnapshotsArgsBuilder{
+  return &MetaServiceListSnapshotsArgsBuilder{
+    obj: NewMetaServiceListSnapshotsArgs(),
+  }
+}
+
+func (p MetaServiceListSnapshotsArgsBuilder) Emit() *MetaServiceListSnapshotsArgs{
+  return &MetaServiceListSnapshotsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListSnapshotsArgsBuilder) Req(req *ListSnapshotsReq) *MetaServiceListSnapshotsArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListSnapshotsArgs) SetReq(req *ListSnapshotsReq) *MetaServiceListSnapshotsArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListSnapshotsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -20769,7 +24544,7 @@ func (p *MetaServiceListSnapshotsArgs) String() string {
 //  - Success
 type MetaServiceListSnapshotsResult struct {
   thrift.IResponse
-  Success *ListSnapshotsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListSnapshotsResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListSnapshotsResult() *MetaServiceListSnapshotsResult {
@@ -20785,6 +24560,32 @@ return p.Success
 }
 func (p *MetaServiceListSnapshotsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListSnapshotsResultBuilder struct {
+  obj *MetaServiceListSnapshotsResult
+}
+
+func NewMetaServiceListSnapshotsResultBuilder() *MetaServiceListSnapshotsResultBuilder{
+  return &MetaServiceListSnapshotsResultBuilder{
+    obj: NewMetaServiceListSnapshotsResult(),
+  }
+}
+
+func (p MetaServiceListSnapshotsResultBuilder) Emit() *MetaServiceListSnapshotsResult{
+  return &MetaServiceListSnapshotsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListSnapshotsResultBuilder) Success(success *ListSnapshotsResp) *MetaServiceListSnapshotsResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListSnapshotsResult) SetSuccess(success *ListSnapshotsResp) *MetaServiceListSnapshotsResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListSnapshotsResult) Read(iprot thrift.Protocol) error {
@@ -20889,6 +24690,32 @@ func (p *MetaServiceRunAdminJobArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceRunAdminJobArgsBuilder struct {
+  obj *MetaServiceRunAdminJobArgs
+}
+
+func NewMetaServiceRunAdminJobArgsBuilder() *MetaServiceRunAdminJobArgsBuilder{
+  return &MetaServiceRunAdminJobArgsBuilder{
+    obj: NewMetaServiceRunAdminJobArgs(),
+  }
+}
+
+func (p MetaServiceRunAdminJobArgsBuilder) Emit() *MetaServiceRunAdminJobArgs{
+  return &MetaServiceRunAdminJobArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceRunAdminJobArgsBuilder) Req(req *AdminJobReq) *MetaServiceRunAdminJobArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceRunAdminJobArgs) SetReq(req *AdminJobReq) *MetaServiceRunAdminJobArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceRunAdminJobArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -20969,7 +24796,7 @@ func (p *MetaServiceRunAdminJobArgs) String() string {
 //  - Success
 type MetaServiceRunAdminJobResult struct {
   thrift.IResponse
-  Success *AdminJobResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminJobResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceRunAdminJobResult() *MetaServiceRunAdminJobResult {
@@ -20985,6 +24812,32 @@ return p.Success
 }
 func (p *MetaServiceRunAdminJobResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceRunAdminJobResultBuilder struct {
+  obj *MetaServiceRunAdminJobResult
+}
+
+func NewMetaServiceRunAdminJobResultBuilder() *MetaServiceRunAdminJobResultBuilder{
+  return &MetaServiceRunAdminJobResultBuilder{
+    obj: NewMetaServiceRunAdminJobResult(),
+  }
+}
+
+func (p MetaServiceRunAdminJobResultBuilder) Emit() *MetaServiceRunAdminJobResult{
+  return &MetaServiceRunAdminJobResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceRunAdminJobResultBuilder) Success(success *AdminJobResp) *MetaServiceRunAdminJobResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceRunAdminJobResult) SetSuccess(success *AdminJobResp) *MetaServiceRunAdminJobResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceRunAdminJobResult) Read(iprot thrift.Protocol) error {
@@ -21089,6 +24942,32 @@ func (p *MetaServiceMergeZoneArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceMergeZoneArgsBuilder struct {
+  obj *MetaServiceMergeZoneArgs
+}
+
+func NewMetaServiceMergeZoneArgsBuilder() *MetaServiceMergeZoneArgsBuilder{
+  return &MetaServiceMergeZoneArgsBuilder{
+    obj: NewMetaServiceMergeZoneArgs(),
+  }
+}
+
+func (p MetaServiceMergeZoneArgsBuilder) Emit() *MetaServiceMergeZoneArgs{
+  return &MetaServiceMergeZoneArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceMergeZoneArgsBuilder) Req(req *MergeZoneReq) *MetaServiceMergeZoneArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceMergeZoneArgs) SetReq(req *MergeZoneReq) *MetaServiceMergeZoneArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceMergeZoneArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -21169,7 +25048,7 @@ func (p *MetaServiceMergeZoneArgs) String() string {
 //  - Success
 type MetaServiceMergeZoneResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceMergeZoneResult() *MetaServiceMergeZoneResult {
@@ -21185,6 +25064,32 @@ return p.Success
 }
 func (p *MetaServiceMergeZoneResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceMergeZoneResultBuilder struct {
+  obj *MetaServiceMergeZoneResult
+}
+
+func NewMetaServiceMergeZoneResultBuilder() *MetaServiceMergeZoneResultBuilder{
+  return &MetaServiceMergeZoneResultBuilder{
+    obj: NewMetaServiceMergeZoneResult(),
+  }
+}
+
+func (p MetaServiceMergeZoneResultBuilder) Emit() *MetaServiceMergeZoneResult{
+  return &MetaServiceMergeZoneResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceMergeZoneResultBuilder) Success(success *ExecResp) *MetaServiceMergeZoneResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceMergeZoneResult) SetSuccess(success *ExecResp) *MetaServiceMergeZoneResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceMergeZoneResult) Read(iprot thrift.Protocol) error {
@@ -21289,6 +25194,32 @@ func (p *MetaServiceDropZoneArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceDropZoneArgsBuilder struct {
+  obj *MetaServiceDropZoneArgs
+}
+
+func NewMetaServiceDropZoneArgsBuilder() *MetaServiceDropZoneArgsBuilder{
+  return &MetaServiceDropZoneArgsBuilder{
+    obj: NewMetaServiceDropZoneArgs(),
+  }
+}
+
+func (p MetaServiceDropZoneArgsBuilder) Emit() *MetaServiceDropZoneArgs{
+  return &MetaServiceDropZoneArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceDropZoneArgsBuilder) Req(req *DropZoneReq) *MetaServiceDropZoneArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceDropZoneArgs) SetReq(req *DropZoneReq) *MetaServiceDropZoneArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceDropZoneArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -21369,7 +25300,7 @@ func (p *MetaServiceDropZoneArgs) String() string {
 //  - Success
 type MetaServiceDropZoneResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceDropZoneResult() *MetaServiceDropZoneResult {
@@ -21385,6 +25316,32 @@ return p.Success
 }
 func (p *MetaServiceDropZoneResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceDropZoneResultBuilder struct {
+  obj *MetaServiceDropZoneResult
+}
+
+func NewMetaServiceDropZoneResultBuilder() *MetaServiceDropZoneResultBuilder{
+  return &MetaServiceDropZoneResultBuilder{
+    obj: NewMetaServiceDropZoneResult(),
+  }
+}
+
+func (p MetaServiceDropZoneResultBuilder) Emit() *MetaServiceDropZoneResult{
+  return &MetaServiceDropZoneResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceDropZoneResultBuilder) Success(success *ExecResp) *MetaServiceDropZoneResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceDropZoneResult) SetSuccess(success *ExecResp) *MetaServiceDropZoneResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceDropZoneResult) Read(iprot thrift.Protocol) error {
@@ -21489,6 +25446,32 @@ func (p *MetaServiceSplitZoneArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceSplitZoneArgsBuilder struct {
+  obj *MetaServiceSplitZoneArgs
+}
+
+func NewMetaServiceSplitZoneArgsBuilder() *MetaServiceSplitZoneArgsBuilder{
+  return &MetaServiceSplitZoneArgsBuilder{
+    obj: NewMetaServiceSplitZoneArgs(),
+  }
+}
+
+func (p MetaServiceSplitZoneArgsBuilder) Emit() *MetaServiceSplitZoneArgs{
+  return &MetaServiceSplitZoneArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceSplitZoneArgsBuilder) Req(req *SplitZoneReq) *MetaServiceSplitZoneArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceSplitZoneArgs) SetReq(req *SplitZoneReq) *MetaServiceSplitZoneArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceSplitZoneArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -21569,7 +25552,7 @@ func (p *MetaServiceSplitZoneArgs) String() string {
 //  - Success
 type MetaServiceSplitZoneResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceSplitZoneResult() *MetaServiceSplitZoneResult {
@@ -21585,6 +25568,32 @@ return p.Success
 }
 func (p *MetaServiceSplitZoneResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceSplitZoneResultBuilder struct {
+  obj *MetaServiceSplitZoneResult
+}
+
+func NewMetaServiceSplitZoneResultBuilder() *MetaServiceSplitZoneResultBuilder{
+  return &MetaServiceSplitZoneResultBuilder{
+    obj: NewMetaServiceSplitZoneResult(),
+  }
+}
+
+func (p MetaServiceSplitZoneResultBuilder) Emit() *MetaServiceSplitZoneResult{
+  return &MetaServiceSplitZoneResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceSplitZoneResultBuilder) Success(success *ExecResp) *MetaServiceSplitZoneResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceSplitZoneResult) SetSuccess(success *ExecResp) *MetaServiceSplitZoneResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceSplitZoneResult) Read(iprot thrift.Protocol) error {
@@ -21689,6 +25698,32 @@ func (p *MetaServiceRenameZoneArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceRenameZoneArgsBuilder struct {
+  obj *MetaServiceRenameZoneArgs
+}
+
+func NewMetaServiceRenameZoneArgsBuilder() *MetaServiceRenameZoneArgsBuilder{
+  return &MetaServiceRenameZoneArgsBuilder{
+    obj: NewMetaServiceRenameZoneArgs(),
+  }
+}
+
+func (p MetaServiceRenameZoneArgsBuilder) Emit() *MetaServiceRenameZoneArgs{
+  return &MetaServiceRenameZoneArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceRenameZoneArgsBuilder) Req(req *RenameZoneReq) *MetaServiceRenameZoneArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceRenameZoneArgs) SetReq(req *RenameZoneReq) *MetaServiceRenameZoneArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceRenameZoneArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -21769,7 +25804,7 @@ func (p *MetaServiceRenameZoneArgs) String() string {
 //  - Success
 type MetaServiceRenameZoneResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceRenameZoneResult() *MetaServiceRenameZoneResult {
@@ -21785,6 +25820,32 @@ return p.Success
 }
 func (p *MetaServiceRenameZoneResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceRenameZoneResultBuilder struct {
+  obj *MetaServiceRenameZoneResult
+}
+
+func NewMetaServiceRenameZoneResultBuilder() *MetaServiceRenameZoneResultBuilder{
+  return &MetaServiceRenameZoneResultBuilder{
+    obj: NewMetaServiceRenameZoneResult(),
+  }
+}
+
+func (p MetaServiceRenameZoneResultBuilder) Emit() *MetaServiceRenameZoneResult{
+  return &MetaServiceRenameZoneResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceRenameZoneResultBuilder) Success(success *ExecResp) *MetaServiceRenameZoneResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceRenameZoneResult) SetSuccess(success *ExecResp) *MetaServiceRenameZoneResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceRenameZoneResult) Read(iprot thrift.Protocol) error {
@@ -21889,6 +25950,32 @@ func (p *MetaServiceGetZoneArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetZoneArgsBuilder struct {
+  obj *MetaServiceGetZoneArgs
+}
+
+func NewMetaServiceGetZoneArgsBuilder() *MetaServiceGetZoneArgsBuilder{
+  return &MetaServiceGetZoneArgsBuilder{
+    obj: NewMetaServiceGetZoneArgs(),
+  }
+}
+
+func (p MetaServiceGetZoneArgsBuilder) Emit() *MetaServiceGetZoneArgs{
+  return &MetaServiceGetZoneArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetZoneArgsBuilder) Req(req *GetZoneReq) *MetaServiceGetZoneArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetZoneArgs) SetReq(req *GetZoneReq) *MetaServiceGetZoneArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetZoneArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -21969,7 +26056,7 @@ func (p *MetaServiceGetZoneArgs) String() string {
 //  - Success
 type MetaServiceGetZoneResult struct {
   thrift.IResponse
-  Success *GetZoneResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetZoneResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetZoneResult() *MetaServiceGetZoneResult {
@@ -21985,6 +26072,32 @@ return p.Success
 }
 func (p *MetaServiceGetZoneResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetZoneResultBuilder struct {
+  obj *MetaServiceGetZoneResult
+}
+
+func NewMetaServiceGetZoneResultBuilder() *MetaServiceGetZoneResultBuilder{
+  return &MetaServiceGetZoneResultBuilder{
+    obj: NewMetaServiceGetZoneResult(),
+  }
+}
+
+func (p MetaServiceGetZoneResultBuilder) Emit() *MetaServiceGetZoneResult{
+  return &MetaServiceGetZoneResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetZoneResultBuilder) Success(success *GetZoneResp) *MetaServiceGetZoneResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetZoneResult) SetSuccess(success *GetZoneResp) *MetaServiceGetZoneResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetZoneResult) Read(iprot thrift.Protocol) error {
@@ -22089,6 +26202,32 @@ func (p *MetaServiceListZonesArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListZonesArgsBuilder struct {
+  obj *MetaServiceListZonesArgs
+}
+
+func NewMetaServiceListZonesArgsBuilder() *MetaServiceListZonesArgsBuilder{
+  return &MetaServiceListZonesArgsBuilder{
+    obj: NewMetaServiceListZonesArgs(),
+  }
+}
+
+func (p MetaServiceListZonesArgsBuilder) Emit() *MetaServiceListZonesArgs{
+  return &MetaServiceListZonesArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListZonesArgsBuilder) Req(req *ListZonesReq) *MetaServiceListZonesArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListZonesArgs) SetReq(req *ListZonesReq) *MetaServiceListZonesArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListZonesArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -22169,7 +26308,7 @@ func (p *MetaServiceListZonesArgs) String() string {
 //  - Success
 type MetaServiceListZonesResult struct {
   thrift.IResponse
-  Success *ListZonesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListZonesResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListZonesResult() *MetaServiceListZonesResult {
@@ -22185,6 +26324,32 @@ return p.Success
 }
 func (p *MetaServiceListZonesResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListZonesResultBuilder struct {
+  obj *MetaServiceListZonesResult
+}
+
+func NewMetaServiceListZonesResultBuilder() *MetaServiceListZonesResultBuilder{
+  return &MetaServiceListZonesResultBuilder{
+    obj: NewMetaServiceListZonesResult(),
+  }
+}
+
+func (p MetaServiceListZonesResultBuilder) Emit() *MetaServiceListZonesResult{
+  return &MetaServiceListZonesResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListZonesResultBuilder) Success(success *ListZonesResp) *MetaServiceListZonesResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListZonesResult) SetSuccess(success *ListZonesResp) *MetaServiceListZonesResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListZonesResult) Read(iprot thrift.Protocol) error {
@@ -22267,406 +26432,6 @@ func (p *MetaServiceListZonesResult) String() string {
 
 // Attributes:
 //  - Req
-type MetaServiceCreateBackupArgs struct {
-  thrift.IRequest
-  Req *CreateBackupReq `thrift:"req,1" db:"req" json:"req"`
-}
-
-func NewMetaServiceCreateBackupArgs() *MetaServiceCreateBackupArgs {
-  return &MetaServiceCreateBackupArgs{
-    Req: NewCreateBackupReq(),
-  }
-}
-
-var MetaServiceCreateBackupArgs_Req_DEFAULT *CreateBackupReq
-func (p *MetaServiceCreateBackupArgs) GetReq() *CreateBackupReq {
-  if !p.IsSetReq() {
-    return MetaServiceCreateBackupArgs_Req_DEFAULT
-  }
-return p.Req
-}
-func (p *MetaServiceCreateBackupArgs) IsSetReq() bool {
-  return p != nil && p.Req != nil
-}
-
-func (p *MetaServiceCreateBackupArgs) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceCreateBackupArgs)  ReadField1(iprot thrift.Protocol) error {
-  p.Req = NewCreateBackupReq()
-  if err := p.Req.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceCreateBackupArgs) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("createBackup_args"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *MetaServiceCreateBackupArgs) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
-  if err := p.Req.Write(oprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
-  return err
-}
-
-func (p *MetaServiceCreateBackupArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var reqVal string
-  if p.Req == nil {
-    reqVal = "<nil>"
-  } else {
-    reqVal = fmt.Sprintf("%v", p.Req)
-  }
-  return fmt.Sprintf("MetaServiceCreateBackupArgs({Req:%s})", reqVal)
-}
-
-// Attributes:
-//  - Success
-type MetaServiceCreateBackupResult struct {
-  thrift.IResponse
-  Success *CreateBackupResp `thrift:"success,0" db:"success" json:"success,omitempty"`
-}
-
-func NewMetaServiceCreateBackupResult() *MetaServiceCreateBackupResult {
-  return &MetaServiceCreateBackupResult{}
-}
-
-var MetaServiceCreateBackupResult_Success_DEFAULT *CreateBackupResp
-func (p *MetaServiceCreateBackupResult) GetSuccess() *CreateBackupResp {
-  if !p.IsSetSuccess() {
-    return MetaServiceCreateBackupResult_Success_DEFAULT
-  }
-return p.Success
-}
-func (p *MetaServiceCreateBackupResult) IsSetSuccess() bool {
-  return p != nil && p.Success != nil
-}
-
-func (p *MetaServiceCreateBackupResult) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 0:
-      if err := p.ReadField0(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceCreateBackupResult)  ReadField0(iprot thrift.Protocol) error {
-  p.Success = NewCreateBackupResp()
-  if err := p.Success.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceCreateBackupResult) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("createBackup_result"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField0(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *MetaServiceCreateBackupResult) writeField0(oprot thrift.Protocol) (err error) {
-  if p.IsSetSuccess() {
-    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
-    if err := p.Success.Write(oprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
-    }
-    if err := oprot.WriteFieldEnd(); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
-  }
-  return err
-}
-
-func (p *MetaServiceCreateBackupResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var successVal string
-  if p.Success == nil {
-    successVal = "<nil>"
-  } else {
-    successVal = fmt.Sprintf("%v", p.Success)
-  }
-  return fmt.Sprintf("MetaServiceCreateBackupResult({Success:%s})", successVal)
-}
-
-// Attributes:
-//  - Req
-type MetaServiceRestoreMetaArgs struct {
-  thrift.IRequest
-  Req *RestoreMetaReq `thrift:"req,1" db:"req" json:"req"`
-}
-
-func NewMetaServiceRestoreMetaArgs() *MetaServiceRestoreMetaArgs {
-  return &MetaServiceRestoreMetaArgs{
-    Req: NewRestoreMetaReq(),
-  }
-}
-
-var MetaServiceRestoreMetaArgs_Req_DEFAULT *RestoreMetaReq
-func (p *MetaServiceRestoreMetaArgs) GetReq() *RestoreMetaReq {
-  if !p.IsSetReq() {
-    return MetaServiceRestoreMetaArgs_Req_DEFAULT
-  }
-return p.Req
-}
-func (p *MetaServiceRestoreMetaArgs) IsSetReq() bool {
-  return p != nil && p.Req != nil
-}
-
-func (p *MetaServiceRestoreMetaArgs) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceRestoreMetaArgs)  ReadField1(iprot thrift.Protocol) error {
-  p.Req = NewRestoreMetaReq()
-  if err := p.Req.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceRestoreMetaArgs) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("restoreMeta_args"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *MetaServiceRestoreMetaArgs) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
-  if err := p.Req.Write(oprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
-  return err
-}
-
-func (p *MetaServiceRestoreMetaArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var reqVal string
-  if p.Req == nil {
-    reqVal = "<nil>"
-  } else {
-    reqVal = fmt.Sprintf("%v", p.Req)
-  }
-  return fmt.Sprintf("MetaServiceRestoreMetaArgs({Req:%s})", reqVal)
-}
-
-// Attributes:
-//  - Success
-type MetaServiceRestoreMetaResult struct {
-  thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
-}
-
-func NewMetaServiceRestoreMetaResult() *MetaServiceRestoreMetaResult {
-  return &MetaServiceRestoreMetaResult{}
-}
-
-var MetaServiceRestoreMetaResult_Success_DEFAULT *ExecResp
-func (p *MetaServiceRestoreMetaResult) GetSuccess() *ExecResp {
-  if !p.IsSetSuccess() {
-    return MetaServiceRestoreMetaResult_Success_DEFAULT
-  }
-return p.Success
-}
-func (p *MetaServiceRestoreMetaResult) IsSetSuccess() bool {
-  return p != nil && p.Success != nil
-}
-
-func (p *MetaServiceRestoreMetaResult) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 0:
-      if err := p.ReadField0(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceRestoreMetaResult)  ReadField0(iprot thrift.Protocol) error {
-  p.Success = NewExecResp()
-  if err := p.Success.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
-  }
-  return nil
-}
-
-func (p *MetaServiceRestoreMetaResult) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("restoreMeta_result"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField0(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *MetaServiceRestoreMetaResult) writeField0(oprot thrift.Protocol) (err error) {
-  if p.IsSetSuccess() {
-    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
-    if err := p.Success.Write(oprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
-    }
-    if err := oprot.WriteFieldEnd(); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
-  }
-  return err
-}
-
-func (p *MetaServiceRestoreMetaResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var successVal string
-  if p.Success == nil {
-    successVal = "<nil>"
-  } else {
-    successVal = fmt.Sprintf("%v", p.Success)
-  }
-  return fmt.Sprintf("MetaServiceRestoreMetaResult({Success:%s})", successVal)
-}
-
-// Attributes:
-//  - Req
 type MetaServiceAddListenerArgs struct {
   thrift.IRequest
   Req *AddListenerReq `thrift:"req,1" db:"req" json:"req"`
@@ -22687,6 +26452,32 @@ return p.Req
 }
 func (p *MetaServiceAddListenerArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
+}
+
+type MetaServiceAddListenerArgsBuilder struct {
+  obj *MetaServiceAddListenerArgs
+}
+
+func NewMetaServiceAddListenerArgsBuilder() *MetaServiceAddListenerArgsBuilder{
+  return &MetaServiceAddListenerArgsBuilder{
+    obj: NewMetaServiceAddListenerArgs(),
+  }
+}
+
+func (p MetaServiceAddListenerArgsBuilder) Emit() *MetaServiceAddListenerArgs{
+  return &MetaServiceAddListenerArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceAddListenerArgsBuilder) Req(req *AddListenerReq) *MetaServiceAddListenerArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceAddListenerArgs) SetReq(req *AddListenerReq) *MetaServiceAddListenerArgs {
+  m.Req = req
+  return m
 }
 
 func (p *MetaServiceAddListenerArgs) Read(iprot thrift.Protocol) error {
@@ -22769,7 +26560,7 @@ func (p *MetaServiceAddListenerArgs) String() string {
 //  - Success
 type MetaServiceAddListenerResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceAddListenerResult() *MetaServiceAddListenerResult {
@@ -22785,6 +26576,32 @@ return p.Success
 }
 func (p *MetaServiceAddListenerResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceAddListenerResultBuilder struct {
+  obj *MetaServiceAddListenerResult
+}
+
+func NewMetaServiceAddListenerResultBuilder() *MetaServiceAddListenerResultBuilder{
+  return &MetaServiceAddListenerResultBuilder{
+    obj: NewMetaServiceAddListenerResult(),
+  }
+}
+
+func (p MetaServiceAddListenerResultBuilder) Emit() *MetaServiceAddListenerResult{
+  return &MetaServiceAddListenerResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceAddListenerResultBuilder) Success(success *ExecResp) *MetaServiceAddListenerResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceAddListenerResult) SetSuccess(success *ExecResp) *MetaServiceAddListenerResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceAddListenerResult) Read(iprot thrift.Protocol) error {
@@ -22889,6 +26706,32 @@ func (p *MetaServiceRemoveListenerArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceRemoveListenerArgsBuilder struct {
+  obj *MetaServiceRemoveListenerArgs
+}
+
+func NewMetaServiceRemoveListenerArgsBuilder() *MetaServiceRemoveListenerArgsBuilder{
+  return &MetaServiceRemoveListenerArgsBuilder{
+    obj: NewMetaServiceRemoveListenerArgs(),
+  }
+}
+
+func (p MetaServiceRemoveListenerArgsBuilder) Emit() *MetaServiceRemoveListenerArgs{
+  return &MetaServiceRemoveListenerArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceRemoveListenerArgsBuilder) Req(req *RemoveListenerReq) *MetaServiceRemoveListenerArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceRemoveListenerArgs) SetReq(req *RemoveListenerReq) *MetaServiceRemoveListenerArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceRemoveListenerArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -22969,7 +26812,7 @@ func (p *MetaServiceRemoveListenerArgs) String() string {
 //  - Success
 type MetaServiceRemoveListenerResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceRemoveListenerResult() *MetaServiceRemoveListenerResult {
@@ -22985,6 +26828,32 @@ return p.Success
 }
 func (p *MetaServiceRemoveListenerResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceRemoveListenerResultBuilder struct {
+  obj *MetaServiceRemoveListenerResult
+}
+
+func NewMetaServiceRemoveListenerResultBuilder() *MetaServiceRemoveListenerResultBuilder{
+  return &MetaServiceRemoveListenerResultBuilder{
+    obj: NewMetaServiceRemoveListenerResult(),
+  }
+}
+
+func (p MetaServiceRemoveListenerResultBuilder) Emit() *MetaServiceRemoveListenerResult{
+  return &MetaServiceRemoveListenerResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceRemoveListenerResultBuilder) Success(success *ExecResp) *MetaServiceRemoveListenerResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceRemoveListenerResult) SetSuccess(success *ExecResp) *MetaServiceRemoveListenerResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceRemoveListenerResult) Read(iprot thrift.Protocol) error {
@@ -23089,6 +26958,32 @@ func (p *MetaServiceListListenerArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListListenerArgsBuilder struct {
+  obj *MetaServiceListListenerArgs
+}
+
+func NewMetaServiceListListenerArgsBuilder() *MetaServiceListListenerArgsBuilder{
+  return &MetaServiceListListenerArgsBuilder{
+    obj: NewMetaServiceListListenerArgs(),
+  }
+}
+
+func (p MetaServiceListListenerArgsBuilder) Emit() *MetaServiceListListenerArgs{
+  return &MetaServiceListListenerArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListListenerArgsBuilder) Req(req *ListListenerReq) *MetaServiceListListenerArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListListenerArgs) SetReq(req *ListListenerReq) *MetaServiceListListenerArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListListenerArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -23169,7 +27064,7 @@ func (p *MetaServiceListListenerArgs) String() string {
 //  - Success
 type MetaServiceListListenerResult struct {
   thrift.IResponse
-  Success *ListListenerResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListListenerResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListListenerResult() *MetaServiceListListenerResult {
@@ -23185,6 +27080,32 @@ return p.Success
 }
 func (p *MetaServiceListListenerResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListListenerResultBuilder struct {
+  obj *MetaServiceListListenerResult
+}
+
+func NewMetaServiceListListenerResultBuilder() *MetaServiceListListenerResultBuilder{
+  return &MetaServiceListListenerResultBuilder{
+    obj: NewMetaServiceListListenerResult(),
+  }
+}
+
+func (p MetaServiceListListenerResultBuilder) Emit() *MetaServiceListListenerResult{
+  return &MetaServiceListListenerResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListListenerResultBuilder) Success(success *ListListenerResp) *MetaServiceListListenerResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListListenerResult) SetSuccess(success *ListListenerResp) *MetaServiceListListenerResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListListenerResult) Read(iprot thrift.Protocol) error {
@@ -23289,6 +27210,32 @@ func (p *MetaServiceGetStatsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetStatsArgsBuilder struct {
+  obj *MetaServiceGetStatsArgs
+}
+
+func NewMetaServiceGetStatsArgsBuilder() *MetaServiceGetStatsArgsBuilder{
+  return &MetaServiceGetStatsArgsBuilder{
+    obj: NewMetaServiceGetStatsArgs(),
+  }
+}
+
+func (p MetaServiceGetStatsArgsBuilder) Emit() *MetaServiceGetStatsArgs{
+  return &MetaServiceGetStatsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetStatsArgsBuilder) Req(req *GetStatsReq) *MetaServiceGetStatsArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetStatsArgs) SetReq(req *GetStatsReq) *MetaServiceGetStatsArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetStatsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -23369,7 +27316,7 @@ func (p *MetaServiceGetStatsArgs) String() string {
 //  - Success
 type MetaServiceGetStatsResult struct {
   thrift.IResponse
-  Success *GetStatsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetStatsResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetStatsResult() *MetaServiceGetStatsResult {
@@ -23385,6 +27332,32 @@ return p.Success
 }
 func (p *MetaServiceGetStatsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetStatsResultBuilder struct {
+  obj *MetaServiceGetStatsResult
+}
+
+func NewMetaServiceGetStatsResultBuilder() *MetaServiceGetStatsResultBuilder{
+  return &MetaServiceGetStatsResultBuilder{
+    obj: NewMetaServiceGetStatsResult(),
+  }
+}
+
+func (p MetaServiceGetStatsResultBuilder) Emit() *MetaServiceGetStatsResult{
+  return &MetaServiceGetStatsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetStatsResultBuilder) Success(success *GetStatsResp) *MetaServiceGetStatsResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetStatsResult) SetSuccess(success *GetStatsResp) *MetaServiceGetStatsResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetStatsResult) Read(iprot thrift.Protocol) error {
@@ -23489,6 +27462,32 @@ func (p *MetaServiceSignInFTServiceArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceSignInFTServiceArgsBuilder struct {
+  obj *MetaServiceSignInFTServiceArgs
+}
+
+func NewMetaServiceSignInFTServiceArgsBuilder() *MetaServiceSignInFTServiceArgsBuilder{
+  return &MetaServiceSignInFTServiceArgsBuilder{
+    obj: NewMetaServiceSignInFTServiceArgs(),
+  }
+}
+
+func (p MetaServiceSignInFTServiceArgsBuilder) Emit() *MetaServiceSignInFTServiceArgs{
+  return &MetaServiceSignInFTServiceArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceSignInFTServiceArgsBuilder) Req(req *SignInFTServiceReq) *MetaServiceSignInFTServiceArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceSignInFTServiceArgs) SetReq(req *SignInFTServiceReq) *MetaServiceSignInFTServiceArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceSignInFTServiceArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -23569,7 +27568,7 @@ func (p *MetaServiceSignInFTServiceArgs) String() string {
 //  - Success
 type MetaServiceSignInFTServiceResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceSignInFTServiceResult() *MetaServiceSignInFTServiceResult {
@@ -23585,6 +27584,32 @@ return p.Success
 }
 func (p *MetaServiceSignInFTServiceResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceSignInFTServiceResultBuilder struct {
+  obj *MetaServiceSignInFTServiceResult
+}
+
+func NewMetaServiceSignInFTServiceResultBuilder() *MetaServiceSignInFTServiceResultBuilder{
+  return &MetaServiceSignInFTServiceResultBuilder{
+    obj: NewMetaServiceSignInFTServiceResult(),
+  }
+}
+
+func (p MetaServiceSignInFTServiceResultBuilder) Emit() *MetaServiceSignInFTServiceResult{
+  return &MetaServiceSignInFTServiceResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceSignInFTServiceResultBuilder) Success(success *ExecResp) *MetaServiceSignInFTServiceResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceSignInFTServiceResult) SetSuccess(success *ExecResp) *MetaServiceSignInFTServiceResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceSignInFTServiceResult) Read(iprot thrift.Protocol) error {
@@ -23689,6 +27714,32 @@ func (p *MetaServiceSignOutFTServiceArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceSignOutFTServiceArgsBuilder struct {
+  obj *MetaServiceSignOutFTServiceArgs
+}
+
+func NewMetaServiceSignOutFTServiceArgsBuilder() *MetaServiceSignOutFTServiceArgsBuilder{
+  return &MetaServiceSignOutFTServiceArgsBuilder{
+    obj: NewMetaServiceSignOutFTServiceArgs(),
+  }
+}
+
+func (p MetaServiceSignOutFTServiceArgsBuilder) Emit() *MetaServiceSignOutFTServiceArgs{
+  return &MetaServiceSignOutFTServiceArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceSignOutFTServiceArgsBuilder) Req(req *SignOutFTServiceReq) *MetaServiceSignOutFTServiceArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceSignOutFTServiceArgs) SetReq(req *SignOutFTServiceReq) *MetaServiceSignOutFTServiceArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceSignOutFTServiceArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -23769,7 +27820,7 @@ func (p *MetaServiceSignOutFTServiceArgs) String() string {
 //  - Success
 type MetaServiceSignOutFTServiceResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceSignOutFTServiceResult() *MetaServiceSignOutFTServiceResult {
@@ -23785,6 +27836,32 @@ return p.Success
 }
 func (p *MetaServiceSignOutFTServiceResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceSignOutFTServiceResultBuilder struct {
+  obj *MetaServiceSignOutFTServiceResult
+}
+
+func NewMetaServiceSignOutFTServiceResultBuilder() *MetaServiceSignOutFTServiceResultBuilder{
+  return &MetaServiceSignOutFTServiceResultBuilder{
+    obj: NewMetaServiceSignOutFTServiceResult(),
+  }
+}
+
+func (p MetaServiceSignOutFTServiceResultBuilder) Emit() *MetaServiceSignOutFTServiceResult{
+  return &MetaServiceSignOutFTServiceResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceSignOutFTServiceResultBuilder) Success(success *ExecResp) *MetaServiceSignOutFTServiceResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceSignOutFTServiceResult) SetSuccess(success *ExecResp) *MetaServiceSignOutFTServiceResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceSignOutFTServiceResult) Read(iprot thrift.Protocol) error {
@@ -23889,6 +27966,32 @@ func (p *MetaServiceListFTClientsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListFTClientsArgsBuilder struct {
+  obj *MetaServiceListFTClientsArgs
+}
+
+func NewMetaServiceListFTClientsArgsBuilder() *MetaServiceListFTClientsArgsBuilder{
+  return &MetaServiceListFTClientsArgsBuilder{
+    obj: NewMetaServiceListFTClientsArgs(),
+  }
+}
+
+func (p MetaServiceListFTClientsArgsBuilder) Emit() *MetaServiceListFTClientsArgs{
+  return &MetaServiceListFTClientsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListFTClientsArgsBuilder) Req(req *ListFTClientsReq) *MetaServiceListFTClientsArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListFTClientsArgs) SetReq(req *ListFTClientsReq) *MetaServiceListFTClientsArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListFTClientsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -23969,7 +28072,7 @@ func (p *MetaServiceListFTClientsArgs) String() string {
 //  - Success
 type MetaServiceListFTClientsResult struct {
   thrift.IResponse
-  Success *ListFTClientsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListFTClientsResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListFTClientsResult() *MetaServiceListFTClientsResult {
@@ -23985,6 +28088,32 @@ return p.Success
 }
 func (p *MetaServiceListFTClientsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListFTClientsResultBuilder struct {
+  obj *MetaServiceListFTClientsResult
+}
+
+func NewMetaServiceListFTClientsResultBuilder() *MetaServiceListFTClientsResultBuilder{
+  return &MetaServiceListFTClientsResultBuilder{
+    obj: NewMetaServiceListFTClientsResult(),
+  }
+}
+
+func (p MetaServiceListFTClientsResultBuilder) Emit() *MetaServiceListFTClientsResult{
+  return &MetaServiceListFTClientsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListFTClientsResultBuilder) Success(success *ListFTClientsResp) *MetaServiceListFTClientsResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListFTClientsResult) SetSuccess(success *ListFTClientsResp) *MetaServiceListFTClientsResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListFTClientsResult) Read(iprot thrift.Protocol) error {
@@ -24089,6 +28218,32 @@ func (p *MetaServiceCreateFTIndexArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceCreateFTIndexArgsBuilder struct {
+  obj *MetaServiceCreateFTIndexArgs
+}
+
+func NewMetaServiceCreateFTIndexArgsBuilder() *MetaServiceCreateFTIndexArgsBuilder{
+  return &MetaServiceCreateFTIndexArgsBuilder{
+    obj: NewMetaServiceCreateFTIndexArgs(),
+  }
+}
+
+func (p MetaServiceCreateFTIndexArgsBuilder) Emit() *MetaServiceCreateFTIndexArgs{
+  return &MetaServiceCreateFTIndexArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceCreateFTIndexArgsBuilder) Req(req *CreateFTIndexReq) *MetaServiceCreateFTIndexArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceCreateFTIndexArgs) SetReq(req *CreateFTIndexReq) *MetaServiceCreateFTIndexArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceCreateFTIndexArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -24169,7 +28324,7 @@ func (p *MetaServiceCreateFTIndexArgs) String() string {
 //  - Success
 type MetaServiceCreateFTIndexResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceCreateFTIndexResult() *MetaServiceCreateFTIndexResult {
@@ -24185,6 +28340,32 @@ return p.Success
 }
 func (p *MetaServiceCreateFTIndexResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceCreateFTIndexResultBuilder struct {
+  obj *MetaServiceCreateFTIndexResult
+}
+
+func NewMetaServiceCreateFTIndexResultBuilder() *MetaServiceCreateFTIndexResultBuilder{
+  return &MetaServiceCreateFTIndexResultBuilder{
+    obj: NewMetaServiceCreateFTIndexResult(),
+  }
+}
+
+func (p MetaServiceCreateFTIndexResultBuilder) Emit() *MetaServiceCreateFTIndexResult{
+  return &MetaServiceCreateFTIndexResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceCreateFTIndexResultBuilder) Success(success *ExecResp) *MetaServiceCreateFTIndexResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceCreateFTIndexResult) SetSuccess(success *ExecResp) *MetaServiceCreateFTIndexResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceCreateFTIndexResult) Read(iprot thrift.Protocol) error {
@@ -24289,6 +28470,32 @@ func (p *MetaServiceDropFTIndexArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceDropFTIndexArgsBuilder struct {
+  obj *MetaServiceDropFTIndexArgs
+}
+
+func NewMetaServiceDropFTIndexArgsBuilder() *MetaServiceDropFTIndexArgsBuilder{
+  return &MetaServiceDropFTIndexArgsBuilder{
+    obj: NewMetaServiceDropFTIndexArgs(),
+  }
+}
+
+func (p MetaServiceDropFTIndexArgsBuilder) Emit() *MetaServiceDropFTIndexArgs{
+  return &MetaServiceDropFTIndexArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceDropFTIndexArgsBuilder) Req(req *DropFTIndexReq) *MetaServiceDropFTIndexArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceDropFTIndexArgs) SetReq(req *DropFTIndexReq) *MetaServiceDropFTIndexArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceDropFTIndexArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -24369,7 +28576,7 @@ func (p *MetaServiceDropFTIndexArgs) String() string {
 //  - Success
 type MetaServiceDropFTIndexResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceDropFTIndexResult() *MetaServiceDropFTIndexResult {
@@ -24385,6 +28592,32 @@ return p.Success
 }
 func (p *MetaServiceDropFTIndexResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceDropFTIndexResultBuilder struct {
+  obj *MetaServiceDropFTIndexResult
+}
+
+func NewMetaServiceDropFTIndexResultBuilder() *MetaServiceDropFTIndexResultBuilder{
+  return &MetaServiceDropFTIndexResultBuilder{
+    obj: NewMetaServiceDropFTIndexResult(),
+  }
+}
+
+func (p MetaServiceDropFTIndexResultBuilder) Emit() *MetaServiceDropFTIndexResult{
+  return &MetaServiceDropFTIndexResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceDropFTIndexResultBuilder) Success(success *ExecResp) *MetaServiceDropFTIndexResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceDropFTIndexResult) SetSuccess(success *ExecResp) *MetaServiceDropFTIndexResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceDropFTIndexResult) Read(iprot thrift.Protocol) error {
@@ -24489,6 +28722,32 @@ func (p *MetaServiceListFTIndexesArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListFTIndexesArgsBuilder struct {
+  obj *MetaServiceListFTIndexesArgs
+}
+
+func NewMetaServiceListFTIndexesArgsBuilder() *MetaServiceListFTIndexesArgsBuilder{
+  return &MetaServiceListFTIndexesArgsBuilder{
+    obj: NewMetaServiceListFTIndexesArgs(),
+  }
+}
+
+func (p MetaServiceListFTIndexesArgsBuilder) Emit() *MetaServiceListFTIndexesArgs{
+  return &MetaServiceListFTIndexesArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListFTIndexesArgsBuilder) Req(req *ListFTIndexesReq) *MetaServiceListFTIndexesArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListFTIndexesArgs) SetReq(req *ListFTIndexesReq) *MetaServiceListFTIndexesArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListFTIndexesArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -24569,7 +28828,7 @@ func (p *MetaServiceListFTIndexesArgs) String() string {
 //  - Success
 type MetaServiceListFTIndexesResult struct {
   thrift.IResponse
-  Success *ListFTIndexesResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListFTIndexesResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListFTIndexesResult() *MetaServiceListFTIndexesResult {
@@ -24585,6 +28844,32 @@ return p.Success
 }
 func (p *MetaServiceListFTIndexesResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListFTIndexesResultBuilder struct {
+  obj *MetaServiceListFTIndexesResult
+}
+
+func NewMetaServiceListFTIndexesResultBuilder() *MetaServiceListFTIndexesResultBuilder{
+  return &MetaServiceListFTIndexesResultBuilder{
+    obj: NewMetaServiceListFTIndexesResult(),
+  }
+}
+
+func (p MetaServiceListFTIndexesResultBuilder) Emit() *MetaServiceListFTIndexesResult{
+  return &MetaServiceListFTIndexesResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListFTIndexesResultBuilder) Success(success *ListFTIndexesResp) *MetaServiceListFTIndexesResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListFTIndexesResult) SetSuccess(success *ListFTIndexesResp) *MetaServiceListFTIndexesResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListFTIndexesResult) Read(iprot thrift.Protocol) error {
@@ -24689,6 +28974,32 @@ func (p *MetaServiceCreateSessionArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceCreateSessionArgsBuilder struct {
+  obj *MetaServiceCreateSessionArgs
+}
+
+func NewMetaServiceCreateSessionArgsBuilder() *MetaServiceCreateSessionArgsBuilder{
+  return &MetaServiceCreateSessionArgsBuilder{
+    obj: NewMetaServiceCreateSessionArgs(),
+  }
+}
+
+func (p MetaServiceCreateSessionArgsBuilder) Emit() *MetaServiceCreateSessionArgs{
+  return &MetaServiceCreateSessionArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceCreateSessionArgsBuilder) Req(req *CreateSessionReq) *MetaServiceCreateSessionArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceCreateSessionArgs) SetReq(req *CreateSessionReq) *MetaServiceCreateSessionArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceCreateSessionArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -24769,7 +29080,7 @@ func (p *MetaServiceCreateSessionArgs) String() string {
 //  - Success
 type MetaServiceCreateSessionResult struct {
   thrift.IResponse
-  Success *CreateSessionResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *CreateSessionResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceCreateSessionResult() *MetaServiceCreateSessionResult {
@@ -24785,6 +29096,32 @@ return p.Success
 }
 func (p *MetaServiceCreateSessionResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceCreateSessionResultBuilder struct {
+  obj *MetaServiceCreateSessionResult
+}
+
+func NewMetaServiceCreateSessionResultBuilder() *MetaServiceCreateSessionResultBuilder{
+  return &MetaServiceCreateSessionResultBuilder{
+    obj: NewMetaServiceCreateSessionResult(),
+  }
+}
+
+func (p MetaServiceCreateSessionResultBuilder) Emit() *MetaServiceCreateSessionResult{
+  return &MetaServiceCreateSessionResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceCreateSessionResultBuilder) Success(success *CreateSessionResp) *MetaServiceCreateSessionResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceCreateSessionResult) SetSuccess(success *CreateSessionResp) *MetaServiceCreateSessionResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceCreateSessionResult) Read(iprot thrift.Protocol) error {
@@ -24889,6 +29226,32 @@ func (p *MetaServiceUpdateSessionsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceUpdateSessionsArgsBuilder struct {
+  obj *MetaServiceUpdateSessionsArgs
+}
+
+func NewMetaServiceUpdateSessionsArgsBuilder() *MetaServiceUpdateSessionsArgsBuilder{
+  return &MetaServiceUpdateSessionsArgsBuilder{
+    obj: NewMetaServiceUpdateSessionsArgs(),
+  }
+}
+
+func (p MetaServiceUpdateSessionsArgsBuilder) Emit() *MetaServiceUpdateSessionsArgs{
+  return &MetaServiceUpdateSessionsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceUpdateSessionsArgsBuilder) Req(req *UpdateSessionsReq) *MetaServiceUpdateSessionsArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceUpdateSessionsArgs) SetReq(req *UpdateSessionsReq) *MetaServiceUpdateSessionsArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceUpdateSessionsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -24969,7 +29332,7 @@ func (p *MetaServiceUpdateSessionsArgs) String() string {
 //  - Success
 type MetaServiceUpdateSessionsResult struct {
   thrift.IResponse
-  Success *UpdateSessionsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *UpdateSessionsResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceUpdateSessionsResult() *MetaServiceUpdateSessionsResult {
@@ -24985,6 +29348,32 @@ return p.Success
 }
 func (p *MetaServiceUpdateSessionsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceUpdateSessionsResultBuilder struct {
+  obj *MetaServiceUpdateSessionsResult
+}
+
+func NewMetaServiceUpdateSessionsResultBuilder() *MetaServiceUpdateSessionsResultBuilder{
+  return &MetaServiceUpdateSessionsResultBuilder{
+    obj: NewMetaServiceUpdateSessionsResult(),
+  }
+}
+
+func (p MetaServiceUpdateSessionsResultBuilder) Emit() *MetaServiceUpdateSessionsResult{
+  return &MetaServiceUpdateSessionsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceUpdateSessionsResultBuilder) Success(success *UpdateSessionsResp) *MetaServiceUpdateSessionsResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceUpdateSessionsResult) SetSuccess(success *UpdateSessionsResp) *MetaServiceUpdateSessionsResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceUpdateSessionsResult) Read(iprot thrift.Protocol) error {
@@ -25089,6 +29478,32 @@ func (p *MetaServiceListSessionsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceListSessionsArgsBuilder struct {
+  obj *MetaServiceListSessionsArgs
+}
+
+func NewMetaServiceListSessionsArgsBuilder() *MetaServiceListSessionsArgsBuilder{
+  return &MetaServiceListSessionsArgsBuilder{
+    obj: NewMetaServiceListSessionsArgs(),
+  }
+}
+
+func (p MetaServiceListSessionsArgsBuilder) Emit() *MetaServiceListSessionsArgs{
+  return &MetaServiceListSessionsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListSessionsArgsBuilder) Req(req *ListSessionsReq) *MetaServiceListSessionsArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListSessionsArgs) SetReq(req *ListSessionsReq) *MetaServiceListSessionsArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceListSessionsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -25169,7 +29584,7 @@ func (p *MetaServiceListSessionsArgs) String() string {
 //  - Success
 type MetaServiceListSessionsResult struct {
   thrift.IResponse
-  Success *ListSessionsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListSessionsResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListSessionsResult() *MetaServiceListSessionsResult {
@@ -25185,6 +29600,32 @@ return p.Success
 }
 func (p *MetaServiceListSessionsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListSessionsResultBuilder struct {
+  obj *MetaServiceListSessionsResult
+}
+
+func NewMetaServiceListSessionsResultBuilder() *MetaServiceListSessionsResultBuilder{
+  return &MetaServiceListSessionsResultBuilder{
+    obj: NewMetaServiceListSessionsResult(),
+  }
+}
+
+func (p MetaServiceListSessionsResultBuilder) Emit() *MetaServiceListSessionsResult{
+  return &MetaServiceListSessionsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListSessionsResultBuilder) Success(success *ListSessionsResp) *MetaServiceListSessionsResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListSessionsResult) SetSuccess(success *ListSessionsResp) *MetaServiceListSessionsResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListSessionsResult) Read(iprot thrift.Protocol) error {
@@ -25289,6 +29730,32 @@ func (p *MetaServiceGetSessionArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetSessionArgsBuilder struct {
+  obj *MetaServiceGetSessionArgs
+}
+
+func NewMetaServiceGetSessionArgsBuilder() *MetaServiceGetSessionArgsBuilder{
+  return &MetaServiceGetSessionArgsBuilder{
+    obj: NewMetaServiceGetSessionArgs(),
+  }
+}
+
+func (p MetaServiceGetSessionArgsBuilder) Emit() *MetaServiceGetSessionArgs{
+  return &MetaServiceGetSessionArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetSessionArgsBuilder) Req(req *GetSessionReq) *MetaServiceGetSessionArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetSessionArgs) SetReq(req *GetSessionReq) *MetaServiceGetSessionArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetSessionArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -25369,7 +29836,7 @@ func (p *MetaServiceGetSessionArgs) String() string {
 //  - Success
 type MetaServiceGetSessionResult struct {
   thrift.IResponse
-  Success *GetSessionResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetSessionResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetSessionResult() *MetaServiceGetSessionResult {
@@ -25385,6 +29852,32 @@ return p.Success
 }
 func (p *MetaServiceGetSessionResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetSessionResultBuilder struct {
+  obj *MetaServiceGetSessionResult
+}
+
+func NewMetaServiceGetSessionResultBuilder() *MetaServiceGetSessionResultBuilder{
+  return &MetaServiceGetSessionResultBuilder{
+    obj: NewMetaServiceGetSessionResult(),
+  }
+}
+
+func (p MetaServiceGetSessionResultBuilder) Emit() *MetaServiceGetSessionResult{
+  return &MetaServiceGetSessionResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetSessionResultBuilder) Success(success *GetSessionResp) *MetaServiceGetSessionResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetSessionResult) SetSuccess(success *GetSessionResp) *MetaServiceGetSessionResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetSessionResult) Read(iprot thrift.Protocol) error {
@@ -25489,6 +29982,32 @@ func (p *MetaServiceRemoveSessionArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceRemoveSessionArgsBuilder struct {
+  obj *MetaServiceRemoveSessionArgs
+}
+
+func NewMetaServiceRemoveSessionArgsBuilder() *MetaServiceRemoveSessionArgsBuilder{
+  return &MetaServiceRemoveSessionArgsBuilder{
+    obj: NewMetaServiceRemoveSessionArgs(),
+  }
+}
+
+func (p MetaServiceRemoveSessionArgsBuilder) Emit() *MetaServiceRemoveSessionArgs{
+  return &MetaServiceRemoveSessionArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceRemoveSessionArgsBuilder) Req(req *RemoveSessionReq) *MetaServiceRemoveSessionArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceRemoveSessionArgs) SetReq(req *RemoveSessionReq) *MetaServiceRemoveSessionArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceRemoveSessionArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -25569,7 +30088,7 @@ func (p *MetaServiceRemoveSessionArgs) String() string {
 //  - Success
 type MetaServiceRemoveSessionResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceRemoveSessionResult() *MetaServiceRemoveSessionResult {
@@ -25585,6 +30104,32 @@ return p.Success
 }
 func (p *MetaServiceRemoveSessionResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceRemoveSessionResultBuilder struct {
+  obj *MetaServiceRemoveSessionResult
+}
+
+func NewMetaServiceRemoveSessionResultBuilder() *MetaServiceRemoveSessionResultBuilder{
+  return &MetaServiceRemoveSessionResultBuilder{
+    obj: NewMetaServiceRemoveSessionResult(),
+  }
+}
+
+func (p MetaServiceRemoveSessionResultBuilder) Emit() *MetaServiceRemoveSessionResult{
+  return &MetaServiceRemoveSessionResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceRemoveSessionResultBuilder) Success(success *ExecResp) *MetaServiceRemoveSessionResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceRemoveSessionResult) SetSuccess(success *ExecResp) *MetaServiceRemoveSessionResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceRemoveSessionResult) Read(iprot thrift.Protocol) error {
@@ -25689,6 +30234,32 @@ func (p *MetaServiceKillQueryArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceKillQueryArgsBuilder struct {
+  obj *MetaServiceKillQueryArgs
+}
+
+func NewMetaServiceKillQueryArgsBuilder() *MetaServiceKillQueryArgsBuilder{
+  return &MetaServiceKillQueryArgsBuilder{
+    obj: NewMetaServiceKillQueryArgs(),
+  }
+}
+
+func (p MetaServiceKillQueryArgsBuilder) Emit() *MetaServiceKillQueryArgs{
+  return &MetaServiceKillQueryArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceKillQueryArgsBuilder) Req(req *KillQueryReq) *MetaServiceKillQueryArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceKillQueryArgs) SetReq(req *KillQueryReq) *MetaServiceKillQueryArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceKillQueryArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -25769,7 +30340,7 @@ func (p *MetaServiceKillQueryArgs) String() string {
 //  - Success
 type MetaServiceKillQueryResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceKillQueryResult() *MetaServiceKillQueryResult {
@@ -25785,6 +30356,32 @@ return p.Success
 }
 func (p *MetaServiceKillQueryResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceKillQueryResultBuilder struct {
+  obj *MetaServiceKillQueryResult
+}
+
+func NewMetaServiceKillQueryResultBuilder() *MetaServiceKillQueryResultBuilder{
+  return &MetaServiceKillQueryResultBuilder{
+    obj: NewMetaServiceKillQueryResult(),
+  }
+}
+
+func (p MetaServiceKillQueryResultBuilder) Emit() *MetaServiceKillQueryResult{
+  return &MetaServiceKillQueryResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceKillQueryResultBuilder) Success(success *ExecResp) *MetaServiceKillQueryResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceKillQueryResult) SetSuccess(success *ExecResp) *MetaServiceKillQueryResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceKillQueryResult) Read(iprot thrift.Protocol) error {
@@ -25889,6 +30486,32 @@ func (p *MetaServiceReportTaskFinishArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceReportTaskFinishArgsBuilder struct {
+  obj *MetaServiceReportTaskFinishArgs
+}
+
+func NewMetaServiceReportTaskFinishArgsBuilder() *MetaServiceReportTaskFinishArgsBuilder{
+  return &MetaServiceReportTaskFinishArgsBuilder{
+    obj: NewMetaServiceReportTaskFinishArgs(),
+  }
+}
+
+func (p MetaServiceReportTaskFinishArgsBuilder) Emit() *MetaServiceReportTaskFinishArgs{
+  return &MetaServiceReportTaskFinishArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceReportTaskFinishArgsBuilder) Req(req *ReportTaskReq) *MetaServiceReportTaskFinishArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceReportTaskFinishArgs) SetReq(req *ReportTaskReq) *MetaServiceReportTaskFinishArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceReportTaskFinishArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -25969,7 +30592,7 @@ func (p *MetaServiceReportTaskFinishArgs) String() string {
 //  - Success
 type MetaServiceReportTaskFinishResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceReportTaskFinishResult() *MetaServiceReportTaskFinishResult {
@@ -25985,6 +30608,32 @@ return p.Success
 }
 func (p *MetaServiceReportTaskFinishResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceReportTaskFinishResultBuilder struct {
+  obj *MetaServiceReportTaskFinishResult
+}
+
+func NewMetaServiceReportTaskFinishResultBuilder() *MetaServiceReportTaskFinishResultBuilder{
+  return &MetaServiceReportTaskFinishResultBuilder{
+    obj: NewMetaServiceReportTaskFinishResult(),
+  }
+}
+
+func (p MetaServiceReportTaskFinishResultBuilder) Emit() *MetaServiceReportTaskFinishResult{
+  return &MetaServiceReportTaskFinishResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceReportTaskFinishResultBuilder) Success(success *ExecResp) *MetaServiceReportTaskFinishResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceReportTaskFinishResult) SetSuccess(success *ExecResp) *MetaServiceReportTaskFinishResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceReportTaskFinishResult) Read(iprot thrift.Protocol) error {
@@ -26067,6 +30716,510 @@ func (p *MetaServiceReportTaskFinishResult) String() string {
 
 // Attributes:
 //  - Req
+type MetaServiceCreateBackupArgs struct {
+  thrift.IRequest
+  Req *CreateBackupReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceCreateBackupArgs() *MetaServiceCreateBackupArgs {
+  return &MetaServiceCreateBackupArgs{
+    Req: NewCreateBackupReq(),
+  }
+}
+
+var MetaServiceCreateBackupArgs_Req_DEFAULT *CreateBackupReq
+func (p *MetaServiceCreateBackupArgs) GetReq() *CreateBackupReq {
+  if !p.IsSetReq() {
+    return MetaServiceCreateBackupArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceCreateBackupArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+type MetaServiceCreateBackupArgsBuilder struct {
+  obj *MetaServiceCreateBackupArgs
+}
+
+func NewMetaServiceCreateBackupArgsBuilder() *MetaServiceCreateBackupArgsBuilder{
+  return &MetaServiceCreateBackupArgsBuilder{
+    obj: NewMetaServiceCreateBackupArgs(),
+  }
+}
+
+func (p MetaServiceCreateBackupArgsBuilder) Emit() *MetaServiceCreateBackupArgs{
+  return &MetaServiceCreateBackupArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceCreateBackupArgsBuilder) Req(req *CreateBackupReq) *MetaServiceCreateBackupArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceCreateBackupArgs) SetReq(req *CreateBackupReq) *MetaServiceCreateBackupArgs {
+  m.Req = req
+  return m
+}
+
+func (p *MetaServiceCreateBackupArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateBackupArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewCreateBackupReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateBackupArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("createBackup_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceCreateBackupArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceCreateBackupArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceCreateBackupArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceCreateBackupResult struct {
+  thrift.IResponse
+  Success *CreateBackupResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceCreateBackupResult() *MetaServiceCreateBackupResult {
+  return &MetaServiceCreateBackupResult{}
+}
+
+var MetaServiceCreateBackupResult_Success_DEFAULT *CreateBackupResp
+func (p *MetaServiceCreateBackupResult) GetSuccess() *CreateBackupResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceCreateBackupResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceCreateBackupResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+type MetaServiceCreateBackupResultBuilder struct {
+  obj *MetaServiceCreateBackupResult
+}
+
+func NewMetaServiceCreateBackupResultBuilder() *MetaServiceCreateBackupResultBuilder{
+  return &MetaServiceCreateBackupResultBuilder{
+    obj: NewMetaServiceCreateBackupResult(),
+  }
+}
+
+func (p MetaServiceCreateBackupResultBuilder) Emit() *MetaServiceCreateBackupResult{
+  return &MetaServiceCreateBackupResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceCreateBackupResultBuilder) Success(success *CreateBackupResp) *MetaServiceCreateBackupResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceCreateBackupResult) SetSuccess(success *CreateBackupResp) *MetaServiceCreateBackupResult {
+  m.Success = success
+  return m
+}
+
+func (p *MetaServiceCreateBackupResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateBackupResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewCreateBackupResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceCreateBackupResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("createBackup_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceCreateBackupResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceCreateBackupResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceCreateBackupResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceRestoreMetaArgs struct {
+  thrift.IRequest
+  Req *RestoreMetaReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceRestoreMetaArgs() *MetaServiceRestoreMetaArgs {
+  return &MetaServiceRestoreMetaArgs{
+    Req: NewRestoreMetaReq(),
+  }
+}
+
+var MetaServiceRestoreMetaArgs_Req_DEFAULT *RestoreMetaReq
+func (p *MetaServiceRestoreMetaArgs) GetReq() *RestoreMetaReq {
+  if !p.IsSetReq() {
+    return MetaServiceRestoreMetaArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceRestoreMetaArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+type MetaServiceRestoreMetaArgsBuilder struct {
+  obj *MetaServiceRestoreMetaArgs
+}
+
+func NewMetaServiceRestoreMetaArgsBuilder() *MetaServiceRestoreMetaArgsBuilder{
+  return &MetaServiceRestoreMetaArgsBuilder{
+    obj: NewMetaServiceRestoreMetaArgs(),
+  }
+}
+
+func (p MetaServiceRestoreMetaArgsBuilder) Emit() *MetaServiceRestoreMetaArgs{
+  return &MetaServiceRestoreMetaArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceRestoreMetaArgsBuilder) Req(req *RestoreMetaReq) *MetaServiceRestoreMetaArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceRestoreMetaArgs) SetReq(req *RestoreMetaReq) *MetaServiceRestoreMetaArgs {
+  m.Req = req
+  return m
+}
+
+func (p *MetaServiceRestoreMetaArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceRestoreMetaArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewRestoreMetaReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceRestoreMetaArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("restoreMeta_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceRestoreMetaArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceRestoreMetaArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceRestoreMetaArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceRestoreMetaResult struct {
+  thrift.IResponse
+  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceRestoreMetaResult() *MetaServiceRestoreMetaResult {
+  return &MetaServiceRestoreMetaResult{}
+}
+
+var MetaServiceRestoreMetaResult_Success_DEFAULT *ExecResp
+func (p *MetaServiceRestoreMetaResult) GetSuccess() *ExecResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceRestoreMetaResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceRestoreMetaResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+type MetaServiceRestoreMetaResultBuilder struct {
+  obj *MetaServiceRestoreMetaResult
+}
+
+func NewMetaServiceRestoreMetaResultBuilder() *MetaServiceRestoreMetaResultBuilder{
+  return &MetaServiceRestoreMetaResultBuilder{
+    obj: NewMetaServiceRestoreMetaResult(),
+  }
+}
+
+func (p MetaServiceRestoreMetaResultBuilder) Emit() *MetaServiceRestoreMetaResult{
+  return &MetaServiceRestoreMetaResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceRestoreMetaResultBuilder) Success(success *ExecResp) *MetaServiceRestoreMetaResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceRestoreMetaResult) SetSuccess(success *ExecResp) *MetaServiceRestoreMetaResult {
+  m.Success = success
+  return m
+}
+
+func (p *MetaServiceRestoreMetaResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceRestoreMetaResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceRestoreMetaResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("restoreMeta_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceRestoreMetaResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceRestoreMetaResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceRestoreMetaResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
 type MetaServiceListClusterArgs struct {
   thrift.IRequest
   Req *ListClusterInfoReq `thrift:"req,1" db:"req" json:"req"`
@@ -26087,6 +31240,32 @@ return p.Req
 }
 func (p *MetaServiceListClusterArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
+}
+
+type MetaServiceListClusterArgsBuilder struct {
+  obj *MetaServiceListClusterArgs
+}
+
+func NewMetaServiceListClusterArgsBuilder() *MetaServiceListClusterArgsBuilder{
+  return &MetaServiceListClusterArgsBuilder{
+    obj: NewMetaServiceListClusterArgs(),
+  }
+}
+
+func (p MetaServiceListClusterArgsBuilder) Emit() *MetaServiceListClusterArgs{
+  return &MetaServiceListClusterArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceListClusterArgsBuilder) Req(req *ListClusterInfoReq) *MetaServiceListClusterArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceListClusterArgs) SetReq(req *ListClusterInfoReq) *MetaServiceListClusterArgs {
+  m.Req = req
+  return m
 }
 
 func (p *MetaServiceListClusterArgs) Read(iprot thrift.Protocol) error {
@@ -26169,7 +31348,7 @@ func (p *MetaServiceListClusterArgs) String() string {
 //  - Success
 type MetaServiceListClusterResult struct {
   thrift.IResponse
-  Success *ListClusterInfoResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ListClusterInfoResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceListClusterResult() *MetaServiceListClusterResult {
@@ -26185,6 +31364,32 @@ return p.Success
 }
 func (p *MetaServiceListClusterResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceListClusterResultBuilder struct {
+  obj *MetaServiceListClusterResult
+}
+
+func NewMetaServiceListClusterResultBuilder() *MetaServiceListClusterResultBuilder{
+  return &MetaServiceListClusterResultBuilder{
+    obj: NewMetaServiceListClusterResult(),
+  }
+}
+
+func (p MetaServiceListClusterResultBuilder) Emit() *MetaServiceListClusterResult{
+  return &MetaServiceListClusterResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceListClusterResultBuilder) Success(success *ListClusterInfoResp) *MetaServiceListClusterResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceListClusterResult) SetSuccess(success *ListClusterInfoResp) *MetaServiceListClusterResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceListClusterResult) Read(iprot thrift.Protocol) error {
@@ -26289,6 +31494,32 @@ func (p *MetaServiceGetMetaDirInfoArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceGetMetaDirInfoArgsBuilder struct {
+  obj *MetaServiceGetMetaDirInfoArgs
+}
+
+func NewMetaServiceGetMetaDirInfoArgsBuilder() *MetaServiceGetMetaDirInfoArgsBuilder{
+  return &MetaServiceGetMetaDirInfoArgsBuilder{
+    obj: NewMetaServiceGetMetaDirInfoArgs(),
+  }
+}
+
+func (p MetaServiceGetMetaDirInfoArgsBuilder) Emit() *MetaServiceGetMetaDirInfoArgs{
+  return &MetaServiceGetMetaDirInfoArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceGetMetaDirInfoArgsBuilder) Req(req *GetMetaDirInfoReq) *MetaServiceGetMetaDirInfoArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceGetMetaDirInfoArgs) SetReq(req *GetMetaDirInfoReq) *MetaServiceGetMetaDirInfoArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceGetMetaDirInfoArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -26369,7 +31600,7 @@ func (p *MetaServiceGetMetaDirInfoArgs) String() string {
 //  - Success
 type MetaServiceGetMetaDirInfoResult struct {
   thrift.IResponse
-  Success *GetMetaDirInfoResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetMetaDirInfoResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceGetMetaDirInfoResult() *MetaServiceGetMetaDirInfoResult {
@@ -26385,6 +31616,32 @@ return p.Success
 }
 func (p *MetaServiceGetMetaDirInfoResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceGetMetaDirInfoResultBuilder struct {
+  obj *MetaServiceGetMetaDirInfoResult
+}
+
+func NewMetaServiceGetMetaDirInfoResultBuilder() *MetaServiceGetMetaDirInfoResultBuilder{
+  return &MetaServiceGetMetaDirInfoResultBuilder{
+    obj: NewMetaServiceGetMetaDirInfoResult(),
+  }
+}
+
+func (p MetaServiceGetMetaDirInfoResultBuilder) Emit() *MetaServiceGetMetaDirInfoResult{
+  return &MetaServiceGetMetaDirInfoResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceGetMetaDirInfoResultBuilder) Success(success *GetMetaDirInfoResp) *MetaServiceGetMetaDirInfoResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceGetMetaDirInfoResult) SetSuccess(success *GetMetaDirInfoResp) *MetaServiceGetMetaDirInfoResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceGetMetaDirInfoResult) Read(iprot thrift.Protocol) error {
@@ -26489,6 +31746,32 @@ func (p *MetaServiceVerifyClientVersionArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type MetaServiceVerifyClientVersionArgsBuilder struct {
+  obj *MetaServiceVerifyClientVersionArgs
+}
+
+func NewMetaServiceVerifyClientVersionArgsBuilder() *MetaServiceVerifyClientVersionArgsBuilder{
+  return &MetaServiceVerifyClientVersionArgsBuilder{
+    obj: NewMetaServiceVerifyClientVersionArgs(),
+  }
+}
+
+func (p MetaServiceVerifyClientVersionArgsBuilder) Emit() *MetaServiceVerifyClientVersionArgs{
+  return &MetaServiceVerifyClientVersionArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (m *MetaServiceVerifyClientVersionArgsBuilder) Req(req *VerifyClientVersionReq) *MetaServiceVerifyClientVersionArgsBuilder {
+  m.obj.Req = req
+  return m
+}
+
+func (m *MetaServiceVerifyClientVersionArgs) SetReq(req *VerifyClientVersionReq) *MetaServiceVerifyClientVersionArgs {
+  m.Req = req
+  return m
+}
+
 func (p *MetaServiceVerifyClientVersionArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -26569,7 +31852,7 @@ func (p *MetaServiceVerifyClientVersionArgs) String() string {
 //  - Success
 type MetaServiceVerifyClientVersionResult struct {
   thrift.IResponse
-  Success *VerifyClientVersionResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *VerifyClientVersionResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceVerifyClientVersionResult() *MetaServiceVerifyClientVersionResult {
@@ -26585,6 +31868,32 @@ return p.Success
 }
 func (p *MetaServiceVerifyClientVersionResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type MetaServiceVerifyClientVersionResultBuilder struct {
+  obj *MetaServiceVerifyClientVersionResult
+}
+
+func NewMetaServiceVerifyClientVersionResultBuilder() *MetaServiceVerifyClientVersionResultBuilder{
+  return &MetaServiceVerifyClientVersionResultBuilder{
+    obj: NewMetaServiceVerifyClientVersionResult(),
+  }
+}
+
+func (p MetaServiceVerifyClientVersionResultBuilder) Emit() *MetaServiceVerifyClientVersionResult{
+  return &MetaServiceVerifyClientVersionResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (m *MetaServiceVerifyClientVersionResultBuilder) Success(success *VerifyClientVersionResp) *MetaServiceVerifyClientVersionResultBuilder {
+  m.obj.Success = success
+  return m
+}
+
+func (m *MetaServiceVerifyClientVersionResult) SetSuccess(success *VerifyClientVersionResp) *MetaServiceVerifyClientVersionResult {
+  m.Success = success
+  return m
 }
 
 func (p *MetaServiceVerifyClientVersionResult) Read(iprot thrift.Protocol) error {

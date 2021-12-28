@@ -583,11 +583,16 @@ func (p *GraphServiceChannelClient) VerifyClientVersion(ctx context.Context, req
 
 type GraphServiceProcessor struct {
   processorMap map[string]thrift.ProcessorFunctionContext
+  functionServiceMap map[string]string
   handler GraphService
 }
 
 func (p *GraphServiceProcessor) AddToProcessorMap(key string, processor thrift.ProcessorFunctionContext) {
   p.processorMap[key] = processor
+}
+
+func (p *GraphServiceProcessor) AddToFunctionServiceMap(key, service string) {
+  p.functionServiceMap[key] = service
 }
 
 func (p *GraphServiceProcessor) GetProcessorFunctionContext(key string) (processor thrift.ProcessorFunctionContext, err error) {
@@ -601,8 +606,12 @@ func (p *GraphServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFuncti
   return p.processorMap
 }
 
+func (p *GraphServiceProcessor) FunctionServiceMap() map[string]string {
+  return p.functionServiceMap
+}
+
 func NewGraphServiceProcessor(handler GraphService) *GraphServiceProcessor {
-  self9 := &GraphServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self9 := &GraphServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext), functionServiceMap:make(map[string]string)}
   self9.processorMap["authenticate"] = &graphServiceProcessorAuthenticate{handler:handler}
   self9.processorMap["signout"] = &graphServiceProcessorSignout{handler:handler}
   self9.processorMap["execute"] = &graphServiceProcessorExecute{handler:handler}
@@ -610,11 +619,23 @@ func NewGraphServiceProcessor(handler GraphService) *GraphServiceProcessor {
   self9.processorMap["executeJson"] = &graphServiceProcessorExecuteJson{handler:handler}
   self9.processorMap["executeJsonWithParameter"] = &graphServiceProcessorExecuteJsonWithParameter{handler:handler}
   self9.processorMap["verifyClientVersion"] = &graphServiceProcessorVerifyClientVersion{handler:handler}
+  self9.functionServiceMap["authenticate"] = "GraphService"
+  self9.functionServiceMap["signout"] = "GraphService"
+  self9.functionServiceMap["execute"] = "GraphService"
+  self9.functionServiceMap["executeWithParameter"] = "GraphService"
+  self9.functionServiceMap["executeJson"] = "GraphService"
+  self9.functionServiceMap["executeJsonWithParameter"] = "GraphService"
+  self9.functionServiceMap["verifyClientVersion"] = "GraphService"
   return self9
 }
 
 type graphServiceProcessorAuthenticate struct {
   handler GraphService
+}
+
+func (p *GraphServiceAuthenticateResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *graphServiceProcessorAuthenticate) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -714,6 +735,11 @@ type graphServiceProcessorExecute struct {
   handler GraphService
 }
 
+func (p *GraphServiceExecuteResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *graphServiceProcessorExecute) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := GraphServiceExecuteArgs{}
   if err := args.Read(iprot); err != nil {
@@ -762,6 +788,11 @@ func (p *graphServiceProcessorExecute) RunContext(ctx context.Context, argStruct
 
 type graphServiceProcessorExecuteWithParameter struct {
   handler GraphService
+}
+
+func (p *GraphServiceExecuteWithParameterResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *graphServiceProcessorExecuteWithParameter) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -814,6 +845,11 @@ type graphServiceProcessorExecuteJson struct {
   handler GraphService
 }
 
+func (p *GraphServiceExecuteJsonResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *graphServiceProcessorExecuteJson) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := GraphServiceExecuteJsonArgs{}
   if err := args.Read(iprot); err != nil {
@@ -864,6 +900,11 @@ type graphServiceProcessorExecuteJsonWithParameter struct {
   handler GraphService
 }
 
+func (p *GraphServiceExecuteJsonWithParameterResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *graphServiceProcessorExecuteJsonWithParameter) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := GraphServiceExecuteJsonWithParameterArgs{}
   if err := args.Read(iprot); err != nil {
@@ -912,6 +953,11 @@ func (p *graphServiceProcessorExecuteJsonWithParameter) RunContext(ctx context.C
 
 type graphServiceProcessorVerifyClientVersion struct {
   handler GraphService
+}
+
+func (p *GraphServiceVerifyClientVersionResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *graphServiceProcessorVerifyClientVersion) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -984,6 +1030,43 @@ func (p *GraphServiceAuthenticateArgs) GetUsername() []byte {
 func (p *GraphServiceAuthenticateArgs) GetPassword() []byte {
   return p.Password
 }
+type GraphServiceAuthenticateArgsBuilder struct {
+  obj *GraphServiceAuthenticateArgs
+}
+
+func NewGraphServiceAuthenticateArgsBuilder() *GraphServiceAuthenticateArgsBuilder{
+  return &GraphServiceAuthenticateArgsBuilder{
+    obj: NewGraphServiceAuthenticateArgs(),
+  }
+}
+
+func (p GraphServiceAuthenticateArgsBuilder) Emit() *GraphServiceAuthenticateArgs{
+  return &GraphServiceAuthenticateArgs{
+    Username: p.obj.Username,
+    Password: p.obj.Password,
+  }
+}
+
+func (g *GraphServiceAuthenticateArgsBuilder) Username(username []byte) *GraphServiceAuthenticateArgsBuilder {
+  g.obj.Username = username
+  return g
+}
+
+func (g *GraphServiceAuthenticateArgsBuilder) Password(password []byte) *GraphServiceAuthenticateArgsBuilder {
+  g.obj.Password = password
+  return g
+}
+
+func (g *GraphServiceAuthenticateArgs) SetUsername(username []byte) *GraphServiceAuthenticateArgs {
+  g.Username = username
+  return g
+}
+
+func (g *GraphServiceAuthenticateArgs) SetPassword(password []byte) *GraphServiceAuthenticateArgs {
+  g.Password = password
+  return g
+}
+
 func (p *GraphServiceAuthenticateArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1022,19 +1105,19 @@ func (p *GraphServiceAuthenticateArgs) Read(iprot thrift.Protocol) error {
 
 func (p *GraphServiceAuthenticateArgs)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Username = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.Username = v
+  }
   return nil
 }
 
 func (p *GraphServiceAuthenticateArgs)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Password = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Password = v
+  }
   return nil
 }
 
@@ -1084,7 +1167,7 @@ func (p *GraphServiceAuthenticateArgs) String() string {
 //  - Success
 type GraphServiceAuthenticateResult struct {
   thrift.IResponse
-  Success *AuthResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AuthResponse `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewGraphServiceAuthenticateResult() *GraphServiceAuthenticateResult {
@@ -1100,6 +1183,32 @@ return p.Success
 }
 func (p *GraphServiceAuthenticateResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type GraphServiceAuthenticateResultBuilder struct {
+  obj *GraphServiceAuthenticateResult
+}
+
+func NewGraphServiceAuthenticateResultBuilder() *GraphServiceAuthenticateResultBuilder{
+  return &GraphServiceAuthenticateResultBuilder{
+    obj: NewGraphServiceAuthenticateResult(),
+  }
+}
+
+func (p GraphServiceAuthenticateResultBuilder) Emit() *GraphServiceAuthenticateResult{
+  return &GraphServiceAuthenticateResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphServiceAuthenticateResultBuilder) Success(success *AuthResponse) *GraphServiceAuthenticateResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphServiceAuthenticateResult) SetSuccess(success *AuthResponse) *GraphServiceAuthenticateResult {
+  g.Success = success
+  return g
 }
 
 func (p *GraphServiceAuthenticateResult) Read(iprot thrift.Protocol) error {
@@ -1195,6 +1304,32 @@ func NewGraphServiceSignoutArgs() *GraphServiceSignoutArgs {
 func (p *GraphServiceSignoutArgs) GetSessionId() int64 {
   return p.SessionId
 }
+type GraphServiceSignoutArgsBuilder struct {
+  obj *GraphServiceSignoutArgs
+}
+
+func NewGraphServiceSignoutArgsBuilder() *GraphServiceSignoutArgsBuilder{
+  return &GraphServiceSignoutArgsBuilder{
+    obj: NewGraphServiceSignoutArgs(),
+  }
+}
+
+func (p GraphServiceSignoutArgsBuilder) Emit() *GraphServiceSignoutArgs{
+  return &GraphServiceSignoutArgs{
+    SessionId: p.obj.SessionId,
+  }
+}
+
+func (g *GraphServiceSignoutArgsBuilder) SessionId(sessionId int64) *GraphServiceSignoutArgsBuilder {
+  g.obj.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceSignoutArgs) SetSessionId(sessionId int64) *GraphServiceSignoutArgs {
+  g.SessionId = sessionId
+  return g
+}
+
 func (p *GraphServiceSignoutArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1229,10 +1364,10 @@ func (p *GraphServiceSignoutArgs) Read(iprot thrift.Protocol) error {
 
 func (p *GraphServiceSignoutArgs)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.SessionId = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.SessionId = v
+  }
   return nil
 }
 
@@ -1287,6 +1422,43 @@ func (p *GraphServiceExecuteArgs) GetSessionId() int64 {
 func (p *GraphServiceExecuteArgs) GetStmt() []byte {
   return p.Stmt
 }
+type GraphServiceExecuteArgsBuilder struct {
+  obj *GraphServiceExecuteArgs
+}
+
+func NewGraphServiceExecuteArgsBuilder() *GraphServiceExecuteArgsBuilder{
+  return &GraphServiceExecuteArgsBuilder{
+    obj: NewGraphServiceExecuteArgs(),
+  }
+}
+
+func (p GraphServiceExecuteArgsBuilder) Emit() *GraphServiceExecuteArgs{
+  return &GraphServiceExecuteArgs{
+    SessionId: p.obj.SessionId,
+    Stmt: p.obj.Stmt,
+  }
+}
+
+func (g *GraphServiceExecuteArgsBuilder) SessionId(sessionId int64) *GraphServiceExecuteArgsBuilder {
+  g.obj.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteArgsBuilder) Stmt(stmt []byte) *GraphServiceExecuteArgsBuilder {
+  g.obj.Stmt = stmt
+  return g
+}
+
+func (g *GraphServiceExecuteArgs) SetSessionId(sessionId int64) *GraphServiceExecuteArgs {
+  g.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteArgs) SetStmt(stmt []byte) *GraphServiceExecuteArgs {
+  g.Stmt = stmt
+  return g
+}
+
 func (p *GraphServiceExecuteArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1325,19 +1497,19 @@ func (p *GraphServiceExecuteArgs) Read(iprot thrift.Protocol) error {
 
 func (p *GraphServiceExecuteArgs)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.SessionId = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.SessionId = v
+  }
   return nil
 }
 
 func (p *GraphServiceExecuteArgs)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Stmt = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Stmt = v
+  }
   return nil
 }
 
@@ -1387,7 +1559,7 @@ func (p *GraphServiceExecuteArgs) String() string {
 //  - Success
 type GraphServiceExecuteResult struct {
   thrift.IResponse
-  Success *ExecutionResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecutionResponse `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewGraphServiceExecuteResult() *GraphServiceExecuteResult {
@@ -1403,6 +1575,32 @@ return p.Success
 }
 func (p *GraphServiceExecuteResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type GraphServiceExecuteResultBuilder struct {
+  obj *GraphServiceExecuteResult
+}
+
+func NewGraphServiceExecuteResultBuilder() *GraphServiceExecuteResultBuilder{
+  return &GraphServiceExecuteResultBuilder{
+    obj: NewGraphServiceExecuteResult(),
+  }
+}
+
+func (p GraphServiceExecuteResultBuilder) Emit() *GraphServiceExecuteResult{
+  return &GraphServiceExecuteResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphServiceExecuteResultBuilder) Success(success *ExecutionResponse) *GraphServiceExecuteResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphServiceExecuteResult) SetSuccess(success *ExecutionResponse) *GraphServiceExecuteResult {
+  g.Success = success
+  return g
 }
 
 func (p *GraphServiceExecuteResult) Read(iprot thrift.Protocol) error {
@@ -1510,6 +1708,54 @@ func (p *GraphServiceExecuteWithParameterArgs) GetStmt() []byte {
 func (p *GraphServiceExecuteWithParameterArgs) GetParameterMap() map[string]*nebula0.Value {
   return p.ParameterMap
 }
+type GraphServiceExecuteWithParameterArgsBuilder struct {
+  obj *GraphServiceExecuteWithParameterArgs
+}
+
+func NewGraphServiceExecuteWithParameterArgsBuilder() *GraphServiceExecuteWithParameterArgsBuilder{
+  return &GraphServiceExecuteWithParameterArgsBuilder{
+    obj: NewGraphServiceExecuteWithParameterArgs(),
+  }
+}
+
+func (p GraphServiceExecuteWithParameterArgsBuilder) Emit() *GraphServiceExecuteWithParameterArgs{
+  return &GraphServiceExecuteWithParameterArgs{
+    SessionId: p.obj.SessionId,
+    Stmt: p.obj.Stmt,
+    ParameterMap: p.obj.ParameterMap,
+  }
+}
+
+func (g *GraphServiceExecuteWithParameterArgsBuilder) SessionId(sessionId int64) *GraphServiceExecuteWithParameterArgsBuilder {
+  g.obj.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteWithParameterArgsBuilder) Stmt(stmt []byte) *GraphServiceExecuteWithParameterArgsBuilder {
+  g.obj.Stmt = stmt
+  return g
+}
+
+func (g *GraphServiceExecuteWithParameterArgsBuilder) ParameterMap(parameterMap map[string]*nebula0.Value) *GraphServiceExecuteWithParameterArgsBuilder {
+  g.obj.ParameterMap = parameterMap
+  return g
+}
+
+func (g *GraphServiceExecuteWithParameterArgs) SetSessionId(sessionId int64) *GraphServiceExecuteWithParameterArgs {
+  g.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteWithParameterArgs) SetStmt(stmt []byte) *GraphServiceExecuteWithParameterArgs {
+  g.Stmt = stmt
+  return g
+}
+
+func (g *GraphServiceExecuteWithParameterArgs) SetParameterMap(parameterMap map[string]*nebula0.Value) *GraphServiceExecuteWithParameterArgs {
+  g.ParameterMap = parameterMap
+  return g
+}
+
 func (p *GraphServiceExecuteWithParameterArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1552,19 +1798,19 @@ func (p *GraphServiceExecuteWithParameterArgs) Read(iprot thrift.Protocol) error
 
 func (p *GraphServiceExecuteWithParameterArgs)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.SessionId = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.SessionId = v
+  }
   return nil
 }
 
 func (p *GraphServiceExecuteWithParameterArgs)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Stmt = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Stmt = v
+  }
   return nil
 }
 
@@ -1576,12 +1822,12 @@ func (p *GraphServiceExecuteWithParameterArgs)  ReadField3(iprot thrift.Protocol
   tMap := make(map[string]*nebula0.Value, size)
   p.ParameterMap =  tMap
   for i := 0; i < size; i ++ {
-var _key11 string
+    var _key11 string
     if v, err := iprot.ReadString(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _key11 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _key11 = v
+    }
     _val12 := nebula0.NewValue()
     if err := _val12.Read(iprot); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val12), err)
@@ -1663,7 +1909,7 @@ func (p *GraphServiceExecuteWithParameterArgs) String() string {
 //  - Success
 type GraphServiceExecuteWithParameterResult struct {
   thrift.IResponse
-  Success *ExecutionResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecutionResponse `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewGraphServiceExecuteWithParameterResult() *GraphServiceExecuteWithParameterResult {
@@ -1679,6 +1925,32 @@ return p.Success
 }
 func (p *GraphServiceExecuteWithParameterResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type GraphServiceExecuteWithParameterResultBuilder struct {
+  obj *GraphServiceExecuteWithParameterResult
+}
+
+func NewGraphServiceExecuteWithParameterResultBuilder() *GraphServiceExecuteWithParameterResultBuilder{
+  return &GraphServiceExecuteWithParameterResultBuilder{
+    obj: NewGraphServiceExecuteWithParameterResult(),
+  }
+}
+
+func (p GraphServiceExecuteWithParameterResultBuilder) Emit() *GraphServiceExecuteWithParameterResult{
+  return &GraphServiceExecuteWithParameterResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphServiceExecuteWithParameterResultBuilder) Success(success *ExecutionResponse) *GraphServiceExecuteWithParameterResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphServiceExecuteWithParameterResult) SetSuccess(success *ExecutionResponse) *GraphServiceExecuteWithParameterResult {
+  g.Success = success
+  return g
 }
 
 func (p *GraphServiceExecuteWithParameterResult) Read(iprot thrift.Protocol) error {
@@ -1780,6 +2052,43 @@ func (p *GraphServiceExecuteJsonArgs) GetSessionId() int64 {
 func (p *GraphServiceExecuteJsonArgs) GetStmt() []byte {
   return p.Stmt
 }
+type GraphServiceExecuteJsonArgsBuilder struct {
+  obj *GraphServiceExecuteJsonArgs
+}
+
+func NewGraphServiceExecuteJsonArgsBuilder() *GraphServiceExecuteJsonArgsBuilder{
+  return &GraphServiceExecuteJsonArgsBuilder{
+    obj: NewGraphServiceExecuteJsonArgs(),
+  }
+}
+
+func (p GraphServiceExecuteJsonArgsBuilder) Emit() *GraphServiceExecuteJsonArgs{
+  return &GraphServiceExecuteJsonArgs{
+    SessionId: p.obj.SessionId,
+    Stmt: p.obj.Stmt,
+  }
+}
+
+func (g *GraphServiceExecuteJsonArgsBuilder) SessionId(sessionId int64) *GraphServiceExecuteJsonArgsBuilder {
+  g.obj.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteJsonArgsBuilder) Stmt(stmt []byte) *GraphServiceExecuteJsonArgsBuilder {
+  g.obj.Stmt = stmt
+  return g
+}
+
+func (g *GraphServiceExecuteJsonArgs) SetSessionId(sessionId int64) *GraphServiceExecuteJsonArgs {
+  g.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteJsonArgs) SetStmt(stmt []byte) *GraphServiceExecuteJsonArgs {
+  g.Stmt = stmt
+  return g
+}
+
 func (p *GraphServiceExecuteJsonArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1818,19 +2127,19 @@ func (p *GraphServiceExecuteJsonArgs) Read(iprot thrift.Protocol) error {
 
 func (p *GraphServiceExecuteJsonArgs)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.SessionId = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.SessionId = v
+  }
   return nil
 }
 
 func (p *GraphServiceExecuteJsonArgs)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Stmt = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Stmt = v
+  }
   return nil
 }
 
@@ -1880,7 +2189,7 @@ func (p *GraphServiceExecuteJsonArgs) String() string {
 //  - Success
 type GraphServiceExecuteJsonResult struct {
   thrift.IResponse
-  Success []byte `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success []byte `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewGraphServiceExecuteJsonResult() *GraphServiceExecuteJsonResult {
@@ -1894,6 +2203,32 @@ func (p *GraphServiceExecuteJsonResult) GetSuccess() []byte {
 }
 func (p *GraphServiceExecuteJsonResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type GraphServiceExecuteJsonResultBuilder struct {
+  obj *GraphServiceExecuteJsonResult
+}
+
+func NewGraphServiceExecuteJsonResultBuilder() *GraphServiceExecuteJsonResultBuilder{
+  return &GraphServiceExecuteJsonResultBuilder{
+    obj: NewGraphServiceExecuteJsonResult(),
+  }
+}
+
+func (p GraphServiceExecuteJsonResultBuilder) Emit() *GraphServiceExecuteJsonResult{
+  return &GraphServiceExecuteJsonResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphServiceExecuteJsonResultBuilder) Success(success []byte) *GraphServiceExecuteJsonResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphServiceExecuteJsonResult) SetSuccess(success []byte) *GraphServiceExecuteJsonResult {
+  g.Success = success
+  return g
 }
 
 func (p *GraphServiceExecuteJsonResult) Read(iprot thrift.Protocol) error {
@@ -1930,10 +2265,10 @@ func (p *GraphServiceExecuteJsonResult) Read(iprot thrift.Protocol) error {
 
 func (p *GraphServiceExecuteJsonResult)  ReadField0(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 0: ", err)
-} else {
-  p.Success = v
-}
+    return thrift.PrependError("error reading field 0: ", err)
+  } else {
+    p.Success = v
+  }
   return nil
 }
 
@@ -1996,6 +2331,54 @@ func (p *GraphServiceExecuteJsonWithParameterArgs) GetStmt() []byte {
 func (p *GraphServiceExecuteJsonWithParameterArgs) GetParameterMap() map[string]*nebula0.Value {
   return p.ParameterMap
 }
+type GraphServiceExecuteJsonWithParameterArgsBuilder struct {
+  obj *GraphServiceExecuteJsonWithParameterArgs
+}
+
+func NewGraphServiceExecuteJsonWithParameterArgsBuilder() *GraphServiceExecuteJsonWithParameterArgsBuilder{
+  return &GraphServiceExecuteJsonWithParameterArgsBuilder{
+    obj: NewGraphServiceExecuteJsonWithParameterArgs(),
+  }
+}
+
+func (p GraphServiceExecuteJsonWithParameterArgsBuilder) Emit() *GraphServiceExecuteJsonWithParameterArgs{
+  return &GraphServiceExecuteJsonWithParameterArgs{
+    SessionId: p.obj.SessionId,
+    Stmt: p.obj.Stmt,
+    ParameterMap: p.obj.ParameterMap,
+  }
+}
+
+func (g *GraphServiceExecuteJsonWithParameterArgsBuilder) SessionId(sessionId int64) *GraphServiceExecuteJsonWithParameterArgsBuilder {
+  g.obj.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteJsonWithParameterArgsBuilder) Stmt(stmt []byte) *GraphServiceExecuteJsonWithParameterArgsBuilder {
+  g.obj.Stmt = stmt
+  return g
+}
+
+func (g *GraphServiceExecuteJsonWithParameterArgsBuilder) ParameterMap(parameterMap map[string]*nebula0.Value) *GraphServiceExecuteJsonWithParameterArgsBuilder {
+  g.obj.ParameterMap = parameterMap
+  return g
+}
+
+func (g *GraphServiceExecuteJsonWithParameterArgs) SetSessionId(sessionId int64) *GraphServiceExecuteJsonWithParameterArgs {
+  g.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteJsonWithParameterArgs) SetStmt(stmt []byte) *GraphServiceExecuteJsonWithParameterArgs {
+  g.Stmt = stmt
+  return g
+}
+
+func (g *GraphServiceExecuteJsonWithParameterArgs) SetParameterMap(parameterMap map[string]*nebula0.Value) *GraphServiceExecuteJsonWithParameterArgs {
+  g.ParameterMap = parameterMap
+  return g
+}
+
 func (p *GraphServiceExecuteJsonWithParameterArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -2038,19 +2421,19 @@ func (p *GraphServiceExecuteJsonWithParameterArgs) Read(iprot thrift.Protocol) e
 
 func (p *GraphServiceExecuteJsonWithParameterArgs)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.SessionId = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.SessionId = v
+  }
   return nil
 }
 
 func (p *GraphServiceExecuteJsonWithParameterArgs)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Stmt = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Stmt = v
+  }
   return nil
 }
 
@@ -2062,12 +2445,12 @@ func (p *GraphServiceExecuteJsonWithParameterArgs)  ReadField3(iprot thrift.Prot
   tMap := make(map[string]*nebula0.Value, size)
   p.ParameterMap =  tMap
   for i := 0; i < size; i ++ {
-var _key13 string
+    var _key13 string
     if v, err := iprot.ReadString(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _key13 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _key13 = v
+    }
     _val14 := nebula0.NewValue()
     if err := _val14.Read(iprot); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val14), err)
@@ -2149,7 +2532,7 @@ func (p *GraphServiceExecuteJsonWithParameterArgs) String() string {
 //  - Success
 type GraphServiceExecuteJsonWithParameterResult struct {
   thrift.IResponse
-  Success []byte `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success []byte `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewGraphServiceExecuteJsonWithParameterResult() *GraphServiceExecuteJsonWithParameterResult {
@@ -2163,6 +2546,32 @@ func (p *GraphServiceExecuteJsonWithParameterResult) GetSuccess() []byte {
 }
 func (p *GraphServiceExecuteJsonWithParameterResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type GraphServiceExecuteJsonWithParameterResultBuilder struct {
+  obj *GraphServiceExecuteJsonWithParameterResult
+}
+
+func NewGraphServiceExecuteJsonWithParameterResultBuilder() *GraphServiceExecuteJsonWithParameterResultBuilder{
+  return &GraphServiceExecuteJsonWithParameterResultBuilder{
+    obj: NewGraphServiceExecuteJsonWithParameterResult(),
+  }
+}
+
+func (p GraphServiceExecuteJsonWithParameterResultBuilder) Emit() *GraphServiceExecuteJsonWithParameterResult{
+  return &GraphServiceExecuteJsonWithParameterResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphServiceExecuteJsonWithParameterResultBuilder) Success(success []byte) *GraphServiceExecuteJsonWithParameterResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphServiceExecuteJsonWithParameterResult) SetSuccess(success []byte) *GraphServiceExecuteJsonWithParameterResult {
+  g.Success = success
+  return g
 }
 
 func (p *GraphServiceExecuteJsonWithParameterResult) Read(iprot thrift.Protocol) error {
@@ -2199,10 +2608,10 @@ func (p *GraphServiceExecuteJsonWithParameterResult) Read(iprot thrift.Protocol)
 
 func (p *GraphServiceExecuteJsonWithParameterResult)  ReadField0(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 0: ", err)
-} else {
-  p.Success = v
-}
+    return thrift.PrependError("error reading field 0: ", err)
+  } else {
+    p.Success = v
+  }
   return nil
 }
 
@@ -2260,6 +2669,32 @@ return p.Req
 }
 func (p *GraphServiceVerifyClientVersionArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
+}
+
+type GraphServiceVerifyClientVersionArgsBuilder struct {
+  obj *GraphServiceVerifyClientVersionArgs
+}
+
+func NewGraphServiceVerifyClientVersionArgsBuilder() *GraphServiceVerifyClientVersionArgsBuilder{
+  return &GraphServiceVerifyClientVersionArgsBuilder{
+    obj: NewGraphServiceVerifyClientVersionArgs(),
+  }
+}
+
+func (p GraphServiceVerifyClientVersionArgsBuilder) Emit() *GraphServiceVerifyClientVersionArgs{
+  return &GraphServiceVerifyClientVersionArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (g *GraphServiceVerifyClientVersionArgsBuilder) Req(req *VerifyClientVersionReq) *GraphServiceVerifyClientVersionArgsBuilder {
+  g.obj.Req = req
+  return g
+}
+
+func (g *GraphServiceVerifyClientVersionArgs) SetReq(req *VerifyClientVersionReq) *GraphServiceVerifyClientVersionArgs {
+  g.Req = req
+  return g
 }
 
 func (p *GraphServiceVerifyClientVersionArgs) Read(iprot thrift.Protocol) error {
@@ -2342,7 +2777,7 @@ func (p *GraphServiceVerifyClientVersionArgs) String() string {
 //  - Success
 type GraphServiceVerifyClientVersionResult struct {
   thrift.IResponse
-  Success *VerifyClientVersionResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *VerifyClientVersionResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewGraphServiceVerifyClientVersionResult() *GraphServiceVerifyClientVersionResult {
@@ -2358,6 +2793,32 @@ return p.Success
 }
 func (p *GraphServiceVerifyClientVersionResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type GraphServiceVerifyClientVersionResultBuilder struct {
+  obj *GraphServiceVerifyClientVersionResult
+}
+
+func NewGraphServiceVerifyClientVersionResultBuilder() *GraphServiceVerifyClientVersionResultBuilder{
+  return &GraphServiceVerifyClientVersionResultBuilder{
+    obj: NewGraphServiceVerifyClientVersionResult(),
+  }
+}
+
+func (p GraphServiceVerifyClientVersionResultBuilder) Emit() *GraphServiceVerifyClientVersionResult{
+  return &GraphServiceVerifyClientVersionResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphServiceVerifyClientVersionResultBuilder) Success(success *VerifyClientVersionResp) *GraphServiceVerifyClientVersionResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphServiceVerifyClientVersionResult) SetSuccess(success *VerifyClientVersionResp) *GraphServiceVerifyClientVersionResult {
+  g.Success = success
+  return g
 }
 
 func (p *GraphServiceVerifyClientVersionResult) Read(iprot thrift.Protocol) error {
