@@ -261,9 +261,9 @@ func EngineSignTypePtr(v EngineSignType) *EngineSignType { return &v }
 //  - PlanID
 //  - ProfileDetail
 type RequestCommon struct {
-  SessionID *nebula0.SessionID `thrift:"session_id,1" db:"session_id" json:"session_id,omitempty"`
-  PlanID *nebula0.ExecutionPlanID `thrift:"plan_id,2" db:"plan_id" json:"plan_id,omitempty"`
-  ProfileDetail *bool `thrift:"profile_detail,3" db:"profile_detail" json:"profile_detail,omitempty"`
+  SessionID *nebula0.SessionID `thrift:"session_id,1,optional" db:"session_id" json:"session_id,omitempty"`
+  PlanID *nebula0.ExecutionPlanID `thrift:"plan_id,2,optional" db:"plan_id" json:"plan_id,omitempty"`
+  ProfileDetail *bool `thrift:"profile_detail,3,optional" db:"profile_detail" json:"profile_detail,omitempty"`
 }
 
 func NewRequestCommon() *RequestCommon {
@@ -301,6 +301,54 @@ func (p *RequestCommon) IsSetPlanID() bool {
 
 func (p *RequestCommon) IsSetProfileDetail() bool {
   return p != nil && p.ProfileDetail != nil
+}
+
+type RequestCommonBuilder struct {
+  obj *RequestCommon
+}
+
+func NewRequestCommonBuilder() *RequestCommonBuilder{
+  return &RequestCommonBuilder{
+    obj: NewRequestCommon(),
+  }
+}
+
+func (p RequestCommonBuilder) Emit() *RequestCommon{
+  return &RequestCommon{
+    SessionID: p.obj.SessionID,
+    PlanID: p.obj.PlanID,
+    ProfileDetail: p.obj.ProfileDetail,
+  }
+}
+
+func (r *RequestCommonBuilder) SessionID(sessionID *nebula0.SessionID) *RequestCommonBuilder {
+  r.obj.SessionID = sessionID
+  return r
+}
+
+func (r *RequestCommonBuilder) PlanID(planID *nebula0.ExecutionPlanID) *RequestCommonBuilder {
+  r.obj.PlanID = planID
+  return r
+}
+
+func (r *RequestCommonBuilder) ProfileDetail(profileDetail *bool) *RequestCommonBuilder {
+  r.obj.ProfileDetail = profileDetail
+  return r
+}
+
+func (r *RequestCommon) SetSessionID(sessionID *nebula0.SessionID) *RequestCommon {
+  r.SessionID = sessionID
+  return r
+}
+
+func (r *RequestCommon) SetPlanID(planID *nebula0.ExecutionPlanID) *RequestCommon {
+  r.PlanID = planID
+  return r
+}
+
+func (r *RequestCommon) SetProfileDetail(profileDetail *bool) *RequestCommon {
+  r.ProfileDetail = profileDetail
+  return r
 }
 
 func (p *RequestCommon) Read(iprot thrift.Protocol) error {
@@ -345,30 +393,30 @@ func (p *RequestCommon) Read(iprot thrift.Protocol) error {
 
 func (p *RequestCommon)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.SessionID(v)
-  p.SessionID = &temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.SessionID(v)
+    p.SessionID = &temp
+  }
   return nil
 }
 
 func (p *RequestCommon)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.ExecutionPlanID(v)
-  p.PlanID = &temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.ExecutionPlanID(v)
+    p.PlanID = &temp
+  }
   return nil
 }
 
 func (p *RequestCommon)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  p.ProfileDetail = &v
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.ProfileDetail = &v
+  }
   return nil
 }
 
@@ -454,7 +502,7 @@ func (p *RequestCommon) String() string {
 type PartitionResult_ struct {
   Code nebula0.ErrorCode `thrift:"code,1,required" db:"code" json:"code"`
   PartID nebula0.PartitionID `thrift:"part_id,2,required" db:"part_id" json:"part_id"`
-  Leader *nebula0.HostAddr `thrift:"leader,3" db:"leader" json:"leader,omitempty"`
+  Leader *nebula0.HostAddr `thrift:"leader,3,optional" db:"leader" json:"leader,omitempty"`
 }
 
 func NewPartitionResult_() *PartitionResult_ {
@@ -478,6 +526,54 @@ return p.Leader
 }
 func (p *PartitionResult_) IsSetLeader() bool {
   return p != nil && p.Leader != nil
+}
+
+type PartitionResult_Builder struct {
+  obj *PartitionResult_
+}
+
+func NewPartitionResult_Builder() *PartitionResult_Builder{
+  return &PartitionResult_Builder{
+    obj: NewPartitionResult_(),
+  }
+}
+
+func (p PartitionResult_Builder) Emit() *PartitionResult_{
+  return &PartitionResult_{
+    Code: p.obj.Code,
+    PartID: p.obj.PartID,
+    Leader: p.obj.Leader,
+  }
+}
+
+func (p *PartitionResult_Builder) Code(code nebula0.ErrorCode) *PartitionResult_Builder {
+  p.obj.Code = code
+  return p
+}
+
+func (p *PartitionResult_Builder) PartID(partID nebula0.PartitionID) *PartitionResult_Builder {
+  p.obj.PartID = partID
+  return p
+}
+
+func (p *PartitionResult_Builder) Leader(leader *nebula0.HostAddr) *PartitionResult_Builder {
+  p.obj.Leader = leader
+  return p
+}
+
+func (p *PartitionResult_) SetCode(code nebula0.ErrorCode) *PartitionResult_ {
+  p.Code = code
+  return p
+}
+
+func (p *PartitionResult_) SetPartID(partID nebula0.PartitionID) *PartitionResult_ {
+  p.PartID = partID
+  return p
+}
+
+func (p *PartitionResult_) SetLeader(leader *nebula0.HostAddr) *PartitionResult_ {
+  p.Leader = leader
+  return p
 }
 
 func (p *PartitionResult_) Read(iprot thrift.Protocol) error {
@@ -532,21 +628,21 @@ func (p *PartitionResult_) Read(iprot thrift.Protocol) error {
 
 func (p *PartitionResult_)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.ErrorCode(v)
-  p.Code = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.ErrorCode(v)
+    p.Code = temp
+  }
   return nil
 }
 
 func (p *PartitionResult_)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.PartitionID(v)
-  p.PartID = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.PartitionID(v)
+    p.PartID = temp
+  }
   return nil
 }
 
@@ -627,7 +723,7 @@ func (p *PartitionResult_) String() string {
 type ResponseCommon struct {
   FailedParts []*PartitionResult_ `thrift:"failed_parts,1,required" db:"failed_parts" json:"failed_parts"`
   LatencyInUs int64 `thrift:"latency_in_us,2,required" db:"latency_in_us" json:"latency_in_us"`
-  LatencyDetailUs map[string]int32 `thrift:"latency_detail_us,3" db:"latency_detail_us" json:"latency_detail_us,omitempty"`
+  LatencyDetailUs map[string]int32 `thrift:"latency_detail_us,3,optional" db:"latency_detail_us" json:"latency_detail_us,omitempty"`
 }
 
 func NewResponseCommon() *ResponseCommon {
@@ -649,6 +745,54 @@ func (p *ResponseCommon) GetLatencyDetailUs() map[string]int32 {
 }
 func (p *ResponseCommon) IsSetLatencyDetailUs() bool {
   return p != nil && p.LatencyDetailUs != nil
+}
+
+type ResponseCommonBuilder struct {
+  obj *ResponseCommon
+}
+
+func NewResponseCommonBuilder() *ResponseCommonBuilder{
+  return &ResponseCommonBuilder{
+    obj: NewResponseCommon(),
+  }
+}
+
+func (p ResponseCommonBuilder) Emit() *ResponseCommon{
+  return &ResponseCommon{
+    FailedParts: p.obj.FailedParts,
+    LatencyInUs: p.obj.LatencyInUs,
+    LatencyDetailUs: p.obj.LatencyDetailUs,
+  }
+}
+
+func (r *ResponseCommonBuilder) FailedParts(failedParts []*PartitionResult_) *ResponseCommonBuilder {
+  r.obj.FailedParts = failedParts
+  return r
+}
+
+func (r *ResponseCommonBuilder) LatencyInUs(latencyInUs int64) *ResponseCommonBuilder {
+  r.obj.LatencyInUs = latencyInUs
+  return r
+}
+
+func (r *ResponseCommonBuilder) LatencyDetailUs(latencyDetailUs map[string]int32) *ResponseCommonBuilder {
+  r.obj.LatencyDetailUs = latencyDetailUs
+  return r
+}
+
+func (r *ResponseCommon) SetFailedParts(failedParts []*PartitionResult_) *ResponseCommon {
+  r.FailedParts = failedParts
+  return r
+}
+
+func (r *ResponseCommon) SetLatencyInUs(latencyInUs int64) *ResponseCommon {
+  r.LatencyInUs = latencyInUs
+  return r
+}
+
+func (r *ResponseCommon) SetLatencyDetailUs(latencyDetailUs map[string]int32) *ResponseCommon {
+  r.LatencyDetailUs = latencyDetailUs
+  return r
 }
 
 func (p *ResponseCommon) Read(iprot thrift.Protocol) error {
@@ -723,10 +867,10 @@ func (p *ResponseCommon)  ReadField1(iprot thrift.Protocol) error {
 
 func (p *ResponseCommon)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.LatencyInUs = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.LatencyInUs = v
+  }
   return nil
 }
 
@@ -738,18 +882,18 @@ func (p *ResponseCommon)  ReadField3(iprot thrift.Protocol) error {
   tMap := make(map[string]int32, size)
   p.LatencyDetailUs =  tMap
   for i := 0; i < size; i ++ {
-var _key3 string
+    var _key3 string
     if v, err := iprot.ReadString(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _key3 = v
-}
-var _val4 int32
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _key3 = v
+    }
+    var _val4 int32
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _val4 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _val4 = v
+    }
     p.LatencyDetailUs[_key3] = _val4
   }
   if err := iprot.ReadMapEnd(); err != nil {
@@ -859,6 +1003,54 @@ func (p *StatProp) GetProp() []byte {
 func (p *StatProp) GetStat() StatType {
   return p.Stat
 }
+type StatPropBuilder struct {
+  obj *StatProp
+}
+
+func NewStatPropBuilder() *StatPropBuilder{
+  return &StatPropBuilder{
+    obj: NewStatProp(),
+  }
+}
+
+func (p StatPropBuilder) Emit() *StatProp{
+  return &StatProp{
+    Alias: p.obj.Alias,
+    Prop: p.obj.Prop,
+    Stat: p.obj.Stat,
+  }
+}
+
+func (s *StatPropBuilder) Alias(alias []byte) *StatPropBuilder {
+  s.obj.Alias = alias
+  return s
+}
+
+func (s *StatPropBuilder) Prop(prop []byte) *StatPropBuilder {
+  s.obj.Prop = prop
+  return s
+}
+
+func (s *StatPropBuilder) Stat(stat StatType) *StatPropBuilder {
+  s.obj.Stat = stat
+  return s
+}
+
+func (s *StatProp) SetAlias(alias []byte) *StatProp {
+  s.Alias = alias
+  return s
+}
+
+func (s *StatProp) SetProp(prop []byte) *StatProp {
+  s.Prop = prop
+  return s
+}
+
+func (s *StatProp) SetStat(stat StatType) *StatProp {
+  s.Stat = stat
+  return s
+}
+
 func (p *StatProp) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -901,29 +1093,29 @@ func (p *StatProp) Read(iprot thrift.Protocol) error {
 
 func (p *StatProp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Alias = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.Alias = v
+  }
   return nil
 }
 
 func (p *StatProp)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Prop = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Prop = v
+  }
   return nil
 }
 
 func (p *StatProp)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  temp := StatType(v)
-  p.Stat = temp
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    temp := StatType(v)
+    p.Stat = temp
+  }
   return nil
 }
 
@@ -1001,6 +1193,43 @@ func (p *Expr) GetAlias() []byte {
 func (p *Expr) GetExpr() []byte {
   return p.Expr
 }
+type ExprBuilder struct {
+  obj *Expr
+}
+
+func NewExprBuilder() *ExprBuilder{
+  return &ExprBuilder{
+    obj: NewExpr(),
+  }
+}
+
+func (p ExprBuilder) Emit() *Expr{
+  return &Expr{
+    Alias: p.obj.Alias,
+    Expr: p.obj.Expr,
+  }
+}
+
+func (e *ExprBuilder) Alias(alias []byte) *ExprBuilder {
+  e.obj.Alias = alias
+  return e
+}
+
+func (e *ExprBuilder) Expr(expr []byte) *ExprBuilder {
+  e.obj.Expr = expr
+  return e
+}
+
+func (e *Expr) SetAlias(alias []byte) *Expr {
+  e.Alias = alias
+  return e
+}
+
+func (e *Expr) SetExpr(expr []byte) *Expr {
+  e.Expr = expr
+  return e
+}
+
 func (p *Expr) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1039,19 +1268,19 @@ func (p *Expr) Read(iprot thrift.Protocol) error {
 
 func (p *Expr)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Alias = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.Alias = v
+  }
   return nil
 }
 
 func (p *Expr)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Expr = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Expr = v
+  }
   return nil
 }
 
@@ -1117,6 +1346,43 @@ func (p *EdgeProp) GetType() nebula0.EdgeType {
 func (p *EdgeProp) GetProps() [][]byte {
   return p.Props
 }
+type EdgePropBuilder struct {
+  obj *EdgeProp
+}
+
+func NewEdgePropBuilder() *EdgePropBuilder{
+  return &EdgePropBuilder{
+    obj: NewEdgeProp(),
+  }
+}
+
+func (p EdgePropBuilder) Emit() *EdgeProp{
+  return &EdgeProp{
+    Type: p.obj.Type,
+    Props: p.obj.Props,
+  }
+}
+
+func (e *EdgePropBuilder) Type(type_a1 nebula0.EdgeType) *EdgePropBuilder {
+  e.obj.Type = type_a1
+  return e
+}
+
+func (e *EdgePropBuilder) Props(props [][]byte) *EdgePropBuilder {
+  e.obj.Props = props
+  return e
+}
+
+func (e *EdgeProp) SetType(type_a1 nebula0.EdgeType) *EdgeProp {
+  e.Type = type_a1
+  return e
+}
+
+func (e *EdgeProp) SetProps(props [][]byte) *EdgeProp {
+  e.Props = props
+  return e
+}
+
 func (p *EdgeProp) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1155,11 +1421,11 @@ func (p *EdgeProp) Read(iprot thrift.Protocol) error {
 
 func (p *EdgeProp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.EdgeType(v)
-  p.Type = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.EdgeType(v)
+    p.Type = temp
+  }
   return nil
 }
 
@@ -1171,12 +1437,12 @@ func (p *EdgeProp)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.Props =  tSlice
   for i := 0; i < size; i ++ {
-var _elem5 []byte
+    var _elem5 []byte
     if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _elem5 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _elem5 = v
+    }
     p.Props = append(p.Props, _elem5)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -1255,6 +1521,43 @@ func (p *VertexProp) GetTag() nebula0.TagID {
 func (p *VertexProp) GetProps() [][]byte {
   return p.Props
 }
+type VertexPropBuilder struct {
+  obj *VertexProp
+}
+
+func NewVertexPropBuilder() *VertexPropBuilder{
+  return &VertexPropBuilder{
+    obj: NewVertexProp(),
+  }
+}
+
+func (p VertexPropBuilder) Emit() *VertexProp{
+  return &VertexProp{
+    Tag: p.obj.Tag,
+    Props: p.obj.Props,
+  }
+}
+
+func (v *VertexPropBuilder) Tag(tag nebula0.TagID) *VertexPropBuilder {
+  v.obj.Tag = tag
+  return v
+}
+
+func (v *VertexPropBuilder) Props(props [][]byte) *VertexPropBuilder {
+  v.obj.Props = props
+  return v
+}
+
+func (v *VertexProp) SetTag(tag nebula0.TagID) *VertexProp {
+  v.Tag = tag
+  return v
+}
+
+func (v *VertexProp) SetProps(props [][]byte) *VertexProp {
+  v.Props = props
+  return v
+}
+
 func (p *VertexProp) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1293,11 +1596,11 @@ func (p *VertexProp) Read(iprot thrift.Protocol) error {
 
 func (p *VertexProp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.TagID(v)
-  p.Tag = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.TagID(v)
+    p.Tag = temp
+  }
   return nil
 }
 
@@ -1309,12 +1612,12 @@ func (p *VertexProp)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.Props =  tSlice
   for i := 0; i < size; i ++ {
-var _elem6 []byte
+    var _elem6 []byte
     if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _elem6 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _elem6 = v
+    }
     p.Props = append(p.Props, _elem6)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -1393,6 +1696,43 @@ func (p *OrderBy) GetProp() []byte {
 func (p *OrderBy) GetDirection() OrderDirection {
   return p.Direction
 }
+type OrderByBuilder struct {
+  obj *OrderBy
+}
+
+func NewOrderByBuilder() *OrderByBuilder{
+  return &OrderByBuilder{
+    obj: NewOrderBy(),
+  }
+}
+
+func (p OrderByBuilder) Emit() *OrderBy{
+  return &OrderBy{
+    Prop: p.obj.Prop,
+    Direction: p.obj.Direction,
+  }
+}
+
+func (o *OrderByBuilder) Prop(prop []byte) *OrderByBuilder {
+  o.obj.Prop = prop
+  return o
+}
+
+func (o *OrderByBuilder) Direction(direction OrderDirection) *OrderByBuilder {
+  o.obj.Direction = direction
+  return o
+}
+
+func (o *OrderBy) SetProp(prop []byte) *OrderBy {
+  o.Prop = prop
+  return o
+}
+
+func (o *OrderBy) SetDirection(direction OrderDirection) *OrderBy {
+  o.Direction = direction
+  return o
+}
+
 func (p *OrderBy) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1431,20 +1771,20 @@ func (p *OrderBy) Read(iprot thrift.Protocol) error {
 
 func (p *OrderBy)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Prop = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.Prop = v
+  }
   return nil
 }
 
 func (p *OrderBy)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := OrderDirection(v)
-  p.Direction = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := OrderDirection(v)
+    p.Direction = temp
+  }
   return nil
 }
 
@@ -1506,19 +1846,19 @@ type TraverseSpec struct {
   EdgeTypes []nebula0.EdgeType `thrift:"edge_types,1" db:"edge_types" json:"edge_types"`
   EdgeDirection EdgeDirection `thrift:"edge_direction,2" db:"edge_direction" json:"edge_direction"`
   Dedup bool `thrift:"dedup,3" db:"dedup" json:"dedup"`
-  StatProps []*StatProp `thrift:"stat_props,4" db:"stat_props" json:"stat_props,omitempty"`
-  VertexProps []*VertexProp `thrift:"vertex_props,5" db:"vertex_props" json:"vertex_props,omitempty"`
-  EdgeProps []*EdgeProp `thrift:"edge_props,6" db:"edge_props" json:"edge_props,omitempty"`
-  Expressions []*Expr `thrift:"expressions,7" db:"expressions" json:"expressions,omitempty"`
-  OrderBy []*OrderBy `thrift:"order_by,8" db:"order_by" json:"order_by,omitempty"`
-  Random *bool `thrift:"random,9" db:"random" json:"random,omitempty"`
-  Limit *int64 `thrift:"limit,10" db:"limit" json:"limit,omitempty"`
-  Filter []byte `thrift:"filter,11" db:"filter" json:"filter,omitempty"`
+  StatProps []*StatProp `thrift:"stat_props,4,optional" db:"stat_props" json:"stat_props,omitempty"`
+  VertexProps []*VertexProp `thrift:"vertex_props,5,optional" db:"vertex_props" json:"vertex_props,omitempty"`
+  EdgeProps []*EdgeProp `thrift:"edge_props,6,optional" db:"edge_props" json:"edge_props,omitempty"`
+  Expressions []*Expr `thrift:"expressions,7,optional" db:"expressions" json:"expressions,omitempty"`
+  OrderBy []*OrderBy `thrift:"order_by,8,optional" db:"order_by" json:"order_by,omitempty"`
+  Random *bool `thrift:"random,9,optional" db:"random" json:"random,omitempty"`
+  Limit *int64 `thrift:"limit,10,optional" db:"limit" json:"limit,omitempty"`
+  Filter []byte `thrift:"filter,11,optional" db:"filter" json:"filter,omitempty"`
 }
 
 func NewTraverseSpec() *TraverseSpec {
   return &TraverseSpec{
-    EdgeDirection:     1,
+    EdgeDirection: 1,
   }
 }
 
@@ -1610,6 +1950,142 @@ func (p *TraverseSpec) IsSetFilter() bool {
   return p != nil && p.Filter != nil
 }
 
+type TraverseSpecBuilder struct {
+  obj *TraverseSpec
+}
+
+func NewTraverseSpecBuilder() *TraverseSpecBuilder{
+  return &TraverseSpecBuilder{
+    obj: NewTraverseSpec(),
+  }
+}
+
+func (p TraverseSpecBuilder) Emit() *TraverseSpec{
+  return &TraverseSpec{
+    EdgeTypes: p.obj.EdgeTypes,
+    EdgeDirection: p.obj.EdgeDirection,
+    Dedup: p.obj.Dedup,
+    StatProps: p.obj.StatProps,
+    VertexProps: p.obj.VertexProps,
+    EdgeProps: p.obj.EdgeProps,
+    Expressions: p.obj.Expressions,
+    OrderBy: p.obj.OrderBy,
+    Random: p.obj.Random,
+    Limit: p.obj.Limit,
+    Filter: p.obj.Filter,
+  }
+}
+
+func (t *TraverseSpecBuilder) EdgeTypes(edgeTypes []nebula0.EdgeType) *TraverseSpecBuilder {
+  t.obj.EdgeTypes = edgeTypes
+  return t
+}
+
+func (t *TraverseSpecBuilder) EdgeDirection(edgeDirection EdgeDirection) *TraverseSpecBuilder {
+  t.obj.EdgeDirection = edgeDirection
+  return t
+}
+
+func (t *TraverseSpecBuilder) Dedup(dedup bool) *TraverseSpecBuilder {
+  t.obj.Dedup = dedup
+  return t
+}
+
+func (t *TraverseSpecBuilder) StatProps(statProps []*StatProp) *TraverseSpecBuilder {
+  t.obj.StatProps = statProps
+  return t
+}
+
+func (t *TraverseSpecBuilder) VertexProps(vertexProps []*VertexProp) *TraverseSpecBuilder {
+  t.obj.VertexProps = vertexProps
+  return t
+}
+
+func (t *TraverseSpecBuilder) EdgeProps(edgeProps []*EdgeProp) *TraverseSpecBuilder {
+  t.obj.EdgeProps = edgeProps
+  return t
+}
+
+func (t *TraverseSpecBuilder) Expressions(expressions []*Expr) *TraverseSpecBuilder {
+  t.obj.Expressions = expressions
+  return t
+}
+
+func (t *TraverseSpecBuilder) OrderBy(orderBy []*OrderBy) *TraverseSpecBuilder {
+  t.obj.OrderBy = orderBy
+  return t
+}
+
+func (t *TraverseSpecBuilder) Random(random *bool) *TraverseSpecBuilder {
+  t.obj.Random = random
+  return t
+}
+
+func (t *TraverseSpecBuilder) Limit(limit *int64) *TraverseSpecBuilder {
+  t.obj.Limit = limit
+  return t
+}
+
+func (t *TraverseSpecBuilder) Filter(filter []byte) *TraverseSpecBuilder {
+  t.obj.Filter = filter
+  return t
+}
+
+func (t *TraverseSpec) SetEdgeTypes(edgeTypes []nebula0.EdgeType) *TraverseSpec {
+  t.EdgeTypes = edgeTypes
+  return t
+}
+
+func (t *TraverseSpec) SetEdgeDirection(edgeDirection EdgeDirection) *TraverseSpec {
+  t.EdgeDirection = edgeDirection
+  return t
+}
+
+func (t *TraverseSpec) SetDedup(dedup bool) *TraverseSpec {
+  t.Dedup = dedup
+  return t
+}
+
+func (t *TraverseSpec) SetStatProps(statProps []*StatProp) *TraverseSpec {
+  t.StatProps = statProps
+  return t
+}
+
+func (t *TraverseSpec) SetVertexProps(vertexProps []*VertexProp) *TraverseSpec {
+  t.VertexProps = vertexProps
+  return t
+}
+
+func (t *TraverseSpec) SetEdgeProps(edgeProps []*EdgeProp) *TraverseSpec {
+  t.EdgeProps = edgeProps
+  return t
+}
+
+func (t *TraverseSpec) SetExpressions(expressions []*Expr) *TraverseSpec {
+  t.Expressions = expressions
+  return t
+}
+
+func (t *TraverseSpec) SetOrderBy(orderBy []*OrderBy) *TraverseSpec {
+  t.OrderBy = orderBy
+  return t
+}
+
+func (t *TraverseSpec) SetRandom(random *bool) *TraverseSpec {
+  t.Random = random
+  return t
+}
+
+func (t *TraverseSpec) SetLimit(limit *int64) *TraverseSpec {
+  t.Limit = limit
+  return t
+}
+
+func (t *TraverseSpec) SetFilter(filter []byte) *TraverseSpec {
+  t.Filter = filter
+  return t
+}
+
 func (p *TraverseSpec) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1690,13 +2166,13 @@ func (p *TraverseSpec)  ReadField1(iprot thrift.Protocol) error {
   tSlice := make([]nebula0.EdgeType, 0, size)
   p.EdgeTypes =  tSlice
   for i := 0; i < size; i ++ {
-var _elem7 nebula0.EdgeType
+    var _elem7 nebula0.EdgeType
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.EdgeType(v)
-    _elem7 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.EdgeType(v)
+      _elem7 = temp
+    }
     p.EdgeTypes = append(p.EdgeTypes, _elem7)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -1707,20 +2183,20 @@ var _elem7 nebula0.EdgeType
 
 func (p *TraverseSpec)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := EdgeDirection(v)
-  p.EdgeDirection = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := EdgeDirection(v)
+    p.EdgeDirection = temp
+  }
   return nil
 }
 
 func (p *TraverseSpec)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  p.Dedup = v
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.Dedup = v
+  }
   return nil
 }
 
@@ -1826,28 +2302,28 @@ func (p *TraverseSpec)  ReadField8(iprot thrift.Protocol) error {
 
 func (p *TraverseSpec)  ReadField9(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 9: ", err)
-} else {
-  p.Random = &v
-}
+    return thrift.PrependError("error reading field 9: ", err)
+  } else {
+    p.Random = &v
+  }
   return nil
 }
 
 func (p *TraverseSpec)  ReadField10(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 10: ", err)
-} else {
-  p.Limit = &v
-}
+    return thrift.PrependError("error reading field 10: ", err)
+  } else {
+    p.Limit = &v
+  }
   return nil
 }
 
 func (p *TraverseSpec)  ReadField11(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 11: ", err)
-} else {
-  p.Filter = v
-}
+    return thrift.PrependError("error reading field 11: ", err)
+  } else {
+    p.Filter = v
+  }
   return nil
 }
 
@@ -2091,7 +2567,7 @@ type GetNeighborsRequest struct {
   ColumnNames [][]byte `thrift:"column_names,2" db:"column_names" json:"column_names"`
   Parts map[nebula0.PartitionID][]*nebula0.Row `thrift:"parts,3" db:"parts" json:"parts"`
   TraverseSpec *TraverseSpec `thrift:"traverse_spec,4" db:"traverse_spec" json:"traverse_spec"`
-  Common *RequestCommon `thrift:"common,5" db:"common" json:"common,omitempty"`
+  Common *RequestCommon `thrift:"common,5,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewGetNeighborsRequest() *GetNeighborsRequest {
@@ -2132,6 +2608,76 @@ func (p *GetNeighborsRequest) IsSetTraverseSpec() bool {
 
 func (p *GetNeighborsRequest) IsSetCommon() bool {
   return p != nil && p.Common != nil
+}
+
+type GetNeighborsRequestBuilder struct {
+  obj *GetNeighborsRequest
+}
+
+func NewGetNeighborsRequestBuilder() *GetNeighborsRequestBuilder{
+  return &GetNeighborsRequestBuilder{
+    obj: NewGetNeighborsRequest(),
+  }
+}
+
+func (p GetNeighborsRequestBuilder) Emit() *GetNeighborsRequest{
+  return &GetNeighborsRequest{
+    SpaceID: p.obj.SpaceID,
+    ColumnNames: p.obj.ColumnNames,
+    Parts: p.obj.Parts,
+    TraverseSpec: p.obj.TraverseSpec,
+    Common: p.obj.Common,
+  }
+}
+
+func (g *GetNeighborsRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *GetNeighborsRequestBuilder {
+  g.obj.SpaceID = spaceID
+  return g
+}
+
+func (g *GetNeighborsRequestBuilder) ColumnNames(columnNames [][]byte) *GetNeighborsRequestBuilder {
+  g.obj.ColumnNames = columnNames
+  return g
+}
+
+func (g *GetNeighborsRequestBuilder) Parts(parts map[nebula0.PartitionID][]*nebula0.Row) *GetNeighborsRequestBuilder {
+  g.obj.Parts = parts
+  return g
+}
+
+func (g *GetNeighborsRequestBuilder) TraverseSpec(traverseSpec *TraverseSpec) *GetNeighborsRequestBuilder {
+  g.obj.TraverseSpec = traverseSpec
+  return g
+}
+
+func (g *GetNeighborsRequestBuilder) Common(common *RequestCommon) *GetNeighborsRequestBuilder {
+  g.obj.Common = common
+  return g
+}
+
+func (g *GetNeighborsRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *GetNeighborsRequest {
+  g.SpaceID = spaceID
+  return g
+}
+
+func (g *GetNeighborsRequest) SetColumnNames(columnNames [][]byte) *GetNeighborsRequest {
+  g.ColumnNames = columnNames
+  return g
+}
+
+func (g *GetNeighborsRequest) SetParts(parts map[nebula0.PartitionID][]*nebula0.Row) *GetNeighborsRequest {
+  g.Parts = parts
+  return g
+}
+
+func (g *GetNeighborsRequest) SetTraverseSpec(traverseSpec *TraverseSpec) *GetNeighborsRequest {
+  g.TraverseSpec = traverseSpec
+  return g
+}
+
+func (g *GetNeighborsRequest) SetCommon(common *RequestCommon) *GetNeighborsRequest {
+  g.Common = common
+  return g
 }
 
 func (p *GetNeighborsRequest) Read(iprot thrift.Protocol) error {
@@ -2184,11 +2730,11 @@ func (p *GetNeighborsRequest) Read(iprot thrift.Protocol) error {
 
 func (p *GetNeighborsRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -2200,12 +2746,12 @@ func (p *GetNeighborsRequest)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.ColumnNames =  tSlice
   for i := 0; i < size; i ++ {
-var _elem13 []byte
+    var _elem13 []byte
     if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _elem13 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _elem13 = v
+    }
     p.ColumnNames = append(p.ColumnNames, _elem13)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -2222,13 +2768,13 @@ func (p *GetNeighborsRequest)  ReadField3(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][]*nebula0.Row, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key14 nebula0.PartitionID
+    var _key14 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key14 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key14 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
@@ -2393,7 +2939,7 @@ func (p *GetNeighborsRequest) String() string {
 //  - Vertices
 type GetNeighborsResponse struct {
   Result_ *ResponseCommon `thrift:"result,1,required" db:"result" json:"result"`
-  Vertices *nebula0.DataSet `thrift:"vertices,2" db:"vertices" json:"vertices,omitempty"`
+  Vertices *nebula0.DataSet `thrift:"vertices,2,optional" db:"vertices" json:"vertices,omitempty"`
 }
 
 func NewGetNeighborsResponse() *GetNeighborsResponse {
@@ -2422,6 +2968,43 @@ func (p *GetNeighborsResponse) IsSetResult_() bool {
 
 func (p *GetNeighborsResponse) IsSetVertices() bool {
   return p != nil && p.Vertices != nil
+}
+
+type GetNeighborsResponseBuilder struct {
+  obj *GetNeighborsResponse
+}
+
+func NewGetNeighborsResponseBuilder() *GetNeighborsResponseBuilder{
+  return &GetNeighborsResponseBuilder{
+    obj: NewGetNeighborsResponse(),
+  }
+}
+
+func (p GetNeighborsResponseBuilder) Emit() *GetNeighborsResponse{
+  return &GetNeighborsResponse{
+    Result_: p.obj.Result_,
+    Vertices: p.obj.Vertices,
+  }
+}
+
+func (g *GetNeighborsResponseBuilder) Result_(result *ResponseCommon) *GetNeighborsResponseBuilder {
+  g.obj.Result_ = result
+  return g
+}
+
+func (g *GetNeighborsResponseBuilder) Vertices(vertices *nebula0.DataSet) *GetNeighborsResponseBuilder {
+  g.obj.Vertices = vertices
+  return g
+}
+
+func (g *GetNeighborsResponse) SetResult_(result *ResponseCommon) *GetNeighborsResponse {
+  g.Result_ = result
+  return g
+}
+
+func (g *GetNeighborsResponse) SetVertices(vertices *nebula0.DataSet) *GetNeighborsResponse {
+  g.Vertices = vertices
+  return g
 }
 
 func (p *GetNeighborsResponse) Read(iprot thrift.Protocol) error {
@@ -2560,6 +3143,32 @@ func (p *ExecResponse) IsSetResult_() bool {
   return p != nil && p.Result_ != nil
 }
 
+type ExecResponseBuilder struct {
+  obj *ExecResponse
+}
+
+func NewExecResponseBuilder() *ExecResponseBuilder{
+  return &ExecResponseBuilder{
+    obj: NewExecResponse(),
+  }
+}
+
+func (p ExecResponseBuilder) Emit() *ExecResponse{
+  return &ExecResponse{
+    Result_: p.obj.Result_,
+  }
+}
+
+func (e *ExecResponseBuilder) Result_(result *ResponseCommon) *ExecResponseBuilder {
+  e.obj.Result_ = result
+  return e
+}
+
+func (e *ExecResponse) SetResult_(result *ResponseCommon) *ExecResponse {
+  e.Result_ = result
+  return e
+}
+
 func (p *ExecResponse) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -2655,14 +3264,14 @@ func (p *ExecResponse) String() string {
 type GetPropRequest struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
   Parts map[nebula0.PartitionID][]*nebula0.Row `thrift:"parts,2" db:"parts" json:"parts"`
-  VertexProps []*VertexProp `thrift:"vertex_props,3" db:"vertex_props" json:"vertex_props,omitempty"`
-  EdgeProps []*EdgeProp `thrift:"edge_props,4" db:"edge_props" json:"edge_props,omitempty"`
-  Expressions []*Expr `thrift:"expressions,5" db:"expressions" json:"expressions,omitempty"`
+  VertexProps []*VertexProp `thrift:"vertex_props,3,optional" db:"vertex_props" json:"vertex_props,omitempty"`
+  EdgeProps []*EdgeProp `thrift:"edge_props,4,optional" db:"edge_props" json:"edge_props,omitempty"`
+  Expressions []*Expr `thrift:"expressions,5,optional" db:"expressions" json:"expressions,omitempty"`
   Dedup bool `thrift:"dedup,6" db:"dedup" json:"dedup"`
-  OrderBy []*OrderBy `thrift:"order_by,7" db:"order_by" json:"order_by,omitempty"`
-  Limit *int64 `thrift:"limit,8" db:"limit" json:"limit,omitempty"`
-  Filter []byte `thrift:"filter,9" db:"filter" json:"filter,omitempty"`
-  Common *RequestCommon `thrift:"common,10" db:"common" json:"common,omitempty"`
+  OrderBy []*OrderBy `thrift:"order_by,7,optional" db:"order_by" json:"order_by,omitempty"`
+  Limit *int64 `thrift:"limit,8,optional" db:"limit" json:"limit,omitempty"`
+  Filter []byte `thrift:"filter,9,optional" db:"filter" json:"filter,omitempty"`
+  Common *RequestCommon `thrift:"common,10,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewGetPropRequest() *GetPropRequest {
@@ -2748,6 +3357,131 @@ func (p *GetPropRequest) IsSetCommon() bool {
   return p != nil && p.Common != nil
 }
 
+type GetPropRequestBuilder struct {
+  obj *GetPropRequest
+}
+
+func NewGetPropRequestBuilder() *GetPropRequestBuilder{
+  return &GetPropRequestBuilder{
+    obj: NewGetPropRequest(),
+  }
+}
+
+func (p GetPropRequestBuilder) Emit() *GetPropRequest{
+  return &GetPropRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    VertexProps: p.obj.VertexProps,
+    EdgeProps: p.obj.EdgeProps,
+    Expressions: p.obj.Expressions,
+    Dedup: p.obj.Dedup,
+    OrderBy: p.obj.OrderBy,
+    Limit: p.obj.Limit,
+    Filter: p.obj.Filter,
+    Common: p.obj.Common,
+  }
+}
+
+func (g *GetPropRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *GetPropRequestBuilder {
+  g.obj.SpaceID = spaceID
+  return g
+}
+
+func (g *GetPropRequestBuilder) Parts(parts map[nebula0.PartitionID][]*nebula0.Row) *GetPropRequestBuilder {
+  g.obj.Parts = parts
+  return g
+}
+
+func (g *GetPropRequestBuilder) VertexProps(vertexProps []*VertexProp) *GetPropRequestBuilder {
+  g.obj.VertexProps = vertexProps
+  return g
+}
+
+func (g *GetPropRequestBuilder) EdgeProps(edgeProps []*EdgeProp) *GetPropRequestBuilder {
+  g.obj.EdgeProps = edgeProps
+  return g
+}
+
+func (g *GetPropRequestBuilder) Expressions(expressions []*Expr) *GetPropRequestBuilder {
+  g.obj.Expressions = expressions
+  return g
+}
+
+func (g *GetPropRequestBuilder) Dedup(dedup bool) *GetPropRequestBuilder {
+  g.obj.Dedup = dedup
+  return g
+}
+
+func (g *GetPropRequestBuilder) OrderBy(orderBy []*OrderBy) *GetPropRequestBuilder {
+  g.obj.OrderBy = orderBy
+  return g
+}
+
+func (g *GetPropRequestBuilder) Limit(limit *int64) *GetPropRequestBuilder {
+  g.obj.Limit = limit
+  return g
+}
+
+func (g *GetPropRequestBuilder) Filter(filter []byte) *GetPropRequestBuilder {
+  g.obj.Filter = filter
+  return g
+}
+
+func (g *GetPropRequestBuilder) Common(common *RequestCommon) *GetPropRequestBuilder {
+  g.obj.Common = common
+  return g
+}
+
+func (g *GetPropRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *GetPropRequest {
+  g.SpaceID = spaceID
+  return g
+}
+
+func (g *GetPropRequest) SetParts(parts map[nebula0.PartitionID][]*nebula0.Row) *GetPropRequest {
+  g.Parts = parts
+  return g
+}
+
+func (g *GetPropRequest) SetVertexProps(vertexProps []*VertexProp) *GetPropRequest {
+  g.VertexProps = vertexProps
+  return g
+}
+
+func (g *GetPropRequest) SetEdgeProps(edgeProps []*EdgeProp) *GetPropRequest {
+  g.EdgeProps = edgeProps
+  return g
+}
+
+func (g *GetPropRequest) SetExpressions(expressions []*Expr) *GetPropRequest {
+  g.Expressions = expressions
+  return g
+}
+
+func (g *GetPropRequest) SetDedup(dedup bool) *GetPropRequest {
+  g.Dedup = dedup
+  return g
+}
+
+func (g *GetPropRequest) SetOrderBy(orderBy []*OrderBy) *GetPropRequest {
+  g.OrderBy = orderBy
+  return g
+}
+
+func (g *GetPropRequest) SetLimit(limit *int64) *GetPropRequest {
+  g.Limit = limit
+  return g
+}
+
+func (g *GetPropRequest) SetFilter(filter []byte) *GetPropRequest {
+  g.Filter = filter
+  return g
+}
+
+func (g *GetPropRequest) SetCommon(common *RequestCommon) *GetPropRequest {
+  g.Common = common
+  return g
+}
+
 func (p *GetPropRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -2818,11 +3552,11 @@ func (p *GetPropRequest) Read(iprot thrift.Protocol) error {
 
 func (p *GetPropRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -2834,13 +3568,13 @@ func (p *GetPropRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][]*nebula0.Row, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key17 nebula0.PartitionID
+    var _key17 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key17 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key17 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
@@ -2927,10 +3661,10 @@ func (p *GetPropRequest)  ReadField5(iprot thrift.Protocol) error {
 
 func (p *GetPropRequest)  ReadField6(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 6: ", err)
-} else {
-  p.Dedup = v
-}
+    return thrift.PrependError("error reading field 6: ", err)
+  } else {
+    p.Dedup = v
+  }
   return nil
 }
 
@@ -2956,19 +3690,19 @@ func (p *GetPropRequest)  ReadField7(iprot thrift.Protocol) error {
 
 func (p *GetPropRequest)  ReadField8(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 8: ", err)
-} else {
-  p.Limit = &v
-}
+    return thrift.PrependError("error reading field 8: ", err)
+  } else {
+    p.Limit = &v
+  }
   return nil
 }
 
 func (p *GetPropRequest)  ReadField9(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 9: ", err)
-} else {
-  p.Filter = v
-}
+    return thrift.PrependError("error reading field 9: ", err)
+  } else {
+    p.Filter = v
+  }
   return nil
 }
 
@@ -3203,7 +3937,7 @@ func (p *GetPropRequest) String() string {
 //  - Props
 type GetPropResponse struct {
   Result_ *ResponseCommon `thrift:"result,1" db:"result" json:"result"`
-  Props *nebula0.DataSet `thrift:"props,2" db:"props" json:"props,omitempty"`
+  Props *nebula0.DataSet `thrift:"props,2,optional" db:"props" json:"props,omitempty"`
 }
 
 func NewGetPropResponse() *GetPropResponse {
@@ -3232,6 +3966,43 @@ func (p *GetPropResponse) IsSetResult_() bool {
 
 func (p *GetPropResponse) IsSetProps() bool {
   return p != nil && p.Props != nil
+}
+
+type GetPropResponseBuilder struct {
+  obj *GetPropResponse
+}
+
+func NewGetPropResponseBuilder() *GetPropResponseBuilder{
+  return &GetPropResponseBuilder{
+    obj: NewGetPropResponse(),
+  }
+}
+
+func (p GetPropResponseBuilder) Emit() *GetPropResponse{
+  return &GetPropResponse{
+    Result_: p.obj.Result_,
+    Props: p.obj.Props,
+  }
+}
+
+func (g *GetPropResponseBuilder) Result_(result *ResponseCommon) *GetPropResponseBuilder {
+  g.obj.Result_ = result
+  return g
+}
+
+func (g *GetPropResponseBuilder) Props(props *nebula0.DataSet) *GetPropResponseBuilder {
+  g.obj.Props = props
+  return g
+}
+
+func (g *GetPropResponse) SetResult_(result *ResponseCommon) *GetPropResponse {
+  g.Result_ = result
+  return g
+}
+
+func (g *GetPropResponse) SetProps(props *nebula0.DataSet) *GetPropResponse {
+  g.Props = props
+  return g
 }
 
 func (p *GetPropResponse) Read(iprot thrift.Protocol) error {
@@ -3362,6 +4133,43 @@ func (p *NewTag_) GetTagID() nebula0.TagID {
 func (p *NewTag_) GetProps() []*nebula0.Value {
   return p.Props
 }
+type NewTag_Builder struct {
+  obj *NewTag_
+}
+
+func NewNewTag_Builder() *NewTag_Builder{
+  return &NewTag_Builder{
+    obj: NewNewTag_(),
+  }
+}
+
+func (p NewTag_Builder) Emit() *NewTag_{
+  return &NewTag_{
+    TagID: p.obj.TagID,
+    Props: p.obj.Props,
+  }
+}
+
+func (n *NewTag_Builder) TagID(tagID nebula0.TagID) *NewTag_Builder {
+  n.obj.TagID = tagID
+  return n
+}
+
+func (n *NewTag_Builder) Props(props []*nebula0.Value) *NewTag_Builder {
+  n.obj.Props = props
+  return n
+}
+
+func (n *NewTag_) SetTagID(tagID nebula0.TagID) *NewTag_ {
+  n.TagID = tagID
+  return n
+}
+
+func (n *NewTag_) SetProps(props []*nebula0.Value) *NewTag_ {
+  n.Props = props
+  return n
+}
+
 func (p *NewTag_) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -3400,11 +4208,11 @@ func (p *NewTag_) Read(iprot thrift.Protocol) error {
 
 func (p *NewTag_)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.TagID(v)
-  p.TagID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.TagID(v)
+    p.TagID = temp
+  }
   return nil
 }
 
@@ -3504,6 +4312,43 @@ func (p *NewVertex_) GetTags() []*NewTag_ {
 }
 func (p *NewVertex_) IsSetId() bool {
   return p != nil && p.Id != nil
+}
+
+type NewVertex_Builder struct {
+  obj *NewVertex_
+}
+
+func NewNewVertex_Builder() *NewVertex_Builder{
+  return &NewVertex_Builder{
+    obj: NewNewVertex_(),
+  }
+}
+
+func (p NewVertex_Builder) Emit() *NewVertex_{
+  return &NewVertex_{
+    Id: p.obj.Id,
+    Tags: p.obj.Tags,
+  }
+}
+
+func (n *NewVertex_Builder) Id(id *nebula0.Value) *NewVertex_Builder {
+  n.obj.Id = id
+  return n
+}
+
+func (n *NewVertex_Builder) Tags(tags []*NewTag_) *NewVertex_Builder {
+  n.obj.Tags = tags
+  return n
+}
+
+func (n *NewVertex_) SetId(id *nebula0.Value) *NewVertex_ {
+  n.Id = id
+  return n
+}
+
+func (n *NewVertex_) SetTags(tags []*NewTag_) *NewVertex_ {
+  n.Tags = tags
+  return n
 }
 
 func (p *NewVertex_) Read(iprot thrift.Protocol) error {
@@ -3673,6 +4518,65 @@ func (p *EdgeKey) IsSetDst() bool {
   return p != nil && p.Dst != nil
 }
 
+type EdgeKeyBuilder struct {
+  obj *EdgeKey
+}
+
+func NewEdgeKeyBuilder() *EdgeKeyBuilder{
+  return &EdgeKeyBuilder{
+    obj: NewEdgeKey(),
+  }
+}
+
+func (p EdgeKeyBuilder) Emit() *EdgeKey{
+  return &EdgeKey{
+    Src: p.obj.Src,
+    EdgeType: p.obj.EdgeType,
+    Ranking: p.obj.Ranking,
+    Dst: p.obj.Dst,
+  }
+}
+
+func (e *EdgeKeyBuilder) Src(src *nebula0.Value) *EdgeKeyBuilder {
+  e.obj.Src = src
+  return e
+}
+
+func (e *EdgeKeyBuilder) EdgeType(edgeType nebula0.EdgeType) *EdgeKeyBuilder {
+  e.obj.EdgeType = edgeType
+  return e
+}
+
+func (e *EdgeKeyBuilder) Ranking(ranking nebula0.EdgeRanking) *EdgeKeyBuilder {
+  e.obj.Ranking = ranking
+  return e
+}
+
+func (e *EdgeKeyBuilder) Dst(dst *nebula0.Value) *EdgeKeyBuilder {
+  e.obj.Dst = dst
+  return e
+}
+
+func (e *EdgeKey) SetSrc(src *nebula0.Value) *EdgeKey {
+  e.Src = src
+  return e
+}
+
+func (e *EdgeKey) SetEdgeType(edgeType nebula0.EdgeType) *EdgeKey {
+  e.EdgeType = edgeType
+  return e
+}
+
+func (e *EdgeKey) SetRanking(ranking nebula0.EdgeRanking) *EdgeKey {
+  e.Ranking = ranking
+  return e
+}
+
+func (e *EdgeKey) SetDst(dst *nebula0.Value) *EdgeKey {
+  e.Dst = dst
+  return e
+}
+
 func (p *EdgeKey) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -3727,21 +4631,21 @@ func (p *EdgeKey)  ReadField1(iprot thrift.Protocol) error {
 
 func (p *EdgeKey)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.EdgeType(v)
-  p.EdgeType = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.EdgeType(v)
+    p.EdgeType = temp
+  }
   return nil
 }
 
 func (p *EdgeKey)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  temp := nebula0.EdgeRanking(v)
-  p.Ranking = temp
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    temp := nebula0.EdgeRanking(v)
+    p.Ranking = temp
+  }
   return nil
 }
 
@@ -3858,6 +4762,43 @@ func (p *NewEdge_) GetProps() []*nebula0.Value {
 }
 func (p *NewEdge_) IsSetKey() bool {
   return p != nil && p.Key != nil
+}
+
+type NewEdge_Builder struct {
+  obj *NewEdge_
+}
+
+func NewNewEdge_Builder() *NewEdge_Builder{
+  return &NewEdge_Builder{
+    obj: NewNewEdge_(),
+  }
+}
+
+func (p NewEdge_Builder) Emit() *NewEdge_{
+  return &NewEdge_{
+    Key: p.obj.Key,
+    Props: p.obj.Props,
+  }
+}
+
+func (n *NewEdge_Builder) Key(key *EdgeKey) *NewEdge_Builder {
+  n.obj.Key = key
+  return n
+}
+
+func (n *NewEdge_Builder) Props(props []*nebula0.Value) *NewEdge_Builder {
+  n.obj.Props = props
+  return n
+}
+
+func (n *NewEdge_) SetKey(key *EdgeKey) *NewEdge_ {
+  n.Key = key
+  return n
+}
+
+func (n *NewEdge_) SetProps(props []*nebula0.Value) *NewEdge_ {
+  n.Props = props
+  return n
 }
 
 func (p *NewEdge_) Read(iprot thrift.Protocol) error {
@@ -3994,7 +4935,7 @@ type AddVerticesRequest struct {
   PropNames map[nebula0.TagID][][]byte `thrift:"prop_names,3" db:"prop_names" json:"prop_names"`
   IfNotExists bool `thrift:"if_not_exists,4" db:"if_not_exists" json:"if_not_exists"`
   IgnoreExistedIndex bool `thrift:"ignore_existed_index,5" db:"ignore_existed_index" json:"ignore_existed_index"`
-  Common *RequestCommon `thrift:"common,6" db:"common" json:"common,omitempty"`
+  Common *RequestCommon `thrift:"common,6,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewAddVerticesRequest() *AddVerticesRequest {
@@ -4030,6 +4971,87 @@ return p.Common
 }
 func (p *AddVerticesRequest) IsSetCommon() bool {
   return p != nil && p.Common != nil
+}
+
+type AddVerticesRequestBuilder struct {
+  obj *AddVerticesRequest
+}
+
+func NewAddVerticesRequestBuilder() *AddVerticesRequestBuilder{
+  return &AddVerticesRequestBuilder{
+    obj: NewAddVerticesRequest(),
+  }
+}
+
+func (p AddVerticesRequestBuilder) Emit() *AddVerticesRequest{
+  return &AddVerticesRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    PropNames: p.obj.PropNames,
+    IfNotExists: p.obj.IfNotExists,
+    IgnoreExistedIndex: p.obj.IgnoreExistedIndex,
+    Common: p.obj.Common,
+  }
+}
+
+func (a *AddVerticesRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *AddVerticesRequestBuilder {
+  a.obj.SpaceID = spaceID
+  return a
+}
+
+func (a *AddVerticesRequestBuilder) Parts(parts map[nebula0.PartitionID][]*NewVertex_) *AddVerticesRequestBuilder {
+  a.obj.Parts = parts
+  return a
+}
+
+func (a *AddVerticesRequestBuilder) PropNames(propNames map[nebula0.TagID][][]byte) *AddVerticesRequestBuilder {
+  a.obj.PropNames = propNames
+  return a
+}
+
+func (a *AddVerticesRequestBuilder) IfNotExists(ifNotExists bool) *AddVerticesRequestBuilder {
+  a.obj.IfNotExists = ifNotExists
+  return a
+}
+
+func (a *AddVerticesRequestBuilder) IgnoreExistedIndex(ignoreExistedIndex bool) *AddVerticesRequestBuilder {
+  a.obj.IgnoreExistedIndex = ignoreExistedIndex
+  return a
+}
+
+func (a *AddVerticesRequestBuilder) Common(common *RequestCommon) *AddVerticesRequestBuilder {
+  a.obj.Common = common
+  return a
+}
+
+func (a *AddVerticesRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *AddVerticesRequest {
+  a.SpaceID = spaceID
+  return a
+}
+
+func (a *AddVerticesRequest) SetParts(parts map[nebula0.PartitionID][]*NewVertex_) *AddVerticesRequest {
+  a.Parts = parts
+  return a
+}
+
+func (a *AddVerticesRequest) SetPropNames(propNames map[nebula0.TagID][][]byte) *AddVerticesRequest {
+  a.PropNames = propNames
+  return a
+}
+
+func (a *AddVerticesRequest) SetIfNotExists(ifNotExists bool) *AddVerticesRequest {
+  a.IfNotExists = ifNotExists
+  return a
+}
+
+func (a *AddVerticesRequest) SetIgnoreExistedIndex(ignoreExistedIndex bool) *AddVerticesRequest {
+  a.IgnoreExistedIndex = ignoreExistedIndex
+  return a
+}
+
+func (a *AddVerticesRequest) SetCommon(common *RequestCommon) *AddVerticesRequest {
+  a.Common = common
+  return a
 }
 
 func (p *AddVerticesRequest) Read(iprot thrift.Protocol) error {
@@ -4086,11 +5108,11 @@ func (p *AddVerticesRequest) Read(iprot thrift.Protocol) error {
 
 func (p *AddVerticesRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -4102,13 +5124,13 @@ func (p *AddVerticesRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][]*NewVertex_, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key27 nebula0.PartitionID
+    var _key27 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key27 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key27 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
@@ -4141,13 +5163,13 @@ func (p *AddVerticesRequest)  ReadField3(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.TagID][][]byte, size)
   p.PropNames =  tMap
   for i := 0; i < size; i ++ {
-var _key30 nebula0.TagID
+    var _key30 nebula0.TagID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.TagID(v)
-    _key30 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.TagID(v)
+      _key30 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
@@ -4155,12 +5177,12 @@ var _key30 nebula0.TagID
     tSlice := make([][]byte, 0, size)
     _val31 :=  tSlice
     for i := 0; i < size; i ++ {
-var _elem32 []byte
+      var _elem32 []byte
       if v, err := iprot.ReadBinary(); err != nil {
-      return thrift.PrependError("error reading field 0: ", err)
-} else {
-      _elem32 = v
-}
+        return thrift.PrependError("error reading field 0: ", err)
+      } else {
+        _elem32 = v
+      }
       _val31 = append(_val31, _elem32)
     }
     if err := iprot.ReadListEnd(); err != nil {
@@ -4176,19 +5198,19 @@ var _elem32 []byte
 
 func (p *AddVerticesRequest)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  p.IfNotExists = v
-}
+    return thrift.PrependError("error reading field 4: ", err)
+  } else {
+    p.IfNotExists = v
+  }
   return nil
 }
 
 func (p *AddVerticesRequest)  ReadField5(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 5: ", err)
-} else {
-  p.IgnoreExistedIndex = v
-}
+    return thrift.PrependError("error reading field 5: ", err)
+  } else {
+    p.IgnoreExistedIndex = v
+  }
   return nil
 }
 
@@ -4348,7 +5370,7 @@ type AddEdgesRequest struct {
   PropNames [][]byte `thrift:"prop_names,3" db:"prop_names" json:"prop_names"`
   IfNotExists bool `thrift:"if_not_exists,4" db:"if_not_exists" json:"if_not_exists"`
   IgnoreExistedIndex bool `thrift:"ignore_existed_index,5" db:"ignore_existed_index" json:"ignore_existed_index"`
-  Common *RequestCommon `thrift:"common,6" db:"common" json:"common,omitempty"`
+  Common *RequestCommon `thrift:"common,6,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewAddEdgesRequest() *AddEdgesRequest {
@@ -4384,6 +5406,87 @@ return p.Common
 }
 func (p *AddEdgesRequest) IsSetCommon() bool {
   return p != nil && p.Common != nil
+}
+
+type AddEdgesRequestBuilder struct {
+  obj *AddEdgesRequest
+}
+
+func NewAddEdgesRequestBuilder() *AddEdgesRequestBuilder{
+  return &AddEdgesRequestBuilder{
+    obj: NewAddEdgesRequest(),
+  }
+}
+
+func (p AddEdgesRequestBuilder) Emit() *AddEdgesRequest{
+  return &AddEdgesRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    PropNames: p.obj.PropNames,
+    IfNotExists: p.obj.IfNotExists,
+    IgnoreExistedIndex: p.obj.IgnoreExistedIndex,
+    Common: p.obj.Common,
+  }
+}
+
+func (a *AddEdgesRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *AddEdgesRequestBuilder {
+  a.obj.SpaceID = spaceID
+  return a
+}
+
+func (a *AddEdgesRequestBuilder) Parts(parts map[nebula0.PartitionID][]*NewEdge_) *AddEdgesRequestBuilder {
+  a.obj.Parts = parts
+  return a
+}
+
+func (a *AddEdgesRequestBuilder) PropNames(propNames [][]byte) *AddEdgesRequestBuilder {
+  a.obj.PropNames = propNames
+  return a
+}
+
+func (a *AddEdgesRequestBuilder) IfNotExists(ifNotExists bool) *AddEdgesRequestBuilder {
+  a.obj.IfNotExists = ifNotExists
+  return a
+}
+
+func (a *AddEdgesRequestBuilder) IgnoreExistedIndex(ignoreExistedIndex bool) *AddEdgesRequestBuilder {
+  a.obj.IgnoreExistedIndex = ignoreExistedIndex
+  return a
+}
+
+func (a *AddEdgesRequestBuilder) Common(common *RequestCommon) *AddEdgesRequestBuilder {
+  a.obj.Common = common
+  return a
+}
+
+func (a *AddEdgesRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *AddEdgesRequest {
+  a.SpaceID = spaceID
+  return a
+}
+
+func (a *AddEdgesRequest) SetParts(parts map[nebula0.PartitionID][]*NewEdge_) *AddEdgesRequest {
+  a.Parts = parts
+  return a
+}
+
+func (a *AddEdgesRequest) SetPropNames(propNames [][]byte) *AddEdgesRequest {
+  a.PropNames = propNames
+  return a
+}
+
+func (a *AddEdgesRequest) SetIfNotExists(ifNotExists bool) *AddEdgesRequest {
+  a.IfNotExists = ifNotExists
+  return a
+}
+
+func (a *AddEdgesRequest) SetIgnoreExistedIndex(ignoreExistedIndex bool) *AddEdgesRequest {
+  a.IgnoreExistedIndex = ignoreExistedIndex
+  return a
+}
+
+func (a *AddEdgesRequest) SetCommon(common *RequestCommon) *AddEdgesRequest {
+  a.Common = common
+  return a
 }
 
 func (p *AddEdgesRequest) Read(iprot thrift.Protocol) error {
@@ -4440,11 +5543,11 @@ func (p *AddEdgesRequest) Read(iprot thrift.Protocol) error {
 
 func (p *AddEdgesRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -4456,13 +5559,13 @@ func (p *AddEdgesRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][]*NewEdge_, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key33 nebula0.PartitionID
+    var _key33 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key33 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key33 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
@@ -4495,12 +5598,12 @@ func (p *AddEdgesRequest)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.PropNames =  tSlice
   for i := 0; i < size; i ++ {
-var _elem36 []byte
+    var _elem36 []byte
     if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _elem36 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _elem36 = v
+    }
     p.PropNames = append(p.PropNames, _elem36)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -4511,19 +5614,19 @@ var _elem36 []byte
 
 func (p *AddEdgesRequest)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  p.IfNotExists = v
-}
+    return thrift.PrependError("error reading field 4: ", err)
+  } else {
+    p.IfNotExists = v
+  }
   return nil
 }
 
 func (p *AddEdgesRequest)  ReadField5(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 5: ", err)
-} else {
-  p.IgnoreExistedIndex = v
-}
+    return thrift.PrependError("error reading field 5: ", err)
+  } else {
+    p.IgnoreExistedIndex = v
+  }
   return nil
 }
 
@@ -4667,7 +5770,7 @@ func (p *AddEdgesRequest) String() string {
 type DeleteVerticesRequest struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
   Parts map[nebula0.PartitionID][]*nebula0.Value `thrift:"parts,2" db:"parts" json:"parts"`
-  Common *RequestCommon `thrift:"common,3" db:"common" json:"common,omitempty"`
+  Common *RequestCommon `thrift:"common,3,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewDeleteVerticesRequest() *DeleteVerticesRequest {
@@ -4691,6 +5794,54 @@ return p.Common
 }
 func (p *DeleteVerticesRequest) IsSetCommon() bool {
   return p != nil && p.Common != nil
+}
+
+type DeleteVerticesRequestBuilder struct {
+  obj *DeleteVerticesRequest
+}
+
+func NewDeleteVerticesRequestBuilder() *DeleteVerticesRequestBuilder{
+  return &DeleteVerticesRequestBuilder{
+    obj: NewDeleteVerticesRequest(),
+  }
+}
+
+func (p DeleteVerticesRequestBuilder) Emit() *DeleteVerticesRequest{
+  return &DeleteVerticesRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    Common: p.obj.Common,
+  }
+}
+
+func (d *DeleteVerticesRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *DeleteVerticesRequestBuilder {
+  d.obj.SpaceID = spaceID
+  return d
+}
+
+func (d *DeleteVerticesRequestBuilder) Parts(parts map[nebula0.PartitionID][]*nebula0.Value) *DeleteVerticesRequestBuilder {
+  d.obj.Parts = parts
+  return d
+}
+
+func (d *DeleteVerticesRequestBuilder) Common(common *RequestCommon) *DeleteVerticesRequestBuilder {
+  d.obj.Common = common
+  return d
+}
+
+func (d *DeleteVerticesRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *DeleteVerticesRequest {
+  d.SpaceID = spaceID
+  return d
+}
+
+func (d *DeleteVerticesRequest) SetParts(parts map[nebula0.PartitionID][]*nebula0.Value) *DeleteVerticesRequest {
+  d.Parts = parts
+  return d
+}
+
+func (d *DeleteVerticesRequest) SetCommon(common *RequestCommon) *DeleteVerticesRequest {
+  d.Common = common
+  return d
 }
 
 func (p *DeleteVerticesRequest) Read(iprot thrift.Protocol) error {
@@ -4735,11 +5886,11 @@ func (p *DeleteVerticesRequest) Read(iprot thrift.Protocol) error {
 
 func (p *DeleteVerticesRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -4751,13 +5902,13 @@ func (p *DeleteVerticesRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][]*nebula0.Value, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key37 nebula0.PartitionID
+    var _key37 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key37 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key37 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
@@ -4878,7 +6029,7 @@ func (p *DeleteVerticesRequest) String() string {
 type DeleteEdgesRequest struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
   Parts map[nebula0.PartitionID][]*EdgeKey `thrift:"parts,2" db:"parts" json:"parts"`
-  Common *RequestCommon `thrift:"common,3" db:"common" json:"common,omitempty"`
+  Common *RequestCommon `thrift:"common,3,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewDeleteEdgesRequest() *DeleteEdgesRequest {
@@ -4902,6 +6053,54 @@ return p.Common
 }
 func (p *DeleteEdgesRequest) IsSetCommon() bool {
   return p != nil && p.Common != nil
+}
+
+type DeleteEdgesRequestBuilder struct {
+  obj *DeleteEdgesRequest
+}
+
+func NewDeleteEdgesRequestBuilder() *DeleteEdgesRequestBuilder{
+  return &DeleteEdgesRequestBuilder{
+    obj: NewDeleteEdgesRequest(),
+  }
+}
+
+func (p DeleteEdgesRequestBuilder) Emit() *DeleteEdgesRequest{
+  return &DeleteEdgesRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    Common: p.obj.Common,
+  }
+}
+
+func (d *DeleteEdgesRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *DeleteEdgesRequestBuilder {
+  d.obj.SpaceID = spaceID
+  return d
+}
+
+func (d *DeleteEdgesRequestBuilder) Parts(parts map[nebula0.PartitionID][]*EdgeKey) *DeleteEdgesRequestBuilder {
+  d.obj.Parts = parts
+  return d
+}
+
+func (d *DeleteEdgesRequestBuilder) Common(common *RequestCommon) *DeleteEdgesRequestBuilder {
+  d.obj.Common = common
+  return d
+}
+
+func (d *DeleteEdgesRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *DeleteEdgesRequest {
+  d.SpaceID = spaceID
+  return d
+}
+
+func (d *DeleteEdgesRequest) SetParts(parts map[nebula0.PartitionID][]*EdgeKey) *DeleteEdgesRequest {
+  d.Parts = parts
+  return d
+}
+
+func (d *DeleteEdgesRequest) SetCommon(common *RequestCommon) *DeleteEdgesRequest {
+  d.Common = common
+  return d
 }
 
 func (p *DeleteEdgesRequest) Read(iprot thrift.Protocol) error {
@@ -4946,11 +6145,11 @@ func (p *DeleteEdgesRequest) Read(iprot thrift.Protocol) error {
 
 func (p *DeleteEdgesRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -4962,13 +6161,13 @@ func (p *DeleteEdgesRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][]*EdgeKey, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key40 nebula0.PartitionID
+    var _key40 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key40 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key40 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
@@ -5109,6 +6308,43 @@ func (p *DelTags) IsSetId() bool {
   return p != nil && p.Id != nil
 }
 
+type DelTagsBuilder struct {
+  obj *DelTags
+}
+
+func NewDelTagsBuilder() *DelTagsBuilder{
+  return &DelTagsBuilder{
+    obj: NewDelTags(),
+  }
+}
+
+func (p DelTagsBuilder) Emit() *DelTags{
+  return &DelTags{
+    Id: p.obj.Id,
+    Tags: p.obj.Tags,
+  }
+}
+
+func (d *DelTagsBuilder) Id(id *nebula0.Value) *DelTagsBuilder {
+  d.obj.Id = id
+  return d
+}
+
+func (d *DelTagsBuilder) Tags(tags []nebula0.TagID) *DelTagsBuilder {
+  d.obj.Tags = tags
+  return d
+}
+
+func (d *DelTags) SetId(id *nebula0.Value) *DelTags {
+  d.Id = id
+  return d
+}
+
+func (d *DelTags) SetTags(tags []nebula0.TagID) *DelTags {
+  d.Tags = tags
+  return d
+}
+
 func (p *DelTags) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -5161,13 +6397,13 @@ func (p *DelTags)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([]nebula0.TagID, 0, size)
   p.Tags =  tSlice
   for i := 0; i < size; i ++ {
-var _elem43 nebula0.TagID
+    var _elem43 nebula0.TagID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.TagID(v)
-    _elem43 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.TagID(v)
+      _elem43 = temp
+    }
     p.Tags = append(p.Tags, _elem43)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -5239,7 +6475,7 @@ func (p *DelTags) String() string {
 type DeleteTagsRequest struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
   Parts map[nebula0.PartitionID][]*DelTags `thrift:"parts,2" db:"parts" json:"parts"`
-  Common *RequestCommon `thrift:"common,3" db:"common" json:"common,omitempty"`
+  Common *RequestCommon `thrift:"common,3,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewDeleteTagsRequest() *DeleteTagsRequest {
@@ -5263,6 +6499,54 @@ return p.Common
 }
 func (p *DeleteTagsRequest) IsSetCommon() bool {
   return p != nil && p.Common != nil
+}
+
+type DeleteTagsRequestBuilder struct {
+  obj *DeleteTagsRequest
+}
+
+func NewDeleteTagsRequestBuilder() *DeleteTagsRequestBuilder{
+  return &DeleteTagsRequestBuilder{
+    obj: NewDeleteTagsRequest(),
+  }
+}
+
+func (p DeleteTagsRequestBuilder) Emit() *DeleteTagsRequest{
+  return &DeleteTagsRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    Common: p.obj.Common,
+  }
+}
+
+func (d *DeleteTagsRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *DeleteTagsRequestBuilder {
+  d.obj.SpaceID = spaceID
+  return d
+}
+
+func (d *DeleteTagsRequestBuilder) Parts(parts map[nebula0.PartitionID][]*DelTags) *DeleteTagsRequestBuilder {
+  d.obj.Parts = parts
+  return d
+}
+
+func (d *DeleteTagsRequestBuilder) Common(common *RequestCommon) *DeleteTagsRequestBuilder {
+  d.obj.Common = common
+  return d
+}
+
+func (d *DeleteTagsRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *DeleteTagsRequest {
+  d.SpaceID = spaceID
+  return d
+}
+
+func (d *DeleteTagsRequest) SetParts(parts map[nebula0.PartitionID][]*DelTags) *DeleteTagsRequest {
+  d.Parts = parts
+  return d
+}
+
+func (d *DeleteTagsRequest) SetCommon(common *RequestCommon) *DeleteTagsRequest {
+  d.Common = common
+  return d
 }
 
 func (p *DeleteTagsRequest) Read(iprot thrift.Protocol) error {
@@ -5307,11 +6591,11 @@ func (p *DeleteTagsRequest) Read(iprot thrift.Protocol) error {
 
 func (p *DeleteTagsRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -5323,13 +6607,13 @@ func (p *DeleteTagsRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][]*DelTags, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key44 nebula0.PartitionID
+    var _key44 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key44 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key44 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
@@ -5448,7 +6732,7 @@ func (p *DeleteTagsRequest) String() string {
 //  - Props
 type UpdateResponse struct {
   Result_ *ResponseCommon `thrift:"result,1,required" db:"result" json:"result"`
-  Props *nebula0.DataSet `thrift:"props,2" db:"props" json:"props,omitempty"`
+  Props *nebula0.DataSet `thrift:"props,2,optional" db:"props" json:"props,omitempty"`
 }
 
 func NewUpdateResponse() *UpdateResponse {
@@ -5477,6 +6761,43 @@ func (p *UpdateResponse) IsSetResult_() bool {
 
 func (p *UpdateResponse) IsSetProps() bool {
   return p != nil && p.Props != nil
+}
+
+type UpdateResponseBuilder struct {
+  obj *UpdateResponse
+}
+
+func NewUpdateResponseBuilder() *UpdateResponseBuilder{
+  return &UpdateResponseBuilder{
+    obj: NewUpdateResponse(),
+  }
+}
+
+func (p UpdateResponseBuilder) Emit() *UpdateResponse{
+  return &UpdateResponse{
+    Result_: p.obj.Result_,
+    Props: p.obj.Props,
+  }
+}
+
+func (u *UpdateResponseBuilder) Result_(result *ResponseCommon) *UpdateResponseBuilder {
+  u.obj.Result_ = result
+  return u
+}
+
+func (u *UpdateResponseBuilder) Props(props *nebula0.DataSet) *UpdateResponseBuilder {
+  u.obj.Props = props
+  return u
+}
+
+func (u *UpdateResponse) SetResult_(result *ResponseCommon) *UpdateResponse {
+  u.Result_ = result
+  return u
+}
+
+func (u *UpdateResponse) SetProps(props *nebula0.DataSet) *UpdateResponse {
+  u.Props = props
+  return u
 }
 
 func (p *UpdateResponse) Read(iprot thrift.Protocol) error {
@@ -5612,6 +6933,43 @@ func (p *UpdatedProp) GetName() []byte {
 func (p *UpdatedProp) GetValue() []byte {
   return p.Value
 }
+type UpdatedPropBuilder struct {
+  obj *UpdatedProp
+}
+
+func NewUpdatedPropBuilder() *UpdatedPropBuilder{
+  return &UpdatedPropBuilder{
+    obj: NewUpdatedProp(),
+  }
+}
+
+func (p UpdatedPropBuilder) Emit() *UpdatedProp{
+  return &UpdatedProp{
+    Name: p.obj.Name,
+    Value: p.obj.Value,
+  }
+}
+
+func (u *UpdatedPropBuilder) Name(name []byte) *UpdatedPropBuilder {
+  u.obj.Name = name
+  return u
+}
+
+func (u *UpdatedPropBuilder) Value(value []byte) *UpdatedPropBuilder {
+  u.obj.Value = value
+  return u
+}
+
+func (u *UpdatedProp) SetName(name []byte) *UpdatedProp {
+  u.Name = name
+  return u
+}
+
+func (u *UpdatedProp) SetValue(value []byte) *UpdatedProp {
+  u.Value = value
+  return u
+}
+
 func (p *UpdatedProp) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -5660,19 +7018,19 @@ func (p *UpdatedProp) Read(iprot thrift.Protocol) error {
 
 func (p *UpdatedProp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Name = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.Name = v
+  }
   return nil
 }
 
 func (p *UpdatedProp)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Value = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Value = v
+  }
   return nil
 }
 
@@ -5734,10 +7092,10 @@ type UpdateVertexRequest struct {
   VertexID *nebula0.Value `thrift:"vertex_id,3" db:"vertex_id" json:"vertex_id"`
   TagID nebula0.TagID `thrift:"tag_id,4,required" db:"tag_id" json:"tag_id"`
   UpdatedProps []*UpdatedProp `thrift:"updated_props,5" db:"updated_props" json:"updated_props"`
-  Insertable bool `thrift:"insertable,6" db:"insertable" json:"insertable,omitempty"`
-  ReturnProps [][]byte `thrift:"return_props,7" db:"return_props" json:"return_props,omitempty"`
-  Condition []byte `thrift:"condition,8" db:"condition" json:"condition,omitempty"`
-  Common *RequestCommon `thrift:"common,9" db:"common" json:"common,omitempty"`
+  Insertable bool `thrift:"insertable,6,optional" db:"insertable" json:"insertable,omitempty"`
+  ReturnProps [][]byte `thrift:"return_props,7,optional" db:"return_props" json:"return_props,omitempty"`
+  Condition []byte `thrift:"condition,8,optional" db:"condition" json:"condition,omitempty"`
+  Common *RequestCommon `thrift:"common,9,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewUpdateVertexRequest() *UpdateVertexRequest {
@@ -5807,6 +7165,120 @@ func (p *UpdateVertexRequest) IsSetCondition() bool {
 
 func (p *UpdateVertexRequest) IsSetCommon() bool {
   return p != nil && p.Common != nil
+}
+
+type UpdateVertexRequestBuilder struct {
+  obj *UpdateVertexRequest
+}
+
+func NewUpdateVertexRequestBuilder() *UpdateVertexRequestBuilder{
+  return &UpdateVertexRequestBuilder{
+    obj: NewUpdateVertexRequest(),
+  }
+}
+
+func (p UpdateVertexRequestBuilder) Emit() *UpdateVertexRequest{
+  return &UpdateVertexRequest{
+    SpaceID: p.obj.SpaceID,
+    PartID: p.obj.PartID,
+    VertexID: p.obj.VertexID,
+    TagID: p.obj.TagID,
+    UpdatedProps: p.obj.UpdatedProps,
+    Insertable: p.obj.Insertable,
+    ReturnProps: p.obj.ReturnProps,
+    Condition: p.obj.Condition,
+    Common: p.obj.Common,
+  }
+}
+
+func (u *UpdateVertexRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *UpdateVertexRequestBuilder {
+  u.obj.SpaceID = spaceID
+  return u
+}
+
+func (u *UpdateVertexRequestBuilder) PartID(partID nebula0.PartitionID) *UpdateVertexRequestBuilder {
+  u.obj.PartID = partID
+  return u
+}
+
+func (u *UpdateVertexRequestBuilder) VertexID(vertexID *nebula0.Value) *UpdateVertexRequestBuilder {
+  u.obj.VertexID = vertexID
+  return u
+}
+
+func (u *UpdateVertexRequestBuilder) TagID(tagID nebula0.TagID) *UpdateVertexRequestBuilder {
+  u.obj.TagID = tagID
+  return u
+}
+
+func (u *UpdateVertexRequestBuilder) UpdatedProps(updatedProps []*UpdatedProp) *UpdateVertexRequestBuilder {
+  u.obj.UpdatedProps = updatedProps
+  return u
+}
+
+func (u *UpdateVertexRequestBuilder) Insertable(insertable bool) *UpdateVertexRequestBuilder {
+  u.obj.Insertable = insertable
+  return u
+}
+
+func (u *UpdateVertexRequestBuilder) ReturnProps(returnProps [][]byte) *UpdateVertexRequestBuilder {
+  u.obj.ReturnProps = returnProps
+  return u
+}
+
+func (u *UpdateVertexRequestBuilder) Condition(condition []byte) *UpdateVertexRequestBuilder {
+  u.obj.Condition = condition
+  return u
+}
+
+func (u *UpdateVertexRequestBuilder) Common(common *RequestCommon) *UpdateVertexRequestBuilder {
+  u.obj.Common = common
+  return u
+}
+
+func (u *UpdateVertexRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *UpdateVertexRequest {
+  u.SpaceID = spaceID
+  return u
+}
+
+func (u *UpdateVertexRequest) SetPartID(partID nebula0.PartitionID) *UpdateVertexRequest {
+  u.PartID = partID
+  return u
+}
+
+func (u *UpdateVertexRequest) SetVertexID(vertexID *nebula0.Value) *UpdateVertexRequest {
+  u.VertexID = vertexID
+  return u
+}
+
+func (u *UpdateVertexRequest) SetTagID(tagID nebula0.TagID) *UpdateVertexRequest {
+  u.TagID = tagID
+  return u
+}
+
+func (u *UpdateVertexRequest) SetUpdatedProps(updatedProps []*UpdatedProp) *UpdateVertexRequest {
+  u.UpdatedProps = updatedProps
+  return u
+}
+
+func (u *UpdateVertexRequest) SetInsertable(insertable bool) *UpdateVertexRequest {
+  u.Insertable = insertable
+  return u
+}
+
+func (u *UpdateVertexRequest) SetReturnProps(returnProps [][]byte) *UpdateVertexRequest {
+  u.ReturnProps = returnProps
+  return u
+}
+
+func (u *UpdateVertexRequest) SetCondition(condition []byte) *UpdateVertexRequest {
+  u.Condition = condition
+  return u
+}
+
+func (u *UpdateVertexRequest) SetCommon(common *RequestCommon) *UpdateVertexRequest {
+  u.Common = common
+  return u
 }
 
 func (p *UpdateVertexRequest) Read(iprot thrift.Protocol) error {
@@ -5880,21 +7352,21 @@ func (p *UpdateVertexRequest) Read(iprot thrift.Protocol) error {
 
 func (p *UpdateVertexRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
 func (p *UpdateVertexRequest)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.PartitionID(v)
-  p.PartID = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.PartitionID(v)
+    p.PartID = temp
+  }
   return nil
 }
 
@@ -5908,11 +7380,11 @@ func (p *UpdateVertexRequest)  ReadField3(iprot thrift.Protocol) error {
 
 func (p *UpdateVertexRequest)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  temp := nebula0.TagID(v)
-  p.TagID = temp
-}
+    return thrift.PrependError("error reading field 4: ", err)
+  } else {
+    temp := nebula0.TagID(v)
+    p.TagID = temp
+  }
   return nil
 }
 
@@ -5938,10 +7410,10 @@ func (p *UpdateVertexRequest)  ReadField5(iprot thrift.Protocol) error {
 
 func (p *UpdateVertexRequest)  ReadField6(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 6: ", err)
-} else {
-  p.Insertable = v
-}
+    return thrift.PrependError("error reading field 6: ", err)
+  } else {
+    p.Insertable = v
+  }
   return nil
 }
 
@@ -5953,12 +7425,12 @@ func (p *UpdateVertexRequest)  ReadField7(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.ReturnProps =  tSlice
   for i := 0; i < size; i ++ {
-var _elem48 []byte
+    var _elem48 []byte
     if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _elem48 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _elem48 = v
+    }
     p.ReturnProps = append(p.ReturnProps, _elem48)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -5969,10 +7441,10 @@ var _elem48 []byte
 
 func (p *UpdateVertexRequest)  ReadField8(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 8: ", err)
-} else {
-  p.Condition = v
-}
+    return thrift.PrependError("error reading field 8: ", err)
+  } else {
+    p.Condition = v
+  }
   return nil
 }
 
@@ -6161,10 +7633,10 @@ type UpdateEdgeRequest struct {
   PartID nebula0.PartitionID `thrift:"part_id,2" db:"part_id" json:"part_id"`
   EdgeKey *EdgeKey `thrift:"edge_key,3" db:"edge_key" json:"edge_key"`
   UpdatedProps []*UpdatedProp `thrift:"updated_props,4" db:"updated_props" json:"updated_props"`
-  Insertable bool `thrift:"insertable,5" db:"insertable" json:"insertable,omitempty"`
-  ReturnProps [][]byte `thrift:"return_props,6" db:"return_props" json:"return_props,omitempty"`
-  Condition []byte `thrift:"condition,7" db:"condition" json:"condition,omitempty"`
-  Common *RequestCommon `thrift:"common,8" db:"common" json:"common,omitempty"`
+  Insertable bool `thrift:"insertable,5,optional" db:"insertable" json:"insertable,omitempty"`
+  ReturnProps [][]byte `thrift:"return_props,6,optional" db:"return_props" json:"return_props,omitempty"`
+  Condition []byte `thrift:"condition,7,optional" db:"condition" json:"condition,omitempty"`
+  Common *RequestCommon `thrift:"common,8,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewUpdateEdgeRequest() *UpdateEdgeRequest {
@@ -6234,6 +7706,109 @@ func (p *UpdateEdgeRequest) IsSetCommon() bool {
   return p != nil && p.Common != nil
 }
 
+type UpdateEdgeRequestBuilder struct {
+  obj *UpdateEdgeRequest
+}
+
+func NewUpdateEdgeRequestBuilder() *UpdateEdgeRequestBuilder{
+  return &UpdateEdgeRequestBuilder{
+    obj: NewUpdateEdgeRequest(),
+  }
+}
+
+func (p UpdateEdgeRequestBuilder) Emit() *UpdateEdgeRequest{
+  return &UpdateEdgeRequest{
+    SpaceID: p.obj.SpaceID,
+    PartID: p.obj.PartID,
+    EdgeKey: p.obj.EdgeKey,
+    UpdatedProps: p.obj.UpdatedProps,
+    Insertable: p.obj.Insertable,
+    ReturnProps: p.obj.ReturnProps,
+    Condition: p.obj.Condition,
+    Common: p.obj.Common,
+  }
+}
+
+func (u *UpdateEdgeRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *UpdateEdgeRequestBuilder {
+  u.obj.SpaceID = spaceID
+  return u
+}
+
+func (u *UpdateEdgeRequestBuilder) PartID(partID nebula0.PartitionID) *UpdateEdgeRequestBuilder {
+  u.obj.PartID = partID
+  return u
+}
+
+func (u *UpdateEdgeRequestBuilder) EdgeKey(edgeKey *EdgeKey) *UpdateEdgeRequestBuilder {
+  u.obj.EdgeKey = edgeKey
+  return u
+}
+
+func (u *UpdateEdgeRequestBuilder) UpdatedProps(updatedProps []*UpdatedProp) *UpdateEdgeRequestBuilder {
+  u.obj.UpdatedProps = updatedProps
+  return u
+}
+
+func (u *UpdateEdgeRequestBuilder) Insertable(insertable bool) *UpdateEdgeRequestBuilder {
+  u.obj.Insertable = insertable
+  return u
+}
+
+func (u *UpdateEdgeRequestBuilder) ReturnProps(returnProps [][]byte) *UpdateEdgeRequestBuilder {
+  u.obj.ReturnProps = returnProps
+  return u
+}
+
+func (u *UpdateEdgeRequestBuilder) Condition(condition []byte) *UpdateEdgeRequestBuilder {
+  u.obj.Condition = condition
+  return u
+}
+
+func (u *UpdateEdgeRequestBuilder) Common(common *RequestCommon) *UpdateEdgeRequestBuilder {
+  u.obj.Common = common
+  return u
+}
+
+func (u *UpdateEdgeRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *UpdateEdgeRequest {
+  u.SpaceID = spaceID
+  return u
+}
+
+func (u *UpdateEdgeRequest) SetPartID(partID nebula0.PartitionID) *UpdateEdgeRequest {
+  u.PartID = partID
+  return u
+}
+
+func (u *UpdateEdgeRequest) SetEdgeKey(edgeKey *EdgeKey) *UpdateEdgeRequest {
+  u.EdgeKey = edgeKey
+  return u
+}
+
+func (u *UpdateEdgeRequest) SetUpdatedProps(updatedProps []*UpdatedProp) *UpdateEdgeRequest {
+  u.UpdatedProps = updatedProps
+  return u
+}
+
+func (u *UpdateEdgeRequest) SetInsertable(insertable bool) *UpdateEdgeRequest {
+  u.Insertable = insertable
+  return u
+}
+
+func (u *UpdateEdgeRequest) SetReturnProps(returnProps [][]byte) *UpdateEdgeRequest {
+  u.ReturnProps = returnProps
+  return u
+}
+
+func (u *UpdateEdgeRequest) SetCondition(condition []byte) *UpdateEdgeRequest {
+  u.Condition = condition
+  return u
+}
+
+func (u *UpdateEdgeRequest) SetCommon(common *RequestCommon) *UpdateEdgeRequest {
+  u.Common = common
+  return u
+}
+
 func (p *UpdateEdgeRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -6296,21 +7871,21 @@ func (p *UpdateEdgeRequest) Read(iprot thrift.Protocol) error {
 
 func (p *UpdateEdgeRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
 func (p *UpdateEdgeRequest)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.PartitionID(v)
-  p.PartID = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.PartitionID(v)
+    p.PartID = temp
+  }
   return nil
 }
 
@@ -6344,10 +7919,10 @@ func (p *UpdateEdgeRequest)  ReadField4(iprot thrift.Protocol) error {
 
 func (p *UpdateEdgeRequest)  ReadField5(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 5: ", err)
-} else {
-  p.Insertable = v
-}
+    return thrift.PrependError("error reading field 5: ", err)
+  } else {
+    p.Insertable = v
+  }
   return nil
 }
 
@@ -6359,12 +7934,12 @@ func (p *UpdateEdgeRequest)  ReadField6(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.ReturnProps =  tSlice
   for i := 0; i < size; i ++ {
-var _elem50 []byte
+    var _elem50 []byte
     if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _elem50 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _elem50 = v
+    }
     p.ReturnProps = append(p.ReturnProps, _elem50)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -6375,10 +7950,10 @@ var _elem50 []byte
 
 func (p *UpdateEdgeRequest)  ReadField7(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 7: ", err)
-} else {
-  p.Condition = v
-}
+    return thrift.PrependError("error reading field 7: ", err)
+  } else {
+    p.Condition = v
+  }
   return nil
 }
 
@@ -6550,7 +8125,7 @@ type GetUUIDReq struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
   PartID nebula0.PartitionID `thrift:"part_id,2" db:"part_id" json:"part_id"`
   Name []byte `thrift:"name,3" db:"name" json:"name"`
-  Common *RequestCommon `thrift:"common,4" db:"common" json:"common,omitempty"`
+  Common *RequestCommon `thrift:"common,4,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewGetUUIDReq() *GetUUIDReq {
@@ -6578,6 +8153,65 @@ return p.Common
 }
 func (p *GetUUIDReq) IsSetCommon() bool {
   return p != nil && p.Common != nil
+}
+
+type GetUUIDReqBuilder struct {
+  obj *GetUUIDReq
+}
+
+func NewGetUUIDReqBuilder() *GetUUIDReqBuilder{
+  return &GetUUIDReqBuilder{
+    obj: NewGetUUIDReq(),
+  }
+}
+
+func (p GetUUIDReqBuilder) Emit() *GetUUIDReq{
+  return &GetUUIDReq{
+    SpaceID: p.obj.SpaceID,
+    PartID: p.obj.PartID,
+    Name: p.obj.Name,
+    Common: p.obj.Common,
+  }
+}
+
+func (g *GetUUIDReqBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *GetUUIDReqBuilder {
+  g.obj.SpaceID = spaceID
+  return g
+}
+
+func (g *GetUUIDReqBuilder) PartID(partID nebula0.PartitionID) *GetUUIDReqBuilder {
+  g.obj.PartID = partID
+  return g
+}
+
+func (g *GetUUIDReqBuilder) Name(name []byte) *GetUUIDReqBuilder {
+  g.obj.Name = name
+  return g
+}
+
+func (g *GetUUIDReqBuilder) Common(common *RequestCommon) *GetUUIDReqBuilder {
+  g.obj.Common = common
+  return g
+}
+
+func (g *GetUUIDReq) SetSpaceID(spaceID nebula0.GraphSpaceID) *GetUUIDReq {
+  g.SpaceID = spaceID
+  return g
+}
+
+func (g *GetUUIDReq) SetPartID(partID nebula0.PartitionID) *GetUUIDReq {
+  g.PartID = partID
+  return g
+}
+
+func (g *GetUUIDReq) SetName(name []byte) *GetUUIDReq {
+  g.Name = name
+  return g
+}
+
+func (g *GetUUIDReq) SetCommon(common *RequestCommon) *GetUUIDReq {
+  g.Common = common
+  return g
 }
 
 func (p *GetUUIDReq) Read(iprot thrift.Protocol) error {
@@ -6626,30 +8260,30 @@ func (p *GetUUIDReq) Read(iprot thrift.Protocol) error {
 
 func (p *GetUUIDReq)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
 func (p *GetUUIDReq)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.PartitionID(v)
-  p.PartID = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.PartitionID(v)
+    p.PartID = temp
+  }
   return nil
 }
 
 func (p *GetUUIDReq)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  p.Name = v
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.Name = v
+  }
   return nil
 }
 
@@ -6771,6 +8405,43 @@ func (p *GetUUIDResp) IsSetId() bool {
   return p != nil && p.Id != nil
 }
 
+type GetUUIDRespBuilder struct {
+  obj *GetUUIDResp
+}
+
+func NewGetUUIDRespBuilder() *GetUUIDRespBuilder{
+  return &GetUUIDRespBuilder{
+    obj: NewGetUUIDResp(),
+  }
+}
+
+func (p GetUUIDRespBuilder) Emit() *GetUUIDResp{
+  return &GetUUIDResp{
+    Result_: p.obj.Result_,
+    Id: p.obj.Id,
+  }
+}
+
+func (g *GetUUIDRespBuilder) Result_(result *ResponseCommon) *GetUUIDRespBuilder {
+  g.obj.Result_ = result
+  return g
+}
+
+func (g *GetUUIDRespBuilder) Id(id *nebula0.Value) *GetUUIDRespBuilder {
+  g.obj.Id = id
+  return g
+}
+
+func (g *GetUUIDResp) SetResult_(result *ResponseCommon) *GetUUIDResp {
+  g.Result_ = result
+  return g
+}
+
+func (g *GetUUIDResp) SetId(id *nebula0.Value) *GetUUIDResp {
+  g.Id = id
+  return g
+}
+
 func (p *GetUUIDResp) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -6887,7 +8558,7 @@ func (p *GetUUIDResp) String() string {
 //  - Data
 type LookupIndexResp struct {
   Result_ *ResponseCommon `thrift:"result,1,required" db:"result" json:"result"`
-  Data *nebula0.DataSet `thrift:"data,2" db:"data" json:"data,omitempty"`
+  Data *nebula0.DataSet `thrift:"data,2,optional" db:"data" json:"data,omitempty"`
 }
 
 func NewLookupIndexResp() *LookupIndexResp {
@@ -6916,6 +8587,43 @@ func (p *LookupIndexResp) IsSetResult_() bool {
 
 func (p *LookupIndexResp) IsSetData() bool {
   return p != nil && p.Data != nil
+}
+
+type LookupIndexRespBuilder struct {
+  obj *LookupIndexResp
+}
+
+func NewLookupIndexRespBuilder() *LookupIndexRespBuilder{
+  return &LookupIndexRespBuilder{
+    obj: NewLookupIndexResp(),
+  }
+}
+
+func (p LookupIndexRespBuilder) Emit() *LookupIndexResp{
+  return &LookupIndexResp{
+    Result_: p.obj.Result_,
+    Data: p.obj.Data,
+  }
+}
+
+func (l *LookupIndexRespBuilder) Result_(result *ResponseCommon) *LookupIndexRespBuilder {
+  l.obj.Result_ = result
+  return l
+}
+
+func (l *LookupIndexRespBuilder) Data(data *nebula0.DataSet) *LookupIndexRespBuilder {
+  l.obj.Data = data
+  return l
+}
+
+func (l *LookupIndexResp) SetResult_(result *ResponseCommon) *LookupIndexResp {
+  l.Result_ = result
+  return l
+}
+
+func (l *LookupIndexResp) SetData(data *nebula0.DataSet) *LookupIndexResp {
+  l.Data = data
+  return l
 }
 
 func (p *LookupIndexResp) Read(iprot thrift.Protocol) error {
@@ -7091,6 +8799,87 @@ func (p *IndexColumnHint) IsSetEndValue() bool {
   return p != nil && p.EndValue != nil
 }
 
+type IndexColumnHintBuilder struct {
+  obj *IndexColumnHint
+}
+
+func NewIndexColumnHintBuilder() *IndexColumnHintBuilder{
+  return &IndexColumnHintBuilder{
+    obj: NewIndexColumnHint(),
+  }
+}
+
+func (p IndexColumnHintBuilder) Emit() *IndexColumnHint{
+  return &IndexColumnHint{
+    ColumnName: p.obj.ColumnName,
+    ScanType: p.obj.ScanType,
+    BeginValue: p.obj.BeginValue,
+    EndValue: p.obj.EndValue,
+    IncludeBegin: p.obj.IncludeBegin,
+    IncludeEnd: p.obj.IncludeEnd,
+  }
+}
+
+func (i *IndexColumnHintBuilder) ColumnName(columnName []byte) *IndexColumnHintBuilder {
+  i.obj.ColumnName = columnName
+  return i
+}
+
+func (i *IndexColumnHintBuilder) ScanType(scanType ScanType) *IndexColumnHintBuilder {
+  i.obj.ScanType = scanType
+  return i
+}
+
+func (i *IndexColumnHintBuilder) BeginValue(beginValue *nebula0.Value) *IndexColumnHintBuilder {
+  i.obj.BeginValue = beginValue
+  return i
+}
+
+func (i *IndexColumnHintBuilder) EndValue(endValue *nebula0.Value) *IndexColumnHintBuilder {
+  i.obj.EndValue = endValue
+  return i
+}
+
+func (i *IndexColumnHintBuilder) IncludeBegin(includeBegin bool) *IndexColumnHintBuilder {
+  i.obj.IncludeBegin = includeBegin
+  return i
+}
+
+func (i *IndexColumnHintBuilder) IncludeEnd(includeEnd bool) *IndexColumnHintBuilder {
+  i.obj.IncludeEnd = includeEnd
+  return i
+}
+
+func (i *IndexColumnHint) SetColumnName(columnName []byte) *IndexColumnHint {
+  i.ColumnName = columnName
+  return i
+}
+
+func (i *IndexColumnHint) SetScanType(scanType ScanType) *IndexColumnHint {
+  i.ScanType = scanType
+  return i
+}
+
+func (i *IndexColumnHint) SetBeginValue(beginValue *nebula0.Value) *IndexColumnHint {
+  i.BeginValue = beginValue
+  return i
+}
+
+func (i *IndexColumnHint) SetEndValue(endValue *nebula0.Value) *IndexColumnHint {
+  i.EndValue = endValue
+  return i
+}
+
+func (i *IndexColumnHint) SetIncludeBegin(includeBegin bool) *IndexColumnHint {
+  i.IncludeBegin = includeBegin
+  return i
+}
+
+func (i *IndexColumnHint) SetIncludeEnd(includeEnd bool) *IndexColumnHint {
+  i.IncludeEnd = includeEnd
+  return i
+}
+
 func (p *IndexColumnHint) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -7145,20 +8934,20 @@ func (p *IndexColumnHint) Read(iprot thrift.Protocol) error {
 
 func (p *IndexColumnHint)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.ColumnName = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.ColumnName = v
+  }
   return nil
 }
 
 func (p *IndexColumnHint)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := ScanType(v)
-  p.ScanType = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := ScanType(v)
+    p.ScanType = temp
+  }
   return nil
 }
 
@@ -7180,19 +8969,19 @@ func (p *IndexColumnHint)  ReadField4(iprot thrift.Protocol) error {
 
 func (p *IndexColumnHint)  ReadField5(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 5: ", err)
-} else {
-  p.IncludeBegin = v
-}
+    return thrift.PrependError("error reading field 5: ", err)
+  } else {
+    p.IncludeBegin = v
+  }
   return nil
 }
 
 func (p *IndexColumnHint)  ReadField6(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 6: ", err)
-} else {
-  p.IncludeEnd = v
-}
+    return thrift.PrependError("error reading field 6: ", err)
+  } else {
+    p.IncludeEnd = v
+  }
   return nil
 }
 
@@ -7324,6 +9113,54 @@ func (p *IndexQueryContext) GetFilter() []byte {
 func (p *IndexQueryContext) GetColumnHints() []*IndexColumnHint {
   return p.ColumnHints
 }
+type IndexQueryContextBuilder struct {
+  obj *IndexQueryContext
+}
+
+func NewIndexQueryContextBuilder() *IndexQueryContextBuilder{
+  return &IndexQueryContextBuilder{
+    obj: NewIndexQueryContext(),
+  }
+}
+
+func (p IndexQueryContextBuilder) Emit() *IndexQueryContext{
+  return &IndexQueryContext{
+    IndexID: p.obj.IndexID,
+    Filter: p.obj.Filter,
+    ColumnHints: p.obj.ColumnHints,
+  }
+}
+
+func (i *IndexQueryContextBuilder) IndexID(indexID nebula0.IndexID) *IndexQueryContextBuilder {
+  i.obj.IndexID = indexID
+  return i
+}
+
+func (i *IndexQueryContextBuilder) Filter(filter []byte) *IndexQueryContextBuilder {
+  i.obj.Filter = filter
+  return i
+}
+
+func (i *IndexQueryContextBuilder) ColumnHints(columnHints []*IndexColumnHint) *IndexQueryContextBuilder {
+  i.obj.ColumnHints = columnHints
+  return i
+}
+
+func (i *IndexQueryContext) SetIndexID(indexID nebula0.IndexID) *IndexQueryContext {
+  i.IndexID = indexID
+  return i
+}
+
+func (i *IndexQueryContext) SetFilter(filter []byte) *IndexQueryContext {
+  i.Filter = filter
+  return i
+}
+
+func (i *IndexQueryContext) SetColumnHints(columnHints []*IndexColumnHint) *IndexQueryContext {
+  i.ColumnHints = columnHints
+  return i
+}
+
 func (p *IndexQueryContext) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -7366,20 +9203,20 @@ func (p *IndexQueryContext) Read(iprot thrift.Protocol) error {
 
 func (p *IndexQueryContext)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.IndexID(v)
-  p.IndexID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.IndexID(v)
+    p.IndexID = temp
+  }
   return nil
 }
 
 func (p *IndexQueryContext)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Filter = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Filter = v
+  }
   return nil
 }
 
@@ -7491,6 +9328,43 @@ return p.SchemaID
 }
 func (p *IndexSpec) IsSetSchemaID() bool {
   return p != nil && p.SchemaID != nil
+}
+
+type IndexSpecBuilder struct {
+  obj *IndexSpec
+}
+
+func NewIndexSpecBuilder() *IndexSpecBuilder{
+  return &IndexSpecBuilder{
+    obj: NewIndexSpec(),
+  }
+}
+
+func (p IndexSpecBuilder) Emit() *IndexSpec{
+  return &IndexSpec{
+    Contexts: p.obj.Contexts,
+    SchemaID: p.obj.SchemaID,
+  }
+}
+
+func (i *IndexSpecBuilder) Contexts(contexts []*IndexQueryContext) *IndexSpecBuilder {
+  i.obj.Contexts = contexts
+  return i
+}
+
+func (i *IndexSpecBuilder) SchemaID(schemaID *nebula0.SchemaID) *IndexSpecBuilder {
+  i.obj.SchemaID = schemaID
+  return i
+}
+
+func (i *IndexSpec) SetContexts(contexts []*IndexQueryContext) *IndexSpec {
+  i.Contexts = contexts
+  return i
+}
+
+func (i *IndexSpec) SetSchemaID(schemaID *nebula0.SchemaID) *IndexSpec {
+  i.SchemaID = schemaID
+  return i
 }
 
 func (p *IndexSpec) Read(iprot thrift.Protocol) error {
@@ -7630,9 +9504,9 @@ type LookupIndexRequest struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1,required" db:"space_id" json:"space_id"`
   Parts []nebula0.PartitionID `thrift:"parts,2,required" db:"parts" json:"parts"`
   Indices *IndexSpec `thrift:"indices,3" db:"indices" json:"indices"`
-  ReturnColumns [][]byte `thrift:"return_columns,4" db:"return_columns" json:"return_columns,omitempty"`
-  Common *RequestCommon `thrift:"common,5" db:"common" json:"common,omitempty"`
-  Limit *int64 `thrift:"limit,6" db:"limit" json:"limit,omitempty"`
+  ReturnColumns [][]byte `thrift:"return_columns,4,optional" db:"return_columns" json:"return_columns,omitempty"`
+  Common *RequestCommon `thrift:"common,5,optional" db:"common" json:"common,omitempty"`
+  Limit *int64 `thrift:"limit,6,optional" db:"limit" json:"limit,omitempty"`
 }
 
 func NewLookupIndexRequest() *LookupIndexRequest {
@@ -7689,6 +9563,87 @@ func (p *LookupIndexRequest) IsSetCommon() bool {
 
 func (p *LookupIndexRequest) IsSetLimit() bool {
   return p != nil && p.Limit != nil
+}
+
+type LookupIndexRequestBuilder struct {
+  obj *LookupIndexRequest
+}
+
+func NewLookupIndexRequestBuilder() *LookupIndexRequestBuilder{
+  return &LookupIndexRequestBuilder{
+    obj: NewLookupIndexRequest(),
+  }
+}
+
+func (p LookupIndexRequestBuilder) Emit() *LookupIndexRequest{
+  return &LookupIndexRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    Indices: p.obj.Indices,
+    ReturnColumns: p.obj.ReturnColumns,
+    Common: p.obj.Common,
+    Limit: p.obj.Limit,
+  }
+}
+
+func (l *LookupIndexRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *LookupIndexRequestBuilder {
+  l.obj.SpaceID = spaceID
+  return l
+}
+
+func (l *LookupIndexRequestBuilder) Parts(parts []nebula0.PartitionID) *LookupIndexRequestBuilder {
+  l.obj.Parts = parts
+  return l
+}
+
+func (l *LookupIndexRequestBuilder) Indices(indices *IndexSpec) *LookupIndexRequestBuilder {
+  l.obj.Indices = indices
+  return l
+}
+
+func (l *LookupIndexRequestBuilder) ReturnColumns(returnColumns [][]byte) *LookupIndexRequestBuilder {
+  l.obj.ReturnColumns = returnColumns
+  return l
+}
+
+func (l *LookupIndexRequestBuilder) Common(common *RequestCommon) *LookupIndexRequestBuilder {
+  l.obj.Common = common
+  return l
+}
+
+func (l *LookupIndexRequestBuilder) Limit(limit *int64) *LookupIndexRequestBuilder {
+  l.obj.Limit = limit
+  return l
+}
+
+func (l *LookupIndexRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *LookupIndexRequest {
+  l.SpaceID = spaceID
+  return l
+}
+
+func (l *LookupIndexRequest) SetParts(parts []nebula0.PartitionID) *LookupIndexRequest {
+  l.Parts = parts
+  return l
+}
+
+func (l *LookupIndexRequest) SetIndices(indices *IndexSpec) *LookupIndexRequest {
+  l.Indices = indices
+  return l
+}
+
+func (l *LookupIndexRequest) SetReturnColumns(returnColumns [][]byte) *LookupIndexRequest {
+  l.ReturnColumns = returnColumns
+  return l
+}
+
+func (l *LookupIndexRequest) SetCommon(common *RequestCommon) *LookupIndexRequest {
+  l.Common = common
+  return l
+}
+
+func (l *LookupIndexRequest) SetLimit(limit *int64) *LookupIndexRequest {
+  l.Limit = limit
+  return l
 }
 
 func (p *LookupIndexRequest) Read(iprot thrift.Protocol) error {
@@ -7755,11 +9710,11 @@ func (p *LookupIndexRequest) Read(iprot thrift.Protocol) error {
 
 func (p *LookupIndexRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -7771,13 +9726,13 @@ func (p *LookupIndexRequest)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([]nebula0.PartitionID, 0, size)
   p.Parts =  tSlice
   for i := 0; i < size; i ++ {
-var _elem53 nebula0.PartitionID
+    var _elem53 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _elem53 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _elem53 = temp
+    }
     p.Parts = append(p.Parts, _elem53)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -7802,12 +9757,12 @@ func (p *LookupIndexRequest)  ReadField4(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.ReturnColumns =  tSlice
   for i := 0; i < size; i ++ {
-var _elem54 []byte
+    var _elem54 []byte
     if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _elem54 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _elem54 = v
+    }
     p.ReturnColumns = append(p.ReturnColumns, _elem54)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -7826,10 +9781,10 @@ func (p *LookupIndexRequest)  ReadField5(iprot thrift.Protocol) error {
 
 func (p *LookupIndexRequest)  ReadField6(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 6: ", err)
-} else {
-  p.Limit = &v
-}
+    return thrift.PrependError("error reading field 6: ", err)
+  } else {
+    p.Limit = &v
+  }
   return nil
 }
 
@@ -7973,7 +9928,7 @@ type LookupAndTraverseRequest struct {
   Parts []nebula0.PartitionID `thrift:"parts,2,required" db:"parts" json:"parts"`
   Indices *IndexSpec `thrift:"indices,3" db:"indices" json:"indices"`
   TraverseSpec *TraverseSpec `thrift:"traverse_spec,4" db:"traverse_spec" json:"traverse_spec"`
-  Common *RequestCommon `thrift:"common,5" db:"common" json:"common,omitempty"`
+  Common *RequestCommon `thrift:"common,5,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewLookupAndTraverseRequest() *LookupAndTraverseRequest {
@@ -8022,6 +9977,76 @@ func (p *LookupAndTraverseRequest) IsSetTraverseSpec() bool {
 
 func (p *LookupAndTraverseRequest) IsSetCommon() bool {
   return p != nil && p.Common != nil
+}
+
+type LookupAndTraverseRequestBuilder struct {
+  obj *LookupAndTraverseRequest
+}
+
+func NewLookupAndTraverseRequestBuilder() *LookupAndTraverseRequestBuilder{
+  return &LookupAndTraverseRequestBuilder{
+    obj: NewLookupAndTraverseRequest(),
+  }
+}
+
+func (p LookupAndTraverseRequestBuilder) Emit() *LookupAndTraverseRequest{
+  return &LookupAndTraverseRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    Indices: p.obj.Indices,
+    TraverseSpec: p.obj.TraverseSpec,
+    Common: p.obj.Common,
+  }
+}
+
+func (l *LookupAndTraverseRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *LookupAndTraverseRequestBuilder {
+  l.obj.SpaceID = spaceID
+  return l
+}
+
+func (l *LookupAndTraverseRequestBuilder) Parts(parts []nebula0.PartitionID) *LookupAndTraverseRequestBuilder {
+  l.obj.Parts = parts
+  return l
+}
+
+func (l *LookupAndTraverseRequestBuilder) Indices(indices *IndexSpec) *LookupAndTraverseRequestBuilder {
+  l.obj.Indices = indices
+  return l
+}
+
+func (l *LookupAndTraverseRequestBuilder) TraverseSpec(traverseSpec *TraverseSpec) *LookupAndTraverseRequestBuilder {
+  l.obj.TraverseSpec = traverseSpec
+  return l
+}
+
+func (l *LookupAndTraverseRequestBuilder) Common(common *RequestCommon) *LookupAndTraverseRequestBuilder {
+  l.obj.Common = common
+  return l
+}
+
+func (l *LookupAndTraverseRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *LookupAndTraverseRequest {
+  l.SpaceID = spaceID
+  return l
+}
+
+func (l *LookupAndTraverseRequest) SetParts(parts []nebula0.PartitionID) *LookupAndTraverseRequest {
+  l.Parts = parts
+  return l
+}
+
+func (l *LookupAndTraverseRequest) SetIndices(indices *IndexSpec) *LookupAndTraverseRequest {
+  l.Indices = indices
+  return l
+}
+
+func (l *LookupAndTraverseRequest) SetTraverseSpec(traverseSpec *TraverseSpec) *LookupAndTraverseRequest {
+  l.TraverseSpec = traverseSpec
+  return l
+}
+
+func (l *LookupAndTraverseRequest) SetCommon(common *RequestCommon) *LookupAndTraverseRequest {
+  l.Common = common
+  return l
 }
 
 func (p *LookupAndTraverseRequest) Read(iprot thrift.Protocol) error {
@@ -8084,11 +10109,11 @@ func (p *LookupAndTraverseRequest) Read(iprot thrift.Protocol) error {
 
 func (p *LookupAndTraverseRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -8100,13 +10125,13 @@ func (p *LookupAndTraverseRequest)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([]nebula0.PartitionID, 0, size)
   p.Parts =  tSlice
   for i := 0; i < size; i ++ {
-var _elem55 nebula0.PartitionID
+    var _elem55 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _elem55 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _elem55 = temp
+    }
     p.Parts = append(p.Parts, _elem55)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -8248,7 +10273,7 @@ func (p *LookupAndTraverseRequest) String() string {
 // Attributes:
 //  - NextCursor
 type ScanCursor struct {
-  NextCursor []byte `thrift:"next_cursor,1" db:"next_cursor" json:"next_cursor,omitempty"`
+  NextCursor []byte `thrift:"next_cursor,1,optional" db:"next_cursor" json:"next_cursor,omitempty"`
 }
 
 func NewScanCursor() *ScanCursor {
@@ -8262,6 +10287,32 @@ func (p *ScanCursor) GetNextCursor() []byte {
 }
 func (p *ScanCursor) IsSetNextCursor() bool {
   return p != nil && p.NextCursor != nil
+}
+
+type ScanCursorBuilder struct {
+  obj *ScanCursor
+}
+
+func NewScanCursorBuilder() *ScanCursorBuilder{
+  return &ScanCursorBuilder{
+    obj: NewScanCursor(),
+  }
+}
+
+func (p ScanCursorBuilder) Emit() *ScanCursor{
+  return &ScanCursor{
+    NextCursor: p.obj.NextCursor,
+  }
+}
+
+func (s *ScanCursorBuilder) NextCursor(nextCursor []byte) *ScanCursorBuilder {
+  s.obj.NextCursor = nextCursor
+  return s
+}
+
+func (s *ScanCursor) SetNextCursor(nextCursor []byte) *ScanCursor {
+  s.NextCursor = nextCursor
+  return s
 }
 
 func (p *ScanCursor) Read(iprot thrift.Protocol) error {
@@ -8298,10 +10349,10 @@ func (p *ScanCursor) Read(iprot thrift.Protocol) error {
 
 func (p *ScanCursor)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.NextCursor = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.NextCursor = v
+  }
   return nil
 }
 
@@ -8353,12 +10404,12 @@ type ScanVertexRequest struct {
   Parts map[nebula0.PartitionID]*ScanCursor `thrift:"parts,2" db:"parts" json:"parts"`
   ReturnColumns []*VertexProp `thrift:"return_columns,3" db:"return_columns" json:"return_columns"`
   Limit int64 `thrift:"limit,4" db:"limit" json:"limit"`
-  StartTime *int64 `thrift:"start_time,5" db:"start_time" json:"start_time,omitempty"`
-  EndTime *int64 `thrift:"end_time,6" db:"end_time" json:"end_time,omitempty"`
-  Filter []byte `thrift:"filter,7" db:"filter" json:"filter,omitempty"`
+  StartTime *int64 `thrift:"start_time,5,optional" db:"start_time" json:"start_time,omitempty"`
+  EndTime *int64 `thrift:"end_time,6,optional" db:"end_time" json:"end_time,omitempty"`
+  Filter []byte `thrift:"filter,7,optional" db:"filter" json:"filter,omitempty"`
   OnlyLatestVersion bool `thrift:"only_latest_version,8" db:"only_latest_version" json:"only_latest_version"`
   EnableReadFromFollower bool `thrift:"enable_read_from_follower,9" db:"enable_read_from_follower" json:"enable_read_from_follower"`
-  Common *RequestCommon `thrift:"common,10" db:"common" json:"common,omitempty"`
+  Common *RequestCommon `thrift:"common,10,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewScanVertexRequest() *ScanVertexRequest {
@@ -8433,6 +10484,131 @@ func (p *ScanVertexRequest) IsSetCommon() bool {
   return p != nil && p.Common != nil
 }
 
+type ScanVertexRequestBuilder struct {
+  obj *ScanVertexRequest
+}
+
+func NewScanVertexRequestBuilder() *ScanVertexRequestBuilder{
+  return &ScanVertexRequestBuilder{
+    obj: NewScanVertexRequest(),
+  }
+}
+
+func (p ScanVertexRequestBuilder) Emit() *ScanVertexRequest{
+  return &ScanVertexRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    ReturnColumns: p.obj.ReturnColumns,
+    Limit: p.obj.Limit,
+    StartTime: p.obj.StartTime,
+    EndTime: p.obj.EndTime,
+    Filter: p.obj.Filter,
+    OnlyLatestVersion: p.obj.OnlyLatestVersion,
+    EnableReadFromFollower: p.obj.EnableReadFromFollower,
+    Common: p.obj.Common,
+  }
+}
+
+func (s *ScanVertexRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *ScanVertexRequestBuilder {
+  s.obj.SpaceID = spaceID
+  return s
+}
+
+func (s *ScanVertexRequestBuilder) Parts(parts map[nebula0.PartitionID]*ScanCursor) *ScanVertexRequestBuilder {
+  s.obj.Parts = parts
+  return s
+}
+
+func (s *ScanVertexRequestBuilder) ReturnColumns(returnColumns []*VertexProp) *ScanVertexRequestBuilder {
+  s.obj.ReturnColumns = returnColumns
+  return s
+}
+
+func (s *ScanVertexRequestBuilder) Limit(limit int64) *ScanVertexRequestBuilder {
+  s.obj.Limit = limit
+  return s
+}
+
+func (s *ScanVertexRequestBuilder) StartTime(startTime *int64) *ScanVertexRequestBuilder {
+  s.obj.StartTime = startTime
+  return s
+}
+
+func (s *ScanVertexRequestBuilder) EndTime(endTime *int64) *ScanVertexRequestBuilder {
+  s.obj.EndTime = endTime
+  return s
+}
+
+func (s *ScanVertexRequestBuilder) Filter(filter []byte) *ScanVertexRequestBuilder {
+  s.obj.Filter = filter
+  return s
+}
+
+func (s *ScanVertexRequestBuilder) OnlyLatestVersion(onlyLatestVersion bool) *ScanVertexRequestBuilder {
+  s.obj.OnlyLatestVersion = onlyLatestVersion
+  return s
+}
+
+func (s *ScanVertexRequestBuilder) EnableReadFromFollower(enableReadFromFollower bool) *ScanVertexRequestBuilder {
+  s.obj.EnableReadFromFollower = enableReadFromFollower
+  return s
+}
+
+func (s *ScanVertexRequestBuilder) Common(common *RequestCommon) *ScanVertexRequestBuilder {
+  s.obj.Common = common
+  return s
+}
+
+func (s *ScanVertexRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *ScanVertexRequest {
+  s.SpaceID = spaceID
+  return s
+}
+
+func (s *ScanVertexRequest) SetParts(parts map[nebula0.PartitionID]*ScanCursor) *ScanVertexRequest {
+  s.Parts = parts
+  return s
+}
+
+func (s *ScanVertexRequest) SetReturnColumns(returnColumns []*VertexProp) *ScanVertexRequest {
+  s.ReturnColumns = returnColumns
+  return s
+}
+
+func (s *ScanVertexRequest) SetLimit(limit int64) *ScanVertexRequest {
+  s.Limit = limit
+  return s
+}
+
+func (s *ScanVertexRequest) SetStartTime(startTime *int64) *ScanVertexRequest {
+  s.StartTime = startTime
+  return s
+}
+
+func (s *ScanVertexRequest) SetEndTime(endTime *int64) *ScanVertexRequest {
+  s.EndTime = endTime
+  return s
+}
+
+func (s *ScanVertexRequest) SetFilter(filter []byte) *ScanVertexRequest {
+  s.Filter = filter
+  return s
+}
+
+func (s *ScanVertexRequest) SetOnlyLatestVersion(onlyLatestVersion bool) *ScanVertexRequest {
+  s.OnlyLatestVersion = onlyLatestVersion
+  return s
+}
+
+func (s *ScanVertexRequest) SetEnableReadFromFollower(enableReadFromFollower bool) *ScanVertexRequest {
+  s.EnableReadFromFollower = enableReadFromFollower
+  return s
+}
+
+func (s *ScanVertexRequest) SetCommon(common *RequestCommon) *ScanVertexRequest {
+  s.Common = common
+  return s
+}
+
 func (p *ScanVertexRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -8503,11 +10679,11 @@ func (p *ScanVertexRequest) Read(iprot thrift.Protocol) error {
 
 func (p *ScanVertexRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -8519,13 +10695,13 @@ func (p *ScanVertexRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID]*ScanCursor, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key56 nebula0.PartitionID
+    var _key56 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key56 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key56 = temp
+    }
     _val57 := NewScanCursor()
     if err := _val57.Read(iprot); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val57), err)
@@ -8560,55 +10736,55 @@ func (p *ScanVertexRequest)  ReadField3(iprot thrift.Protocol) error {
 
 func (p *ScanVertexRequest)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  p.Limit = v
-}
+    return thrift.PrependError("error reading field 4: ", err)
+  } else {
+    p.Limit = v
+  }
   return nil
 }
 
 func (p *ScanVertexRequest)  ReadField5(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 5: ", err)
-} else {
-  p.StartTime = &v
-}
+    return thrift.PrependError("error reading field 5: ", err)
+  } else {
+    p.StartTime = &v
+  }
   return nil
 }
 
 func (p *ScanVertexRequest)  ReadField6(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 6: ", err)
-} else {
-  p.EndTime = &v
-}
+    return thrift.PrependError("error reading field 6: ", err)
+  } else {
+    p.EndTime = &v
+  }
   return nil
 }
 
 func (p *ScanVertexRequest)  ReadField7(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 7: ", err)
-} else {
-  p.Filter = v
-}
+    return thrift.PrependError("error reading field 7: ", err)
+  } else {
+    p.Filter = v
+  }
   return nil
 }
 
 func (p *ScanVertexRequest)  ReadField8(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 8: ", err)
-} else {
-  p.OnlyLatestVersion = v
-}
+    return thrift.PrependError("error reading field 8: ", err)
+  } else {
+    p.OnlyLatestVersion = v
+  }
   return nil
 }
 
 func (p *ScanVertexRequest)  ReadField9(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 9: ", err)
-} else {
-  p.EnableReadFromFollower = v
-}
+    return thrift.PrependError("error reading field 9: ", err)
+  } else {
+    p.EnableReadFromFollower = v
+  }
   return nil
 }
 
@@ -8818,12 +10994,12 @@ type ScanEdgeRequest struct {
   Parts map[nebula0.PartitionID]*ScanCursor `thrift:"parts,2" db:"parts" json:"parts"`
   ReturnColumns []*EdgeProp `thrift:"return_columns,3" db:"return_columns" json:"return_columns"`
   Limit int64 `thrift:"limit,4" db:"limit" json:"limit"`
-  StartTime *int64 `thrift:"start_time,5" db:"start_time" json:"start_time,omitempty"`
-  EndTime *int64 `thrift:"end_time,6" db:"end_time" json:"end_time,omitempty"`
-  Filter []byte `thrift:"filter,7" db:"filter" json:"filter,omitempty"`
+  StartTime *int64 `thrift:"start_time,5,optional" db:"start_time" json:"start_time,omitempty"`
+  EndTime *int64 `thrift:"end_time,6,optional" db:"end_time" json:"end_time,omitempty"`
+  Filter []byte `thrift:"filter,7,optional" db:"filter" json:"filter,omitempty"`
   OnlyLatestVersion bool `thrift:"only_latest_version,8" db:"only_latest_version" json:"only_latest_version"`
   EnableReadFromFollower bool `thrift:"enable_read_from_follower,9" db:"enable_read_from_follower" json:"enable_read_from_follower"`
-  Common *RequestCommon `thrift:"common,10" db:"common" json:"common,omitempty"`
+  Common *RequestCommon `thrift:"common,10,optional" db:"common" json:"common,omitempty"`
 }
 
 func NewScanEdgeRequest() *ScanEdgeRequest {
@@ -8898,6 +11074,131 @@ func (p *ScanEdgeRequest) IsSetCommon() bool {
   return p != nil && p.Common != nil
 }
 
+type ScanEdgeRequestBuilder struct {
+  obj *ScanEdgeRequest
+}
+
+func NewScanEdgeRequestBuilder() *ScanEdgeRequestBuilder{
+  return &ScanEdgeRequestBuilder{
+    obj: NewScanEdgeRequest(),
+  }
+}
+
+func (p ScanEdgeRequestBuilder) Emit() *ScanEdgeRequest{
+  return &ScanEdgeRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    ReturnColumns: p.obj.ReturnColumns,
+    Limit: p.obj.Limit,
+    StartTime: p.obj.StartTime,
+    EndTime: p.obj.EndTime,
+    Filter: p.obj.Filter,
+    OnlyLatestVersion: p.obj.OnlyLatestVersion,
+    EnableReadFromFollower: p.obj.EnableReadFromFollower,
+    Common: p.obj.Common,
+  }
+}
+
+func (s *ScanEdgeRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *ScanEdgeRequestBuilder {
+  s.obj.SpaceID = spaceID
+  return s
+}
+
+func (s *ScanEdgeRequestBuilder) Parts(parts map[nebula0.PartitionID]*ScanCursor) *ScanEdgeRequestBuilder {
+  s.obj.Parts = parts
+  return s
+}
+
+func (s *ScanEdgeRequestBuilder) ReturnColumns(returnColumns []*EdgeProp) *ScanEdgeRequestBuilder {
+  s.obj.ReturnColumns = returnColumns
+  return s
+}
+
+func (s *ScanEdgeRequestBuilder) Limit(limit int64) *ScanEdgeRequestBuilder {
+  s.obj.Limit = limit
+  return s
+}
+
+func (s *ScanEdgeRequestBuilder) StartTime(startTime *int64) *ScanEdgeRequestBuilder {
+  s.obj.StartTime = startTime
+  return s
+}
+
+func (s *ScanEdgeRequestBuilder) EndTime(endTime *int64) *ScanEdgeRequestBuilder {
+  s.obj.EndTime = endTime
+  return s
+}
+
+func (s *ScanEdgeRequestBuilder) Filter(filter []byte) *ScanEdgeRequestBuilder {
+  s.obj.Filter = filter
+  return s
+}
+
+func (s *ScanEdgeRequestBuilder) OnlyLatestVersion(onlyLatestVersion bool) *ScanEdgeRequestBuilder {
+  s.obj.OnlyLatestVersion = onlyLatestVersion
+  return s
+}
+
+func (s *ScanEdgeRequestBuilder) EnableReadFromFollower(enableReadFromFollower bool) *ScanEdgeRequestBuilder {
+  s.obj.EnableReadFromFollower = enableReadFromFollower
+  return s
+}
+
+func (s *ScanEdgeRequestBuilder) Common(common *RequestCommon) *ScanEdgeRequestBuilder {
+  s.obj.Common = common
+  return s
+}
+
+func (s *ScanEdgeRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *ScanEdgeRequest {
+  s.SpaceID = spaceID
+  return s
+}
+
+func (s *ScanEdgeRequest) SetParts(parts map[nebula0.PartitionID]*ScanCursor) *ScanEdgeRequest {
+  s.Parts = parts
+  return s
+}
+
+func (s *ScanEdgeRequest) SetReturnColumns(returnColumns []*EdgeProp) *ScanEdgeRequest {
+  s.ReturnColumns = returnColumns
+  return s
+}
+
+func (s *ScanEdgeRequest) SetLimit(limit int64) *ScanEdgeRequest {
+  s.Limit = limit
+  return s
+}
+
+func (s *ScanEdgeRequest) SetStartTime(startTime *int64) *ScanEdgeRequest {
+  s.StartTime = startTime
+  return s
+}
+
+func (s *ScanEdgeRequest) SetEndTime(endTime *int64) *ScanEdgeRequest {
+  s.EndTime = endTime
+  return s
+}
+
+func (s *ScanEdgeRequest) SetFilter(filter []byte) *ScanEdgeRequest {
+  s.Filter = filter
+  return s
+}
+
+func (s *ScanEdgeRequest) SetOnlyLatestVersion(onlyLatestVersion bool) *ScanEdgeRequest {
+  s.OnlyLatestVersion = onlyLatestVersion
+  return s
+}
+
+func (s *ScanEdgeRequest) SetEnableReadFromFollower(enableReadFromFollower bool) *ScanEdgeRequest {
+  s.EnableReadFromFollower = enableReadFromFollower
+  return s
+}
+
+func (s *ScanEdgeRequest) SetCommon(common *RequestCommon) *ScanEdgeRequest {
+  s.Common = common
+  return s
+}
+
 func (p *ScanEdgeRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -8968,11 +11269,11 @@ func (p *ScanEdgeRequest) Read(iprot thrift.Protocol) error {
 
 func (p *ScanEdgeRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -8984,13 +11285,13 @@ func (p *ScanEdgeRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID]*ScanCursor, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key59 nebula0.PartitionID
+    var _key59 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key59 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key59 = temp
+    }
     _val60 := NewScanCursor()
     if err := _val60.Read(iprot); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val60), err)
@@ -9025,55 +11326,55 @@ func (p *ScanEdgeRequest)  ReadField3(iprot thrift.Protocol) error {
 
 func (p *ScanEdgeRequest)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  p.Limit = v
-}
+    return thrift.PrependError("error reading field 4: ", err)
+  } else {
+    p.Limit = v
+  }
   return nil
 }
 
 func (p *ScanEdgeRequest)  ReadField5(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 5: ", err)
-} else {
-  p.StartTime = &v
-}
+    return thrift.PrependError("error reading field 5: ", err)
+  } else {
+    p.StartTime = &v
+  }
   return nil
 }
 
 func (p *ScanEdgeRequest)  ReadField6(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 6: ", err)
-} else {
-  p.EndTime = &v
-}
+    return thrift.PrependError("error reading field 6: ", err)
+  } else {
+    p.EndTime = &v
+  }
   return nil
 }
 
 func (p *ScanEdgeRequest)  ReadField7(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 7: ", err)
-} else {
-  p.Filter = v
-}
+    return thrift.PrependError("error reading field 7: ", err)
+  } else {
+    p.Filter = v
+  }
   return nil
 }
 
 func (p *ScanEdgeRequest)  ReadField8(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 8: ", err)
-} else {
-  p.OnlyLatestVersion = v
-}
+    return thrift.PrependError("error reading field 8: ", err)
+  } else {
+    p.OnlyLatestVersion = v
+  }
   return nil
 }
 
 func (p *ScanEdgeRequest)  ReadField9(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 9: ", err)
-} else {
-  p.EnableReadFromFollower = v
-}
+    return thrift.PrependError("error reading field 9: ", err)
+  } else {
+    p.EnableReadFromFollower = v
+  }
   return nil
 }
 
@@ -9273,7 +11574,7 @@ func (p *ScanEdgeRequest) String() string {
 //  - Cursors
 type ScanResponse struct {
   Result_ *ResponseCommon `thrift:"result,1,required" db:"result" json:"result"`
-  Props *nebula0.DataSet `thrift:"props,2" db:"props" json:"props,omitempty"`
+  Props *nebula0.DataSet `thrift:"props,2,optional" db:"props" json:"props,omitempty"`
   Cursors map[nebula0.PartitionID]*ScanCursor `thrift:"cursors,3" db:"cursors" json:"cursors"`
 }
 
@@ -9307,6 +11608,54 @@ func (p *ScanResponse) IsSetResult_() bool {
 
 func (p *ScanResponse) IsSetProps() bool {
   return p != nil && p.Props != nil
+}
+
+type ScanResponseBuilder struct {
+  obj *ScanResponse
+}
+
+func NewScanResponseBuilder() *ScanResponseBuilder{
+  return &ScanResponseBuilder{
+    obj: NewScanResponse(),
+  }
+}
+
+func (p ScanResponseBuilder) Emit() *ScanResponse{
+  return &ScanResponse{
+    Result_: p.obj.Result_,
+    Props: p.obj.Props,
+    Cursors: p.obj.Cursors,
+  }
+}
+
+func (s *ScanResponseBuilder) Result_(result *ResponseCommon) *ScanResponseBuilder {
+  s.obj.Result_ = result
+  return s
+}
+
+func (s *ScanResponseBuilder) Props(props *nebula0.DataSet) *ScanResponseBuilder {
+  s.obj.Props = props
+  return s
+}
+
+func (s *ScanResponseBuilder) Cursors(cursors map[nebula0.PartitionID]*ScanCursor) *ScanResponseBuilder {
+  s.obj.Cursors = cursors
+  return s
+}
+
+func (s *ScanResponse) SetResult_(result *ResponseCommon) *ScanResponse {
+  s.Result_ = result
+  return s
+}
+
+func (s *ScanResponse) SetProps(props *nebula0.DataSet) *ScanResponse {
+  s.Props = props
+  return s
+}
+
+func (s *ScanResponse) SetCursors(cursors map[nebula0.PartitionID]*ScanCursor) *ScanResponse {
+  s.Cursors = cursors
+  return s
 }
 
 func (p *ScanResponse) Read(iprot thrift.Protocol) error {
@@ -9378,13 +11727,13 @@ func (p *ScanResponse)  ReadField3(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID]*ScanCursor, size)
   p.Cursors =  tMap
   for i := 0; i < size; i ++ {
-var _key62 nebula0.PartitionID
+    var _key62 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key62 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key62 = temp
+    }
     _val63 := NewScanCursor()
     if err := _val63.Read(iprot); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val63), err)
@@ -9482,8 +11831,8 @@ func (p *ScanResponse) String() string {
 //  - TaskSpecificParas
 type TaskPara struct {
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
-  Parts []nebula0.PartitionID `thrift:"parts,2" db:"parts" json:"parts,omitempty"`
-  TaskSpecificParas [][]byte `thrift:"task_specific_paras,3" db:"task_specific_paras" json:"task_specific_paras,omitempty"`
+  Parts []nebula0.PartitionID `thrift:"parts,2,optional" db:"parts" json:"parts,omitempty"`
+  TaskSpecificParas [][]byte `thrift:"task_specific_paras,3,optional" db:"task_specific_paras" json:"task_specific_paras,omitempty"`
 }
 
 func NewTaskPara() *TaskPara {
@@ -9510,6 +11859,54 @@ func (p *TaskPara) IsSetParts() bool {
 
 func (p *TaskPara) IsSetTaskSpecificParas() bool {
   return p != nil && p.TaskSpecificParas != nil
+}
+
+type TaskParaBuilder struct {
+  obj *TaskPara
+}
+
+func NewTaskParaBuilder() *TaskParaBuilder{
+  return &TaskParaBuilder{
+    obj: NewTaskPara(),
+  }
+}
+
+func (p TaskParaBuilder) Emit() *TaskPara{
+  return &TaskPara{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    TaskSpecificParas: p.obj.TaskSpecificParas,
+  }
+}
+
+func (t *TaskParaBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *TaskParaBuilder {
+  t.obj.SpaceID = spaceID
+  return t
+}
+
+func (t *TaskParaBuilder) Parts(parts []nebula0.PartitionID) *TaskParaBuilder {
+  t.obj.Parts = parts
+  return t
+}
+
+func (t *TaskParaBuilder) TaskSpecificParas(taskSpecificParas [][]byte) *TaskParaBuilder {
+  t.obj.TaskSpecificParas = taskSpecificParas
+  return t
+}
+
+func (t *TaskPara) SetSpaceID(spaceID nebula0.GraphSpaceID) *TaskPara {
+  t.SpaceID = spaceID
+  return t
+}
+
+func (t *TaskPara) SetParts(parts []nebula0.PartitionID) *TaskPara {
+  t.Parts = parts
+  return t
+}
+
+func (t *TaskPara) SetTaskSpecificParas(taskSpecificParas [][]byte) *TaskPara {
+  t.TaskSpecificParas = taskSpecificParas
+  return t
 }
 
 func (p *TaskPara) Read(iprot thrift.Protocol) error {
@@ -9554,11 +11951,11 @@ func (p *TaskPara) Read(iprot thrift.Protocol) error {
 
 func (p *TaskPara)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -9570,13 +11967,13 @@ func (p *TaskPara)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([]nebula0.PartitionID, 0, size)
   p.Parts =  tSlice
   for i := 0; i < size; i ++ {
-var _elem64 nebula0.PartitionID
+    var _elem64 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _elem64 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _elem64 = temp
+    }
     p.Parts = append(p.Parts, _elem64)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -9593,12 +11990,12 @@ func (p *TaskPara)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.TaskSpecificParas =  tSlice
   for i := 0; i < size; i ++ {
-var _elem65 []byte
+    var _elem65 []byte
     if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _elem65 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _elem65 = v
+    }
     p.TaskSpecificParas = append(p.TaskSpecificParas, _elem65)
   }
   if err := iprot.ReadListEnd(); err != nil {
@@ -9707,6 +12104,54 @@ func (p *KVGetRequest) GetParts() map[nebula0.PartitionID][][]byte {
 func (p *KVGetRequest) GetReturnPartly() bool {
   return p.ReturnPartly
 }
+type KVGetRequestBuilder struct {
+  obj *KVGetRequest
+}
+
+func NewKVGetRequestBuilder() *KVGetRequestBuilder{
+  return &KVGetRequestBuilder{
+    obj: NewKVGetRequest(),
+  }
+}
+
+func (p KVGetRequestBuilder) Emit() *KVGetRequest{
+  return &KVGetRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    ReturnPartly: p.obj.ReturnPartly,
+  }
+}
+
+func (k *KVGetRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *KVGetRequestBuilder {
+  k.obj.SpaceID = spaceID
+  return k
+}
+
+func (k *KVGetRequestBuilder) Parts(parts map[nebula0.PartitionID][][]byte) *KVGetRequestBuilder {
+  k.obj.Parts = parts
+  return k
+}
+
+func (k *KVGetRequestBuilder) ReturnPartly(returnPartly bool) *KVGetRequestBuilder {
+  k.obj.ReturnPartly = returnPartly
+  return k
+}
+
+func (k *KVGetRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *KVGetRequest {
+  k.SpaceID = spaceID
+  return k
+}
+
+func (k *KVGetRequest) SetParts(parts map[nebula0.PartitionID][][]byte) *KVGetRequest {
+  k.Parts = parts
+  return k
+}
+
+func (k *KVGetRequest) SetReturnPartly(returnPartly bool) *KVGetRequest {
+  k.ReturnPartly = returnPartly
+  return k
+}
+
 func (p *KVGetRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -9749,11 +12194,11 @@ func (p *KVGetRequest) Read(iprot thrift.Protocol) error {
 
 func (p *KVGetRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -9765,13 +12210,13 @@ func (p *KVGetRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][][]byte, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key66 nebula0.PartitionID
+    var _key66 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key66 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key66 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
@@ -9779,12 +12224,12 @@ var _key66 nebula0.PartitionID
     tSlice := make([][]byte, 0, size)
     _val67 :=  tSlice
     for i := 0; i < size; i ++ {
-var _elem68 []byte
+      var _elem68 []byte
       if v, err := iprot.ReadBinary(); err != nil {
-      return thrift.PrependError("error reading field 0: ", err)
-} else {
-      _elem68 = v
-}
+        return thrift.PrependError("error reading field 0: ", err)
+      } else {
+        _elem68 = v
+      }
       _val67 = append(_val67, _elem68)
     }
     if err := iprot.ReadListEnd(); err != nil {
@@ -9800,10 +12245,10 @@ var _elem68 []byte
 
 func (p *KVGetRequest)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  p.ReturnPartly = v
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.ReturnPartly = v
+  }
   return nil
 }
 
@@ -9908,6 +12353,43 @@ func (p *KVGetResponse) IsSetResult_() bool {
   return p != nil && p.Result_ != nil
 }
 
+type KVGetResponseBuilder struct {
+  obj *KVGetResponse
+}
+
+func NewKVGetResponseBuilder() *KVGetResponseBuilder{
+  return &KVGetResponseBuilder{
+    obj: NewKVGetResponse(),
+  }
+}
+
+func (p KVGetResponseBuilder) Emit() *KVGetResponse{
+  return &KVGetResponse{
+    Result_: p.obj.Result_,
+    KeyValues: p.obj.KeyValues,
+  }
+}
+
+func (k *KVGetResponseBuilder) Result_(result *ResponseCommon) *KVGetResponseBuilder {
+  k.obj.Result_ = result
+  return k
+}
+
+func (k *KVGetResponseBuilder) KeyValues(keyValues map[string][]byte) *KVGetResponseBuilder {
+  k.obj.KeyValues = keyValues
+  return k
+}
+
+func (k *KVGetResponse) SetResult_(result *ResponseCommon) *KVGetResponse {
+  k.Result_ = result
+  return k
+}
+
+func (k *KVGetResponse) SetKeyValues(keyValues map[string][]byte) *KVGetResponse {
+  k.KeyValues = keyValues
+  return k
+}
+
 func (p *KVGetResponse) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -9965,18 +12447,18 @@ func (p *KVGetResponse)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[string][]byte, size)
   p.KeyValues =  tMap
   for i := 0; i < size; i ++ {
-var _key69 string
+    var _key69 string
     if v, err := iprot.ReadString(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _key69 = v
-}
-var _val70 []byte
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _key69 = v
+    }
+    var _val70 []byte
     if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _val70 = v
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _val70 = v
+    }
     p.KeyValues[_key69] = _val70
   }
   if err := iprot.ReadMapEnd(); err != nil {
@@ -10063,6 +12545,43 @@ func (p *KVPutRequest) GetSpaceID() nebula0.GraphSpaceID {
 func (p *KVPutRequest) GetParts() map[nebula0.PartitionID][]*nebula0.KeyValue {
   return p.Parts
 }
+type KVPutRequestBuilder struct {
+  obj *KVPutRequest
+}
+
+func NewKVPutRequestBuilder() *KVPutRequestBuilder{
+  return &KVPutRequestBuilder{
+    obj: NewKVPutRequest(),
+  }
+}
+
+func (p KVPutRequestBuilder) Emit() *KVPutRequest{
+  return &KVPutRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+  }
+}
+
+func (k *KVPutRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *KVPutRequestBuilder {
+  k.obj.SpaceID = spaceID
+  return k
+}
+
+func (k *KVPutRequestBuilder) Parts(parts map[nebula0.PartitionID][]*nebula0.KeyValue) *KVPutRequestBuilder {
+  k.obj.Parts = parts
+  return k
+}
+
+func (k *KVPutRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *KVPutRequest {
+  k.SpaceID = spaceID
+  return k
+}
+
+func (k *KVPutRequest) SetParts(parts map[nebula0.PartitionID][]*nebula0.KeyValue) *KVPutRequest {
+  k.Parts = parts
+  return k
+}
+
 func (p *KVPutRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -10101,11 +12620,11 @@ func (p *KVPutRequest) Read(iprot thrift.Protocol) error {
 
 func (p *KVPutRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -10117,13 +12636,13 @@ func (p *KVPutRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][]*nebula0.KeyValue, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key71 nebula0.PartitionID
+    var _key71 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key71 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key71 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
@@ -10229,6 +12748,43 @@ func (p *KVRemoveRequest) GetSpaceID() nebula0.GraphSpaceID {
 func (p *KVRemoveRequest) GetParts() map[nebula0.PartitionID][][]byte {
   return p.Parts
 }
+type KVRemoveRequestBuilder struct {
+  obj *KVRemoveRequest
+}
+
+func NewKVRemoveRequestBuilder() *KVRemoveRequestBuilder{
+  return &KVRemoveRequestBuilder{
+    obj: NewKVRemoveRequest(),
+  }
+}
+
+func (p KVRemoveRequestBuilder) Emit() *KVRemoveRequest{
+  return &KVRemoveRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+  }
+}
+
+func (k *KVRemoveRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *KVRemoveRequestBuilder {
+  k.obj.SpaceID = spaceID
+  return k
+}
+
+func (k *KVRemoveRequestBuilder) Parts(parts map[nebula0.PartitionID][][]byte) *KVRemoveRequestBuilder {
+  k.obj.Parts = parts
+  return k
+}
+
+func (k *KVRemoveRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *KVRemoveRequest {
+  k.SpaceID = spaceID
+  return k
+}
+
+func (k *KVRemoveRequest) SetParts(parts map[nebula0.PartitionID][][]byte) *KVRemoveRequest {
+  k.Parts = parts
+  return k
+}
+
 func (p *KVRemoveRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -10267,11 +12823,11 @@ func (p *KVRemoveRequest) Read(iprot thrift.Protocol) error {
 
 func (p *KVRemoveRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -10283,13 +12839,13 @@ func (p *KVRemoveRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][][]byte, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key74 nebula0.PartitionID
+    var _key74 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key74 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key74 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
@@ -10297,12 +12853,12 @@ var _key74 nebula0.PartitionID
     tSlice := make([][]byte, 0, size)
     _val75 :=  tSlice
     for i := 0; i < size; i ++ {
-var _elem76 []byte
+      var _elem76 []byte
       if v, err := iprot.ReadBinary(); err != nil {
-      return thrift.PrependError("error reading field 0: ", err)
-} else {
-      _elem76 = v
-}
+        return thrift.PrependError("error reading field 0: ", err)
+      } else {
+        _elem76 = v
+      }
       _val75 = append(_val75, _elem76)
     }
     if err := iprot.ReadListEnd(); err != nil {
@@ -10381,7 +12937,7 @@ func (p *KVRemoveRequest) String() string {
 //  - Stats
 type AdminExecResp struct {
   Result_ *ResponseCommon `thrift:"result,1,required" db:"result" json:"result"`
-  Stats *meta1.StatsItem `thrift:"stats,2" db:"stats" json:"stats,omitempty"`
+  Stats *meta1.StatsItem `thrift:"stats,2,optional" db:"stats" json:"stats,omitempty"`
 }
 
 func NewAdminExecResp() *AdminExecResp {
@@ -10410,6 +12966,43 @@ func (p *AdminExecResp) IsSetResult_() bool {
 
 func (p *AdminExecResp) IsSetStats() bool {
   return p != nil && p.Stats != nil
+}
+
+type AdminExecRespBuilder struct {
+  obj *AdminExecResp
+}
+
+func NewAdminExecRespBuilder() *AdminExecRespBuilder{
+  return &AdminExecRespBuilder{
+    obj: NewAdminExecResp(),
+  }
+}
+
+func (p AdminExecRespBuilder) Emit() *AdminExecResp{
+  return &AdminExecResp{
+    Result_: p.obj.Result_,
+    Stats: p.obj.Stats,
+  }
+}
+
+func (a *AdminExecRespBuilder) Result_(result *ResponseCommon) *AdminExecRespBuilder {
+  a.obj.Result_ = result
+  return a
+}
+
+func (a *AdminExecRespBuilder) Stats(stats *meta1.StatsItem) *AdminExecRespBuilder {
+  a.obj.Stats = stats
+  return a
+}
+
+func (a *AdminExecResp) SetResult_(result *ResponseCommon) *AdminExecResp {
+  a.Result_ = result
+  return a
+}
+
+func (a *AdminExecResp) SetStats(stats *meta1.StatsItem) *AdminExecResp {
+  a.Stats = stats
+  return a
 }
 
 func (p *AdminExecResp) Read(iprot thrift.Protocol) error {
@@ -10560,6 +13153,54 @@ func (p *TransLeaderReq) IsSetNewLeader_() bool {
   return p != nil && p.NewLeader_ != nil
 }
 
+type TransLeaderReqBuilder struct {
+  obj *TransLeaderReq
+}
+
+func NewTransLeaderReqBuilder() *TransLeaderReqBuilder{
+  return &TransLeaderReqBuilder{
+    obj: NewTransLeaderReq(),
+  }
+}
+
+func (p TransLeaderReqBuilder) Emit() *TransLeaderReq{
+  return &TransLeaderReq{
+    SpaceID: p.obj.SpaceID,
+    PartID: p.obj.PartID,
+    NewLeader_: p.obj.NewLeader_,
+  }
+}
+
+func (t *TransLeaderReqBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *TransLeaderReqBuilder {
+  t.obj.SpaceID = spaceID
+  return t
+}
+
+func (t *TransLeaderReqBuilder) PartID(partID nebula0.PartitionID) *TransLeaderReqBuilder {
+  t.obj.PartID = partID
+  return t
+}
+
+func (t *TransLeaderReqBuilder) NewLeader_(newLeader *nebula0.HostAddr) *TransLeaderReqBuilder {
+  t.obj.NewLeader_ = newLeader
+  return t
+}
+
+func (t *TransLeaderReq) SetSpaceID(spaceID nebula0.GraphSpaceID) *TransLeaderReq {
+  t.SpaceID = spaceID
+  return t
+}
+
+func (t *TransLeaderReq) SetPartID(partID nebula0.PartitionID) *TransLeaderReq {
+  t.PartID = partID
+  return t
+}
+
+func (t *TransLeaderReq) SetNewLeader_(newLeader *nebula0.HostAddr) *TransLeaderReq {
+  t.NewLeader_ = newLeader
+  return t
+}
+
 func (p *TransLeaderReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -10602,21 +13243,21 @@ func (p *TransLeaderReq) Read(iprot thrift.Protocol) error {
 
 func (p *TransLeaderReq)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
 func (p *TransLeaderReq)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.PartitionID(v)
-  p.PartID = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.PartitionID(v)
+    p.PartID = temp
+  }
   return nil
 }
 
@@ -10720,6 +13361,65 @@ func (p *AddPartReq) GetAsLearner() bool {
 func (p *AddPartReq) GetPeers() []*nebula0.HostAddr {
   return p.Peers
 }
+type AddPartReqBuilder struct {
+  obj *AddPartReq
+}
+
+func NewAddPartReqBuilder() *AddPartReqBuilder{
+  return &AddPartReqBuilder{
+    obj: NewAddPartReq(),
+  }
+}
+
+func (p AddPartReqBuilder) Emit() *AddPartReq{
+  return &AddPartReq{
+    SpaceID: p.obj.SpaceID,
+    PartID: p.obj.PartID,
+    AsLearner: p.obj.AsLearner,
+    Peers: p.obj.Peers,
+  }
+}
+
+func (a *AddPartReqBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *AddPartReqBuilder {
+  a.obj.SpaceID = spaceID
+  return a
+}
+
+func (a *AddPartReqBuilder) PartID(partID nebula0.PartitionID) *AddPartReqBuilder {
+  a.obj.PartID = partID
+  return a
+}
+
+func (a *AddPartReqBuilder) AsLearner(asLearner bool) *AddPartReqBuilder {
+  a.obj.AsLearner = asLearner
+  return a
+}
+
+func (a *AddPartReqBuilder) Peers(peers []*nebula0.HostAddr) *AddPartReqBuilder {
+  a.obj.Peers = peers
+  return a
+}
+
+func (a *AddPartReq) SetSpaceID(spaceID nebula0.GraphSpaceID) *AddPartReq {
+  a.SpaceID = spaceID
+  return a
+}
+
+func (a *AddPartReq) SetPartID(partID nebula0.PartitionID) *AddPartReq {
+  a.PartID = partID
+  return a
+}
+
+func (a *AddPartReq) SetAsLearner(asLearner bool) *AddPartReq {
+  a.AsLearner = asLearner
+  return a
+}
+
+func (a *AddPartReq) SetPeers(peers []*nebula0.HostAddr) *AddPartReq {
+  a.Peers = peers
+  return a
+}
+
 func (p *AddPartReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -10766,30 +13466,30 @@ func (p *AddPartReq) Read(iprot thrift.Protocol) error {
 
 func (p *AddPartReq)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
 func (p *AddPartReq)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.PartitionID(v)
-  p.PartID = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.PartitionID(v)
+    p.PartID = temp
+  }
   return nil
 }
 
 func (p *AddPartReq)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  p.AsLearner = v
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.AsLearner = v
+  }
   return nil
 }
 
@@ -10923,6 +13623,54 @@ func (p *AddLearnerReq) IsSetLearner() bool {
   return p != nil && p.Learner != nil
 }
 
+type AddLearnerReqBuilder struct {
+  obj *AddLearnerReq
+}
+
+func NewAddLearnerReqBuilder() *AddLearnerReqBuilder{
+  return &AddLearnerReqBuilder{
+    obj: NewAddLearnerReq(),
+  }
+}
+
+func (p AddLearnerReqBuilder) Emit() *AddLearnerReq{
+  return &AddLearnerReq{
+    SpaceID: p.obj.SpaceID,
+    PartID: p.obj.PartID,
+    Learner: p.obj.Learner,
+  }
+}
+
+func (a *AddLearnerReqBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *AddLearnerReqBuilder {
+  a.obj.SpaceID = spaceID
+  return a
+}
+
+func (a *AddLearnerReqBuilder) PartID(partID nebula0.PartitionID) *AddLearnerReqBuilder {
+  a.obj.PartID = partID
+  return a
+}
+
+func (a *AddLearnerReqBuilder) Learner(learner *nebula0.HostAddr) *AddLearnerReqBuilder {
+  a.obj.Learner = learner
+  return a
+}
+
+func (a *AddLearnerReq) SetSpaceID(spaceID nebula0.GraphSpaceID) *AddLearnerReq {
+  a.SpaceID = spaceID
+  return a
+}
+
+func (a *AddLearnerReq) SetPartID(partID nebula0.PartitionID) *AddLearnerReq {
+  a.PartID = partID
+  return a
+}
+
+func (a *AddLearnerReq) SetLearner(learner *nebula0.HostAddr) *AddLearnerReq {
+  a.Learner = learner
+  return a
+}
+
 func (p *AddLearnerReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -10965,21 +13713,21 @@ func (p *AddLearnerReq) Read(iprot thrift.Protocol) error {
 
 func (p *AddLearnerReq)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
 func (p *AddLearnerReq)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.PartitionID(v)
-  p.PartID = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.PartitionID(v)
+    p.PartID = temp
+  }
   return nil
 }
 
@@ -11071,6 +13819,43 @@ func (p *RemovePartReq) GetSpaceID() nebula0.GraphSpaceID {
 func (p *RemovePartReq) GetPartID() nebula0.PartitionID {
   return p.PartID
 }
+type RemovePartReqBuilder struct {
+  obj *RemovePartReq
+}
+
+func NewRemovePartReqBuilder() *RemovePartReqBuilder{
+  return &RemovePartReqBuilder{
+    obj: NewRemovePartReq(),
+  }
+}
+
+func (p RemovePartReqBuilder) Emit() *RemovePartReq{
+  return &RemovePartReq{
+    SpaceID: p.obj.SpaceID,
+    PartID: p.obj.PartID,
+  }
+}
+
+func (r *RemovePartReqBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *RemovePartReqBuilder {
+  r.obj.SpaceID = spaceID
+  return r
+}
+
+func (r *RemovePartReqBuilder) PartID(partID nebula0.PartitionID) *RemovePartReqBuilder {
+  r.obj.PartID = partID
+  return r
+}
+
+func (r *RemovePartReq) SetSpaceID(spaceID nebula0.GraphSpaceID) *RemovePartReq {
+  r.SpaceID = spaceID
+  return r
+}
+
+func (r *RemovePartReq) SetPartID(partID nebula0.PartitionID) *RemovePartReq {
+  r.PartID = partID
+  return r
+}
+
 func (p *RemovePartReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -11109,21 +13894,21 @@ func (p *RemovePartReq) Read(iprot thrift.Protocol) error {
 
 func (p *RemovePartReq)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
 func (p *RemovePartReq)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.PartitionID(v)
-  p.PartID = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.PartitionID(v)
+    p.PartID = temp
+  }
   return nil
 }
 
@@ -11210,6 +13995,65 @@ func (p *MemberChangeReq) IsSetPeer() bool {
   return p != nil && p.Peer != nil
 }
 
+type MemberChangeReqBuilder struct {
+  obj *MemberChangeReq
+}
+
+func NewMemberChangeReqBuilder() *MemberChangeReqBuilder{
+  return &MemberChangeReqBuilder{
+    obj: NewMemberChangeReq(),
+  }
+}
+
+func (p MemberChangeReqBuilder) Emit() *MemberChangeReq{
+  return &MemberChangeReq{
+    SpaceID: p.obj.SpaceID,
+    PartID: p.obj.PartID,
+    Peer: p.obj.Peer,
+    Add: p.obj.Add,
+  }
+}
+
+func (m *MemberChangeReqBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *MemberChangeReqBuilder {
+  m.obj.SpaceID = spaceID
+  return m
+}
+
+func (m *MemberChangeReqBuilder) PartID(partID nebula0.PartitionID) *MemberChangeReqBuilder {
+  m.obj.PartID = partID
+  return m
+}
+
+func (m *MemberChangeReqBuilder) Peer(peer *nebula0.HostAddr) *MemberChangeReqBuilder {
+  m.obj.Peer = peer
+  return m
+}
+
+func (m *MemberChangeReqBuilder) Add(add bool) *MemberChangeReqBuilder {
+  m.obj.Add = add
+  return m
+}
+
+func (m *MemberChangeReq) SetSpaceID(spaceID nebula0.GraphSpaceID) *MemberChangeReq {
+  m.SpaceID = spaceID
+  return m
+}
+
+func (m *MemberChangeReq) SetPartID(partID nebula0.PartitionID) *MemberChangeReq {
+  m.PartID = partID
+  return m
+}
+
+func (m *MemberChangeReq) SetPeer(peer *nebula0.HostAddr) *MemberChangeReq {
+  m.Peer = peer
+  return m
+}
+
+func (m *MemberChangeReq) SetAdd(add bool) *MemberChangeReq {
+  m.Add = add
+  return m
+}
+
 func (p *MemberChangeReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -11256,21 +14100,21 @@ func (p *MemberChangeReq) Read(iprot thrift.Protocol) error {
 
 func (p *MemberChangeReq)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
 func (p *MemberChangeReq)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.PartitionID(v)
-  p.PartID = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.PartitionID(v)
+    p.PartID = temp
+  }
   return nil
 }
 
@@ -11284,10 +14128,10 @@ func (p *MemberChangeReq)  ReadField3(iprot thrift.Protocol) error {
 
 func (p *MemberChangeReq)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  p.Add = v
-}
+    return thrift.PrependError("error reading field 4: ", err)
+  } else {
+    p.Add = v
+  }
   return nil
 }
 
@@ -11398,6 +14242,54 @@ func (p *CatchUpDataReq) IsSetTarget() bool {
   return p != nil && p.Target != nil
 }
 
+type CatchUpDataReqBuilder struct {
+  obj *CatchUpDataReq
+}
+
+func NewCatchUpDataReqBuilder() *CatchUpDataReqBuilder{
+  return &CatchUpDataReqBuilder{
+    obj: NewCatchUpDataReq(),
+  }
+}
+
+func (p CatchUpDataReqBuilder) Emit() *CatchUpDataReq{
+  return &CatchUpDataReq{
+    SpaceID: p.obj.SpaceID,
+    PartID: p.obj.PartID,
+    Target: p.obj.Target,
+  }
+}
+
+func (c *CatchUpDataReqBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *CatchUpDataReqBuilder {
+  c.obj.SpaceID = spaceID
+  return c
+}
+
+func (c *CatchUpDataReqBuilder) PartID(partID nebula0.PartitionID) *CatchUpDataReqBuilder {
+  c.obj.PartID = partID
+  return c
+}
+
+func (c *CatchUpDataReqBuilder) Target(target *nebula0.HostAddr) *CatchUpDataReqBuilder {
+  c.obj.Target = target
+  return c
+}
+
+func (c *CatchUpDataReq) SetSpaceID(spaceID nebula0.GraphSpaceID) *CatchUpDataReq {
+  c.SpaceID = spaceID
+  return c
+}
+
+func (c *CatchUpDataReq) SetPartID(partID nebula0.PartitionID) *CatchUpDataReq {
+  c.PartID = partID
+  return c
+}
+
+func (c *CatchUpDataReq) SetTarget(target *nebula0.HostAddr) *CatchUpDataReq {
+  c.Target = target
+  return c
+}
+
 func (p *CatchUpDataReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -11440,21 +14332,21 @@ func (p *CatchUpDataReq) Read(iprot thrift.Protocol) error {
 
 func (p *CatchUpDataReq)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
 func (p *CatchUpDataReq)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.PartitionID(v)
-  p.PartID = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.PartitionID(v)
+    p.PartID = temp
+  }
   return nil
 }
 
@@ -11533,6 +14425,21 @@ func NewGetLeaderReq() *GetLeaderReq {
   return &GetLeaderReq{}
 }
 
+type GetLeaderReqBuilder struct {
+  obj *GetLeaderReq
+}
+
+func NewGetLeaderReqBuilder() *GetLeaderReqBuilder{
+  return &GetLeaderReqBuilder{
+    obj: NewGetLeaderReq(),
+  }
+}
+
+func (p GetLeaderReqBuilder) Emit() *GetLeaderReq{
+  return &GetLeaderReq{
+  }
+}
+
 func (p *GetLeaderReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -11577,10 +14484,10 @@ func (p *GetLeaderReq) String() string {
 }
 
 // Attributes:
-//  - SpaceID
+//  - SpaceIds
 //  - Name
 type CreateCPRequest struct {
-  SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
+  SpaceIds []nebula0.GraphSpaceID `thrift:"space_ids,1" db:"space_ids" json:"space_ids"`
   Name []byte `thrift:"name,2" db:"name" json:"name"`
 }
 
@@ -11589,13 +14496,50 @@ func NewCreateCPRequest() *CreateCPRequest {
 }
 
 
-func (p *CreateCPRequest) GetSpaceID() nebula0.GraphSpaceID {
-  return p.SpaceID
+func (p *CreateCPRequest) GetSpaceIds() []nebula0.GraphSpaceID {
+  return p.SpaceIds
 }
 
 func (p *CreateCPRequest) GetName() []byte {
   return p.Name
 }
+type CreateCPRequestBuilder struct {
+  obj *CreateCPRequest
+}
+
+func NewCreateCPRequestBuilder() *CreateCPRequestBuilder{
+  return &CreateCPRequestBuilder{
+    obj: NewCreateCPRequest(),
+  }
+}
+
+func (p CreateCPRequestBuilder) Emit() *CreateCPRequest{
+  return &CreateCPRequest{
+    SpaceIds: p.obj.SpaceIds,
+    Name: p.obj.Name,
+  }
+}
+
+func (c *CreateCPRequestBuilder) SpaceIds(spaceIds []nebula0.GraphSpaceID) *CreateCPRequestBuilder {
+  c.obj.SpaceIds = spaceIds
+  return c
+}
+
+func (c *CreateCPRequestBuilder) Name(name []byte) *CreateCPRequestBuilder {
+  c.obj.Name = name
+  return c
+}
+
+func (c *CreateCPRequest) SetSpaceIds(spaceIds []nebula0.GraphSpaceID) *CreateCPRequest {
+  c.SpaceIds = spaceIds
+  return c
+}
+
+func (c *CreateCPRequest) SetName(name []byte) *CreateCPRequest {
+  c.Name = name
+  return c
+}
+
 func (p *CreateCPRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -11633,21 +14577,34 @@ func (p *CreateCPRequest) Read(iprot thrift.Protocol) error {
 }
 
 func (p *CreateCPRequest)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]nebula0.GraphSpaceID, 0, size)
+  p.SpaceIds =  tSlice
+  for i := 0; i < size; i ++ {
+    var _elem78 nebula0.GraphSpaceID
+    if v, err := iprot.ReadI32(); err != nil {
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.GraphSpaceID(v)
+      _elem78 = temp
+    }
+    p.SpaceIds = append(p.SpaceIds, _elem78)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
   return nil
 }
 
 func (p *CreateCPRequest)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Name = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Name = v
+  }
   return nil
 }
 
@@ -11664,12 +14621,20 @@ func (p *CreateCPRequest) Write(oprot thrift.Protocol) error {
 }
 
 func (p *CreateCPRequest) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("space_id", thrift.I32, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_id: ", p), err) }
-  if err := oprot.WriteI32(int32(p.SpaceID)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.space_id (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("space_ids", thrift.LIST, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_ids: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.I32, len(p.SpaceIds)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.SpaceIds {
+    if err := oprot.WriteI32(int32(v)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space_id: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space_ids: ", p), err) }
   return err
 }
 
@@ -11688,16 +14653,16 @@ func (p *CreateCPRequest) String() string {
     return "<nil>"
   }
 
-  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  spaceIdsVal := fmt.Sprintf("%v", p.SpaceIds)
   nameVal := fmt.Sprintf("%v", p.Name)
-  return fmt.Sprintf("CreateCPRequest({SpaceID:%s Name:%s})", spaceIDVal, nameVal)
+  return fmt.Sprintf("CreateCPRequest({SpaceIds:%s Name:%s})", spaceIdsVal, nameVal)
 }
 
 // Attributes:
-//  - SpaceID
+//  - SpaceIds
 //  - Name
 type DropCPRequest struct {
-  SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
+  SpaceIds []nebula0.GraphSpaceID `thrift:"space_ids,1" db:"space_ids" json:"space_ids"`
   Name []byte `thrift:"name,2" db:"name" json:"name"`
 }
 
@@ -11706,13 +14671,50 @@ func NewDropCPRequest() *DropCPRequest {
 }
 
 
-func (p *DropCPRequest) GetSpaceID() nebula0.GraphSpaceID {
-  return p.SpaceID
+func (p *DropCPRequest) GetSpaceIds() []nebula0.GraphSpaceID {
+  return p.SpaceIds
 }
 
 func (p *DropCPRequest) GetName() []byte {
   return p.Name
 }
+type DropCPRequestBuilder struct {
+  obj *DropCPRequest
+}
+
+func NewDropCPRequestBuilder() *DropCPRequestBuilder{
+  return &DropCPRequestBuilder{
+    obj: NewDropCPRequest(),
+  }
+}
+
+func (p DropCPRequestBuilder) Emit() *DropCPRequest{
+  return &DropCPRequest{
+    SpaceIds: p.obj.SpaceIds,
+    Name: p.obj.Name,
+  }
+}
+
+func (d *DropCPRequestBuilder) SpaceIds(spaceIds []nebula0.GraphSpaceID) *DropCPRequestBuilder {
+  d.obj.SpaceIds = spaceIds
+  return d
+}
+
+func (d *DropCPRequestBuilder) Name(name []byte) *DropCPRequestBuilder {
+  d.obj.Name = name
+  return d
+}
+
+func (d *DropCPRequest) SetSpaceIds(spaceIds []nebula0.GraphSpaceID) *DropCPRequest {
+  d.SpaceIds = spaceIds
+  return d
+}
+
+func (d *DropCPRequest) SetName(name []byte) *DropCPRequest {
+  d.Name = name
+  return d
+}
+
 func (p *DropCPRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -11750,21 +14752,34 @@ func (p *DropCPRequest) Read(iprot thrift.Protocol) error {
 }
 
 func (p *DropCPRequest)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]nebula0.GraphSpaceID, 0, size)
+  p.SpaceIds =  tSlice
+  for i := 0; i < size; i ++ {
+    var _elem79 nebula0.GraphSpaceID
+    if v, err := iprot.ReadI32(); err != nil {
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.GraphSpaceID(v)
+      _elem79 = temp
+    }
+    p.SpaceIds = append(p.SpaceIds, _elem79)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
   return nil
 }
 
 func (p *DropCPRequest)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Name = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Name = v
+  }
   return nil
 }
 
@@ -11781,12 +14796,20 @@ func (p *DropCPRequest) Write(oprot thrift.Protocol) error {
 }
 
 func (p *DropCPRequest) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("space_id", thrift.I32, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_id: ", p), err) }
-  if err := oprot.WriteI32(int32(p.SpaceID)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.space_id (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("space_ids", thrift.LIST, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_ids: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.I32, len(p.SpaceIds)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.SpaceIds {
+    if err := oprot.WriteI32(int32(v)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space_id: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space_ids: ", p), err) }
   return err
 }
 
@@ -11805,16 +14828,16 @@ func (p *DropCPRequest) String() string {
     return "<nil>"
   }
 
-  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  spaceIdsVal := fmt.Sprintf("%v", p.SpaceIds)
   nameVal := fmt.Sprintf("%v", p.Name)
-  return fmt.Sprintf("DropCPRequest({SpaceID:%s Name:%s})", spaceIDVal, nameVal)
+  return fmt.Sprintf("DropCPRequest({SpaceIds:%s Name:%s})", spaceIdsVal, nameVal)
 }
 
 // Attributes:
-//  - SpaceID
+//  - SpaceIds
 //  - Sign
 type BlockingSignRequest struct {
-  SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
+  SpaceIds []nebula0.GraphSpaceID `thrift:"space_ids,1" db:"space_ids" json:"space_ids"`
   Sign EngineSignType `thrift:"sign,2,required" db:"sign" json:"sign"`
 }
 
@@ -11823,13 +14846,50 @@ func NewBlockingSignRequest() *BlockingSignRequest {
 }
 
 
-func (p *BlockingSignRequest) GetSpaceID() nebula0.GraphSpaceID {
-  return p.SpaceID
+func (p *BlockingSignRequest) GetSpaceIds() []nebula0.GraphSpaceID {
+  return p.SpaceIds
 }
 
 func (p *BlockingSignRequest) GetSign() EngineSignType {
   return p.Sign
 }
+type BlockingSignRequestBuilder struct {
+  obj *BlockingSignRequest
+}
+
+func NewBlockingSignRequestBuilder() *BlockingSignRequestBuilder{
+  return &BlockingSignRequestBuilder{
+    obj: NewBlockingSignRequest(),
+  }
+}
+
+func (p BlockingSignRequestBuilder) Emit() *BlockingSignRequest{
+  return &BlockingSignRequest{
+    SpaceIds: p.obj.SpaceIds,
+    Sign: p.obj.Sign,
+  }
+}
+
+func (b *BlockingSignRequestBuilder) SpaceIds(spaceIds []nebula0.GraphSpaceID) *BlockingSignRequestBuilder {
+  b.obj.SpaceIds = spaceIds
+  return b
+}
+
+func (b *BlockingSignRequestBuilder) Sign(sign EngineSignType) *BlockingSignRequestBuilder {
+  b.obj.Sign = sign
+  return b
+}
+
+func (b *BlockingSignRequest) SetSpaceIds(spaceIds []nebula0.GraphSpaceID) *BlockingSignRequest {
+  b.SpaceIds = spaceIds
+  return b
+}
+
+func (b *BlockingSignRequest) SetSign(sign EngineSignType) *BlockingSignRequest {
+  b.Sign = sign
+  return b
+}
+
 func (p *BlockingSignRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -11872,22 +14932,35 @@ func (p *BlockingSignRequest) Read(iprot thrift.Protocol) error {
 }
 
 func (p *BlockingSignRequest)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+  _, size, err := iprot.ReadListBegin()
+  if err != nil {
+    return thrift.PrependError("error reading list begin: ", err)
+  }
+  tSlice := make([]nebula0.GraphSpaceID, 0, size)
+  p.SpaceIds =  tSlice
+  for i := 0; i < size; i ++ {
+    var _elem80 nebula0.GraphSpaceID
+    if v, err := iprot.ReadI32(); err != nil {
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.GraphSpaceID(v)
+      _elem80 = temp
+    }
+    p.SpaceIds = append(p.SpaceIds, _elem80)
+  }
+  if err := iprot.ReadListEnd(); err != nil {
+    return thrift.PrependError("error reading list end: ", err)
+  }
   return nil
 }
 
 func (p *BlockingSignRequest)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := EngineSignType(v)
-  p.Sign = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := EngineSignType(v)
+    p.Sign = temp
+  }
   return nil
 }
 
@@ -11904,12 +14977,20 @@ func (p *BlockingSignRequest) Write(oprot thrift.Protocol) error {
 }
 
 func (p *BlockingSignRequest) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("space_id", thrift.I32, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_id: ", p), err) }
-  if err := oprot.WriteI32(int32(p.SpaceID)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.space_id (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("space_ids", thrift.LIST, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_ids: ", p), err) }
+  if err := oprot.WriteListBegin(thrift.I32, len(p.SpaceIds)); err != nil {
+    return thrift.PrependError("error writing list begin: ", err)
+  }
+  for _, v := range p.SpaceIds {
+    if err := oprot.WriteI32(int32(v)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+  }
+  if err := oprot.WriteListEnd(); err != nil {
+    return thrift.PrependError("error writing list end: ", err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space_id: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space_ids: ", p), err) }
   return err
 }
 
@@ -11928,9 +15009,9 @@ func (p *BlockingSignRequest) String() string {
     return "<nil>"
   }
 
-  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  spaceIdsVal := fmt.Sprintf("%v", p.SpaceIds)
   signVal := fmt.Sprintf("%v", p.Sign)
-  return fmt.Sprintf("BlockingSignRequest({SpaceID:%s Sign:%s})", spaceIDVal, signVal)
+  return fmt.Sprintf("BlockingSignRequest({SpaceIds:%s Sign:%s})", spaceIdsVal, signVal)
 }
 
 // Attributes:
@@ -11960,6 +15041,43 @@ func (p *GetLeaderPartsResp) GetLeaderParts() map[nebula0.GraphSpaceID][]nebula0
 }
 func (p *GetLeaderPartsResp) IsSetResult_() bool {
   return p != nil && p.Result_ != nil
+}
+
+type GetLeaderPartsRespBuilder struct {
+  obj *GetLeaderPartsResp
+}
+
+func NewGetLeaderPartsRespBuilder() *GetLeaderPartsRespBuilder{
+  return &GetLeaderPartsRespBuilder{
+    obj: NewGetLeaderPartsResp(),
+  }
+}
+
+func (p GetLeaderPartsRespBuilder) Emit() *GetLeaderPartsResp{
+  return &GetLeaderPartsResp{
+    Result_: p.obj.Result_,
+    LeaderParts: p.obj.LeaderParts,
+  }
+}
+
+func (g *GetLeaderPartsRespBuilder) Result_(result *ResponseCommon) *GetLeaderPartsRespBuilder {
+  g.obj.Result_ = result
+  return g
+}
+
+func (g *GetLeaderPartsRespBuilder) LeaderParts(leaderParts map[nebula0.GraphSpaceID][]nebula0.PartitionID) *GetLeaderPartsRespBuilder {
+  g.obj.LeaderParts = leaderParts
+  return g
+}
+
+func (g *GetLeaderPartsResp) SetResult_(result *ResponseCommon) *GetLeaderPartsResp {
+  g.Result_ = result
+  return g
+}
+
+func (g *GetLeaderPartsResp) SetLeaderParts(leaderParts map[nebula0.GraphSpaceID][]nebula0.PartitionID) *GetLeaderPartsResp {
+  g.LeaderParts = leaderParts
+  return g
 }
 
 func (p *GetLeaderPartsResp) Read(iprot thrift.Protocol) error {
@@ -12019,33 +15137,33 @@ func (p *GetLeaderPartsResp)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.GraphSpaceID][]nebula0.PartitionID, size)
   p.LeaderParts =  tMap
   for i := 0; i < size; i ++ {
-var _key78 nebula0.GraphSpaceID
+    var _key81 nebula0.GraphSpaceID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.GraphSpaceID(v)
-    _key78 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.GraphSpaceID(v)
+      _key81 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
     }
     tSlice := make([]nebula0.PartitionID, 0, size)
-    _val79 :=  tSlice
+    _val82 :=  tSlice
     for i := 0; i < size; i ++ {
-var _elem80 nebula0.PartitionID
+      var _elem83 nebula0.PartitionID
       if v, err := iprot.ReadI32(); err != nil {
-      return thrift.PrependError("error reading field 0: ", err)
-} else {
-      temp := nebula0.PartitionID(v)
-      _elem80 = temp
-}
-      _val79 = append(_val79, _elem80)
+        return thrift.PrependError("error reading field 0: ", err)
+      } else {
+        temp := nebula0.PartitionID(v)
+        _elem83 = temp
+      }
+      _val82 = append(_val82, _elem83)
     }
     if err := iprot.ReadListEnd(); err != nil {
       return thrift.PrependError("error reading list end: ", err)
     }
-    p.LeaderParts[_key78] = _val79
+    p.LeaderParts[_key81] = _val82
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -12145,6 +15263,54 @@ func (p *CheckPeersReq) GetPartID() nebula0.PartitionID {
 func (p *CheckPeersReq) GetPeers() []*nebula0.HostAddr {
   return p.Peers
 }
+type CheckPeersReqBuilder struct {
+  obj *CheckPeersReq
+}
+
+func NewCheckPeersReqBuilder() *CheckPeersReqBuilder{
+  return &CheckPeersReqBuilder{
+    obj: NewCheckPeersReq(),
+  }
+}
+
+func (p CheckPeersReqBuilder) Emit() *CheckPeersReq{
+  return &CheckPeersReq{
+    SpaceID: p.obj.SpaceID,
+    PartID: p.obj.PartID,
+    Peers: p.obj.Peers,
+  }
+}
+
+func (c *CheckPeersReqBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *CheckPeersReqBuilder {
+  c.obj.SpaceID = spaceID
+  return c
+}
+
+func (c *CheckPeersReqBuilder) PartID(partID nebula0.PartitionID) *CheckPeersReqBuilder {
+  c.obj.PartID = partID
+  return c
+}
+
+func (c *CheckPeersReqBuilder) Peers(peers []*nebula0.HostAddr) *CheckPeersReqBuilder {
+  c.obj.Peers = peers
+  return c
+}
+
+func (c *CheckPeersReq) SetSpaceID(spaceID nebula0.GraphSpaceID) *CheckPeersReq {
+  c.SpaceID = spaceID
+  return c
+}
+
+func (c *CheckPeersReq) SetPartID(partID nebula0.PartitionID) *CheckPeersReq {
+  c.PartID = partID
+  return c
+}
+
+func (c *CheckPeersReq) SetPeers(peers []*nebula0.HostAddr) *CheckPeersReq {
+  c.Peers = peers
+  return c
+}
+
 func (p *CheckPeersReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -12187,21 +15353,21 @@ func (p *CheckPeersReq) Read(iprot thrift.Protocol) error {
 
 func (p *CheckPeersReq)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
 func (p *CheckPeersReq)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  temp := nebula0.PartitionID(v)
-  p.PartID = temp
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    temp := nebula0.PartitionID(v)
+    p.PartID = temp
+  }
   return nil
 }
 
@@ -12213,11 +15379,11 @@ func (p *CheckPeersReq)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*nebula0.HostAddr, 0, size)
   p.Peers =  tSlice
   for i := 0; i < size; i ++ {
-    _elem81 := nebula0.NewHostAddr()
-    if err := _elem81.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem81), err)
+    _elem84 := nebula0.NewHostAddr()
+    if err := _elem84.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem84), err)
     }
-    p.Peers = append(p.Peers, _elem81)
+    p.Peers = append(p.Peers, _elem84)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -12314,6 +15480,54 @@ func (p *RebuildIndexRequest) GetParts() []nebula0.PartitionID {
 func (p *RebuildIndexRequest) GetIndexID() nebula0.IndexID {
   return p.IndexID
 }
+type RebuildIndexRequestBuilder struct {
+  obj *RebuildIndexRequest
+}
+
+func NewRebuildIndexRequestBuilder() *RebuildIndexRequestBuilder{
+  return &RebuildIndexRequestBuilder{
+    obj: NewRebuildIndexRequest(),
+  }
+}
+
+func (p RebuildIndexRequestBuilder) Emit() *RebuildIndexRequest{
+  return &RebuildIndexRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    IndexID: p.obj.IndexID,
+  }
+}
+
+func (r *RebuildIndexRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *RebuildIndexRequestBuilder {
+  r.obj.SpaceID = spaceID
+  return r
+}
+
+func (r *RebuildIndexRequestBuilder) Parts(parts []nebula0.PartitionID) *RebuildIndexRequestBuilder {
+  r.obj.Parts = parts
+  return r
+}
+
+func (r *RebuildIndexRequestBuilder) IndexID(indexID nebula0.IndexID) *RebuildIndexRequestBuilder {
+  r.obj.IndexID = indexID
+  return r
+}
+
+func (r *RebuildIndexRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *RebuildIndexRequest {
+  r.SpaceID = spaceID
+  return r
+}
+
+func (r *RebuildIndexRequest) SetParts(parts []nebula0.PartitionID) *RebuildIndexRequest {
+  r.Parts = parts
+  return r
+}
+
+func (r *RebuildIndexRequest) SetIndexID(indexID nebula0.IndexID) *RebuildIndexRequest {
+  r.IndexID = indexID
+  return r
+}
+
 func (p *RebuildIndexRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -12356,11 +15570,11 @@ func (p *RebuildIndexRequest) Read(iprot thrift.Protocol) error {
 
 func (p *RebuildIndexRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -12372,14 +15586,14 @@ func (p *RebuildIndexRequest)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([]nebula0.PartitionID, 0, size)
   p.Parts =  tSlice
   for i := 0; i < size; i ++ {
-var _elem82 nebula0.PartitionID
+    var _elem85 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _elem82 = temp
-}
-    p.Parts = append(p.Parts, _elem82)
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _elem85 = temp
+    }
+    p.Parts = append(p.Parts, _elem85)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -12389,11 +15603,11 @@ var _elem82 nebula0.PartitionID
 
 func (p *RebuildIndexRequest)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  temp := nebula0.IndexID(v)
-  p.IndexID = temp
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    temp := nebula0.IndexID(v)
+    p.IndexID = temp
+  }
   return nil
 }
 
@@ -12488,6 +15702,43 @@ func (p *CreateCPResp) IsSetResult_() bool {
   return p != nil && p.Result_ != nil
 }
 
+type CreateCPRespBuilder struct {
+  obj *CreateCPResp
+}
+
+func NewCreateCPRespBuilder() *CreateCPRespBuilder{
+  return &CreateCPRespBuilder{
+    obj: NewCreateCPResp(),
+  }
+}
+
+func (p CreateCPRespBuilder) Emit() *CreateCPResp{
+  return &CreateCPResp{
+    Result_: p.obj.Result_,
+    Info: p.obj.Info,
+  }
+}
+
+func (c *CreateCPRespBuilder) Result_(result *ResponseCommon) *CreateCPRespBuilder {
+  c.obj.Result_ = result
+  return c
+}
+
+func (c *CreateCPRespBuilder) Info(info []*nebula0.CheckpointInfo) *CreateCPRespBuilder {
+  c.obj.Info = info
+  return c
+}
+
+func (c *CreateCPResp) SetResult_(result *ResponseCommon) *CreateCPResp {
+  c.Result_ = result
+  return c
+}
+
+func (c *CreateCPResp) SetInfo(info []*nebula0.CheckpointInfo) *CreateCPResp {
+  c.Info = info
+  return c
+}
+
 func (p *CreateCPResp) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -12545,11 +15796,11 @@ func (p *CreateCPResp)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([]*nebula0.CheckpointInfo, 0, size)
   p.Info =  tSlice
   for i := 0; i < size; i ++ {
-    _elem83 := nebula0.NewCheckpointInfo()
-    if err := _elem83.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem83), err)
+    _elem86 := nebula0.NewCheckpointInfo()
+    if err := _elem86.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem86), err)
     }
-    p.Info = append(p.Info, _elem83)
+    p.Info = append(p.Info, _elem86)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -12649,6 +15900,43 @@ func (p *ListClusterInfoResp) IsSetResult_() bool {
 
 func (p *ListClusterInfoResp) IsSetDir() bool {
   return p != nil && p.Dir != nil
+}
+
+type ListClusterInfoRespBuilder struct {
+  obj *ListClusterInfoResp
+}
+
+func NewListClusterInfoRespBuilder() *ListClusterInfoRespBuilder{
+  return &ListClusterInfoRespBuilder{
+    obj: NewListClusterInfoResp(),
+  }
+}
+
+func (p ListClusterInfoRespBuilder) Emit() *ListClusterInfoResp{
+  return &ListClusterInfoResp{
+    Result_: p.obj.Result_,
+    Dir: p.obj.Dir,
+  }
+}
+
+func (l *ListClusterInfoRespBuilder) Result_(result *ResponseCommon) *ListClusterInfoRespBuilder {
+  l.obj.Result_ = result
+  return l
+}
+
+func (l *ListClusterInfoRespBuilder) Dir(dir *nebula0.DirInfo) *ListClusterInfoRespBuilder {
+  l.obj.Dir = dir
+  return l
+}
+
+func (l *ListClusterInfoResp) SetResult_(result *ResponseCommon) *ListClusterInfoResp {
+  l.Result_ = result
+  return l
+}
+
+func (l *ListClusterInfoResp) SetDir(dir *nebula0.DirInfo) *ListClusterInfoResp {
+  l.Dir = dir
+  return l
 }
 
 func (p *ListClusterInfoResp) Read(iprot thrift.Protocol) error {
@@ -12769,6 +16057,21 @@ func NewListClusterInfoReq() *ListClusterInfoReq {
   return &ListClusterInfoReq{}
 }
 
+type ListClusterInfoReqBuilder struct {
+  obj *ListClusterInfoReq
+}
+
+func NewListClusterInfoReqBuilder() *ListClusterInfoReqBuilder{
+  return &ListClusterInfoReqBuilder{
+    obj: NewListClusterInfoReq(),
+  }
+}
+
+func (p ListClusterInfoReqBuilder) Emit() *ListClusterInfoReq{
+  return &ListClusterInfoReq{
+  }
+}
+
 func (p *ListClusterInfoReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -12823,7 +16126,7 @@ type AddAdminTaskRequest struct {
   JobID int32 `thrift:"job_id,2" db:"job_id" json:"job_id"`
   TaskID int32 `thrift:"task_id,3" db:"task_id" json:"task_id"`
   Para *TaskPara `thrift:"para,4" db:"para" json:"para"`
-  Concurrency *int32 `thrift:"concurrency,5" db:"concurrency" json:"concurrency,omitempty"`
+  Concurrency *int32 `thrift:"concurrency,5,optional" db:"concurrency" json:"concurrency,omitempty"`
 }
 
 func NewAddAdminTaskRequest() *AddAdminTaskRequest {
@@ -12864,6 +16167,76 @@ func (p *AddAdminTaskRequest) IsSetPara() bool {
 
 func (p *AddAdminTaskRequest) IsSetConcurrency() bool {
   return p != nil && p.Concurrency != nil
+}
+
+type AddAdminTaskRequestBuilder struct {
+  obj *AddAdminTaskRequest
+}
+
+func NewAddAdminTaskRequestBuilder() *AddAdminTaskRequestBuilder{
+  return &AddAdminTaskRequestBuilder{
+    obj: NewAddAdminTaskRequest(),
+  }
+}
+
+func (p AddAdminTaskRequestBuilder) Emit() *AddAdminTaskRequest{
+  return &AddAdminTaskRequest{
+    Cmd: p.obj.Cmd,
+    JobID: p.obj.JobID,
+    TaskID: p.obj.TaskID,
+    Para: p.obj.Para,
+    Concurrency: p.obj.Concurrency,
+  }
+}
+
+func (a *AddAdminTaskRequestBuilder) Cmd(cmd meta1.AdminCmd) *AddAdminTaskRequestBuilder {
+  a.obj.Cmd = cmd
+  return a
+}
+
+func (a *AddAdminTaskRequestBuilder) JobID(jobID int32) *AddAdminTaskRequestBuilder {
+  a.obj.JobID = jobID
+  return a
+}
+
+func (a *AddAdminTaskRequestBuilder) TaskID(taskID int32) *AddAdminTaskRequestBuilder {
+  a.obj.TaskID = taskID
+  return a
+}
+
+func (a *AddAdminTaskRequestBuilder) Para(para *TaskPara) *AddAdminTaskRequestBuilder {
+  a.obj.Para = para
+  return a
+}
+
+func (a *AddAdminTaskRequestBuilder) Concurrency(concurrency *int32) *AddAdminTaskRequestBuilder {
+  a.obj.Concurrency = concurrency
+  return a
+}
+
+func (a *AddAdminTaskRequest) SetCmd(cmd meta1.AdminCmd) *AddAdminTaskRequest {
+  a.Cmd = cmd
+  return a
+}
+
+func (a *AddAdminTaskRequest) SetJobID(jobID int32) *AddAdminTaskRequest {
+  a.JobID = jobID
+  return a
+}
+
+func (a *AddAdminTaskRequest) SetTaskID(taskID int32) *AddAdminTaskRequest {
+  a.TaskID = taskID
+  return a
+}
+
+func (a *AddAdminTaskRequest) SetPara(para *TaskPara) *AddAdminTaskRequest {
+  a.Para = para
+  return a
+}
+
+func (a *AddAdminTaskRequest) SetConcurrency(concurrency *int32) *AddAdminTaskRequest {
+  a.Concurrency = concurrency
+  return a
 }
 
 func (p *AddAdminTaskRequest) Read(iprot thrift.Protocol) error {
@@ -12916,29 +16289,29 @@ func (p *AddAdminTaskRequest) Read(iprot thrift.Protocol) error {
 
 func (p *AddAdminTaskRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := meta1.AdminCmd(v)
-  p.Cmd = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := meta1.AdminCmd(v)
+    p.Cmd = temp
+  }
   return nil
 }
 
 func (p *AddAdminTaskRequest)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.JobID = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.JobID = v
+  }
   return nil
 }
 
 func (p *AddAdminTaskRequest)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  p.TaskID = v
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.TaskID = v
+  }
   return nil
 }
 
@@ -12952,10 +16325,10 @@ func (p *AddAdminTaskRequest)  ReadField4(iprot thrift.Protocol) error {
 
 func (p *AddAdminTaskRequest)  ReadField5(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 5: ", err)
-} else {
-  p.Concurrency = &v
-}
+    return thrift.PrependError("error reading field 5: ", err)
+  } else {
+    p.Concurrency = &v
+  }
   return nil
 }
 
@@ -13070,6 +16443,43 @@ func (p *StopAdminTaskRequest) GetJobID() int32 {
 func (p *StopAdminTaskRequest) GetTaskID() int32 {
   return p.TaskID
 }
+type StopAdminTaskRequestBuilder struct {
+  obj *StopAdminTaskRequest
+}
+
+func NewStopAdminTaskRequestBuilder() *StopAdminTaskRequestBuilder{
+  return &StopAdminTaskRequestBuilder{
+    obj: NewStopAdminTaskRequest(),
+  }
+}
+
+func (p StopAdminTaskRequestBuilder) Emit() *StopAdminTaskRequest{
+  return &StopAdminTaskRequest{
+    JobID: p.obj.JobID,
+    TaskID: p.obj.TaskID,
+  }
+}
+
+func (s *StopAdminTaskRequestBuilder) JobID(jobID int32) *StopAdminTaskRequestBuilder {
+  s.obj.JobID = jobID
+  return s
+}
+
+func (s *StopAdminTaskRequestBuilder) TaskID(taskID int32) *StopAdminTaskRequestBuilder {
+  s.obj.TaskID = taskID
+  return s
+}
+
+func (s *StopAdminTaskRequest) SetJobID(jobID int32) *StopAdminTaskRequest {
+  s.JobID = jobID
+  return s
+}
+
+func (s *StopAdminTaskRequest) SetTaskID(taskID int32) *StopAdminTaskRequest {
+  s.TaskID = taskID
+  return s
+}
+
 func (p *StopAdminTaskRequest) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -13108,19 +16518,19 @@ func (p *StopAdminTaskRequest) Read(iprot thrift.Protocol) error {
 
 func (p *StopAdminTaskRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.JobID = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.JobID = v
+  }
   return nil
 }
 
 func (p *StopAdminTaskRequest)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.TaskID = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.TaskID = v
+  }
   return nil
 }
 
@@ -13175,9 +16585,9 @@ func (p *StopAdminTaskRequest) String() string {
 type InternalTxnRequest struct {
   TxnID int64 `thrift:"txn_id,1" db:"txn_id" json:"txn_id"`
   TermOfParts map[nebula0.PartitionID]int64 `thrift:"term_of_parts,2" db:"term_of_parts" json:"term_of_parts"`
-  AddEdgeReq *AddEdgesRequest `thrift:"add_edge_req,3" db:"add_edge_req" json:"add_edge_req,omitempty"`
-  UpdEdgeReq *UpdateEdgeRequest `thrift:"upd_edge_req,4" db:"upd_edge_req" json:"upd_edge_req,omitempty"`
-  EdgeVer map[nebula0.PartitionID][]int64 `thrift:"edge_ver,5" db:"edge_ver" json:"edge_ver,omitempty"`
+  AddEdgeReq *AddEdgesRequest `thrift:"add_edge_req,3,optional" db:"add_edge_req" json:"add_edge_req,omitempty"`
+  UpdEdgeReq *UpdateEdgeRequest `thrift:"upd_edge_req,4,optional" db:"upd_edge_req" json:"upd_edge_req,omitempty"`
+  EdgeVer map[nebula0.PartitionID][]int64 `thrift:"edge_ver,5,optional" db:"edge_ver" json:"edge_ver,omitempty"`
 }
 
 func NewInternalTxnRequest() *InternalTxnRequest {
@@ -13221,6 +16631,76 @@ func (p *InternalTxnRequest) IsSetUpdEdgeReq() bool {
 
 func (p *InternalTxnRequest) IsSetEdgeVer() bool {
   return p != nil && p.EdgeVer != nil
+}
+
+type InternalTxnRequestBuilder struct {
+  obj *InternalTxnRequest
+}
+
+func NewInternalTxnRequestBuilder() *InternalTxnRequestBuilder{
+  return &InternalTxnRequestBuilder{
+    obj: NewInternalTxnRequest(),
+  }
+}
+
+func (p InternalTxnRequestBuilder) Emit() *InternalTxnRequest{
+  return &InternalTxnRequest{
+    TxnID: p.obj.TxnID,
+    TermOfParts: p.obj.TermOfParts,
+    AddEdgeReq: p.obj.AddEdgeReq,
+    UpdEdgeReq: p.obj.UpdEdgeReq,
+    EdgeVer: p.obj.EdgeVer,
+  }
+}
+
+func (i *InternalTxnRequestBuilder) TxnID(txnID int64) *InternalTxnRequestBuilder {
+  i.obj.TxnID = txnID
+  return i
+}
+
+func (i *InternalTxnRequestBuilder) TermOfParts(termOfParts map[nebula0.PartitionID]int64) *InternalTxnRequestBuilder {
+  i.obj.TermOfParts = termOfParts
+  return i
+}
+
+func (i *InternalTxnRequestBuilder) AddEdgeReq(addEdgeReq *AddEdgesRequest) *InternalTxnRequestBuilder {
+  i.obj.AddEdgeReq = addEdgeReq
+  return i
+}
+
+func (i *InternalTxnRequestBuilder) UpdEdgeReq(updEdgeReq *UpdateEdgeRequest) *InternalTxnRequestBuilder {
+  i.obj.UpdEdgeReq = updEdgeReq
+  return i
+}
+
+func (i *InternalTxnRequestBuilder) EdgeVer(edgeVer map[nebula0.PartitionID][]int64) *InternalTxnRequestBuilder {
+  i.obj.EdgeVer = edgeVer
+  return i
+}
+
+func (i *InternalTxnRequest) SetTxnID(txnID int64) *InternalTxnRequest {
+  i.TxnID = txnID
+  return i
+}
+
+func (i *InternalTxnRequest) SetTermOfParts(termOfParts map[nebula0.PartitionID]int64) *InternalTxnRequest {
+  i.TermOfParts = termOfParts
+  return i
+}
+
+func (i *InternalTxnRequest) SetAddEdgeReq(addEdgeReq *AddEdgesRequest) *InternalTxnRequest {
+  i.AddEdgeReq = addEdgeReq
+  return i
+}
+
+func (i *InternalTxnRequest) SetUpdEdgeReq(updEdgeReq *UpdateEdgeRequest) *InternalTxnRequest {
+  i.UpdEdgeReq = updEdgeReq
+  return i
+}
+
+func (i *InternalTxnRequest) SetEdgeVer(edgeVer map[nebula0.PartitionID][]int64) *InternalTxnRequest {
+  i.EdgeVer = edgeVer
+  return i
 }
 
 func (p *InternalTxnRequest) Read(iprot thrift.Protocol) error {
@@ -13273,10 +16753,10 @@ func (p *InternalTxnRequest) Read(iprot thrift.Protocol) error {
 
 func (p *InternalTxnRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.TxnID = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.TxnID = v
+  }
   return nil
 }
 
@@ -13288,20 +16768,20 @@ func (p *InternalTxnRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID]int64, size)
   p.TermOfParts =  tMap
   for i := 0; i < size; i ++ {
-var _key84 nebula0.PartitionID
+    var _key87 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key84 = temp
-}
-var _val85 int64
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key87 = temp
+    }
+    var _val88 int64
     if v, err := iprot.ReadI64(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _val85 = v
-}
-    p.TermOfParts[_key84] = _val85
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _val88 = v
+    }
+    p.TermOfParts[_key87] = _val88
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -13333,32 +16813,32 @@ func (p *InternalTxnRequest)  ReadField5(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][]int64, size)
   p.EdgeVer =  tMap
   for i := 0; i < size; i ++ {
-var _key86 nebula0.PartitionID
+    var _key89 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key86 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key89 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
     }
     tSlice := make([]int64, 0, size)
-    _val87 :=  tSlice
+    _val90 :=  tSlice
     for i := 0; i < size; i ++ {
-var _elem88 int64
+      var _elem91 int64
       if v, err := iprot.ReadI64(); err != nil {
-      return thrift.PrependError("error reading field 0: ", err)
-} else {
-      _elem88 = v
-}
-      _val87 = append(_val87, _elem88)
+        return thrift.PrependError("error reading field 0: ", err)
+      } else {
+        _elem91 = v
+      }
+      _val90 = append(_val90, _elem91)
     }
     if err := iprot.ReadListEnd(); err != nil {
       return thrift.PrependError("error reading list end: ", err)
     }
-    p.EdgeVer[_key86] = _val87
+    p.EdgeVer[_key89] = _val90
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -13503,7 +16983,7 @@ type ChainAddEdgesRequest struct {
   PropNames [][]byte `thrift:"prop_names,3" db:"prop_names" json:"prop_names"`
   IfNotExists bool `thrift:"if_not_exists,4" db:"if_not_exists" json:"if_not_exists"`
   Term int64 `thrift:"term,5" db:"term" json:"term"`
-  EdgeVersion *int64 `thrift:"edge_version,6" db:"edge_version" json:"edge_version,omitempty"`
+  EdgeVersion *int64 `thrift:"edge_version,6,optional" db:"edge_version" json:"edge_version,omitempty"`
 }
 
 func NewChainAddEdgesRequest() *ChainAddEdgesRequest {
@@ -13539,6 +17019,87 @@ return *p.EdgeVersion
 }
 func (p *ChainAddEdgesRequest) IsSetEdgeVersion() bool {
   return p != nil && p.EdgeVersion != nil
+}
+
+type ChainAddEdgesRequestBuilder struct {
+  obj *ChainAddEdgesRequest
+}
+
+func NewChainAddEdgesRequestBuilder() *ChainAddEdgesRequestBuilder{
+  return &ChainAddEdgesRequestBuilder{
+    obj: NewChainAddEdgesRequest(),
+  }
+}
+
+func (p ChainAddEdgesRequestBuilder) Emit() *ChainAddEdgesRequest{
+  return &ChainAddEdgesRequest{
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+    PropNames: p.obj.PropNames,
+    IfNotExists: p.obj.IfNotExists,
+    Term: p.obj.Term,
+    EdgeVersion: p.obj.EdgeVersion,
+  }
+}
+
+func (c *ChainAddEdgesRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *ChainAddEdgesRequestBuilder {
+  c.obj.SpaceID = spaceID
+  return c
+}
+
+func (c *ChainAddEdgesRequestBuilder) Parts(parts map[nebula0.PartitionID][]*NewEdge_) *ChainAddEdgesRequestBuilder {
+  c.obj.Parts = parts
+  return c
+}
+
+func (c *ChainAddEdgesRequestBuilder) PropNames(propNames [][]byte) *ChainAddEdgesRequestBuilder {
+  c.obj.PropNames = propNames
+  return c
+}
+
+func (c *ChainAddEdgesRequestBuilder) IfNotExists(ifNotExists bool) *ChainAddEdgesRequestBuilder {
+  c.obj.IfNotExists = ifNotExists
+  return c
+}
+
+func (c *ChainAddEdgesRequestBuilder) Term(term int64) *ChainAddEdgesRequestBuilder {
+  c.obj.Term = term
+  return c
+}
+
+func (c *ChainAddEdgesRequestBuilder) EdgeVersion(edgeVersion *int64) *ChainAddEdgesRequestBuilder {
+  c.obj.EdgeVersion = edgeVersion
+  return c
+}
+
+func (c *ChainAddEdgesRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *ChainAddEdgesRequest {
+  c.SpaceID = spaceID
+  return c
+}
+
+func (c *ChainAddEdgesRequest) SetParts(parts map[nebula0.PartitionID][]*NewEdge_) *ChainAddEdgesRequest {
+  c.Parts = parts
+  return c
+}
+
+func (c *ChainAddEdgesRequest) SetPropNames(propNames [][]byte) *ChainAddEdgesRequest {
+  c.PropNames = propNames
+  return c
+}
+
+func (c *ChainAddEdgesRequest) SetIfNotExists(ifNotExists bool) *ChainAddEdgesRequest {
+  c.IfNotExists = ifNotExists
+  return c
+}
+
+func (c *ChainAddEdgesRequest) SetTerm(term int64) *ChainAddEdgesRequest {
+  c.Term = term
+  return c
+}
+
+func (c *ChainAddEdgesRequest) SetEdgeVersion(edgeVersion *int64) *ChainAddEdgesRequest {
+  c.EdgeVersion = edgeVersion
+  return c
 }
 
 func (p *ChainAddEdgesRequest) Read(iprot thrift.Protocol) error {
@@ -13595,11 +17156,11 @@ func (p *ChainAddEdgesRequest) Read(iprot thrift.Protocol) error {
 
 func (p *ChainAddEdgesRequest)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -13611,30 +17172,30 @@ func (p *ChainAddEdgesRequest)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.PartitionID][]*NewEdge_, size)
   p.Parts =  tMap
   for i := 0; i < size; i ++ {
-var _key89 nebula0.PartitionID
+    var _key92 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _key89 = temp
-}
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _key92 = temp
+    }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
     }
     tSlice := make([]*NewEdge_, 0, size)
-    _val90 :=  tSlice
+    _val93 :=  tSlice
     for i := 0; i < size; i ++ {
-      _elem91 := NewNewEdge_()
-      if err := _elem91.Read(iprot); err != nil {
-        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem91), err)
+      _elem94 := NewNewEdge_()
+      if err := _elem94.Read(iprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem94), err)
       }
-      _val90 = append(_val90, _elem91)
+      _val93 = append(_val93, _elem94)
     }
     if err := iprot.ReadListEnd(); err != nil {
       return thrift.PrependError("error reading list end: ", err)
     }
-    p.Parts[_key89] = _val90
+    p.Parts[_key92] = _val93
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -13650,13 +17211,13 @@ func (p *ChainAddEdgesRequest)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.PropNames =  tSlice
   for i := 0; i < size; i ++ {
-var _elem92 []byte
+    var _elem95 []byte
     if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    _elem92 = v
-}
-    p.PropNames = append(p.PropNames, _elem92)
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _elem95 = v
+    }
+    p.PropNames = append(p.PropNames, _elem95)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -13666,28 +17227,28 @@ var _elem92 []byte
 
 func (p *ChainAddEdgesRequest)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBool(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  p.IfNotExists = v
-}
+    return thrift.PrependError("error reading field 4: ", err)
+  } else {
+    p.IfNotExists = v
+  }
   return nil
 }
 
 func (p *ChainAddEdgesRequest)  ReadField5(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 5: ", err)
-} else {
-  p.Term = v
-}
+    return thrift.PrependError("error reading field 5: ", err)
+  } else {
+    p.Term = v
+  }
   return nil
 }
 
 func (p *ChainAddEdgesRequest)  ReadField6(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 6: ", err)
-} else {
-  p.EdgeVersion = &v
-}
+    return thrift.PrependError("error reading field 6: ", err)
+  } else {
+    p.EdgeVersion = &v
+  }
   return nil
 }
 
@@ -13824,7 +17385,7 @@ func (p *ChainAddEdgesRequest) String() string {
 type ChainUpdateEdgeRequest struct {
   UpdateEdgeRequest *UpdateEdgeRequest `thrift:"update_edge_request,1" db:"update_edge_request" json:"update_edge_request"`
   Term int64 `thrift:"term,2" db:"term" json:"term"`
-  EdgeVersion *int64 `thrift:"edge_version,3" db:"edge_version" json:"edge_version,omitempty"`
+  EdgeVersion *int64 `thrift:"edge_version,3,optional" db:"edge_version" json:"edge_version,omitempty"`
   SpaceID nebula0.GraphSpaceID `thrift:"space_id,4" db:"space_id" json:"space_id"`
   Parts []nebula0.PartitionID `thrift:"parts,5,required" db:"parts" json:"parts"`
 }
@@ -13867,6 +17428,76 @@ func (p *ChainUpdateEdgeRequest) IsSetUpdateEdgeRequest() bool {
 
 func (p *ChainUpdateEdgeRequest) IsSetEdgeVersion() bool {
   return p != nil && p.EdgeVersion != nil
+}
+
+type ChainUpdateEdgeRequestBuilder struct {
+  obj *ChainUpdateEdgeRequest
+}
+
+func NewChainUpdateEdgeRequestBuilder() *ChainUpdateEdgeRequestBuilder{
+  return &ChainUpdateEdgeRequestBuilder{
+    obj: NewChainUpdateEdgeRequest(),
+  }
+}
+
+func (p ChainUpdateEdgeRequestBuilder) Emit() *ChainUpdateEdgeRequest{
+  return &ChainUpdateEdgeRequest{
+    UpdateEdgeRequest: p.obj.UpdateEdgeRequest,
+    Term: p.obj.Term,
+    EdgeVersion: p.obj.EdgeVersion,
+    SpaceID: p.obj.SpaceID,
+    Parts: p.obj.Parts,
+  }
+}
+
+func (c *ChainUpdateEdgeRequestBuilder) UpdateEdgeRequest(updateEdgeRequest *UpdateEdgeRequest) *ChainUpdateEdgeRequestBuilder {
+  c.obj.UpdateEdgeRequest = updateEdgeRequest
+  return c
+}
+
+func (c *ChainUpdateEdgeRequestBuilder) Term(term int64) *ChainUpdateEdgeRequestBuilder {
+  c.obj.Term = term
+  return c
+}
+
+func (c *ChainUpdateEdgeRequestBuilder) EdgeVersion(edgeVersion *int64) *ChainUpdateEdgeRequestBuilder {
+  c.obj.EdgeVersion = edgeVersion
+  return c
+}
+
+func (c *ChainUpdateEdgeRequestBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *ChainUpdateEdgeRequestBuilder {
+  c.obj.SpaceID = spaceID
+  return c
+}
+
+func (c *ChainUpdateEdgeRequestBuilder) Parts(parts []nebula0.PartitionID) *ChainUpdateEdgeRequestBuilder {
+  c.obj.Parts = parts
+  return c
+}
+
+func (c *ChainUpdateEdgeRequest) SetUpdateEdgeRequest(updateEdgeRequest *UpdateEdgeRequest) *ChainUpdateEdgeRequest {
+  c.UpdateEdgeRequest = updateEdgeRequest
+  return c
+}
+
+func (c *ChainUpdateEdgeRequest) SetTerm(term int64) *ChainUpdateEdgeRequest {
+  c.Term = term
+  return c
+}
+
+func (c *ChainUpdateEdgeRequest) SetEdgeVersion(edgeVersion *int64) *ChainUpdateEdgeRequest {
+  c.EdgeVersion = edgeVersion
+  return c
+}
+
+func (c *ChainUpdateEdgeRequest) SetSpaceID(spaceID nebula0.GraphSpaceID) *ChainUpdateEdgeRequest {
+  c.SpaceID = spaceID
+  return c
+}
+
+func (c *ChainUpdateEdgeRequest) SetParts(parts []nebula0.PartitionID) *ChainUpdateEdgeRequest {
+  c.Parts = parts
+  return c
 }
 
 func (p *ChainUpdateEdgeRequest) Read(iprot thrift.Protocol) error {
@@ -13932,29 +17563,29 @@ func (p *ChainUpdateEdgeRequest)  ReadField1(iprot thrift.Protocol) error {
 
 func (p *ChainUpdateEdgeRequest)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Term = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Term = v
+  }
   return nil
 }
 
 func (p *ChainUpdateEdgeRequest)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 3: ", err)
-} else {
-  p.EdgeVersion = &v
-}
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.EdgeVersion = &v
+  }
   return nil
 }
 
 func (p *ChainUpdateEdgeRequest)  ReadField4(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-  return thrift.PrependError("error reading field 4: ", err)
-} else {
-  temp := nebula0.GraphSpaceID(v)
-  p.SpaceID = temp
-}
+    return thrift.PrependError("error reading field 4: ", err)
+  } else {
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
+  }
   return nil
 }
 
@@ -13966,14 +17597,14 @@ func (p *ChainUpdateEdgeRequest)  ReadField5(iprot thrift.Protocol) error {
   tSlice := make([]nebula0.PartitionID, 0, size)
   p.Parts =  tSlice
   for i := 0; i < size; i ++ {
-var _elem93 nebula0.PartitionID
+    var _elem96 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 0: ", err)
-} else {
-    temp := nebula0.PartitionID(v)
-    _elem93 = temp
-}
-    p.Parts = append(p.Parts, _elem93)
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      temp := nebula0.PartitionID(v)
+      _elem96 = temp
+    }
+    p.Parts = append(p.Parts, _elem96)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
