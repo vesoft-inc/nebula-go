@@ -86,6 +86,10 @@ func (valWrap ValueWrapper) IsGeography() bool {
 	return valWrap.value.IsSetGgVal()
 }
 
+func (valWrap ValueWrapper) IsDuration() bool {
+	return valWrap.value.IsSetDuVal()
+}
+
 // AsNull converts the ValueWrapper to nebula.NullType
 func (valWrap ValueWrapper) AsNull() (nebula.NullType, error) {
 	if valWrap.value.IsSetNVal() {
@@ -246,6 +250,15 @@ func (valWrap ValueWrapper) AsGeography() (*nebula.Geography, error) {
 	return nil, fmt.Errorf("failed to convert value %s to nebula.Geography, value is not an geography", valWrap.GetType())
 }
 
+// AsDuration converts the ValueWrapper to a DurationWrapper
+func (valWrap ValueWrapper) AsDuration() (*nebula.Duration, error) {
+	if valWrap.value.IsSetDuVal() {
+		rawDuration := valWrap.value.GetDuVal()
+		return rawDuration, nil
+	}
+	return nil, fmt.Errorf("failed to convert value %s to Duration", valWrap.GetType())
+}
+
 // GetType returns the value type of value in the valWrap as a string
 func (valWrap ValueWrapper) GetType() string {
 	if valWrap.value.IsSetNVal() {
@@ -278,6 +291,8 @@ func (valWrap ValueWrapper) GetType() string {
 		return "set"
 	} else if valWrap.value.IsSetGgVal() {
 		return "geography"
+	} else if valWrap.value.IsSetDuVal() {
+		return "duration"
 	}
 	return "empty"
 }
@@ -387,6 +402,10 @@ func (valWrap ValueWrapper) String() string {
 	} else if value.IsSetGgVal() {
 		ggval := value.GetGgVal()
 		return toWKT(ggval)
+	} else if value.IsSetDuVal() {
+		duval := value.GetDuVal()
+		days := duval.GetSeconds() / (24 * 60 * 60)
+		return fmt.Sprintf("P%vM%vDT%vS", duval.GetMonths(), days, duval.GetSeconds())
 	} else { // is empty
 		return ""
 	}

@@ -371,7 +371,7 @@ func TestServiceDataIO(t *testing.T) {
 			return
 		}
 		assert.Equal(t,
-			"(\"Bob\" :student{name: \"Bob\"} "+
+			"(\"Bob\" :student{interval: P12M0DT0S, name: \"Bob\"} "+
 				":person{age: 10, birthday: 2010-09-10T10:08:02.000000, book_num: 100, "+
 				"child_name: \"Hello Worl\", expend: 100.0, "+
 				"first_out_city: 1111, friends: 10, grade: 3, "+
@@ -931,6 +931,7 @@ func TestExecuteJson(t *testing.T) {
 				"person.property":       float64(1000),
 				"person.start_school":   `2017-09-10`,
 				"student.name":          "Bob",
+				"student.interval":      `P12M0DT0S`,
 			},
 		}
 
@@ -1083,7 +1084,7 @@ func TestExecuteWithParameter(t *testing.T) {
 			return
 		}
 		assert.Equal(t,
-			"(\"Bob\" :student{name: \"Bob\"} "+
+			"(\"Bob\" :student{interval: P12M0DT0S, name: \"Bob\"} "+
 				":person{age: 10, birthday: 2010-09-10T10:08:02.000000, book_num: 100, "+
 				"child_name: \"Hello Worl\", expend: 100.0, "+
 				"first_out_city: 1111, friends: 10, grade: 3, "+
@@ -1227,7 +1228,7 @@ func createTestDataSchema(t *testing.T, session *Session) {
 		"start_school date, morning time, property double, " +
 		"is_girl bool, child_name fixed_string(10), expend float, " +
 		"first_out_city timestamp, hobby string); " +
-		"CREATE TAG IF NOT EXISTS student(name string); " +
+		"CREATE TAG IF NOT EXISTS student(name string, interval duration); " +
 		"CREATE EDGE IF NOT EXISTS like(likeness double); " +
 		"CREATE EDGE IF NOT EXISTS friend(start_Datetime datetime, end_Datetime datetime); " +
 		"CREATE TAG INDEX IF NOT EXISTS person_name_index ON person(name(8));"
@@ -1269,9 +1270,9 @@ func loadTestData(t *testing.T, session *Session) {
 	checkResultSet(t, query, resultSet)
 
 	query =
-		"INSERT VERTEX student(name) VALUES " +
-			"'Bob':('Bob'), 'Lily':('Lily'), " +
-			"'Tom':('Tom'), 'Jerry':('Jerry'), 'John':('John')"
+		"INSERT VERTEX student(name, interval) VALUES " +
+			"'Bob':('Bob', duration({years: 1, seconds: 0})), 'Lily':('Lily', duration({years: 1, seconds: 0})), " +
+			"'Tom':('Tom', duration({years: 1, seconds: 0})), 'Jerry':('Jerry', duration({years: 1, seconds: 0})), 'John':('John', duration({years: 1, seconds: 0}))"
 	resultSet, err = tryToExecute(session, query)
 	if err != nil {
 		t.Fatalf(err.Error())

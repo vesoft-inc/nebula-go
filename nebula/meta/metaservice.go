@@ -70,6 +70,15 @@ type MetaService interface {
   ListEdges(ctx context.Context, req *ListEdgesReq) (_r *ListEdgesResp, err error)
   // Parameters:
   //  - Req
+  AddHosts(ctx context.Context, req *AddHostsReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  AddHostsIntoZone(ctx context.Context, req *AddHostsIntoZoneReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropHosts(ctx context.Context, req *DropHostsReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
   ListHosts(ctx context.Context, req *ListHostsReq) (_r *ListHostsResp, err error)
   // Parameters:
   //  - Req
@@ -187,16 +196,16 @@ type MetaService interface {
   RunAdminJob(ctx context.Context, req *AdminJobReq) (_r *AdminJobResp, err error)
   // Parameters:
   //  - Req
-  AddZone(ctx context.Context, req *AddZoneReq) (_r *ExecResp, err error)
+  MergeZone(ctx context.Context, req *MergeZoneReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
   DropZone(ctx context.Context, req *DropZoneReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  AddHostIntoZone(ctx context.Context, req *AddHostIntoZoneReq) (_r *ExecResp, err error)
+  SplitZone(ctx context.Context, req *SplitZoneReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropHostFromZone(ctx context.Context, req *DropHostFromZoneReq) (_r *ExecResp, err error)
+  RenameZone(ctx context.Context, req *RenameZoneReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
   GetZone(ctx context.Context, req *GetZoneReq) (_r *GetZoneResp, err error)
@@ -320,6 +329,15 @@ type MetaServiceClientInterface interface {
   ListEdges(req *ListEdgesReq) (_r *ListEdgesResp, err error)
   // Parameters:
   //  - Req
+  AddHosts(req *AddHostsReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  AddHostsIntoZone(req *AddHostsIntoZoneReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
+  DropHosts(req *DropHostsReq) (_r *ExecResp, err error)
+  // Parameters:
+  //  - Req
   ListHosts(req *ListHostsReq) (_r *ListHostsResp, err error)
   // Parameters:
   //  - Req
@@ -437,16 +455,16 @@ type MetaServiceClientInterface interface {
   RunAdminJob(req *AdminJobReq) (_r *AdminJobResp, err error)
   // Parameters:
   //  - Req
-  AddZone(req *AddZoneReq) (_r *ExecResp, err error)
+  MergeZone(req *MergeZoneReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
   DropZone(req *DropZoneReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  AddHostIntoZone(req *AddHostIntoZoneReq) (_r *ExecResp, err error)
+  SplitZone(req *SplitZoneReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
-  DropHostFromZone(req *DropHostFromZoneReq) (_r *ExecResp, err error)
+  RenameZone(req *RenameZoneReq) (_r *ExecResp, err error)
   // Parameters:
   //  - Req
   GetZone(req *GetZoneReq) (_r *GetZoneResp, err error)
@@ -845,6 +863,66 @@ func (p *MetaServiceClient) ListEdges(req *ListEdgesReq) (_r *ListEdgesResp, err
 func (p *MetaServiceClient) recvListEdges() (value *ListEdgesResp, err error) {
   var result MetaServiceListEdgesResult
   err = p.CC.RecvMsg("listEdges", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) AddHosts(req *AddHostsReq) (_r *ExecResp, err error) {
+  args := MetaServiceAddHostsArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("addHosts", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddHosts()
+}
+
+
+func (p *MetaServiceClient) recvAddHosts() (value *ExecResp, err error) {
+  var result MetaServiceAddHostsResult
+  err = p.CC.RecvMsg("addHosts", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) AddHostsIntoZone(req *AddHostsIntoZoneReq) (_r *ExecResp, err error) {
+  args := MetaServiceAddHostsIntoZoneArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("addHostsIntoZone", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddHostsIntoZone()
+}
+
+
+func (p *MetaServiceClient) recvAddHostsIntoZone() (value *ExecResp, err error) {
+  var result MetaServiceAddHostsIntoZoneResult
+  err = p.CC.RecvMsg("addHostsIntoZone", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceClient) DropHosts(req *DropHostsReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropHostsArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("dropHosts", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropHosts()
+}
+
+
+func (p *MetaServiceClient) recvDropHosts() (value *ExecResp, err error) {
+  var result MetaServiceDropHostsResult
+  err = p.CC.RecvMsg("dropHosts", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -1632,19 +1710,19 @@ func (p *MetaServiceClient) recvRunAdminJob() (value *AdminJobResp, err error) {
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) AddZone(req *AddZoneReq) (_r *ExecResp, err error) {
-  args := MetaServiceAddZoneArgs{
+func (p *MetaServiceClient) MergeZone(req *MergeZoneReq) (_r *ExecResp, err error) {
+  args := MetaServiceMergeZoneArgs{
     Req : req,
   }
-  err = p.CC.SendMsg("addZone", &args, thrift.CALL)
+  err = p.CC.SendMsg("mergeZone", &args, thrift.CALL)
   if err != nil { return }
-  return p.recvAddZone()
+  return p.recvMergeZone()
 }
 
 
-func (p *MetaServiceClient) recvAddZone() (value *ExecResp, err error) {
-  var result MetaServiceAddZoneResult
-  err = p.CC.RecvMsg("addZone", &result)
+func (p *MetaServiceClient) recvMergeZone() (value *ExecResp, err error) {
+  var result MetaServiceMergeZoneResult
+  err = p.CC.RecvMsg("mergeZone", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -1672,19 +1750,19 @@ func (p *MetaServiceClient) recvDropZone() (value *ExecResp, err error) {
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) AddHostIntoZone(req *AddHostIntoZoneReq) (_r *ExecResp, err error) {
-  args := MetaServiceAddHostIntoZoneArgs{
+func (p *MetaServiceClient) SplitZone(req *SplitZoneReq) (_r *ExecResp, err error) {
+  args := MetaServiceSplitZoneArgs{
     Req : req,
   }
-  err = p.CC.SendMsg("addHostIntoZone", &args, thrift.CALL)
+  err = p.CC.SendMsg("splitZone", &args, thrift.CALL)
   if err != nil { return }
-  return p.recvAddHostIntoZone()
+  return p.recvSplitZone()
 }
 
 
-func (p *MetaServiceClient) recvAddHostIntoZone() (value *ExecResp, err error) {
-  var result MetaServiceAddHostIntoZoneResult
-  err = p.CC.RecvMsg("addHostIntoZone", &result)
+func (p *MetaServiceClient) recvSplitZone() (value *ExecResp, err error) {
+  var result MetaServiceSplitZoneResult
+  err = p.CC.RecvMsg("splitZone", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -1692,19 +1770,19 @@ func (p *MetaServiceClient) recvAddHostIntoZone() (value *ExecResp, err error) {
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) DropHostFromZone(req *DropHostFromZoneReq) (_r *ExecResp, err error) {
-  args := MetaServiceDropHostFromZoneArgs{
+func (p *MetaServiceClient) RenameZone(req *RenameZoneReq) (_r *ExecResp, err error) {
+  args := MetaServiceRenameZoneArgs{
     Req : req,
   }
-  err = p.CC.SendMsg("dropHostFromZone", &args, thrift.CALL)
+  err = p.CC.SendMsg("renameZone", &args, thrift.CALL)
   if err != nil { return }
-  return p.recvDropHostFromZone()
+  return p.recvRenameZone()
 }
 
 
-func (p *MetaServiceClient) recvDropHostFromZone() (value *ExecResp, err error) {
-  var result MetaServiceDropHostFromZoneResult
-  err = p.CC.RecvMsg("dropHostFromZone", &result)
+func (p *MetaServiceClient) recvRenameZone() (value *ExecResp, err error) {
+  var result MetaServiceRenameZoneResult
+  err = p.CC.RecvMsg("renameZone", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -2552,6 +2630,72 @@ func (p *MetaServiceThreadsafeClient) ListEdges(req *ListEdgesReq) (_r *ListEdge
 func (p *MetaServiceThreadsafeClient) recvListEdges() (value *ListEdgesResp, err error) {
   var result MetaServiceListEdgesResult
   err = p.CC.RecvMsg("listEdges", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) AddHosts(req *AddHostsReq) (_r *ExecResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := MetaServiceAddHostsArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("addHosts", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddHosts()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvAddHosts() (value *ExecResp, err error) {
+  var result MetaServiceAddHostsResult
+  err = p.CC.RecvMsg("addHosts", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) AddHostsIntoZone(req *AddHostsIntoZoneReq) (_r *ExecResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := MetaServiceAddHostsIntoZoneArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("addHostsIntoZone", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvAddHostsIntoZone()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvAddHostsIntoZone() (value *ExecResp, err error) {
+  var result MetaServiceAddHostsIntoZoneResult
+  err = p.CC.RecvMsg("addHostsIntoZone", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceThreadsafeClient) DropHosts(req *DropHostsReq) (_r *ExecResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := MetaServiceDropHostsArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("dropHosts", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvDropHosts()
+}
+
+
+func (p *MetaServiceThreadsafeClient) recvDropHosts() (value *ExecResp, err error) {
+  var result MetaServiceDropHostsResult
+  err = p.CC.RecvMsg("dropHosts", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -3417,21 +3561,21 @@ func (p *MetaServiceThreadsafeClient) recvRunAdminJob() (value *AdminJobResp, er
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) AddZone(req *AddZoneReq) (_r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) MergeZone(req *MergeZoneReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  args := MetaServiceAddZoneArgs{
+  args := MetaServiceMergeZoneArgs{
     Req : req,
   }
-  err = p.CC.SendMsg("addZone", &args, thrift.CALL)
+  err = p.CC.SendMsg("mergeZone", &args, thrift.CALL)
   if err != nil { return }
-  return p.recvAddZone()
+  return p.recvMergeZone()
 }
 
 
-func (p *MetaServiceThreadsafeClient) recvAddZone() (value *ExecResp, err error) {
-  var result MetaServiceAddZoneResult
-  err = p.CC.RecvMsg("addZone", &result)
+func (p *MetaServiceThreadsafeClient) recvMergeZone() (value *ExecResp, err error) {
+  var result MetaServiceMergeZoneResult
+  err = p.CC.RecvMsg("mergeZone", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -3461,21 +3605,21 @@ func (p *MetaServiceThreadsafeClient) recvDropZone() (value *ExecResp, err error
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) AddHostIntoZone(req *AddHostIntoZoneReq) (_r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) SplitZone(req *SplitZoneReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  args := MetaServiceAddHostIntoZoneArgs{
+  args := MetaServiceSplitZoneArgs{
     Req : req,
   }
-  err = p.CC.SendMsg("addHostIntoZone", &args, thrift.CALL)
+  err = p.CC.SendMsg("splitZone", &args, thrift.CALL)
   if err != nil { return }
-  return p.recvAddHostIntoZone()
+  return p.recvSplitZone()
 }
 
 
-func (p *MetaServiceThreadsafeClient) recvAddHostIntoZone() (value *ExecResp, err error) {
-  var result MetaServiceAddHostIntoZoneResult
-  err = p.CC.RecvMsg("addHostIntoZone", &result)
+func (p *MetaServiceThreadsafeClient) recvSplitZone() (value *ExecResp, err error) {
+  var result MetaServiceSplitZoneResult
+  err = p.CC.RecvMsg("splitZone", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -3483,21 +3627,21 @@ func (p *MetaServiceThreadsafeClient) recvAddHostIntoZone() (value *ExecResp, er
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) DropHostFromZone(req *DropHostFromZoneReq) (_r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) RenameZone(req *RenameZoneReq) (_r *ExecResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
-  args := MetaServiceDropHostFromZoneArgs{
+  args := MetaServiceRenameZoneArgs{
     Req : req,
   }
-  err = p.CC.SendMsg("dropHostFromZone", &args, thrift.CALL)
+  err = p.CC.SendMsg("renameZone", &args, thrift.CALL)
   if err != nil { return }
-  return p.recvDropHostFromZone()
+  return p.recvRenameZone()
 }
 
 
-func (p *MetaServiceThreadsafeClient) recvDropHostFromZone() (value *ExecResp, err error) {
-  var result MetaServiceDropHostFromZoneResult
-  err = p.CC.RecvMsg("dropHostFromZone", &result)
+func (p *MetaServiceThreadsafeClient) recvRenameZone() (value *ExecResp, err error) {
+  var result MetaServiceRenameZoneResult
+  err = p.CC.RecvMsg("renameZone", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -4249,6 +4393,45 @@ func (p *MetaServiceChannelClient) ListEdges(ctx context.Context, req *ListEdges
 
 // Parameters:
 //  - Req
+func (p *MetaServiceChannelClient) AddHosts(ctx context.Context, req *AddHostsReq) (_r *ExecResp, err error) {
+  args := MetaServiceAddHostsArgs{
+    Req : req,
+  }
+  var result MetaServiceAddHostsResult
+  err = p.RequestChannel.Call(ctx, "addHosts", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) AddHostsIntoZone(ctx context.Context, req *AddHostsIntoZoneReq) (_r *ExecResp, err error) {
+  args := MetaServiceAddHostsIntoZoneArgs{
+    Req : req,
+  }
+  var result MetaServiceAddHostsIntoZoneResult
+  err = p.RequestChannel.Call(ctx, "addHostsIntoZone", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *MetaServiceChannelClient) DropHosts(ctx context.Context, req *DropHostsReq) (_r *ExecResp, err error) {
+  args := MetaServiceDropHostsArgs{
+    Req : req,
+  }
+  var result MetaServiceDropHostsResult
+  err = p.RequestChannel.Call(ctx, "dropHosts", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
 func (p *MetaServiceChannelClient) ListHosts(ctx context.Context, req *ListHostsReq) (_r *ListHostsResp, err error) {
   args := MetaServiceListHostsArgs{
     Req : req,
@@ -4756,12 +4939,12 @@ func (p *MetaServiceChannelClient) RunAdminJob(ctx context.Context, req *AdminJo
 
 // Parameters:
 //  - Req
-func (p *MetaServiceChannelClient) AddZone(ctx context.Context, req *AddZoneReq) (_r *ExecResp, err error) {
-  args := MetaServiceAddZoneArgs{
+func (p *MetaServiceChannelClient) MergeZone(ctx context.Context, req *MergeZoneReq) (_r *ExecResp, err error) {
+  args := MetaServiceMergeZoneArgs{
     Req : req,
   }
-  var result MetaServiceAddZoneResult
-  err = p.RequestChannel.Call(ctx, "addZone", &args, &result)
+  var result MetaServiceMergeZoneResult
+  err = p.RequestChannel.Call(ctx, "mergeZone", &args, &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -4782,12 +4965,12 @@ func (p *MetaServiceChannelClient) DropZone(ctx context.Context, req *DropZoneRe
 
 // Parameters:
 //  - Req
-func (p *MetaServiceChannelClient) AddHostIntoZone(ctx context.Context, req *AddHostIntoZoneReq) (_r *ExecResp, err error) {
-  args := MetaServiceAddHostIntoZoneArgs{
+func (p *MetaServiceChannelClient) SplitZone(ctx context.Context, req *SplitZoneReq) (_r *ExecResp, err error) {
+  args := MetaServiceSplitZoneArgs{
     Req : req,
   }
-  var result MetaServiceAddHostIntoZoneResult
-  err = p.RequestChannel.Call(ctx, "addHostIntoZone", &args, &result)
+  var result MetaServiceSplitZoneResult
+  err = p.RequestChannel.Call(ctx, "splitZone", &args, &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -4795,12 +4978,12 @@ func (p *MetaServiceChannelClient) AddHostIntoZone(ctx context.Context, req *Add
 
 // Parameters:
 //  - Req
-func (p *MetaServiceChannelClient) DropHostFromZone(ctx context.Context, req *DropHostFromZoneReq) (_r *ExecResp, err error) {
-  args := MetaServiceDropHostFromZoneArgs{
+func (p *MetaServiceChannelClient) RenameZone(ctx context.Context, req *RenameZoneReq) (_r *ExecResp, err error) {
+  args := MetaServiceRenameZoneArgs{
     Req : req,
   }
-  var result MetaServiceDropHostFromZoneResult
-  err = p.RequestChannel.Call(ctx, "dropHostFromZone", &args, &result)
+  var result MetaServiceRenameZoneResult
+  err = p.RequestChannel.Call(ctx, "renameZone", &args, &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -5140,90 +5323,93 @@ func (p *MetaServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFunctio
 }
 
 func NewMetaServiceProcessor(handler MetaService) *MetaServiceProcessor {
-  self96 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self96.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
-  self96.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
-  self96.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
-  self96.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
-  self96.processorMap["createSpaceAs"] = &metaServiceProcessorCreateSpaceAs{handler:handler}
-  self96.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
-  self96.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
-  self96.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
-  self96.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
-  self96.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
-  self96.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
-  self96.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
-  self96.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
-  self96.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
-  self96.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
-  self96.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
-  self96.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
-  self96.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
-  self96.processorMap["multiPut"] = &metaServiceProcessorMultiPut{handler:handler}
-  self96.processorMap["get"] = &metaServiceProcessorGet{handler:handler}
-  self96.processorMap["multiGet"] = &metaServiceProcessorMultiGet{handler:handler}
-  self96.processorMap["remove"] = &metaServiceProcessorRemove{handler:handler}
-  self96.processorMap["removeRange"] = &metaServiceProcessorRemoveRange{handler:handler}
-  self96.processorMap["scan"] = &metaServiceProcessorScan{handler:handler}
-  self96.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
-  self96.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
-  self96.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
-  self96.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
-  self96.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
-  self96.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
-  self96.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
-  self96.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
-  self96.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
-  self96.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
-  self96.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
-  self96.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
-  self96.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
-  self96.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
-  self96.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
-  self96.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
-  self96.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
-  self96.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
-  self96.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
-  self96.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
-  self96.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
-  self96.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
-  self96.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
-  self96.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
-  self96.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
-  self96.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
-  self96.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
-  self96.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
-  self96.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
-  self96.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
-  self96.processorMap["addZone"] = &metaServiceProcessorAddZone{handler:handler}
-  self96.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
-  self96.processorMap["addHostIntoZone"] = &metaServiceProcessorAddHostIntoZone{handler:handler}
-  self96.processorMap["dropHostFromZone"] = &metaServiceProcessorDropHostFromZone{handler:handler}
-  self96.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
-  self96.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
-  self96.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
-  self96.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
-  self96.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
-  self96.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
-  self96.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
-  self96.processorMap["getStats"] = &metaServiceProcessorGetStats{handler:handler}
-  self96.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
-  self96.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
-  self96.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
-  self96.processorMap["createFTIndex"] = &metaServiceProcessorCreateFTIndex{handler:handler}
-  self96.processorMap["dropFTIndex"] = &metaServiceProcessorDropFTIndex{handler:handler}
-  self96.processorMap["listFTIndexes"] = &metaServiceProcessorListFTIndexes{handler:handler}
-  self96.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
-  self96.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
-  self96.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
-  self96.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
-  self96.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
-  self96.processorMap["killQuery"] = &metaServiceProcessorKillQuery{handler:handler}
-  self96.processorMap["reportTaskFinish"] = &metaServiceProcessorReportTaskFinish{handler:handler}
-  self96.processorMap["listCluster"] = &metaServiceProcessorListCluster{handler:handler}
-  self96.processorMap["getMetaDirInfo"] = &metaServiceProcessorGetMetaDirInfo{handler:handler}
-  self96.processorMap["verifyClientVersion"] = &metaServiceProcessorVerifyClientVersion{handler:handler}
-  return self96
+  self100 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self100.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
+  self100.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
+  self100.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
+  self100.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
+  self100.processorMap["createSpaceAs"] = &metaServiceProcessorCreateSpaceAs{handler:handler}
+  self100.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
+  self100.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
+  self100.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
+  self100.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
+  self100.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
+  self100.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
+  self100.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
+  self100.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
+  self100.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
+  self100.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
+  self100.processorMap["addHosts"] = &metaServiceProcessorAddHosts{handler:handler}
+  self100.processorMap["addHostsIntoZone"] = &metaServiceProcessorAddHostsIntoZone{handler:handler}
+  self100.processorMap["dropHosts"] = &metaServiceProcessorDropHosts{handler:handler}
+  self100.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
+  self100.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
+  self100.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
+  self100.processorMap["multiPut"] = &metaServiceProcessorMultiPut{handler:handler}
+  self100.processorMap["get"] = &metaServiceProcessorGet{handler:handler}
+  self100.processorMap["multiGet"] = &metaServiceProcessorMultiGet{handler:handler}
+  self100.processorMap["remove"] = &metaServiceProcessorRemove{handler:handler}
+  self100.processorMap["removeRange"] = &metaServiceProcessorRemoveRange{handler:handler}
+  self100.processorMap["scan"] = &metaServiceProcessorScan{handler:handler}
+  self100.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
+  self100.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
+  self100.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
+  self100.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
+  self100.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
+  self100.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
+  self100.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
+  self100.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
+  self100.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
+  self100.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
+  self100.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
+  self100.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
+  self100.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
+  self100.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
+  self100.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
+  self100.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
+  self100.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
+  self100.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
+  self100.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
+  self100.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
+  self100.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
+  self100.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
+  self100.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
+  self100.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
+  self100.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
+  self100.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
+  self100.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
+  self100.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
+  self100.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
+  self100.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
+  self100.processorMap["mergeZone"] = &metaServiceProcessorMergeZone{handler:handler}
+  self100.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
+  self100.processorMap["splitZone"] = &metaServiceProcessorSplitZone{handler:handler}
+  self100.processorMap["renameZone"] = &metaServiceProcessorRenameZone{handler:handler}
+  self100.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
+  self100.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
+  self100.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
+  self100.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
+  self100.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
+  self100.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
+  self100.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
+  self100.processorMap["getStats"] = &metaServiceProcessorGetStats{handler:handler}
+  self100.processorMap["signInFTService"] = &metaServiceProcessorSignInFTService{handler:handler}
+  self100.processorMap["signOutFTService"] = &metaServiceProcessorSignOutFTService{handler:handler}
+  self100.processorMap["listFTClients"] = &metaServiceProcessorListFTClients{handler:handler}
+  self100.processorMap["createFTIndex"] = &metaServiceProcessorCreateFTIndex{handler:handler}
+  self100.processorMap["dropFTIndex"] = &metaServiceProcessorDropFTIndex{handler:handler}
+  self100.processorMap["listFTIndexes"] = &metaServiceProcessorListFTIndexes{handler:handler}
+  self100.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
+  self100.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
+  self100.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
+  self100.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
+  self100.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
+  self100.processorMap["killQuery"] = &metaServiceProcessorKillQuery{handler:handler}
+  self100.processorMap["reportTaskFinish"] = &metaServiceProcessorReportTaskFinish{handler:handler}
+  self100.processorMap["listCluster"] = &metaServiceProcessorListCluster{handler:handler}
+  self100.processorMap["getMetaDirInfo"] = &metaServiceProcessorGetMetaDirInfo{handler:handler}
+  self100.processorMap["verifyClientVersion"] = &metaServiceProcessorVerifyClientVersion{handler:handler}
+  return self100
 }
 
 type metaServiceProcessorCreateSpace struct {
@@ -5968,6 +6154,156 @@ func (p *metaServiceProcessorListEdges) RunContext(ctx context.Context, argStruc
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listEdges: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorAddHosts struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorAddHosts) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceAddHostsArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorAddHosts) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("addHosts", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorAddHosts) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceAddHostsArgs)
+  var result MetaServiceAddHostsResult
+  if retval, err := p.handler.AddHosts(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing addHosts: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorAddHostsIntoZone struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorAddHostsIntoZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceAddHostsIntoZoneArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorAddHostsIntoZone) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("addHostsIntoZone", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorAddHostsIntoZone) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceAddHostsIntoZoneArgs)
+  var result MetaServiceAddHostsIntoZoneResult
+  if retval, err := p.handler.AddHostsIntoZone(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing addHostsIntoZone: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type metaServiceProcessorDropHosts struct {
+  handler MetaService
+}
+
+func (p *metaServiceProcessorDropHosts) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceDropHostsArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *metaServiceProcessorDropHosts) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("dropHosts", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *metaServiceProcessorDropHosts) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceDropHostsArgs)
+  var result MetaServiceDropHostsResult
+  if retval, err := p.handler.DropHosts(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropHosts: " + err.Error())
       return x, x
     }
   } else {
@@ -7926,12 +8262,12 @@ func (p *metaServiceProcessorRunAdminJob) RunContext(ctx context.Context, argStr
   return &result, nil
 }
 
-type metaServiceProcessorAddZone struct {
+type metaServiceProcessorMergeZone struct {
   handler MetaService
 }
 
-func (p *metaServiceProcessorAddZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
-  args := MetaServiceAddZoneArgs{}
+func (p *metaServiceProcessorMergeZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceMergeZoneArgs{}
   if err := args.Read(iprot); err != nil {
     return nil, err
   }
@@ -7939,14 +8275,14 @@ func (p *metaServiceProcessorAddZone) Read(iprot thrift.Protocol) (thrift.Struct
   return &args, nil
 }
 
-func (p *metaServiceProcessorAddZone) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+func (p *metaServiceProcessorMergeZone) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
   var err2 error
   messageType := thrift.REPLY
   switch result.(type) {
   case thrift.ApplicationException:
     messageType = thrift.EXCEPTION
   }
-  if err2 = oprot.WriteMessageBegin("addZone", messageType, seqId); err2 != nil {
+  if err2 = oprot.WriteMessageBegin("mergeZone", messageType, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -7961,13 +8297,13 @@ func (p *metaServiceProcessorAddZone) Write(seqId int32, result thrift.WritableS
   return err
 }
 
-func (p *metaServiceProcessorAddZone) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
-  args := argStruct.(*MetaServiceAddZoneArgs)
-  var result MetaServiceAddZoneResult
-  if retval, err := p.handler.AddZone(ctx, args.Req); err != nil {
+func (p *metaServiceProcessorMergeZone) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceMergeZoneArgs)
+  var result MetaServiceMergeZoneResult
+  if retval, err := p.handler.MergeZone(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
-      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing addZone: " + err.Error())
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing mergeZone: " + err.Error())
       return x, x
     }
   } else {
@@ -8026,12 +8362,12 @@ func (p *metaServiceProcessorDropZone) RunContext(ctx context.Context, argStruct
   return &result, nil
 }
 
-type metaServiceProcessorAddHostIntoZone struct {
+type metaServiceProcessorSplitZone struct {
   handler MetaService
 }
 
-func (p *metaServiceProcessorAddHostIntoZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
-  args := MetaServiceAddHostIntoZoneArgs{}
+func (p *metaServiceProcessorSplitZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceSplitZoneArgs{}
   if err := args.Read(iprot); err != nil {
     return nil, err
   }
@@ -8039,14 +8375,14 @@ func (p *metaServiceProcessorAddHostIntoZone) Read(iprot thrift.Protocol) (thrif
   return &args, nil
 }
 
-func (p *metaServiceProcessorAddHostIntoZone) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+func (p *metaServiceProcessorSplitZone) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
   var err2 error
   messageType := thrift.REPLY
   switch result.(type) {
   case thrift.ApplicationException:
     messageType = thrift.EXCEPTION
   }
-  if err2 = oprot.WriteMessageBegin("addHostIntoZone", messageType, seqId); err2 != nil {
+  if err2 = oprot.WriteMessageBegin("splitZone", messageType, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -8061,13 +8397,13 @@ func (p *metaServiceProcessorAddHostIntoZone) Write(seqId int32, result thrift.W
   return err
 }
 
-func (p *metaServiceProcessorAddHostIntoZone) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
-  args := argStruct.(*MetaServiceAddHostIntoZoneArgs)
-  var result MetaServiceAddHostIntoZoneResult
-  if retval, err := p.handler.AddHostIntoZone(ctx, args.Req); err != nil {
+func (p *metaServiceProcessorSplitZone) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceSplitZoneArgs)
+  var result MetaServiceSplitZoneResult
+  if retval, err := p.handler.SplitZone(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
-      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing addHostIntoZone: " + err.Error())
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing splitZone: " + err.Error())
       return x, x
     }
   } else {
@@ -8076,12 +8412,12 @@ func (p *metaServiceProcessorAddHostIntoZone) RunContext(ctx context.Context, ar
   return &result, nil
 }
 
-type metaServiceProcessorDropHostFromZone struct {
+type metaServiceProcessorRenameZone struct {
   handler MetaService
 }
 
-func (p *metaServiceProcessorDropHostFromZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
-  args := MetaServiceDropHostFromZoneArgs{}
+func (p *metaServiceProcessorRenameZone) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := MetaServiceRenameZoneArgs{}
   if err := args.Read(iprot); err != nil {
     return nil, err
   }
@@ -8089,14 +8425,14 @@ func (p *metaServiceProcessorDropHostFromZone) Read(iprot thrift.Protocol) (thri
   return &args, nil
 }
 
-func (p *metaServiceProcessorDropHostFromZone) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+func (p *metaServiceProcessorRenameZone) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
   var err2 error
   messageType := thrift.REPLY
   switch result.(type) {
   case thrift.ApplicationException:
     messageType = thrift.EXCEPTION
   }
-  if err2 = oprot.WriteMessageBegin("dropHostFromZone", messageType, seqId); err2 != nil {
+  if err2 = oprot.WriteMessageBegin("renameZone", messageType, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -8111,13 +8447,13 @@ func (p *metaServiceProcessorDropHostFromZone) Write(seqId int32, result thrift.
   return err
 }
 
-func (p *metaServiceProcessorDropHostFromZone) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
-  args := argStruct.(*MetaServiceDropHostFromZoneArgs)
-  var result MetaServiceDropHostFromZoneResult
-  if retval, err := p.handler.DropHostFromZone(ctx, args.Req); err != nil {
+func (p *metaServiceProcessorRenameZone) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*MetaServiceRenameZoneArgs)
+  var result MetaServiceRenameZoneResult
+  if retval, err := p.handler.RenameZone(ctx, args.Req); err != nil {
     switch err.(type) {
     default:
-      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing dropHostFromZone: " + err.Error())
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing renameZone: " + err.Error())
       return x, x
     }
   } else {
@@ -12327,6 +12663,606 @@ func (p *MetaServiceListEdgesResult) String() string {
     successVal = fmt.Sprintf("%v", p.Success)
   }
   return fmt.Sprintf("MetaServiceListEdgesResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceAddHostsArgs struct {
+  thrift.IRequest
+  Req *AddHostsReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceAddHostsArgs() *MetaServiceAddHostsArgs {
+  return &MetaServiceAddHostsArgs{
+    Req: NewAddHostsReq(),
+  }
+}
+
+var MetaServiceAddHostsArgs_Req_DEFAULT *AddHostsReq
+func (p *MetaServiceAddHostsArgs) GetReq() *AddHostsReq {
+  if !p.IsSetReq() {
+    return MetaServiceAddHostsArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceAddHostsArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *MetaServiceAddHostsArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceAddHostsArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewAddHostsReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceAddHostsArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("addHosts_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceAddHostsArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceAddHostsArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceAddHostsArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceAddHostsResult struct {
+  thrift.IResponse
+  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceAddHostsResult() *MetaServiceAddHostsResult {
+  return &MetaServiceAddHostsResult{}
+}
+
+var MetaServiceAddHostsResult_Success_DEFAULT *ExecResp
+func (p *MetaServiceAddHostsResult) GetSuccess() *ExecResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceAddHostsResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceAddHostsResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *MetaServiceAddHostsResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceAddHostsResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceAddHostsResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("addHosts_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceAddHostsResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceAddHostsResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceAddHostsResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceAddHostsIntoZoneArgs struct {
+  thrift.IRequest
+  Req *AddHostsIntoZoneReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceAddHostsIntoZoneArgs() *MetaServiceAddHostsIntoZoneArgs {
+  return &MetaServiceAddHostsIntoZoneArgs{
+    Req: NewAddHostsIntoZoneReq(),
+  }
+}
+
+var MetaServiceAddHostsIntoZoneArgs_Req_DEFAULT *AddHostsIntoZoneReq
+func (p *MetaServiceAddHostsIntoZoneArgs) GetReq() *AddHostsIntoZoneReq {
+  if !p.IsSetReq() {
+    return MetaServiceAddHostsIntoZoneArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceAddHostsIntoZoneArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *MetaServiceAddHostsIntoZoneArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceAddHostsIntoZoneArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewAddHostsIntoZoneReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceAddHostsIntoZoneArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("addHostsIntoZone_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceAddHostsIntoZoneArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceAddHostsIntoZoneArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceAddHostsIntoZoneArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceAddHostsIntoZoneResult struct {
+  thrift.IResponse
+  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceAddHostsIntoZoneResult() *MetaServiceAddHostsIntoZoneResult {
+  return &MetaServiceAddHostsIntoZoneResult{}
+}
+
+var MetaServiceAddHostsIntoZoneResult_Success_DEFAULT *ExecResp
+func (p *MetaServiceAddHostsIntoZoneResult) GetSuccess() *ExecResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceAddHostsIntoZoneResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceAddHostsIntoZoneResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *MetaServiceAddHostsIntoZoneResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceAddHostsIntoZoneResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceAddHostsIntoZoneResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("addHostsIntoZone_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceAddHostsIntoZoneResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceAddHostsIntoZoneResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceAddHostsIntoZoneResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type MetaServiceDropHostsArgs struct {
+  thrift.IRequest
+  Req *DropHostsReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewMetaServiceDropHostsArgs() *MetaServiceDropHostsArgs {
+  return &MetaServiceDropHostsArgs{
+    Req: NewDropHostsReq(),
+  }
+}
+
+var MetaServiceDropHostsArgs_Req_DEFAULT *DropHostsReq
+func (p *MetaServiceDropHostsArgs) GetReq() *DropHostsReq {
+  if !p.IsSetReq() {
+    return MetaServiceDropHostsArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *MetaServiceDropHostsArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+func (p *MetaServiceDropHostsArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceDropHostsArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewDropHostsReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceDropHostsArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("dropHosts_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceDropHostsArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *MetaServiceDropHostsArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("MetaServiceDropHostsArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type MetaServiceDropHostsResult struct {
+  thrift.IResponse
+  Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewMetaServiceDropHostsResult() *MetaServiceDropHostsResult {
+  return &MetaServiceDropHostsResult{}
+}
+
+var MetaServiceDropHostsResult_Success_DEFAULT *ExecResp
+func (p *MetaServiceDropHostsResult) GetSuccess() *ExecResp {
+  if !p.IsSetSuccess() {
+    return MetaServiceDropHostsResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *MetaServiceDropHostsResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+func (p *MetaServiceDropHostsResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceDropHostsResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *MetaServiceDropHostsResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("dropHosts_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *MetaServiceDropHostsResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *MetaServiceDropHostsResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("MetaServiceDropHostsResult({Success:%s})", successVal)
 }
 
 // Attributes:
@@ -20131,29 +21067,29 @@ func (p *MetaServiceRunAdminJobResult) String() string {
 
 // Attributes:
 //  - Req
-type MetaServiceAddZoneArgs struct {
+type MetaServiceMergeZoneArgs struct {
   thrift.IRequest
-  Req *AddZoneReq `thrift:"req,1" db:"req" json:"req"`
+  Req *MergeZoneReq `thrift:"req,1" db:"req" json:"req"`
 }
 
-func NewMetaServiceAddZoneArgs() *MetaServiceAddZoneArgs {
-  return &MetaServiceAddZoneArgs{
-    Req: NewAddZoneReq(),
+func NewMetaServiceMergeZoneArgs() *MetaServiceMergeZoneArgs {
+  return &MetaServiceMergeZoneArgs{
+    Req: NewMergeZoneReq(),
   }
 }
 
-var MetaServiceAddZoneArgs_Req_DEFAULT *AddZoneReq
-func (p *MetaServiceAddZoneArgs) GetReq() *AddZoneReq {
+var MetaServiceMergeZoneArgs_Req_DEFAULT *MergeZoneReq
+func (p *MetaServiceMergeZoneArgs) GetReq() *MergeZoneReq {
   if !p.IsSetReq() {
-    return MetaServiceAddZoneArgs_Req_DEFAULT
+    return MetaServiceMergeZoneArgs_Req_DEFAULT
   }
 return p.Req
 }
-func (p *MetaServiceAddZoneArgs) IsSetReq() bool {
+func (p *MetaServiceMergeZoneArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
-func (p *MetaServiceAddZoneArgs) Read(iprot thrift.Protocol) error {
+func (p *MetaServiceMergeZoneArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -20185,16 +21121,16 @@ func (p *MetaServiceAddZoneArgs) Read(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceAddZoneArgs)  ReadField1(iprot thrift.Protocol) error {
-  p.Req = NewAddZoneReq()
+func (p *MetaServiceMergeZoneArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewMergeZoneReq()
   if err := p.Req.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
   }
   return nil
 }
 
-func (p *MetaServiceAddZoneArgs) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("addZone_args"); err != nil {
+func (p *MetaServiceMergeZoneArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("mergeZone_args"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
@@ -20204,7 +21140,7 @@ func (p *MetaServiceAddZoneArgs) Write(oprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceAddZoneArgs) writeField1(oprot thrift.Protocol) (err error) {
+func (p *MetaServiceMergeZoneArgs) writeField1(oprot thrift.Protocol) (err error) {
   if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
   if err := p.Req.Write(oprot); err != nil {
@@ -20215,7 +21151,7 @@ func (p *MetaServiceAddZoneArgs) writeField1(oprot thrift.Protocol) (err error) 
   return err
 }
 
-func (p *MetaServiceAddZoneArgs) String() string {
+func (p *MetaServiceMergeZoneArgs) String() string {
   if p == nil {
     return "<nil>"
   }
@@ -20226,32 +21162,32 @@ func (p *MetaServiceAddZoneArgs) String() string {
   } else {
     reqVal = fmt.Sprintf("%v", p.Req)
   }
-  return fmt.Sprintf("MetaServiceAddZoneArgs({Req:%s})", reqVal)
+  return fmt.Sprintf("MetaServiceMergeZoneArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
-type MetaServiceAddZoneResult struct {
+type MetaServiceMergeZoneResult struct {
   thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
-func NewMetaServiceAddZoneResult() *MetaServiceAddZoneResult {
-  return &MetaServiceAddZoneResult{}
+func NewMetaServiceMergeZoneResult() *MetaServiceMergeZoneResult {
+  return &MetaServiceMergeZoneResult{}
 }
 
-var MetaServiceAddZoneResult_Success_DEFAULT *ExecResp
-func (p *MetaServiceAddZoneResult) GetSuccess() *ExecResp {
+var MetaServiceMergeZoneResult_Success_DEFAULT *ExecResp
+func (p *MetaServiceMergeZoneResult) GetSuccess() *ExecResp {
   if !p.IsSetSuccess() {
-    return MetaServiceAddZoneResult_Success_DEFAULT
+    return MetaServiceMergeZoneResult_Success_DEFAULT
   }
 return p.Success
 }
-func (p *MetaServiceAddZoneResult) IsSetSuccess() bool {
+func (p *MetaServiceMergeZoneResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
 }
 
-func (p *MetaServiceAddZoneResult) Read(iprot thrift.Protocol) error {
+func (p *MetaServiceMergeZoneResult) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -20283,7 +21219,7 @@ func (p *MetaServiceAddZoneResult) Read(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceAddZoneResult)  ReadField0(iprot thrift.Protocol) error {
+func (p *MetaServiceMergeZoneResult)  ReadField0(iprot thrift.Protocol) error {
   p.Success = NewExecResp()
   if err := p.Success.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
@@ -20291,8 +21227,8 @@ func (p *MetaServiceAddZoneResult)  ReadField0(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceAddZoneResult) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("addZone_result"); err != nil {
+func (p *MetaServiceMergeZoneResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("mergeZone_result"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField0(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
@@ -20302,7 +21238,7 @@ func (p *MetaServiceAddZoneResult) Write(oprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceAddZoneResult) writeField0(oprot thrift.Protocol) (err error) {
+func (p *MetaServiceMergeZoneResult) writeField0(oprot thrift.Protocol) (err error) {
   if p.IsSetSuccess() {
     if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
@@ -20315,7 +21251,7 @@ func (p *MetaServiceAddZoneResult) writeField0(oprot thrift.Protocol) (err error
   return err
 }
 
-func (p *MetaServiceAddZoneResult) String() string {
+func (p *MetaServiceMergeZoneResult) String() string {
   if p == nil {
     return "<nil>"
   }
@@ -20326,7 +21262,7 @@ func (p *MetaServiceAddZoneResult) String() string {
   } else {
     successVal = fmt.Sprintf("%v", p.Success)
   }
-  return fmt.Sprintf("MetaServiceAddZoneResult({Success:%s})", successVal)
+  return fmt.Sprintf("MetaServiceMergeZoneResult({Success:%s})", successVal)
 }
 
 // Attributes:
@@ -20531,29 +21467,29 @@ func (p *MetaServiceDropZoneResult) String() string {
 
 // Attributes:
 //  - Req
-type MetaServiceAddHostIntoZoneArgs struct {
+type MetaServiceSplitZoneArgs struct {
   thrift.IRequest
-  Req *AddHostIntoZoneReq `thrift:"req,1" db:"req" json:"req"`
+  Req *SplitZoneReq `thrift:"req,1" db:"req" json:"req"`
 }
 
-func NewMetaServiceAddHostIntoZoneArgs() *MetaServiceAddHostIntoZoneArgs {
-  return &MetaServiceAddHostIntoZoneArgs{
-    Req: NewAddHostIntoZoneReq(),
+func NewMetaServiceSplitZoneArgs() *MetaServiceSplitZoneArgs {
+  return &MetaServiceSplitZoneArgs{
+    Req: NewSplitZoneReq(),
   }
 }
 
-var MetaServiceAddHostIntoZoneArgs_Req_DEFAULT *AddHostIntoZoneReq
-func (p *MetaServiceAddHostIntoZoneArgs) GetReq() *AddHostIntoZoneReq {
+var MetaServiceSplitZoneArgs_Req_DEFAULT *SplitZoneReq
+func (p *MetaServiceSplitZoneArgs) GetReq() *SplitZoneReq {
   if !p.IsSetReq() {
-    return MetaServiceAddHostIntoZoneArgs_Req_DEFAULT
+    return MetaServiceSplitZoneArgs_Req_DEFAULT
   }
 return p.Req
 }
-func (p *MetaServiceAddHostIntoZoneArgs) IsSetReq() bool {
+func (p *MetaServiceSplitZoneArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
-func (p *MetaServiceAddHostIntoZoneArgs) Read(iprot thrift.Protocol) error {
+func (p *MetaServiceSplitZoneArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -20585,16 +21521,16 @@ func (p *MetaServiceAddHostIntoZoneArgs) Read(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceAddHostIntoZoneArgs)  ReadField1(iprot thrift.Protocol) error {
-  p.Req = NewAddHostIntoZoneReq()
+func (p *MetaServiceSplitZoneArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewSplitZoneReq()
   if err := p.Req.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
   }
   return nil
 }
 
-func (p *MetaServiceAddHostIntoZoneArgs) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("addHostIntoZone_args"); err != nil {
+func (p *MetaServiceSplitZoneArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("splitZone_args"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
@@ -20604,7 +21540,7 @@ func (p *MetaServiceAddHostIntoZoneArgs) Write(oprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceAddHostIntoZoneArgs) writeField1(oprot thrift.Protocol) (err error) {
+func (p *MetaServiceSplitZoneArgs) writeField1(oprot thrift.Protocol) (err error) {
   if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
   if err := p.Req.Write(oprot); err != nil {
@@ -20615,7 +21551,7 @@ func (p *MetaServiceAddHostIntoZoneArgs) writeField1(oprot thrift.Protocol) (err
   return err
 }
 
-func (p *MetaServiceAddHostIntoZoneArgs) String() string {
+func (p *MetaServiceSplitZoneArgs) String() string {
   if p == nil {
     return "<nil>"
   }
@@ -20626,32 +21562,32 @@ func (p *MetaServiceAddHostIntoZoneArgs) String() string {
   } else {
     reqVal = fmt.Sprintf("%v", p.Req)
   }
-  return fmt.Sprintf("MetaServiceAddHostIntoZoneArgs({Req:%s})", reqVal)
+  return fmt.Sprintf("MetaServiceSplitZoneArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
-type MetaServiceAddHostIntoZoneResult struct {
+type MetaServiceSplitZoneResult struct {
   thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
-func NewMetaServiceAddHostIntoZoneResult() *MetaServiceAddHostIntoZoneResult {
-  return &MetaServiceAddHostIntoZoneResult{}
+func NewMetaServiceSplitZoneResult() *MetaServiceSplitZoneResult {
+  return &MetaServiceSplitZoneResult{}
 }
 
-var MetaServiceAddHostIntoZoneResult_Success_DEFAULT *ExecResp
-func (p *MetaServiceAddHostIntoZoneResult) GetSuccess() *ExecResp {
+var MetaServiceSplitZoneResult_Success_DEFAULT *ExecResp
+func (p *MetaServiceSplitZoneResult) GetSuccess() *ExecResp {
   if !p.IsSetSuccess() {
-    return MetaServiceAddHostIntoZoneResult_Success_DEFAULT
+    return MetaServiceSplitZoneResult_Success_DEFAULT
   }
 return p.Success
 }
-func (p *MetaServiceAddHostIntoZoneResult) IsSetSuccess() bool {
+func (p *MetaServiceSplitZoneResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
 }
 
-func (p *MetaServiceAddHostIntoZoneResult) Read(iprot thrift.Protocol) error {
+func (p *MetaServiceSplitZoneResult) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -20683,7 +21619,7 @@ func (p *MetaServiceAddHostIntoZoneResult) Read(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceAddHostIntoZoneResult)  ReadField0(iprot thrift.Protocol) error {
+func (p *MetaServiceSplitZoneResult)  ReadField0(iprot thrift.Protocol) error {
   p.Success = NewExecResp()
   if err := p.Success.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
@@ -20691,8 +21627,8 @@ func (p *MetaServiceAddHostIntoZoneResult)  ReadField0(iprot thrift.Protocol) er
   return nil
 }
 
-func (p *MetaServiceAddHostIntoZoneResult) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("addHostIntoZone_result"); err != nil {
+func (p *MetaServiceSplitZoneResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("splitZone_result"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField0(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
@@ -20702,7 +21638,7 @@ func (p *MetaServiceAddHostIntoZoneResult) Write(oprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceAddHostIntoZoneResult) writeField0(oprot thrift.Protocol) (err error) {
+func (p *MetaServiceSplitZoneResult) writeField0(oprot thrift.Protocol) (err error) {
   if p.IsSetSuccess() {
     if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
@@ -20715,7 +21651,7 @@ func (p *MetaServiceAddHostIntoZoneResult) writeField0(oprot thrift.Protocol) (e
   return err
 }
 
-func (p *MetaServiceAddHostIntoZoneResult) String() string {
+func (p *MetaServiceSplitZoneResult) String() string {
   if p == nil {
     return "<nil>"
   }
@@ -20726,34 +21662,34 @@ func (p *MetaServiceAddHostIntoZoneResult) String() string {
   } else {
     successVal = fmt.Sprintf("%v", p.Success)
   }
-  return fmt.Sprintf("MetaServiceAddHostIntoZoneResult({Success:%s})", successVal)
+  return fmt.Sprintf("MetaServiceSplitZoneResult({Success:%s})", successVal)
 }
 
 // Attributes:
 //  - Req
-type MetaServiceDropHostFromZoneArgs struct {
+type MetaServiceRenameZoneArgs struct {
   thrift.IRequest
-  Req *DropHostFromZoneReq `thrift:"req,1" db:"req" json:"req"`
+  Req *RenameZoneReq `thrift:"req,1" db:"req" json:"req"`
 }
 
-func NewMetaServiceDropHostFromZoneArgs() *MetaServiceDropHostFromZoneArgs {
-  return &MetaServiceDropHostFromZoneArgs{
-    Req: NewDropHostFromZoneReq(),
+func NewMetaServiceRenameZoneArgs() *MetaServiceRenameZoneArgs {
+  return &MetaServiceRenameZoneArgs{
+    Req: NewRenameZoneReq(),
   }
 }
 
-var MetaServiceDropHostFromZoneArgs_Req_DEFAULT *DropHostFromZoneReq
-func (p *MetaServiceDropHostFromZoneArgs) GetReq() *DropHostFromZoneReq {
+var MetaServiceRenameZoneArgs_Req_DEFAULT *RenameZoneReq
+func (p *MetaServiceRenameZoneArgs) GetReq() *RenameZoneReq {
   if !p.IsSetReq() {
-    return MetaServiceDropHostFromZoneArgs_Req_DEFAULT
+    return MetaServiceRenameZoneArgs_Req_DEFAULT
   }
 return p.Req
 }
-func (p *MetaServiceDropHostFromZoneArgs) IsSetReq() bool {
+func (p *MetaServiceRenameZoneArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
-func (p *MetaServiceDropHostFromZoneArgs) Read(iprot thrift.Protocol) error {
+func (p *MetaServiceRenameZoneArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -20785,16 +21721,16 @@ func (p *MetaServiceDropHostFromZoneArgs) Read(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceDropHostFromZoneArgs)  ReadField1(iprot thrift.Protocol) error {
-  p.Req = NewDropHostFromZoneReq()
+func (p *MetaServiceRenameZoneArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewRenameZoneReq()
   if err := p.Req.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
   }
   return nil
 }
 
-func (p *MetaServiceDropHostFromZoneArgs) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("dropHostFromZone_args"); err != nil {
+func (p *MetaServiceRenameZoneArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("renameZone_args"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
@@ -20804,7 +21740,7 @@ func (p *MetaServiceDropHostFromZoneArgs) Write(oprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceDropHostFromZoneArgs) writeField1(oprot thrift.Protocol) (err error) {
+func (p *MetaServiceRenameZoneArgs) writeField1(oprot thrift.Protocol) (err error) {
   if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
   if err := p.Req.Write(oprot); err != nil {
@@ -20815,7 +21751,7 @@ func (p *MetaServiceDropHostFromZoneArgs) writeField1(oprot thrift.Protocol) (er
   return err
 }
 
-func (p *MetaServiceDropHostFromZoneArgs) String() string {
+func (p *MetaServiceRenameZoneArgs) String() string {
   if p == nil {
     return "<nil>"
   }
@@ -20826,32 +21762,32 @@ func (p *MetaServiceDropHostFromZoneArgs) String() string {
   } else {
     reqVal = fmt.Sprintf("%v", p.Req)
   }
-  return fmt.Sprintf("MetaServiceDropHostFromZoneArgs({Req:%s})", reqVal)
+  return fmt.Sprintf("MetaServiceRenameZoneArgs({Req:%s})", reqVal)
 }
 
 // Attributes:
 //  - Success
-type MetaServiceDropHostFromZoneResult struct {
+type MetaServiceRenameZoneResult struct {
   thrift.IResponse
   Success *ExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
-func NewMetaServiceDropHostFromZoneResult() *MetaServiceDropHostFromZoneResult {
-  return &MetaServiceDropHostFromZoneResult{}
+func NewMetaServiceRenameZoneResult() *MetaServiceRenameZoneResult {
+  return &MetaServiceRenameZoneResult{}
 }
 
-var MetaServiceDropHostFromZoneResult_Success_DEFAULT *ExecResp
-func (p *MetaServiceDropHostFromZoneResult) GetSuccess() *ExecResp {
+var MetaServiceRenameZoneResult_Success_DEFAULT *ExecResp
+func (p *MetaServiceRenameZoneResult) GetSuccess() *ExecResp {
   if !p.IsSetSuccess() {
-    return MetaServiceDropHostFromZoneResult_Success_DEFAULT
+    return MetaServiceRenameZoneResult_Success_DEFAULT
   }
 return p.Success
 }
-func (p *MetaServiceDropHostFromZoneResult) IsSetSuccess() bool {
+func (p *MetaServiceRenameZoneResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
 }
 
-func (p *MetaServiceDropHostFromZoneResult) Read(iprot thrift.Protocol) error {
+func (p *MetaServiceRenameZoneResult) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -20883,7 +21819,7 @@ func (p *MetaServiceDropHostFromZoneResult) Read(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceDropHostFromZoneResult)  ReadField0(iprot thrift.Protocol) error {
+func (p *MetaServiceRenameZoneResult)  ReadField0(iprot thrift.Protocol) error {
   p.Success = NewExecResp()
   if err := p.Success.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
@@ -20891,8 +21827,8 @@ func (p *MetaServiceDropHostFromZoneResult)  ReadField0(iprot thrift.Protocol) e
   return nil
 }
 
-func (p *MetaServiceDropHostFromZoneResult) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("dropHostFromZone_result"); err != nil {
+func (p *MetaServiceRenameZoneResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("renameZone_result"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField0(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
@@ -20902,7 +21838,7 @@ func (p *MetaServiceDropHostFromZoneResult) Write(oprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MetaServiceDropHostFromZoneResult) writeField0(oprot thrift.Protocol) (err error) {
+func (p *MetaServiceRenameZoneResult) writeField0(oprot thrift.Protocol) (err error) {
   if p.IsSetSuccess() {
     if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
@@ -20915,7 +21851,7 @@ func (p *MetaServiceDropHostFromZoneResult) writeField0(oprot thrift.Protocol) (
   return err
 }
 
-func (p *MetaServiceDropHostFromZoneResult) String() string {
+func (p *MetaServiceRenameZoneResult) String() string {
   if p == nil {
     return "<nil>"
   }
@@ -20926,7 +21862,7 @@ func (p *MetaServiceDropHostFromZoneResult) String() string {
   } else {
     successVal = fmt.Sprintf("%v", p.Success)
   }
-  return fmt.Sprintf("MetaServiceDropHostFromZoneResult({Success:%s})", successVal)
+  return fmt.Sprintf("MetaServiceRenameZoneResult({Success:%s})", successVal)
 }
 
 // Attributes:

@@ -419,6 +419,12 @@ func TestAsGeography(t *testing.T) {
 	assert.Equal(t, "POLYGON((48.3 78.6, 77.9 89.6, -24 -49.7, -36 78.3, 48.3 78.6))", polygonWrap.String())
 }
 
+func TestAsDuration(t *testing.T) {
+	value := nebula.Value{DuVal: &nebula.Duration{86400, 3000, 12}}
+	valWrap := ValueWrapper{&value, testTimezone}
+	assert.Equal(t, true, valWrap.IsDuration())
+	assert.Equal(t, "P12M1DT86400S", valWrap.String())
+}
 func TestNode(t *testing.T) {
 	vertex := getVertex("Tom", 3, 5)
 	node, err := genNode(vertex, testTimezone)

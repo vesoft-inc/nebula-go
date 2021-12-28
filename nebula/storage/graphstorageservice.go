@@ -54,10 +54,10 @@ type GraphStorageService interface {
   UpdateEdge(ctx context.Context, req *UpdateEdgeRequest) (_r *UpdateResponse, err error)
   // Parameters:
   //  - Req
-  ScanVertex(ctx context.Context, req *ScanVertexRequest) (_r *ScanVertexResponse, err error)
+  ScanVertex(ctx context.Context, req *ScanVertexRequest) (_r *ScanResponse, err error)
   // Parameters:
   //  - Req
-  ScanEdge(ctx context.Context, req *ScanEdgeRequest) (_r *ScanEdgeResponse, err error)
+  ScanEdge(ctx context.Context, req *ScanEdgeRequest) (_r *ScanResponse, err error)
   // Parameters:
   //  - Req
   GetUUID(ctx context.Context, req *GetUUIDReq) (_r *GetUUIDResp, err error)
@@ -115,10 +115,10 @@ type GraphStorageServiceClientInterface interface {
   UpdateEdge(req *UpdateEdgeRequest) (_r *UpdateResponse, err error)
   // Parameters:
   //  - Req
-  ScanVertex(req *ScanVertexRequest) (_r *ScanVertexResponse, err error)
+  ScanVertex(req *ScanVertexRequest) (_r *ScanResponse, err error)
   // Parameters:
   //  - Req
-  ScanEdge(req *ScanEdgeRequest) (_r *ScanEdgeResponse, err error)
+  ScanEdge(req *ScanEdgeRequest) (_r *ScanResponse, err error)
   // Parameters:
   //  - Req
   GetUUID(req *GetUUIDReq) (_r *GetUUIDResp, err error)
@@ -356,7 +356,7 @@ func (p *GraphStorageServiceClient) recvUpdateEdge() (value *UpdateResponse, err
 
 // Parameters:
 //  - Req
-func (p *GraphStorageServiceClient) ScanVertex(req *ScanVertexRequest) (_r *ScanVertexResponse, err error) {
+func (p *GraphStorageServiceClient) ScanVertex(req *ScanVertexRequest) (_r *ScanResponse, err error) {
   args := GraphStorageServiceScanVertexArgs{
     Req : req,
   }
@@ -366,7 +366,7 @@ func (p *GraphStorageServiceClient) ScanVertex(req *ScanVertexRequest) (_r *Scan
 }
 
 
-func (p *GraphStorageServiceClient) recvScanVertex() (value *ScanVertexResponse, err error) {
+func (p *GraphStorageServiceClient) recvScanVertex() (value *ScanResponse, err error) {
   var result GraphStorageServiceScanVertexResult
   err = p.CC.RecvMsg("scanVertex", &result)
   if err != nil { return }
@@ -376,7 +376,7 @@ func (p *GraphStorageServiceClient) recvScanVertex() (value *ScanVertexResponse,
 
 // Parameters:
 //  - Req
-func (p *GraphStorageServiceClient) ScanEdge(req *ScanEdgeRequest) (_r *ScanEdgeResponse, err error) {
+func (p *GraphStorageServiceClient) ScanEdge(req *ScanEdgeRequest) (_r *ScanResponse, err error) {
   args := GraphStorageServiceScanEdgeArgs{
     Req : req,
   }
@@ -386,7 +386,7 @@ func (p *GraphStorageServiceClient) ScanEdge(req *ScanEdgeRequest) (_r *ScanEdge
 }
 
 
-func (p *GraphStorageServiceClient) recvScanEdge() (value *ScanEdgeResponse, err error) {
+func (p *GraphStorageServiceClient) recvScanEdge() (value *ScanResponse, err error) {
   var result GraphStorageServiceScanEdgeResult
   err = p.CC.RecvMsg("scanEdge", &result)
   if err != nil { return }
@@ -791,7 +791,7 @@ func (p *GraphStorageServiceThreadsafeClient) recvUpdateEdge() (value *UpdateRes
 
 // Parameters:
 //  - Req
-func (p *GraphStorageServiceThreadsafeClient) ScanVertex(req *ScanVertexRequest) (_r *ScanVertexResponse, err error) {
+func (p *GraphStorageServiceThreadsafeClient) ScanVertex(req *ScanVertexRequest) (_r *ScanResponse, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
   args := GraphStorageServiceScanVertexArgs{
@@ -803,7 +803,7 @@ func (p *GraphStorageServiceThreadsafeClient) ScanVertex(req *ScanVertexRequest)
 }
 
 
-func (p *GraphStorageServiceThreadsafeClient) recvScanVertex() (value *ScanVertexResponse, err error) {
+func (p *GraphStorageServiceThreadsafeClient) recvScanVertex() (value *ScanResponse, err error) {
   var result GraphStorageServiceScanVertexResult
   err = p.CC.RecvMsg("scanVertex", &result)
   if err != nil { return }
@@ -813,7 +813,7 @@ func (p *GraphStorageServiceThreadsafeClient) recvScanVertex() (value *ScanVerte
 
 // Parameters:
 //  - Req
-func (p *GraphStorageServiceThreadsafeClient) ScanEdge(req *ScanEdgeRequest) (_r *ScanEdgeResponse, err error) {
+func (p *GraphStorageServiceThreadsafeClient) ScanEdge(req *ScanEdgeRequest) (_r *ScanResponse, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
   args := GraphStorageServiceScanEdgeArgs{
@@ -825,7 +825,7 @@ func (p *GraphStorageServiceThreadsafeClient) ScanEdge(req *ScanEdgeRequest) (_r
 }
 
 
-func (p *GraphStorageServiceThreadsafeClient) recvScanEdge() (value *ScanEdgeResponse, err error) {
+func (p *GraphStorageServiceThreadsafeClient) recvScanEdge() (value *ScanResponse, err error) {
   var result GraphStorageServiceScanEdgeResult
   err = p.CC.RecvMsg("scanEdge", &result)
   if err != nil { return }
@@ -1149,7 +1149,7 @@ func (p *GraphStorageServiceChannelClient) UpdateEdge(ctx context.Context, req *
 
 // Parameters:
 //  - Req
-func (p *GraphStorageServiceChannelClient) ScanVertex(ctx context.Context, req *ScanVertexRequest) (_r *ScanVertexResponse, err error) {
+func (p *GraphStorageServiceChannelClient) ScanVertex(ctx context.Context, req *ScanVertexRequest) (_r *ScanResponse, err error) {
   args := GraphStorageServiceScanVertexArgs{
     Req : req,
   }
@@ -1162,7 +1162,7 @@ func (p *GraphStorageServiceChannelClient) ScanVertex(ctx context.Context, req *
 
 // Parameters:
 //  - Req
-func (p *GraphStorageServiceChannelClient) ScanEdge(ctx context.Context, req *ScanEdgeRequest) (_r *ScanEdgeResponse, err error) {
+func (p *GraphStorageServiceChannelClient) ScanEdge(ctx context.Context, req *ScanEdgeRequest) (_r *ScanResponse, err error) {
   args := GraphStorageServiceScanEdgeArgs{
     Req : req,
   }
@@ -1299,27 +1299,27 @@ func (p *GraphStorageServiceProcessor) ProcessorMap() map[string]thrift.Processo
 }
 
 func NewGraphStorageServiceProcessor(handler GraphStorageService) *GraphStorageServiceProcessor {
-  self95 := &GraphStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self95.processorMap["getNeighbors"] = &graphStorageServiceProcessorGetNeighbors{handler:handler}
-  self95.processorMap["getProps"] = &graphStorageServiceProcessorGetProps{handler:handler}
-  self95.processorMap["addVertices"] = &graphStorageServiceProcessorAddVertices{handler:handler}
-  self95.processorMap["addEdges"] = &graphStorageServiceProcessorAddEdges{handler:handler}
-  self95.processorMap["deleteEdges"] = &graphStorageServiceProcessorDeleteEdges{handler:handler}
-  self95.processorMap["deleteVertices"] = &graphStorageServiceProcessorDeleteVertices{handler:handler}
-  self95.processorMap["deleteTags"] = &graphStorageServiceProcessorDeleteTags{handler:handler}
-  self95.processorMap["updateVertex"] = &graphStorageServiceProcessorUpdateVertex{handler:handler}
-  self95.processorMap["updateEdge"] = &graphStorageServiceProcessorUpdateEdge{handler:handler}
-  self95.processorMap["scanVertex"] = &graphStorageServiceProcessorScanVertex{handler:handler}
-  self95.processorMap["scanEdge"] = &graphStorageServiceProcessorScanEdge{handler:handler}
-  self95.processorMap["getUUID"] = &graphStorageServiceProcessorGetUUID{handler:handler}
-  self95.processorMap["lookupIndex"] = &graphStorageServiceProcessorLookupIndex{handler:handler}
-  self95.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
-  self95.processorMap["chainUpdateEdge"] = &graphStorageServiceProcessorChainUpdateEdge{handler:handler}
-  self95.processorMap["chainAddEdges"] = &graphStorageServiceProcessorChainAddEdges{handler:handler}
-  self95.processorMap["get"] = &graphStorageServiceProcessorGet{handler:handler}
-  self95.processorMap["put"] = &graphStorageServiceProcessorPut{handler:handler}
-  self95.processorMap["remove"] = &graphStorageServiceProcessorRemove{handler:handler}
-  return self95
+  self94 := &GraphStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self94.processorMap["getNeighbors"] = &graphStorageServiceProcessorGetNeighbors{handler:handler}
+  self94.processorMap["getProps"] = &graphStorageServiceProcessorGetProps{handler:handler}
+  self94.processorMap["addVertices"] = &graphStorageServiceProcessorAddVertices{handler:handler}
+  self94.processorMap["addEdges"] = &graphStorageServiceProcessorAddEdges{handler:handler}
+  self94.processorMap["deleteEdges"] = &graphStorageServiceProcessorDeleteEdges{handler:handler}
+  self94.processorMap["deleteVertices"] = &graphStorageServiceProcessorDeleteVertices{handler:handler}
+  self94.processorMap["deleteTags"] = &graphStorageServiceProcessorDeleteTags{handler:handler}
+  self94.processorMap["updateVertex"] = &graphStorageServiceProcessorUpdateVertex{handler:handler}
+  self94.processorMap["updateEdge"] = &graphStorageServiceProcessorUpdateEdge{handler:handler}
+  self94.processorMap["scanVertex"] = &graphStorageServiceProcessorScanVertex{handler:handler}
+  self94.processorMap["scanEdge"] = &graphStorageServiceProcessorScanEdge{handler:handler}
+  self94.processorMap["getUUID"] = &graphStorageServiceProcessorGetUUID{handler:handler}
+  self94.processorMap["lookupIndex"] = &graphStorageServiceProcessorLookupIndex{handler:handler}
+  self94.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
+  self94.processorMap["chainUpdateEdge"] = &graphStorageServiceProcessorChainUpdateEdge{handler:handler}
+  self94.processorMap["chainAddEdges"] = &graphStorageServiceProcessorChainAddEdges{handler:handler}
+  self94.processorMap["get"] = &graphStorageServiceProcessorGet{handler:handler}
+  self94.processorMap["put"] = &graphStorageServiceProcessorPut{handler:handler}
+  self94.processorMap["remove"] = &graphStorageServiceProcessorRemove{handler:handler}
+  return self94
 }
 
 type graphStorageServiceProcessorGetNeighbors struct {
@@ -4179,15 +4179,15 @@ func (p *GraphStorageServiceScanVertexArgs) String() string {
 //  - Success
 type GraphStorageServiceScanVertexResult struct {
   thrift.IResponse
-  Success *ScanVertexResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ScanResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
 func NewGraphStorageServiceScanVertexResult() *GraphStorageServiceScanVertexResult {
   return &GraphStorageServiceScanVertexResult{}
 }
 
-var GraphStorageServiceScanVertexResult_Success_DEFAULT *ScanVertexResponse
-func (p *GraphStorageServiceScanVertexResult) GetSuccess() *ScanVertexResponse {
+var GraphStorageServiceScanVertexResult_Success_DEFAULT *ScanResponse
+func (p *GraphStorageServiceScanVertexResult) GetSuccess() *ScanResponse {
   if !p.IsSetSuccess() {
     return GraphStorageServiceScanVertexResult_Success_DEFAULT
   }
@@ -4230,7 +4230,7 @@ func (p *GraphStorageServiceScanVertexResult) Read(iprot thrift.Protocol) error 
 }
 
 func (p *GraphStorageServiceScanVertexResult)  ReadField0(iprot thrift.Protocol) error {
-  p.Success = NewScanVertexResponse()
+  p.Success = NewScanResponse()
   if err := p.Success.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
   }
@@ -4379,15 +4379,15 @@ func (p *GraphStorageServiceScanEdgeArgs) String() string {
 //  - Success
 type GraphStorageServiceScanEdgeResult struct {
   thrift.IResponse
-  Success *ScanEdgeResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ScanResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
 func NewGraphStorageServiceScanEdgeResult() *GraphStorageServiceScanEdgeResult {
   return &GraphStorageServiceScanEdgeResult{}
 }
 
-var GraphStorageServiceScanEdgeResult_Success_DEFAULT *ScanEdgeResponse
-func (p *GraphStorageServiceScanEdgeResult) GetSuccess() *ScanEdgeResponse {
+var GraphStorageServiceScanEdgeResult_Success_DEFAULT *ScanResponse
+func (p *GraphStorageServiceScanEdgeResult) GetSuccess() *ScanResponse {
   if !p.IsSetSuccess() {
     return GraphStorageServiceScanEdgeResult_Success_DEFAULT
   }
@@ -4430,7 +4430,7 @@ func (p *GraphStorageServiceScanEdgeResult) Read(iprot thrift.Protocol) error {
 }
 
 func (p *GraphStorageServiceScanEdgeResult)  ReadField0(iprot thrift.Protocol) error {
-  p.Success = NewScanEdgeResponse()
+  p.Success = NewScanResponse()
   if err := p.Success.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
   }

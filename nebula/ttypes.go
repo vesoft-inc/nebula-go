@@ -107,6 +107,7 @@ const (
   PropertyType_INT16 PropertyType = 9
   PropertyType_INT32 PropertyType = 10
   PropertyType_TIMESTAMP PropertyType = 21
+  PropertyType_DURATION PropertyType = 23
   PropertyType_DATE PropertyType = 24
   PropertyType_DATETIME PropertyType = 25
   PropertyType_TIME PropertyType = 26
@@ -126,6 +127,7 @@ var PropertyTypeToName = map[PropertyType]string {
   PropertyType_INT16: "INT16",
   PropertyType_INT32: "INT32",
   PropertyType_TIMESTAMP: "TIMESTAMP",
+  PropertyType_DURATION: "DURATION",
   PropertyType_DATE: "DATE",
   PropertyType_DATETIME: "DATETIME",
   PropertyType_TIME: "TIME",
@@ -145,6 +147,7 @@ var PropertyTypeToValue = map[string]PropertyType {
   "INT16": PropertyType_INT16,
   "INT32": PropertyType_INT32,
   "TIMESTAMP": PropertyType_TIMESTAMP,
+  "DURATION": PropertyType_DURATION,
   "DATE": PropertyType_DATE,
   "DATETIME": PropertyType_DATETIME,
   "TIME": PropertyType_TIME,
@@ -164,6 +167,7 @@ var PropertyTypeNames = []string {
   "INT16",
   "INT32",
   "TIMESTAMP",
+  "DURATION",
   "DATE",
   "DATETIME",
   "TIME",
@@ -183,6 +187,7 @@ var PropertyTypeValues = []PropertyType {
   PropertyType_INT16,
   PropertyType_INT32,
   PropertyType_TIMESTAMP,
+  PropertyType_DURATION,
   PropertyType_DATE,
   PropertyType_DATETIME,
   PropertyType_TIME,
@@ -220,7 +225,7 @@ const (
   ErrorCode_E_TAG_PROP_NOT_FOUND ErrorCode = -10
   ErrorCode_E_ROLE_NOT_FOUND ErrorCode = -11
   ErrorCode_E_CONFIG_NOT_FOUND ErrorCode = -12
-  ErrorCode_E_GROUP_NOT_FOUND ErrorCode = -13
+  ErrorCode_E_MACHINE_NOT_FOUND ErrorCode = -13
   ErrorCode_E_ZONE_NOT_FOUND ErrorCode = -14
   ErrorCode_E_LISTENER_NOT_FOUND ErrorCode = -15
   ErrorCode_E_PART_NOT_FOUND ErrorCode = -16
@@ -344,7 +349,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_TAG_PROP_NOT_FOUND: "E_TAG_PROP_NOT_FOUND",
   ErrorCode_E_ROLE_NOT_FOUND: "E_ROLE_NOT_FOUND",
   ErrorCode_E_CONFIG_NOT_FOUND: "E_CONFIG_NOT_FOUND",
-  ErrorCode_E_GROUP_NOT_FOUND: "E_GROUP_NOT_FOUND",
+  ErrorCode_E_MACHINE_NOT_FOUND: "E_MACHINE_NOT_FOUND",
   ErrorCode_E_ZONE_NOT_FOUND: "E_ZONE_NOT_FOUND",
   ErrorCode_E_LISTENER_NOT_FOUND: "E_LISTENER_NOT_FOUND",
   ErrorCode_E_PART_NOT_FOUND: "E_PART_NOT_FOUND",
@@ -468,7 +473,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_TAG_PROP_NOT_FOUND": ErrorCode_E_TAG_PROP_NOT_FOUND,
   "E_ROLE_NOT_FOUND": ErrorCode_E_ROLE_NOT_FOUND,
   "E_CONFIG_NOT_FOUND": ErrorCode_E_CONFIG_NOT_FOUND,
-  "E_GROUP_NOT_FOUND": ErrorCode_E_GROUP_NOT_FOUND,
+  "E_MACHINE_NOT_FOUND": ErrorCode_E_MACHINE_NOT_FOUND,
   "E_ZONE_NOT_FOUND": ErrorCode_E_ZONE_NOT_FOUND,
   "E_LISTENER_NOT_FOUND": ErrorCode_E_LISTENER_NOT_FOUND,
   "E_PART_NOT_FOUND": ErrorCode_E_PART_NOT_FOUND,
@@ -592,7 +597,7 @@ var ErrorCodeNames = []string {
   "E_TAG_PROP_NOT_FOUND",
   "E_ROLE_NOT_FOUND",
   "E_CONFIG_NOT_FOUND",
-  "E_GROUP_NOT_FOUND",
+  "E_MACHINE_NOT_FOUND",
   "E_ZONE_NOT_FOUND",
   "E_LISTENER_NOT_FOUND",
   "E_PART_NOT_FOUND",
@@ -716,7 +721,7 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_TAG_PROP_NOT_FOUND,
   ErrorCode_E_ROLE_NOT_FOUND,
   ErrorCode_E_CONFIG_NOT_FOUND,
-  ErrorCode_E_GROUP_NOT_FOUND,
+  ErrorCode_E_MACHINE_NOT_FOUND,
   ErrorCode_E_ZONE_NOT_FOUND,
   ErrorCode_E_LISTENER_NOT_FOUND,
   ErrorCode_E_PART_NOT_FOUND,
@@ -1678,6 +1683,7 @@ func (p *DateTime) String() string {
 //  - UVal
 //  - GVal
 //  - GgVal
+//  - DuVal
 type Value struct {
   NVal *NullType `thrift:"nVal,1" db:"nVal" json:"nVal,omitempty"`
   BVal *bool `thrift:"bVal,2" db:"bVal" json:"bVal,omitempty"`
@@ -1695,6 +1701,7 @@ type Value struct {
   UVal *NSet `thrift:"uVal,14" db:"uVal" json:"uVal,omitempty"`
   GVal *DataSet `thrift:"gVal,15" db:"gVal" json:"gVal,omitempty"`
   GgVal *Geography `thrift:"ggVal,16" db:"ggVal" json:"ggVal,omitempty"`
+  DuVal *Duration `thrift:"duVal,17" db:"duVal" json:"duVal,omitempty"`
 }
 
 func NewValue() *Value {
@@ -1811,6 +1818,13 @@ func (p *Value) GetGgVal() *Geography {
   }
 return p.GgVal
 }
+var Value_DuVal_DEFAULT *Duration
+func (p *Value) GetDuVal() *Duration {
+  if !p.IsSetDuVal() {
+    return Value_DuVal_DEFAULT
+  }
+return p.DuVal
+}
 func (p *Value) CountSetFieldsValue() int {
   count := 0
   if (p.IsSetNVal()) {
@@ -1859,6 +1873,9 @@ func (p *Value) CountSetFieldsValue() int {
     count++
   }
   if (p.IsSetGgVal()) {
+    count++
+  }
+  if (p.IsSetDuVal()) {
     count++
   }
   return count
@@ -1927,6 +1944,10 @@ func (p *Value) IsSetGVal() bool {
 
 func (p *Value) IsSetGgVal() bool {
   return p != nil && p.GgVal != nil
+}
+
+func (p *Value) IsSetDuVal() bool {
+  return p != nil && p.DuVal != nil
 }
 
 func (p *Value) Read(iprot thrift.Protocol) error {
@@ -2004,6 +2025,10 @@ func (p *Value) Read(iprot thrift.Protocol) error {
       }
     case 16:
       if err := p.ReadField16(iprot); err != nil {
+        return err
+      }
+    case 17:
+      if err := p.ReadField17(iprot); err != nil {
         return err
       }
     default:
@@ -2155,6 +2180,14 @@ func (p *Value)  ReadField16(iprot thrift.Protocol) error {
   return nil
 }
 
+func (p *Value)  ReadField17(iprot thrift.Protocol) error {
+  p.DuVal = NewDuration()
+  if err := p.DuVal.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.DuVal), err)
+  }
+  return nil
+}
+
 func (p *Value) Write(oprot thrift.Protocol) error {
   if c := p.CountSetFieldsValue(); c > 1 {
     return fmt.Errorf("%T write union: no more than one field must be set (%d set).", p, c)
@@ -2177,6 +2210,7 @@ func (p *Value) Write(oprot thrift.Protocol) error {
   if err := p.writeField14(oprot); err != nil { return err }
   if err := p.writeField15(oprot); err != nil { return err }
   if err := p.writeField16(oprot); err != nil { return err }
+  if err := p.writeField17(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -2387,6 +2421,19 @@ func (p *Value) writeField16(oprot thrift.Protocol) (err error) {
   return err
 }
 
+func (p *Value) writeField17(oprot thrift.Protocol) (err error) {
+  if p.IsSetDuVal() {
+    if err := oprot.WriteFieldBegin("duVal", thrift.STRUCT, 17); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 17:duVal: ", p), err) }
+    if err := p.DuVal.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.DuVal), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 17:duVal: ", p), err) }
+  }
+  return err
+}
+
 func (p *Value) String() string {
   if p == nil {
     return "<nil>"
@@ -2483,7 +2530,13 @@ func (p *Value) String() string {
   } else {
     ggValVal = fmt.Sprintf("%v", p.GgVal)
   }
-  return fmt.Sprintf("Value({NVal:%s BVal:%s IVal:%s FVal:%s SVal:%s DVal:%s TVal:%s DtVal:%s VVal:%s EVal:%s PVal:%s LVal:%s MVal:%s UVal:%s GVal:%s GgVal:%s})", nValVal, bValVal, iValVal, fValVal, sValVal, dValVal, tValVal, dtValVal, vValVal, eValVal, pValVal, lValVal, mValVal, uValVal, gValVal, ggValVal)
+  var duValVal string
+  if p.DuVal == nil {
+    duValVal = "<nil>"
+  } else {
+    duValVal = fmt.Sprintf("%v", p.DuVal)
+  }
+  return fmt.Sprintf("Value({NVal:%s BVal:%s IVal:%s FVal:%s SVal:%s DVal:%s TVal:%s DtVal:%s VVal:%s EVal:%s PVal:%s LVal:%s MVal:%s UVal:%s GVal:%s GgVal:%s DuVal:%s})", nValVal, bValVal, iValVal, fValVal, sValVal, dValVal, tValVal, dtValVal, vValVal, eValVal, pValVal, lValVal, mValVal, uValVal, gValVal, ggValVal, duValVal)
 }
 
 // Attributes:
@@ -4950,6 +5003,153 @@ func (p *KeyValue) String() string {
   keyVal := fmt.Sprintf("%v", p.Key)
   valueVal := fmt.Sprintf("%v", p.Value)
   return fmt.Sprintf("KeyValue({Key:%s Value:%s})", keyVal, valueVal)
+}
+
+// Attributes:
+//  - Seconds
+//  - Microseconds
+//  - Months
+type Duration struct {
+  Seconds int64 `thrift:"seconds,1" db:"seconds" json:"seconds"`
+  Microseconds int32 `thrift:"microseconds,2" db:"microseconds" json:"microseconds"`
+  Months int32 `thrift:"months,3" db:"months" json:"months"`
+}
+
+func NewDuration() *Duration {
+  return &Duration{}
+}
+
+
+func (p *Duration) GetSeconds() int64 {
+  return p.Seconds
+}
+
+func (p *Duration) GetMicroseconds() int32 {
+  return p.Microseconds
+}
+
+func (p *Duration) GetMonths() int32 {
+  return p.Months
+}
+func (p *Duration) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *Duration)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.Seconds = v
+}
+  return nil
+}
+
+func (p *Duration)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Microseconds = v
+}
+  return nil
+}
+
+func (p *Duration)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  p.Months = v
+}
+  return nil
+}
+
+func (p *Duration) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("Duration"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *Duration) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("seconds", thrift.I64, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:seconds: ", p), err) }
+  if err := oprot.WriteI64(int64(p.Seconds)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.seconds (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:seconds: ", p), err) }
+  return err
+}
+
+func (p *Duration) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("microseconds", thrift.I32, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:microseconds: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Microseconds)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.microseconds (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:microseconds: ", p), err) }
+  return err
+}
+
+func (p *Duration) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("months", thrift.I32, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:months: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Months)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.months (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:months: ", p), err) }
+  return err
+}
+
+func (p *Duration) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  secondsVal := fmt.Sprintf("%v", p.Seconds)
+  microsecondsVal := fmt.Sprintf("%v", p.Microseconds)
+  monthsVal := fmt.Sprintf("%v", p.Months)
+  return fmt.Sprintf("Duration({Seconds:%s Microseconds:%s Months:%s})", secondsVal, microsecondsVal, monthsVal)
 }
 
 // Attributes:
