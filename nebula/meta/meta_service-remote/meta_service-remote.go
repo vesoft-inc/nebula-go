@@ -231,11 +231,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "DropSpace requires 1 args")
       flag.Usage()
     }
-    arg114 := flag.Arg(1)
-    mbTrans115 := thrift.NewMemoryBufferLen(len(arg114))
-    defer mbTrans115.Close()
-    _, err116 := mbTrans115.WriteString(arg114)
-    if err116 != nil {
+    arg110 := flag.Arg(1)
+    mbTrans111 := thrift.NewMemoryBufferLen(len(arg110))
+    defer mbTrans111.Close()
+    _, err112 := mbTrans111.WriteString(arg110)
+    if err112 != nil {
       Usage()
       return
     }
@@ -256,11 +256,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetSpace requires 1 args")
       flag.Usage()
     }
-    arg120 := flag.Arg(1)
-    mbTrans121 := thrift.NewMemoryBufferLen(len(arg120))
-    defer mbTrans121.Close()
-    _, err122 := mbTrans121.WriteString(arg120)
-    if err122 != nil {
+    arg116 := flag.Arg(1)
+    mbTrans117 := thrift.NewMemoryBufferLen(len(arg116))
+    defer mbTrans117.Close()
+    _, err118 := mbTrans117.WriteString(arg116)
+    if err118 != nil {
       Usage()
       return
     }
@@ -281,11 +281,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListSpaces requires 1 args")
       flag.Usage()
     }
-    arg126 := flag.Arg(1)
-    mbTrans127 := thrift.NewMemoryBufferLen(len(arg126))
-    defer mbTrans127.Close()
-    _, err128 := mbTrans127.WriteString(arg126)
-    if err128 != nil {
+    arg122 := flag.Arg(1)
+    mbTrans123 := thrift.NewMemoryBufferLen(len(arg122))
+    defer mbTrans123.Close()
+    _, err124 := mbTrans123.WriteString(arg122)
+    if err124 != nil {
       Usage()
       return
     }
@@ -306,11 +306,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "CreateSpaceAs requires 1 args")
       flag.Usage()
     }
-    arg132 := flag.Arg(1)
-    mbTrans133 := thrift.NewMemoryBufferLen(len(arg132))
-    defer mbTrans133.Close()
-    _, err134 := mbTrans133.WriteString(arg132)
-    if err134 != nil {
+    arg128 := flag.Arg(1)
+    mbTrans129 := thrift.NewMemoryBufferLen(len(arg128))
+    defer mbTrans129.Close()
+    _, err130 := mbTrans129.WriteString(arg128)
+    if err130 != nil {
       Usage()
       return
     }
@@ -331,11 +331,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "CreateTag requires 1 args")
       flag.Usage()
     }
-    arg138 := flag.Arg(1)
-    mbTrans139 := thrift.NewMemoryBufferLen(len(arg138))
-    defer mbTrans139.Close()
-    _, err140 := mbTrans139.WriteString(arg138)
-    if err140 != nil {
+    arg134 := flag.Arg(1)
+    mbTrans135 := thrift.NewMemoryBufferLen(len(arg134))
+    defer mbTrans135.Close()
+    _, err136 := mbTrans135.WriteString(arg134)
+    if err136 != nil {
       Usage()
       return
     }
@@ -356,11 +356,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "AlterTag requires 1 args")
       flag.Usage()
     }
-    arg144 := flag.Arg(1)
-    mbTrans145 := thrift.NewMemoryBufferLen(len(arg144))
-    defer mbTrans145.Close()
-    _, err146 := mbTrans145.WriteString(arg144)
-    if err146 != nil {
+    arg140 := flag.Arg(1)
+    mbTrans141 := thrift.NewMemoryBufferLen(len(arg140))
+    defer mbTrans141.Close()
+    _, err142 := mbTrans141.WriteString(arg140)
+    if err142 != nil {
       Usage()
       return
     }
@@ -381,11 +381,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "DropTag requires 1 args")
       flag.Usage()
     }
-    arg150 := flag.Arg(1)
-    mbTrans151 := thrift.NewMemoryBufferLen(len(arg150))
-    defer mbTrans151.Close()
-    _, err152 := mbTrans151.WriteString(arg150)
-    if err152 != nil {
+    arg146 := flag.Arg(1)
+    mbTrans147 := thrift.NewMemoryBufferLen(len(arg146))
+    defer mbTrans147.Close()
+    _, err148 := mbTrans147.WriteString(arg146)
+    if err148 != nil {
       Usage()
       return
     }
@@ -406,11 +406,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetTag requires 1 args")
       flag.Usage()
     }
-    arg156 := flag.Arg(1)
-    mbTrans157 := thrift.NewMemoryBufferLen(len(arg156))
-    defer mbTrans157.Close()
-    _, err158 := mbTrans157.WriteString(arg156)
-    if err158 != nil {
+    arg152 := flag.Arg(1)
+    mbTrans153 := thrift.NewMemoryBufferLen(len(arg152))
+    defer mbTrans153.Close()
+    _, err154 := mbTrans153.WriteString(arg152)
+    if err154 != nil {
       Usage()
       return
     }
@@ -431,11 +431,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListTags requires 1 args")
       flag.Usage()
     }
-    arg162 := flag.Arg(1)
-    mbTrans163 := thrift.NewMemoryBufferLen(len(arg162))
-    defer mbTrans163.Close()
-    _, err164 := mbTrans163.WriteString(arg162)
-    if err164 != nil {
+    arg158 := flag.Arg(1)
+    mbTrans159 := thrift.NewMemoryBufferLen(len(arg158))
+    defer mbTrans159.Close()
+    _, err160 := mbTrans159.WriteString(arg158)
+    if err160 != nil {
       Usage()
       return
     }
@@ -456,11 +456,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "CreateEdge requires 1 args")
       flag.Usage()
     }
-    arg168 := flag.Arg(1)
-    mbTrans169 := thrift.NewMemoryBufferLen(len(arg168))
-    defer mbTrans169.Close()
-    _, err170 := mbTrans169.WriteString(arg168)
-    if err170 != nil {
+    arg164 := flag.Arg(1)
+    mbTrans165 := thrift.NewMemoryBufferLen(len(arg164))
+    defer mbTrans165.Close()
+    _, err166 := mbTrans165.WriteString(arg164)
+    if err166 != nil {
       Usage()
       return
     }
@@ -481,11 +481,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "AlterEdge requires 1 args")
       flag.Usage()
     }
-    arg174 := flag.Arg(1)
-    mbTrans175 := thrift.NewMemoryBufferLen(len(arg174))
-    defer mbTrans175.Close()
-    _, err176 := mbTrans175.WriteString(arg174)
-    if err176 != nil {
+    arg170 := flag.Arg(1)
+    mbTrans171 := thrift.NewMemoryBufferLen(len(arg170))
+    defer mbTrans171.Close()
+    _, err172 := mbTrans171.WriteString(arg170)
+    if err172 != nil {
       Usage()
       return
     }
@@ -506,11 +506,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "DropEdge requires 1 args")
       flag.Usage()
     }
-    arg180 := flag.Arg(1)
-    mbTrans181 := thrift.NewMemoryBufferLen(len(arg180))
-    defer mbTrans181.Close()
-    _, err182 := mbTrans181.WriteString(arg180)
-    if err182 != nil {
+    arg176 := flag.Arg(1)
+    mbTrans177 := thrift.NewMemoryBufferLen(len(arg176))
+    defer mbTrans177.Close()
+    _, err178 := mbTrans177.WriteString(arg176)
+    if err178 != nil {
       Usage()
       return
     }
@@ -531,11 +531,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetEdge requires 1 args")
       flag.Usage()
     }
-    arg186 := flag.Arg(1)
-    mbTrans187 := thrift.NewMemoryBufferLen(len(arg186))
-    defer mbTrans187.Close()
-    _, err188 := mbTrans187.WriteString(arg186)
-    if err188 != nil {
+    arg182 := flag.Arg(1)
+    mbTrans183 := thrift.NewMemoryBufferLen(len(arg182))
+    defer mbTrans183.Close()
+    _, err184 := mbTrans183.WriteString(arg182)
+    if err184 != nil {
       Usage()
       return
     }
@@ -556,11 +556,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListEdges requires 1 args")
       flag.Usage()
     }
-    arg210 := flag.Arg(1)
-    mbTrans211 := thrift.NewMemoryBufferLen(len(arg210))
-    defer mbTrans211.Close()
-    _, err212 := mbTrans211.WriteString(arg210)
-    if err212 != nil {
+    arg188 := flag.Arg(1)
+    mbTrans189 := thrift.NewMemoryBufferLen(len(arg188))
+    defer mbTrans189.Close()
+    _, err190 := mbTrans189.WriteString(arg188)
+    if err190 != nil {
       Usage()
       return
     }
@@ -581,11 +581,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "AddHosts requires 1 args")
       flag.Usage()
     }
-    arg216 := flag.Arg(1)
-    mbTrans217 := thrift.NewMemoryBufferLen(len(arg216))
-    defer mbTrans217.Close()
-    _, err218 := mbTrans217.WriteString(arg216)
-    if err218 != nil {
+    arg194 := flag.Arg(1)
+    mbTrans195 := thrift.NewMemoryBufferLen(len(arg194))
+    defer mbTrans195.Close()
+    _, err196 := mbTrans195.WriteString(arg194)
+    if err196 != nil {
       Usage()
       return
     }
@@ -606,11 +606,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "AddHostsIntoZone requires 1 args")
       flag.Usage()
     }
-    arg222 := flag.Arg(1)
-    mbTrans223 := thrift.NewMemoryBufferLen(len(arg222))
-    defer mbTrans223.Close()
-    _, err224 := mbTrans223.WriteString(arg222)
-    if err224 != nil {
+    arg200 := flag.Arg(1)
+    mbTrans201 := thrift.NewMemoryBufferLen(len(arg200))
+    defer mbTrans201.Close()
+    _, err202 := mbTrans201.WriteString(arg200)
+    if err202 != nil {
       Usage()
       return
     }
@@ -631,11 +631,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "DropHosts requires 1 args")
       flag.Usage()
     }
-    arg228 := flag.Arg(1)
-    mbTrans229 := thrift.NewMemoryBufferLen(len(arg228))
-    defer mbTrans229.Close()
-    _, err230 := mbTrans229.WriteString(arg228)
-    if err230 != nil {
+    arg206 := flag.Arg(1)
+    mbTrans207 := thrift.NewMemoryBufferLen(len(arg206))
+    defer mbTrans207.Close()
+    _, err208 := mbTrans207.WriteString(arg206)
+    if err208 != nil {
       Usage()
       return
     }
@@ -656,11 +656,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListHosts requires 1 args")
       flag.Usage()
     }
-    arg234 := flag.Arg(1)
-    mbTrans235 := thrift.NewMemoryBufferLen(len(arg234))
-    defer mbTrans235.Close()
-    _, err236 := mbTrans235.WriteString(arg234)
-    if err236 != nil {
+    arg212 := flag.Arg(1)
+    mbTrans213 := thrift.NewMemoryBufferLen(len(arg212))
+    defer mbTrans213.Close()
+    _, err214 := mbTrans213.WriteString(arg212)
+    if err214 != nil {
       Usage()
       return
     }
@@ -681,11 +681,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetPartsAlloc requires 1 args")
       flag.Usage()
     }
-    arg240 := flag.Arg(1)
-    mbTrans241 := thrift.NewMemoryBufferLen(len(arg240))
-    defer mbTrans241.Close()
-    _, err242 := mbTrans241.WriteString(arg240)
-    if err242 != nil {
+    arg218 := flag.Arg(1)
+    mbTrans219 := thrift.NewMemoryBufferLen(len(arg218))
+    defer mbTrans219.Close()
+    _, err220 := mbTrans219.WriteString(arg218)
+    if err220 != nil {
       Usage()
       return
     }
@@ -706,11 +706,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListParts requires 1 args")
       flag.Usage()
     }
-    arg246 := flag.Arg(1)
-    mbTrans247 := thrift.NewMemoryBufferLen(len(arg246))
-    defer mbTrans247.Close()
-    _, err248 := mbTrans247.WriteString(arg246)
-    if err248 != nil {
+    arg224 := flag.Arg(1)
+    mbTrans225 := thrift.NewMemoryBufferLen(len(arg224))
+    defer mbTrans225.Close()
+    _, err226 := mbTrans225.WriteString(arg224)
+    if err226 != nil {
       Usage()
       return
     }
@@ -731,11 +731,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "MultiPut requires 1 args")
       flag.Usage()
     }
-    arg252 := flag.Arg(1)
-    mbTrans253 := thrift.NewMemoryBufferLen(len(arg252))
-    defer mbTrans253.Close()
-    _, err254 := mbTrans253.WriteString(arg252)
-    if err254 != nil {
+    arg230 := flag.Arg(1)
+    mbTrans231 := thrift.NewMemoryBufferLen(len(arg230))
+    defer mbTrans231.Close()
+    _, err232 := mbTrans231.WriteString(arg230)
+    if err232 != nil {
       Usage()
       return
     }
@@ -756,11 +756,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "Get requires 1 args")
       flag.Usage()
     }
-    arg258 := flag.Arg(1)
-    mbTrans259 := thrift.NewMemoryBufferLen(len(arg258))
-    defer mbTrans259.Close()
-    _, err260 := mbTrans259.WriteString(arg258)
-    if err260 != nil {
+    arg236 := flag.Arg(1)
+    mbTrans237 := thrift.NewMemoryBufferLen(len(arg236))
+    defer mbTrans237.Close()
+    _, err238 := mbTrans237.WriteString(arg236)
+    if err238 != nil {
       Usage()
       return
     }
@@ -781,11 +781,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "MultiGet requires 1 args")
       flag.Usage()
     }
-    arg264 := flag.Arg(1)
-    mbTrans265 := thrift.NewMemoryBufferLen(len(arg264))
-    defer mbTrans265.Close()
-    _, err266 := mbTrans265.WriteString(arg264)
-    if err266 != nil {
+    arg242 := flag.Arg(1)
+    mbTrans243 := thrift.NewMemoryBufferLen(len(arg242))
+    defer mbTrans243.Close()
+    _, err244 := mbTrans243.WriteString(arg242)
+    if err244 != nil {
       Usage()
       return
     }
@@ -806,11 +806,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "Remove requires 1 args")
       flag.Usage()
     }
-    arg270 := flag.Arg(1)
-    mbTrans271 := thrift.NewMemoryBufferLen(len(arg270))
-    defer mbTrans271.Close()
-    _, err272 := mbTrans271.WriteString(arg270)
-    if err272 != nil {
+    arg248 := flag.Arg(1)
+    mbTrans249 := thrift.NewMemoryBufferLen(len(arg248))
+    defer mbTrans249.Close()
+    _, err250 := mbTrans249.WriteString(arg248)
+    if err250 != nil {
       Usage()
       return
     }
@@ -831,11 +831,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "RemoveRange requires 1 args")
       flag.Usage()
     }
-    arg276 := flag.Arg(1)
-    mbTrans277 := thrift.NewMemoryBufferLen(len(arg276))
-    defer mbTrans277.Close()
-    _, err278 := mbTrans277.WriteString(arg276)
-    if err278 != nil {
+    arg254 := flag.Arg(1)
+    mbTrans255 := thrift.NewMemoryBufferLen(len(arg254))
+    defer mbTrans255.Close()
+    _, err256 := mbTrans255.WriteString(arg254)
+    if err256 != nil {
       Usage()
       return
     }
@@ -856,11 +856,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "Scan requires 1 args")
       flag.Usage()
     }
-    arg282 := flag.Arg(1)
-    mbTrans283 := thrift.NewMemoryBufferLen(len(arg282))
-    defer mbTrans283.Close()
-    _, err284 := mbTrans283.WriteString(arg282)
-    if err284 != nil {
+    arg260 := flag.Arg(1)
+    mbTrans261 := thrift.NewMemoryBufferLen(len(arg260))
+    defer mbTrans261.Close()
+    _, err262 := mbTrans261.WriteString(arg260)
+    if err262 != nil {
       Usage()
       return
     }
@@ -881,11 +881,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "CreateTagIndex requires 1 args")
       flag.Usage()
     }
-    arg288 := flag.Arg(1)
-    mbTrans289 := thrift.NewMemoryBufferLen(len(arg288))
-    defer mbTrans289.Close()
-    _, err290 := mbTrans289.WriteString(arg288)
-    if err290 != nil {
+    arg266 := flag.Arg(1)
+    mbTrans267 := thrift.NewMemoryBufferLen(len(arg266))
+    defer mbTrans267.Close()
+    _, err268 := mbTrans267.WriteString(arg266)
+    if err268 != nil {
       Usage()
       return
     }
@@ -906,11 +906,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "DropTagIndex requires 1 args")
       flag.Usage()
     }
-    arg294 := flag.Arg(1)
-    mbTrans295 := thrift.NewMemoryBufferLen(len(arg294))
-    defer mbTrans295.Close()
-    _, err296 := mbTrans295.WriteString(arg294)
-    if err296 != nil {
+    arg272 := flag.Arg(1)
+    mbTrans273 := thrift.NewMemoryBufferLen(len(arg272))
+    defer mbTrans273.Close()
+    _, err274 := mbTrans273.WriteString(arg272)
+    if err274 != nil {
       Usage()
       return
     }
@@ -931,11 +931,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetTagIndex requires 1 args")
       flag.Usage()
     }
-    arg300 := flag.Arg(1)
-    mbTrans301 := thrift.NewMemoryBufferLen(len(arg300))
-    defer mbTrans301.Close()
-    _, err302 := mbTrans301.WriteString(arg300)
-    if err302 != nil {
+    arg278 := flag.Arg(1)
+    mbTrans279 := thrift.NewMemoryBufferLen(len(arg278))
+    defer mbTrans279.Close()
+    _, err280 := mbTrans279.WriteString(arg278)
+    if err280 != nil {
       Usage()
       return
     }
@@ -956,11 +956,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListTagIndexes requires 1 args")
       flag.Usage()
     }
-    arg306 := flag.Arg(1)
-    mbTrans307 := thrift.NewMemoryBufferLen(len(arg306))
-    defer mbTrans307.Close()
-    _, err308 := mbTrans307.WriteString(arg306)
-    if err308 != nil {
+    arg284 := flag.Arg(1)
+    mbTrans285 := thrift.NewMemoryBufferLen(len(arg284))
+    defer mbTrans285.Close()
+    _, err286 := mbTrans285.WriteString(arg284)
+    if err286 != nil {
       Usage()
       return
     }
@@ -981,11 +981,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "RebuildTagIndex requires 1 args")
       flag.Usage()
     }
-    arg312 := flag.Arg(1)
-    mbTrans313 := thrift.NewMemoryBufferLen(len(arg312))
-    defer mbTrans313.Close()
-    _, err314 := mbTrans313.WriteString(arg312)
-    if err314 != nil {
+    arg290 := flag.Arg(1)
+    mbTrans291 := thrift.NewMemoryBufferLen(len(arg290))
+    defer mbTrans291.Close()
+    _, err292 := mbTrans291.WriteString(arg290)
+    if err292 != nil {
       Usage()
       return
     }
@@ -1006,11 +1006,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListTagIndexStatus requires 1 args")
       flag.Usage()
     }
-    arg318 := flag.Arg(1)
-    mbTrans319 := thrift.NewMemoryBufferLen(len(arg318))
-    defer mbTrans319.Close()
-    _, err320 := mbTrans319.WriteString(arg318)
-    if err320 != nil {
+    arg296 := flag.Arg(1)
+    mbTrans297 := thrift.NewMemoryBufferLen(len(arg296))
+    defer mbTrans297.Close()
+    _, err298 := mbTrans297.WriteString(arg296)
+    if err298 != nil {
       Usage()
       return
     }
@@ -1031,11 +1031,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "CreateEdgeIndex requires 1 args")
       flag.Usage()
     }
-    arg324 := flag.Arg(1)
-    mbTrans325 := thrift.NewMemoryBufferLen(len(arg324))
-    defer mbTrans325.Close()
-    _, err326 := mbTrans325.WriteString(arg324)
-    if err326 != nil {
+    arg302 := flag.Arg(1)
+    mbTrans303 := thrift.NewMemoryBufferLen(len(arg302))
+    defer mbTrans303.Close()
+    _, err304 := mbTrans303.WriteString(arg302)
+    if err304 != nil {
       Usage()
       return
     }
@@ -1056,11 +1056,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "DropEdgeIndex requires 1 args")
       flag.Usage()
     }
-    arg330 := flag.Arg(1)
-    mbTrans331 := thrift.NewMemoryBufferLen(len(arg330))
-    defer mbTrans331.Close()
-    _, err332 := mbTrans331.WriteString(arg330)
-    if err332 != nil {
+    arg308 := flag.Arg(1)
+    mbTrans309 := thrift.NewMemoryBufferLen(len(arg308))
+    defer mbTrans309.Close()
+    _, err310 := mbTrans309.WriteString(arg308)
+    if err310 != nil {
       Usage()
       return
     }
@@ -1081,11 +1081,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetEdgeIndex requires 1 args")
       flag.Usage()
     }
-    arg336 := flag.Arg(1)
-    mbTrans337 := thrift.NewMemoryBufferLen(len(arg336))
-    defer mbTrans337.Close()
-    _, err338 := mbTrans337.WriteString(arg336)
-    if err338 != nil {
+    arg314 := flag.Arg(1)
+    mbTrans315 := thrift.NewMemoryBufferLen(len(arg314))
+    defer mbTrans315.Close()
+    _, err316 := mbTrans315.WriteString(arg314)
+    if err316 != nil {
       Usage()
       return
     }
@@ -1106,11 +1106,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListEdgeIndexes requires 1 args")
       flag.Usage()
     }
-    arg342 := flag.Arg(1)
-    mbTrans343 := thrift.NewMemoryBufferLen(len(arg342))
-    defer mbTrans343.Close()
-    _, err344 := mbTrans343.WriteString(arg342)
-    if err344 != nil {
+    arg320 := flag.Arg(1)
+    mbTrans321 := thrift.NewMemoryBufferLen(len(arg320))
+    defer mbTrans321.Close()
+    _, err322 := mbTrans321.WriteString(arg320)
+    if err322 != nil {
       Usage()
       return
     }
@@ -1131,11 +1131,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "RebuildEdgeIndex requires 1 args")
       flag.Usage()
     }
-    arg348 := flag.Arg(1)
-    mbTrans349 := thrift.NewMemoryBufferLen(len(arg348))
-    defer mbTrans349.Close()
-    _, err350 := mbTrans349.WriteString(arg348)
-    if err350 != nil {
+    arg326 := flag.Arg(1)
+    mbTrans327 := thrift.NewMemoryBufferLen(len(arg326))
+    defer mbTrans327.Close()
+    _, err328 := mbTrans327.WriteString(arg326)
+    if err328 != nil {
       Usage()
       return
     }
@@ -1156,11 +1156,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListEdgeIndexStatus requires 1 args")
       flag.Usage()
     }
-    arg354 := flag.Arg(1)
-    mbTrans355 := thrift.NewMemoryBufferLen(len(arg354))
-    defer mbTrans355.Close()
-    _, err356 := mbTrans355.WriteString(arg354)
-    if err356 != nil {
+    arg332 := flag.Arg(1)
+    mbTrans333 := thrift.NewMemoryBufferLen(len(arg332))
+    defer mbTrans333.Close()
+    _, err334 := mbTrans333.WriteString(arg332)
+    if err334 != nil {
       Usage()
       return
     }
@@ -1181,11 +1181,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "CreateUser requires 1 args")
       flag.Usage()
     }
-    arg360 := flag.Arg(1)
-    mbTrans361 := thrift.NewMemoryBufferLen(len(arg360))
-    defer mbTrans361.Close()
-    _, err362 := mbTrans361.WriteString(arg360)
-    if err362 != nil {
+    arg338 := flag.Arg(1)
+    mbTrans339 := thrift.NewMemoryBufferLen(len(arg338))
+    defer mbTrans339.Close()
+    _, err340 := mbTrans339.WriteString(arg338)
+    if err340 != nil {
       Usage()
       return
     }
@@ -1206,11 +1206,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "DropUser requires 1 args")
       flag.Usage()
     }
-    arg366 := flag.Arg(1)
-    mbTrans367 := thrift.NewMemoryBufferLen(len(arg366))
-    defer mbTrans367.Close()
-    _, err368 := mbTrans367.WriteString(arg366)
-    if err368 != nil {
+    arg344 := flag.Arg(1)
+    mbTrans345 := thrift.NewMemoryBufferLen(len(arg344))
+    defer mbTrans345.Close()
+    _, err346 := mbTrans345.WriteString(arg344)
+    if err346 != nil {
       Usage()
       return
     }
@@ -1231,11 +1231,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "AlterUser requires 1 args")
       flag.Usage()
     }
-    arg372 := flag.Arg(1)
-    mbTrans373 := thrift.NewMemoryBufferLen(len(arg372))
-    defer mbTrans373.Close()
-    _, err374 := mbTrans373.WriteString(arg372)
-    if err374 != nil {
+    arg350 := flag.Arg(1)
+    mbTrans351 := thrift.NewMemoryBufferLen(len(arg350))
+    defer mbTrans351.Close()
+    _, err352 := mbTrans351.WriteString(arg350)
+    if err352 != nil {
       Usage()
       return
     }
@@ -1256,11 +1256,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "GrantRole requires 1 args")
       flag.Usage()
     }
-    arg378 := flag.Arg(1)
-    mbTrans379 := thrift.NewMemoryBufferLen(len(arg378))
-    defer mbTrans379.Close()
-    _, err380 := mbTrans379.WriteString(arg378)
-    if err380 != nil {
+    arg356 := flag.Arg(1)
+    mbTrans357 := thrift.NewMemoryBufferLen(len(arg356))
+    defer mbTrans357.Close()
+    _, err358 := mbTrans357.WriteString(arg356)
+    if err358 != nil {
       Usage()
       return
     }
@@ -1281,11 +1281,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "RevokeRole requires 1 args")
       flag.Usage()
     }
-    arg384 := flag.Arg(1)
-    mbTrans385 := thrift.NewMemoryBufferLen(len(arg384))
-    defer mbTrans385.Close()
-    _, err386 := mbTrans385.WriteString(arg384)
-    if err386 != nil {
+    arg362 := flag.Arg(1)
+    mbTrans363 := thrift.NewMemoryBufferLen(len(arg362))
+    defer mbTrans363.Close()
+    _, err364 := mbTrans363.WriteString(arg362)
+    if err364 != nil {
       Usage()
       return
     }
@@ -1306,11 +1306,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListUsers requires 1 args")
       flag.Usage()
     }
-    arg390 := flag.Arg(1)
-    mbTrans391 := thrift.NewMemoryBufferLen(len(arg390))
-    defer mbTrans391.Close()
-    _, err392 := mbTrans391.WriteString(arg390)
-    if err392 != nil {
+    arg368 := flag.Arg(1)
+    mbTrans369 := thrift.NewMemoryBufferLen(len(arg368))
+    defer mbTrans369.Close()
+    _, err370 := mbTrans369.WriteString(arg368)
+    if err370 != nil {
       Usage()
       return
     }
@@ -1331,11 +1331,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListRoles requires 1 args")
       flag.Usage()
     }
-    arg396 := flag.Arg(1)
-    mbTrans397 := thrift.NewMemoryBufferLen(len(arg396))
-    defer mbTrans397.Close()
-    _, err398 := mbTrans397.WriteString(arg396)
-    if err398 != nil {
+    arg374 := flag.Arg(1)
+    mbTrans375 := thrift.NewMemoryBufferLen(len(arg374))
+    defer mbTrans375.Close()
+    _, err376 := mbTrans375.WriteString(arg374)
+    if err376 != nil {
       Usage()
       return
     }
@@ -1356,11 +1356,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetUserRoles requires 1 args")
       flag.Usage()
     }
-    arg402 := flag.Arg(1)
-    mbTrans403 := thrift.NewMemoryBufferLen(len(arg402))
-    defer mbTrans403.Close()
-    _, err404 := mbTrans403.WriteString(arg402)
-    if err404 != nil {
+    arg380 := flag.Arg(1)
+    mbTrans381 := thrift.NewMemoryBufferLen(len(arg380))
+    defer mbTrans381.Close()
+    _, err382 := mbTrans381.WriteString(arg380)
+    if err382 != nil {
       Usage()
       return
     }
@@ -1381,11 +1381,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ChangePassword requires 1 args")
       flag.Usage()
     }
-    arg408 := flag.Arg(1)
-    mbTrans409 := thrift.NewMemoryBufferLen(len(arg408))
-    defer mbTrans409.Close()
-    _, err410 := mbTrans409.WriteString(arg408)
-    if err410 != nil {
+    arg386 := flag.Arg(1)
+    mbTrans387 := thrift.NewMemoryBufferLen(len(arg386))
+    defer mbTrans387.Close()
+    _, err388 := mbTrans387.WriteString(arg386)
+    if err388 != nil {
       Usage()
       return
     }
@@ -1406,11 +1406,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "HeartBeat requires 1 args")
       flag.Usage()
     }
-    arg414 := flag.Arg(1)
-    mbTrans415 := thrift.NewMemoryBufferLen(len(arg414))
-    defer mbTrans415.Close()
-    _, err416 := mbTrans415.WriteString(arg414)
-    if err416 != nil {
+    arg392 := flag.Arg(1)
+    mbTrans393 := thrift.NewMemoryBufferLen(len(arg392))
+    defer mbTrans393.Close()
+    _, err394 := mbTrans393.WriteString(arg392)
+    if err394 != nil {
       Usage()
       return
     }
@@ -1431,11 +1431,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "AgentHeartbeat requires 1 args")
       flag.Usage()
     }
-    arg420 := flag.Arg(1)
-    mbTrans421 := thrift.NewMemoryBufferLen(len(arg420))
-    defer mbTrans421.Close()
-    _, err422 := mbTrans421.WriteString(arg420)
-    if err422 != nil {
+    arg398 := flag.Arg(1)
+    mbTrans399 := thrift.NewMemoryBufferLen(len(arg398))
+    defer mbTrans399.Close()
+    _, err400 := mbTrans399.WriteString(arg398)
+    if err400 != nil {
       Usage()
       return
     }
@@ -1456,11 +1456,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "RegConfig requires 1 args")
       flag.Usage()
     }
-    arg426 := flag.Arg(1)
-    mbTrans427 := thrift.NewMemoryBufferLen(len(arg426))
-    defer mbTrans427.Close()
-    _, err428 := mbTrans427.WriteString(arg426)
-    if err428 != nil {
+    arg404 := flag.Arg(1)
+    mbTrans405 := thrift.NewMemoryBufferLen(len(arg404))
+    defer mbTrans405.Close()
+    _, err406 := mbTrans405.WriteString(arg404)
+    if err406 != nil {
       Usage()
       return
     }
@@ -1481,11 +1481,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetConfig requires 1 args")
       flag.Usage()
     }
-    arg432 := flag.Arg(1)
-    mbTrans433 := thrift.NewMemoryBufferLen(len(arg432))
-    defer mbTrans433.Close()
-    _, err434 := mbTrans433.WriteString(arg432)
-    if err434 != nil {
+    arg410 := flag.Arg(1)
+    mbTrans411 := thrift.NewMemoryBufferLen(len(arg410))
+    defer mbTrans411.Close()
+    _, err412 := mbTrans411.WriteString(arg410)
+    if err412 != nil {
       Usage()
       return
     }
@@ -1506,11 +1506,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "SetConfig requires 1 args")
       flag.Usage()
     }
-    arg438 := flag.Arg(1)
-    mbTrans439 := thrift.NewMemoryBufferLen(len(arg438))
-    defer mbTrans439.Close()
-    _, err440 := mbTrans439.WriteString(arg438)
-    if err440 != nil {
+    arg416 := flag.Arg(1)
+    mbTrans417 := thrift.NewMemoryBufferLen(len(arg416))
+    defer mbTrans417.Close()
+    _, err418 := mbTrans417.WriteString(arg416)
+    if err418 != nil {
       Usage()
       return
     }
@@ -1531,11 +1531,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListConfigs requires 1 args")
       flag.Usage()
     }
-    arg444 := flag.Arg(1)
-    mbTrans445 := thrift.NewMemoryBufferLen(len(arg444))
-    defer mbTrans445.Close()
-    _, err446 := mbTrans445.WriteString(arg444)
-    if err446 != nil {
+    arg422 := flag.Arg(1)
+    mbTrans423 := thrift.NewMemoryBufferLen(len(arg422))
+    defer mbTrans423.Close()
+    _, err424 := mbTrans423.WriteString(arg422)
+    if err424 != nil {
       Usage()
       return
     }
@@ -1556,11 +1556,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "CreateSnapshot requires 1 args")
       flag.Usage()
     }
-    arg450 := flag.Arg(1)
-    mbTrans451 := thrift.NewMemoryBufferLen(len(arg450))
-    defer mbTrans451.Close()
-    _, err452 := mbTrans451.WriteString(arg450)
-    if err452 != nil {
+    arg428 := flag.Arg(1)
+    mbTrans429 := thrift.NewMemoryBufferLen(len(arg428))
+    defer mbTrans429.Close()
+    _, err430 := mbTrans429.WriteString(arg428)
+    if err430 != nil {
       Usage()
       return
     }
@@ -1581,11 +1581,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "DropSnapshot requires 1 args")
       flag.Usage()
     }
-    arg456 := flag.Arg(1)
-    mbTrans457 := thrift.NewMemoryBufferLen(len(arg456))
-    defer mbTrans457.Close()
-    _, err458 := mbTrans457.WriteString(arg456)
-    if err458 != nil {
+    arg434 := flag.Arg(1)
+    mbTrans435 := thrift.NewMemoryBufferLen(len(arg434))
+    defer mbTrans435.Close()
+    _, err436 := mbTrans435.WriteString(arg434)
+    if err436 != nil {
       Usage()
       return
     }
@@ -1606,11 +1606,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListSnapshots requires 1 args")
       flag.Usage()
     }
-    arg462 := flag.Arg(1)
-    mbTrans463 := thrift.NewMemoryBufferLen(len(arg462))
-    defer mbTrans463.Close()
-    _, err464 := mbTrans463.WriteString(arg462)
-    if err464 != nil {
+    arg440 := flag.Arg(1)
+    mbTrans441 := thrift.NewMemoryBufferLen(len(arg440))
+    defer mbTrans441.Close()
+    _, err442 := mbTrans441.WriteString(arg440)
+    if err442 != nil {
       Usage()
       return
     }
@@ -1631,11 +1631,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "RunAdminJob requires 1 args")
       flag.Usage()
     }
-    arg468 := flag.Arg(1)
-    mbTrans469 := thrift.NewMemoryBufferLen(len(arg468))
-    defer mbTrans469.Close()
-    _, err470 := mbTrans469.WriteString(arg468)
-    if err470 != nil {
+    arg446 := flag.Arg(1)
+    mbTrans447 := thrift.NewMemoryBufferLen(len(arg446))
+    defer mbTrans447.Close()
+    _, err448 := mbTrans447.WriteString(arg446)
+    if err448 != nil {
       Usage()
       return
     }
@@ -1656,11 +1656,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "MergeZone requires 1 args")
       flag.Usage()
     }
-    arg474 := flag.Arg(1)
-    mbTrans475 := thrift.NewMemoryBufferLen(len(arg474))
-    defer mbTrans475.Close()
-    _, err476 := mbTrans475.WriteString(arg474)
-    if err476 != nil {
+    arg452 := flag.Arg(1)
+    mbTrans453 := thrift.NewMemoryBufferLen(len(arg452))
+    defer mbTrans453.Close()
+    _, err454 := mbTrans453.WriteString(arg452)
+    if err454 != nil {
       Usage()
       return
     }
@@ -1681,11 +1681,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "DropZone requires 1 args")
       flag.Usage()
     }
-    arg480 := flag.Arg(1)
-    mbTrans481 := thrift.NewMemoryBufferLen(len(arg480))
-    defer mbTrans481.Close()
-    _, err482 := mbTrans481.WriteString(arg480)
-    if err482 != nil {
+    arg458 := flag.Arg(1)
+    mbTrans459 := thrift.NewMemoryBufferLen(len(arg458))
+    defer mbTrans459.Close()
+    _, err460 := mbTrans459.WriteString(arg458)
+    if err460 != nil {
       Usage()
       return
     }
@@ -1706,11 +1706,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "SplitZone requires 1 args")
       flag.Usage()
     }
-    arg486 := flag.Arg(1)
-    mbTrans487 := thrift.NewMemoryBufferLen(len(arg486))
-    defer mbTrans487.Close()
-    _, err488 := mbTrans487.WriteString(arg486)
-    if err488 != nil {
+    arg464 := flag.Arg(1)
+    mbTrans465 := thrift.NewMemoryBufferLen(len(arg464))
+    defer mbTrans465.Close()
+    _, err466 := mbTrans465.WriteString(arg464)
+    if err466 != nil {
       Usage()
       return
     }
@@ -1731,11 +1731,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "RenameZone requires 1 args")
       flag.Usage()
     }
-    arg492 := flag.Arg(1)
-    mbTrans493 := thrift.NewMemoryBufferLen(len(arg492))
-    defer mbTrans493.Close()
-    _, err494 := mbTrans493.WriteString(arg492)
-    if err494 != nil {
+    arg470 := flag.Arg(1)
+    mbTrans471 := thrift.NewMemoryBufferLen(len(arg470))
+    defer mbTrans471.Close()
+    _, err472 := mbTrans471.WriteString(arg470)
+    if err472 != nil {
       Usage()
       return
     }
@@ -1756,11 +1756,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetZone requires 1 args")
       flag.Usage()
     }
-    arg498 := flag.Arg(1)
-    mbTrans499 := thrift.NewMemoryBufferLen(len(arg498))
-    defer mbTrans499.Close()
-    _, err500 := mbTrans499.WriteString(arg498)
-    if err500 != nil {
+    arg476 := flag.Arg(1)
+    mbTrans477 := thrift.NewMemoryBufferLen(len(arg476))
+    defer mbTrans477.Close()
+    _, err478 := mbTrans477.WriteString(arg476)
+    if err478 != nil {
       Usage()
       return
     }
@@ -1781,11 +1781,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListZones requires 1 args")
       flag.Usage()
     }
-    arg504 := flag.Arg(1)
-    mbTrans505 := thrift.NewMemoryBufferLen(len(arg504))
-    defer mbTrans505.Close()
-    _, err506 := mbTrans505.WriteString(arg504)
-    if err506 != nil {
+    arg482 := flag.Arg(1)
+    mbTrans483 := thrift.NewMemoryBufferLen(len(arg482))
+    defer mbTrans483.Close()
+    _, err484 := mbTrans483.WriteString(arg482)
+    if err484 != nil {
       Usage()
       return
     }
@@ -1806,11 +1806,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "AddListener requires 1 args")
       flag.Usage()
     }
-    arg510 := flag.Arg(1)
-    mbTrans511 := thrift.NewMemoryBufferLen(len(arg510))
-    defer mbTrans511.Close()
-    _, err512 := mbTrans511.WriteString(arg510)
-    if err512 != nil {
+    arg488 := flag.Arg(1)
+    mbTrans489 := thrift.NewMemoryBufferLen(len(arg488))
+    defer mbTrans489.Close()
+    _, err490 := mbTrans489.WriteString(arg488)
+    if err490 != nil {
       Usage()
       return
     }
@@ -1831,11 +1831,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "RemoveListener requires 1 args")
       flag.Usage()
     }
-    arg516 := flag.Arg(1)
-    mbTrans517 := thrift.NewMemoryBufferLen(len(arg516))
-    defer mbTrans517.Close()
-    _, err518 := mbTrans517.WriteString(arg516)
-    if err518 != nil {
+    arg494 := flag.Arg(1)
+    mbTrans495 := thrift.NewMemoryBufferLen(len(arg494))
+    defer mbTrans495.Close()
+    _, err496 := mbTrans495.WriteString(arg494)
+    if err496 != nil {
       Usage()
       return
     }
@@ -1856,11 +1856,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListListener requires 1 args")
       flag.Usage()
     }
-    arg522 := flag.Arg(1)
-    mbTrans523 := thrift.NewMemoryBufferLen(len(arg522))
-    defer mbTrans523.Close()
-    _, err524 := mbTrans523.WriteString(arg522)
-    if err524 != nil {
+    arg500 := flag.Arg(1)
+    mbTrans501 := thrift.NewMemoryBufferLen(len(arg500))
+    defer mbTrans501.Close()
+    _, err502 := mbTrans501.WriteString(arg500)
+    if err502 != nil {
       Usage()
       return
     }
@@ -1881,11 +1881,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetStats requires 1 args")
       flag.Usage()
     }
-    arg528 := flag.Arg(1)
-    mbTrans529 := thrift.NewMemoryBufferLen(len(arg528))
-    defer mbTrans529.Close()
-    _, err530 := mbTrans529.WriteString(arg528)
-    if err530 != nil {
+    arg506 := flag.Arg(1)
+    mbTrans507 := thrift.NewMemoryBufferLen(len(arg506))
+    defer mbTrans507.Close()
+    _, err508 := mbTrans507.WriteString(arg506)
+    if err508 != nil {
       Usage()
       return
     }
@@ -1906,11 +1906,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "SignInFTService requires 1 args")
       flag.Usage()
     }
-    arg534 := flag.Arg(1)
-    mbTrans535 := thrift.NewMemoryBufferLen(len(arg534))
-    defer mbTrans535.Close()
-    _, err536 := mbTrans535.WriteString(arg534)
-    if err536 != nil {
+    arg512 := flag.Arg(1)
+    mbTrans513 := thrift.NewMemoryBufferLen(len(arg512))
+    defer mbTrans513.Close()
+    _, err514 := mbTrans513.WriteString(arg512)
+    if err514 != nil {
       Usage()
       return
     }
@@ -1931,11 +1931,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "SignOutFTService requires 1 args")
       flag.Usage()
     }
-    arg540 := flag.Arg(1)
-    mbTrans541 := thrift.NewMemoryBufferLen(len(arg540))
-    defer mbTrans541.Close()
-    _, err542 := mbTrans541.WriteString(arg540)
-    if err542 != nil {
+    arg518 := flag.Arg(1)
+    mbTrans519 := thrift.NewMemoryBufferLen(len(arg518))
+    defer mbTrans519.Close()
+    _, err520 := mbTrans519.WriteString(arg518)
+    if err520 != nil {
       Usage()
       return
     }
@@ -1956,11 +1956,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListFTClients requires 1 args")
       flag.Usage()
     }
-    arg546 := flag.Arg(1)
-    mbTrans547 := thrift.NewMemoryBufferLen(len(arg546))
-    defer mbTrans547.Close()
-    _, err548 := mbTrans547.WriteString(arg546)
-    if err548 != nil {
+    arg524 := flag.Arg(1)
+    mbTrans525 := thrift.NewMemoryBufferLen(len(arg524))
+    defer mbTrans525.Close()
+    _, err526 := mbTrans525.WriteString(arg524)
+    if err526 != nil {
       Usage()
       return
     }
@@ -1981,11 +1981,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "CreateFTIndex requires 1 args")
       flag.Usage()
     }
-    arg552 := flag.Arg(1)
-    mbTrans553 := thrift.NewMemoryBufferLen(len(arg552))
-    defer mbTrans553.Close()
-    _, err554 := mbTrans553.WriteString(arg552)
-    if err554 != nil {
+    arg530 := flag.Arg(1)
+    mbTrans531 := thrift.NewMemoryBufferLen(len(arg530))
+    defer mbTrans531.Close()
+    _, err532 := mbTrans531.WriteString(arg530)
+    if err532 != nil {
       Usage()
       return
     }
@@ -2006,11 +2006,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "DropFTIndex requires 1 args")
       flag.Usage()
     }
-    arg558 := flag.Arg(1)
-    mbTrans559 := thrift.NewMemoryBufferLen(len(arg558))
-    defer mbTrans559.Close()
-    _, err560 := mbTrans559.WriteString(arg558)
-    if err560 != nil {
+    arg536 := flag.Arg(1)
+    mbTrans537 := thrift.NewMemoryBufferLen(len(arg536))
+    defer mbTrans537.Close()
+    _, err538 := mbTrans537.WriteString(arg536)
+    if err538 != nil {
       Usage()
       return
     }
@@ -2031,11 +2031,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListFTIndexes requires 1 args")
       flag.Usage()
     }
-    arg564 := flag.Arg(1)
-    mbTrans565 := thrift.NewMemoryBufferLen(len(arg564))
-    defer mbTrans565.Close()
-    _, err566 := mbTrans565.WriteString(arg564)
-    if err566 != nil {
+    arg542 := flag.Arg(1)
+    mbTrans543 := thrift.NewMemoryBufferLen(len(arg542))
+    defer mbTrans543.Close()
+    _, err544 := mbTrans543.WriteString(arg542)
+    if err544 != nil {
       Usage()
       return
     }
@@ -2056,11 +2056,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "CreateSession requires 1 args")
       flag.Usage()
     }
-    arg570 := flag.Arg(1)
-    mbTrans571 := thrift.NewMemoryBufferLen(len(arg570))
-    defer mbTrans571.Close()
-    _, err572 := mbTrans571.WriteString(arg570)
-    if err572 != nil {
+    arg548 := flag.Arg(1)
+    mbTrans549 := thrift.NewMemoryBufferLen(len(arg548))
+    defer mbTrans549.Close()
+    _, err550 := mbTrans549.WriteString(arg548)
+    if err550 != nil {
       Usage()
       return
     }
@@ -2081,11 +2081,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "UpdateSessions requires 1 args")
       flag.Usage()
     }
-    arg576 := flag.Arg(1)
-    mbTrans577 := thrift.NewMemoryBufferLen(len(arg576))
-    defer mbTrans577.Close()
-    _, err578 := mbTrans577.WriteString(arg576)
-    if err578 != nil {
+    arg554 := flag.Arg(1)
+    mbTrans555 := thrift.NewMemoryBufferLen(len(arg554))
+    defer mbTrans555.Close()
+    _, err556 := mbTrans555.WriteString(arg554)
+    if err556 != nil {
       Usage()
       return
     }
@@ -2106,11 +2106,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ListSessions requires 1 args")
       flag.Usage()
     }
-    arg582 := flag.Arg(1)
-    mbTrans583 := thrift.NewMemoryBufferLen(len(arg582))
-    defer mbTrans583.Close()
-    _, err584 := mbTrans583.WriteString(arg582)
-    if err584 != nil {
+    arg560 := flag.Arg(1)
+    mbTrans561 := thrift.NewMemoryBufferLen(len(arg560))
+    defer mbTrans561.Close()
+    _, err562 := mbTrans561.WriteString(arg560)
+    if err562 != nil {
       Usage()
       return
     }
@@ -2131,11 +2131,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetSession requires 1 args")
       flag.Usage()
     }
-    arg588 := flag.Arg(1)
-    mbTrans589 := thrift.NewMemoryBufferLen(len(arg588))
-    defer mbTrans589.Close()
-    _, err590 := mbTrans589.WriteString(arg588)
-    if err590 != nil {
+    arg566 := flag.Arg(1)
+    mbTrans567 := thrift.NewMemoryBufferLen(len(arg566))
+    defer mbTrans567.Close()
+    _, err568 := mbTrans567.WriteString(arg566)
+    if err568 != nil {
       Usage()
       return
     }
@@ -2156,11 +2156,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "RemoveSession requires 1 args")
       flag.Usage()
     }
-    arg594 := flag.Arg(1)
-    mbTrans595 := thrift.NewMemoryBufferLen(len(arg594))
-    defer mbTrans595.Close()
-    _, err596 := mbTrans595.WriteString(arg594)
-    if err596 != nil {
+    arg572 := flag.Arg(1)
+    mbTrans573 := thrift.NewMemoryBufferLen(len(arg572))
+    defer mbTrans573.Close()
+    _, err574 := mbTrans573.WriteString(arg572)
+    if err574 != nil {
       Usage()
       return
     }
@@ -2181,11 +2181,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "KillQuery requires 1 args")
       flag.Usage()
     }
-    arg600 := flag.Arg(1)
-    mbTrans601 := thrift.NewMemoryBufferLen(len(arg600))
-    defer mbTrans601.Close()
-    _, err602 := mbTrans601.WriteString(arg600)
-    if err602 != nil {
+    arg578 := flag.Arg(1)
+    mbTrans579 := thrift.NewMemoryBufferLen(len(arg578))
+    defer mbTrans579.Close()
+    _, err580 := mbTrans579.WriteString(arg578)
+    if err580 != nil {
       Usage()
       return
     }
@@ -2206,11 +2206,11 @@ func main() {
       fmt.Fprintln(os.Stderr, "ReportTaskFinish requires 1 args")
       flag.Usage()
     }
-    arg606 := flag.Arg(1)
-    mbTrans607 := thrift.NewMemoryBufferLen(len(arg606))
-    defer mbTrans607.Close()
-    _, err608 := mbTrans607.WriteString(arg606)
-    if err608 != nil {
+    arg584 := flag.Arg(1)
+    mbTrans585 := thrift.NewMemoryBufferLen(len(arg584))
+    defer mbTrans585.Close()
+    _, err586 := mbTrans585.WriteString(arg584)
+    if err586 != nil {
       Usage()
       return
     }
