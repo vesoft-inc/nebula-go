@@ -1,7 +1,9 @@
-/* Copyright (c) 2020 vesoft inc. All rights reserved.
+/*
  *
- * This source code is licensed under Apache 2.0 License,
- * attached with Common Clause Condition 1.0, found in the LICENSES directory.
+ * Copyright (c) 2020 vesoft inc. All rights reserved.
+ *
+ * This source code is licensed under Apache 2.0 License.
+ *
  */
 
 package nebula_go
@@ -115,7 +117,7 @@ func TestAsDedupList(t *testing.T) {
 		UVal: &nebula.NSet{Values: valList},
 	}
 	valWrap := ValueWrapper{&value, testTimezone}
-	assert.Equal(t, "[\"elem1\", \"elem2\", \"elem3\"]", valWrap.String())
+	assert.Equal(t, "{\"elem1\", \"elem2\", \"elem3\"}", valWrap.String())
 	assert.Equal(t, true, valWrap.IsSet())
 
 	res, _ := valWrap.AsList()
@@ -396,6 +398,33 @@ func TestAsPathWrapper(t *testing.T) {
 	assert.Equal(t, *path, *res)
 }
 
+func TestAsGeography(t *testing.T) {
+	point := nebula.Value{GgVal: &nebula.Geography{PtVal: &nebula.Point{Coord: &nebula.Coordinate{X: 48.3, Y: 78.6}}}}
+	pointWrap := ValueWrapper{&point, testTimezone}
+	assert.Equal(t, true, pointWrap.IsGeography())
+	assert.Equal(t, "POINT(48.3 78.6)", pointWrap.String())
+
+	linestring := nebula.Value{
+		GgVal: &nebula.Geography{LsVal: &nebula.LineString{CoordList: []*nebula.Coordinate{{X: 48.3, Y: 78.6}, {X: 77.9, Y: 89.6}, {X: -24, Y: -49.7}}}},
+	}
+	linestringWrap := ValueWrapper{&linestring, testTimezone}
+	assert.Equal(t, true, linestringWrap.IsGeography())
+	assert.Equal(t, "LINESTRING(48.3 78.6, 77.9 89.6, -24 -49.7)", linestringWrap.String())
+
+	polygon := nebula.Value{
+		GgVal: &nebula.Geography{PgVal: &nebula.Polygon{CoordListList: [][]*nebula.Coordinate{{{X: 48.3, Y: 78.6}, {X: 77.9, Y: 89.6}, {X: -24, Y: -49.7}, {X: -36, Y: 78.3}, {X: 48.3, Y: 78.6}}}}},
+	}
+	polygonWrap := ValueWrapper{&polygon, testTimezone}
+	assert.Equal(t, true, polygonWrap.IsGeography())
+	assert.Equal(t, "POLYGON((48.3 78.6, 77.9 89.6, -24 -49.7, -36 78.3, 48.3 78.6))", polygonWrap.String())
+}
+
+func TestAsDuration(t *testing.T) {
+	value := nebula.Value{DuVal: &nebula.Duration{86400, 3000, 12}}
+	valWrap := ValueWrapper{&value, testTimezone}
+	assert.Equal(t, true, valWrap.IsDuration())
+	assert.Equal(t, "P12M1DT86400S", valWrap.String())
+}
 func TestNode(t *testing.T) {
 	vertex := getVertex("Tom", 3, 5)
 	node, err := genNode(vertex, testTimezone)
@@ -527,7 +556,7 @@ func TestResultSet(t *testing.T) {
 	}
 
 	assert.Equal(t, ErrorCode_E_STATEMENT_EMPTY, resultSetWithNil.GetErrorCode())
-	assert.Equal(t, int32(1000), resultSetWithNil.GetLatency())
+	assert.Equal(t, int64(1000), resultSetWithNil.GetLatency())
 	assert.Equal(t, "", resultSetWithNil.GetErrorMsg())
 	assert.Equal(t, "", resultSetWithNil.GetSpaceName())
 	assert.Equal(t, "", resultSetWithNil.GetComment())
@@ -571,7 +600,7 @@ func TestResultSet(t *testing.T) {
 		t.Error(err)
 	}
 	assert.Equal(t, ErrorCode_SUCCEEDED, resultSet.GetErrorCode())
-	assert.Equal(t, int32(1000), resultSet.GetLatency())
+	assert.Equal(t, int64(1000), resultSet.GetLatency())
 	assert.Equal(t, "test_err_msg", resultSet.GetErrorMsg())
 	assert.Equal(t, "test_space", resultSet.GetSpaceName())
 	assert.Equal(t, "test_comment", resultSet.GetComment())

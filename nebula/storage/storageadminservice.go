@@ -70,9 +70,6 @@ type StorageAdminService interface {
   // Parameters:
   //  - Req
   StopAdminTask(ctx context.Context, req *StopAdminTaskRequest) (_r *AdminExecResp, err error)
-  // Parameters:
-  //  - Req
-  ListClusterInfo(ctx context.Context, req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error)
 }
 
 type StorageAdminServiceClientInterface interface {
@@ -122,9 +119,6 @@ type StorageAdminServiceClientInterface interface {
   // Parameters:
   //  - Req
   StopAdminTask(req *StopAdminTaskRequest) (_r *AdminExecResp, err error)
-  // Parameters:
-  //  - Req
-  ListClusterInfo(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error)
 }
 
 type StorageAdminServiceClient struct {
@@ -451,26 +445,6 @@ func (p *StorageAdminServiceClient) StopAdminTask(req *StopAdminTaskRequest) (_r
 func (p *StorageAdminServiceClient) recvStopAdminTask() (value *AdminExecResp, err error) {
   var result StorageAdminServiceStopAdminTaskResult
   err = p.CC.RecvMsg("stopAdminTask", &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
-// Parameters:
-//  - Req
-func (p *StorageAdminServiceClient) ListClusterInfo(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
-  args := StorageAdminServiceListClusterInfoArgs{
-    Req : req,
-  }
-  err = p.CC.SendMsg("listClusterInfo", &args, thrift.CALL)
-  if err != nil { return }
-  return p.recvListClusterInfo()
-}
-
-
-func (p *StorageAdminServiceClient) recvListClusterInfo() (value *ListClusterInfoResp, err error) {
-  var result StorageAdminServiceListClusterInfoResult
-  err = p.CC.RecvMsg("listClusterInfo", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -843,28 +817,6 @@ func (p *StorageAdminServiceThreadsafeClient) recvStopAdminTask() (value *AdminE
   return result.GetSuccess(), nil
 }
 
-// Parameters:
-//  - Req
-func (p *StorageAdminServiceThreadsafeClient) ListClusterInfo(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
-  p.Mu.Lock()
-  defer p.Mu.Unlock()
-  args := StorageAdminServiceListClusterInfoArgs{
-    Req : req,
-  }
-  err = p.CC.SendMsg("listClusterInfo", &args, thrift.CALL)
-  if err != nil { return }
-  return p.recvListClusterInfo()
-}
-
-
-func (p *StorageAdminServiceThreadsafeClient) recvListClusterInfo() (value *ListClusterInfoResp, err error) {
-  var result StorageAdminServiceListClusterInfoResult
-  err = p.CC.RecvMsg("listClusterInfo", &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
 
 type StorageAdminServiceChannelClient struct {
   RequestChannel thrift.RequestChannel
@@ -1081,27 +1033,19 @@ func (p *StorageAdminServiceChannelClient) StopAdminTask(ctx context.Context, re
   return result.GetSuccess(), nil
 }
 
-// Parameters:
-//  - Req
-func (p *StorageAdminServiceChannelClient) ListClusterInfo(ctx context.Context, req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error) {
-  args := StorageAdminServiceListClusterInfoArgs{
-    Req : req,
-  }
-  var result StorageAdminServiceListClusterInfoResult
-  err = p.RequestChannel.Call(ctx, "listClusterInfo", &args, &result)
-  if err != nil { return }
-
-  return result.GetSuccess(), nil
-}
-
 
 type StorageAdminServiceProcessor struct {
   processorMap map[string]thrift.ProcessorFunctionContext
+  functionServiceMap map[string]string
   handler StorageAdminService
 }
 
 func (p *StorageAdminServiceProcessor) AddToProcessorMap(key string, processor thrift.ProcessorFunctionContext) {
   p.processorMap[key] = processor
+}
+
+func (p *StorageAdminServiceProcessor) AddToFunctionServiceMap(key, service string) {
+  p.functionServiceMap[key] = service
 }
 
 func (p *StorageAdminServiceProcessor) GetProcessorFunctionContext(key string) (processor thrift.ProcessorFunctionContext, err error) {
@@ -1115,29 +1059,52 @@ func (p *StorageAdminServiceProcessor) ProcessorMap() map[string]thrift.Processo
   return p.processorMap
 }
 
+func (p *StorageAdminServiceProcessor) FunctionServiceMap() map[string]string {
+  return p.functionServiceMap
+}
+
 func NewStorageAdminServiceProcessor(handler StorageAdminService) *StorageAdminServiceProcessor {
-  self158 := &StorageAdminServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
-  self158.processorMap["transLeader"] = &storageAdminServiceProcessorTransLeader{handler:handler}
-  self158.processorMap["addPart"] = &storageAdminServiceProcessorAddPart{handler:handler}
-  self158.processorMap["addLearner"] = &storageAdminServiceProcessorAddLearner{handler:handler}
-  self158.processorMap["removePart"] = &storageAdminServiceProcessorRemovePart{handler:handler}
-  self158.processorMap["memberChange"] = &storageAdminServiceProcessorMemberChange{handler:handler}
-  self158.processorMap["waitingForCatchUpData"] = &storageAdminServiceProcessorWaitingForCatchUpData{handler:handler}
-  self158.processorMap["createCheckpoint"] = &storageAdminServiceProcessorCreateCheckpoint{handler:handler}
-  self158.processorMap["dropCheckpoint"] = &storageAdminServiceProcessorDropCheckpoint{handler:handler}
-  self158.processorMap["blockingWrites"] = &storageAdminServiceProcessorBlockingWrites{handler:handler}
-  self158.processorMap["rebuildTagIndex"] = &storageAdminServiceProcessorRebuildTagIndex{handler:handler}
-  self158.processorMap["rebuildEdgeIndex"] = &storageAdminServiceProcessorRebuildEdgeIndex{handler:handler}
-  self158.processorMap["getLeaderParts"] = &storageAdminServiceProcessorGetLeaderParts{handler:handler}
-  self158.processorMap["checkPeers"] = &storageAdminServiceProcessorCheckPeers{handler:handler}
-  self158.processorMap["addAdminTask"] = &storageAdminServiceProcessorAddAdminTask{handler:handler}
-  self158.processorMap["stopAdminTask"] = &storageAdminServiceProcessorStopAdminTask{handler:handler}
-  self158.processorMap["listClusterInfo"] = &storageAdminServiceProcessorListClusterInfo{handler:handler}
-  return self158
+  self213 := &StorageAdminServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext), functionServiceMap:make(map[string]string)}
+  self213.processorMap["transLeader"] = &storageAdminServiceProcessorTransLeader{handler:handler}
+  self213.processorMap["addPart"] = &storageAdminServiceProcessorAddPart{handler:handler}
+  self213.processorMap["addLearner"] = &storageAdminServiceProcessorAddLearner{handler:handler}
+  self213.processorMap["removePart"] = &storageAdminServiceProcessorRemovePart{handler:handler}
+  self213.processorMap["memberChange"] = &storageAdminServiceProcessorMemberChange{handler:handler}
+  self213.processorMap["waitingForCatchUpData"] = &storageAdminServiceProcessorWaitingForCatchUpData{handler:handler}
+  self213.processorMap["createCheckpoint"] = &storageAdminServiceProcessorCreateCheckpoint{handler:handler}
+  self213.processorMap["dropCheckpoint"] = &storageAdminServiceProcessorDropCheckpoint{handler:handler}
+  self213.processorMap["blockingWrites"] = &storageAdminServiceProcessorBlockingWrites{handler:handler}
+  self213.processorMap["rebuildTagIndex"] = &storageAdminServiceProcessorRebuildTagIndex{handler:handler}
+  self213.processorMap["rebuildEdgeIndex"] = &storageAdminServiceProcessorRebuildEdgeIndex{handler:handler}
+  self213.processorMap["getLeaderParts"] = &storageAdminServiceProcessorGetLeaderParts{handler:handler}
+  self213.processorMap["checkPeers"] = &storageAdminServiceProcessorCheckPeers{handler:handler}
+  self213.processorMap["addAdminTask"] = &storageAdminServiceProcessorAddAdminTask{handler:handler}
+  self213.processorMap["stopAdminTask"] = &storageAdminServiceProcessorStopAdminTask{handler:handler}
+  self213.functionServiceMap["transLeader"] = "StorageAdminService"
+  self213.functionServiceMap["addPart"] = "StorageAdminService"
+  self213.functionServiceMap["addLearner"] = "StorageAdminService"
+  self213.functionServiceMap["removePart"] = "StorageAdminService"
+  self213.functionServiceMap["memberChange"] = "StorageAdminService"
+  self213.functionServiceMap["waitingForCatchUpData"] = "StorageAdminService"
+  self213.functionServiceMap["createCheckpoint"] = "StorageAdminService"
+  self213.functionServiceMap["dropCheckpoint"] = "StorageAdminService"
+  self213.functionServiceMap["blockingWrites"] = "StorageAdminService"
+  self213.functionServiceMap["rebuildTagIndex"] = "StorageAdminService"
+  self213.functionServiceMap["rebuildEdgeIndex"] = "StorageAdminService"
+  self213.functionServiceMap["getLeaderParts"] = "StorageAdminService"
+  self213.functionServiceMap["checkPeers"] = "StorageAdminService"
+  self213.functionServiceMap["addAdminTask"] = "StorageAdminService"
+  self213.functionServiceMap["stopAdminTask"] = "StorageAdminService"
+  return self213
 }
 
 type storageAdminServiceProcessorTransLeader struct {
   handler StorageAdminService
+}
+
+func (p *StorageAdminServiceTransLeaderResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *storageAdminServiceProcessorTransLeader) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -1190,6 +1157,11 @@ type storageAdminServiceProcessorAddPart struct {
   handler StorageAdminService
 }
 
+func (p *StorageAdminServiceAddPartResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *storageAdminServiceProcessorAddPart) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := StorageAdminServiceAddPartArgs{}
   if err := args.Read(iprot); err != nil {
@@ -1238,6 +1210,11 @@ func (p *storageAdminServiceProcessorAddPart) RunContext(ctx context.Context, ar
 
 type storageAdminServiceProcessorAddLearner struct {
   handler StorageAdminService
+}
+
+func (p *StorageAdminServiceAddLearnerResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *storageAdminServiceProcessorAddLearner) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -1290,6 +1267,11 @@ type storageAdminServiceProcessorRemovePart struct {
   handler StorageAdminService
 }
 
+func (p *StorageAdminServiceRemovePartResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *storageAdminServiceProcessorRemovePart) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := StorageAdminServiceRemovePartArgs{}
   if err := args.Read(iprot); err != nil {
@@ -1338,6 +1320,11 @@ func (p *storageAdminServiceProcessorRemovePart) RunContext(ctx context.Context,
 
 type storageAdminServiceProcessorMemberChange struct {
   handler StorageAdminService
+}
+
+func (p *StorageAdminServiceMemberChangeResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *storageAdminServiceProcessorMemberChange) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -1390,6 +1377,11 @@ type storageAdminServiceProcessorWaitingForCatchUpData struct {
   handler StorageAdminService
 }
 
+func (p *StorageAdminServiceWaitingForCatchUpDataResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *storageAdminServiceProcessorWaitingForCatchUpData) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := StorageAdminServiceWaitingForCatchUpDataArgs{}
   if err := args.Read(iprot); err != nil {
@@ -1438,6 +1430,11 @@ func (p *storageAdminServiceProcessorWaitingForCatchUpData) RunContext(ctx conte
 
 type storageAdminServiceProcessorCreateCheckpoint struct {
   handler StorageAdminService
+}
+
+func (p *StorageAdminServiceCreateCheckpointResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *storageAdminServiceProcessorCreateCheckpoint) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -1490,6 +1487,11 @@ type storageAdminServiceProcessorDropCheckpoint struct {
   handler StorageAdminService
 }
 
+func (p *StorageAdminServiceDropCheckpointResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *storageAdminServiceProcessorDropCheckpoint) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := StorageAdminServiceDropCheckpointArgs{}
   if err := args.Read(iprot); err != nil {
@@ -1538,6 +1540,11 @@ func (p *storageAdminServiceProcessorDropCheckpoint) RunContext(ctx context.Cont
 
 type storageAdminServiceProcessorBlockingWrites struct {
   handler StorageAdminService
+}
+
+func (p *StorageAdminServiceBlockingWritesResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *storageAdminServiceProcessorBlockingWrites) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -1590,6 +1597,11 @@ type storageAdminServiceProcessorRebuildTagIndex struct {
   handler StorageAdminService
 }
 
+func (p *StorageAdminServiceRebuildTagIndexResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *storageAdminServiceProcessorRebuildTagIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := StorageAdminServiceRebuildTagIndexArgs{}
   if err := args.Read(iprot); err != nil {
@@ -1638,6 +1650,11 @@ func (p *storageAdminServiceProcessorRebuildTagIndex) RunContext(ctx context.Con
 
 type storageAdminServiceProcessorRebuildEdgeIndex struct {
   handler StorageAdminService
+}
+
+func (p *StorageAdminServiceRebuildEdgeIndexResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *storageAdminServiceProcessorRebuildEdgeIndex) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -1690,6 +1707,11 @@ type storageAdminServiceProcessorGetLeaderParts struct {
   handler StorageAdminService
 }
 
+func (p *StorageAdminServiceGetLeaderPartsResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *storageAdminServiceProcessorGetLeaderParts) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := StorageAdminServiceGetLeaderPartsArgs{}
   if err := args.Read(iprot); err != nil {
@@ -1738,6 +1760,11 @@ func (p *storageAdminServiceProcessorGetLeaderParts) RunContext(ctx context.Cont
 
 type storageAdminServiceProcessorCheckPeers struct {
   handler StorageAdminService
+}
+
+func (p *StorageAdminServiceCheckPeersResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *storageAdminServiceProcessorCheckPeers) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -1790,6 +1817,11 @@ type storageAdminServiceProcessorAddAdminTask struct {
   handler StorageAdminService
 }
 
+func (p *StorageAdminServiceAddAdminTaskResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *storageAdminServiceProcessorAddAdminTask) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := StorageAdminServiceAddAdminTaskArgs{}
   if err := args.Read(iprot); err != nil {
@@ -1840,6 +1872,11 @@ type storageAdminServiceProcessorStopAdminTask struct {
   handler StorageAdminService
 }
 
+func (p *StorageAdminServiceStopAdminTaskResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *storageAdminServiceProcessorStopAdminTask) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := StorageAdminServiceStopAdminTaskArgs{}
   if err := args.Read(iprot); err != nil {
@@ -1886,56 +1923,6 @@ func (p *storageAdminServiceProcessorStopAdminTask) RunContext(ctx context.Conte
   return &result, nil
 }
 
-type storageAdminServiceProcessorListClusterInfo struct {
-  handler StorageAdminService
-}
-
-func (p *storageAdminServiceProcessorListClusterInfo) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
-  args := StorageAdminServiceListClusterInfoArgs{}
-  if err := args.Read(iprot); err != nil {
-    return nil, err
-  }
-  iprot.ReadMessageEnd()
-  return &args, nil
-}
-
-func (p *storageAdminServiceProcessorListClusterInfo) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
-  var err2 error
-  messageType := thrift.REPLY
-  switch result.(type) {
-  case thrift.ApplicationException:
-    messageType = thrift.EXCEPTION
-  }
-  if err2 = oprot.WriteMessageBegin("listClusterInfo", messageType, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 = result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 = oprot.Flush(); err == nil && err2 != nil {
-    err = err2
-  }
-  return err
-}
-
-func (p *storageAdminServiceProcessorListClusterInfo) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
-  args := argStruct.(*StorageAdminServiceListClusterInfoArgs)
-  var result StorageAdminServiceListClusterInfoResult
-  if retval, err := p.handler.ListClusterInfo(ctx, args.Req); err != nil {
-    switch err.(type) {
-    default:
-      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing listClusterInfo: " + err.Error())
-      return x, x
-    }
-  } else {
-    result.Success = retval
-  }
-  return &result, nil
-}
-
 
 // HELPER FUNCTIONS AND STRUCTURES
 
@@ -1961,6 +1948,32 @@ return p.Req
 }
 func (p *StorageAdminServiceTransLeaderArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
+}
+
+type StorageAdminServiceTransLeaderArgsBuilder struct {
+  obj *StorageAdminServiceTransLeaderArgs
+}
+
+func NewStorageAdminServiceTransLeaderArgsBuilder() *StorageAdminServiceTransLeaderArgsBuilder{
+  return &StorageAdminServiceTransLeaderArgsBuilder{
+    obj: NewStorageAdminServiceTransLeaderArgs(),
+  }
+}
+
+func (p StorageAdminServiceTransLeaderArgsBuilder) Emit() *StorageAdminServiceTransLeaderArgs{
+  return &StorageAdminServiceTransLeaderArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceTransLeaderArgsBuilder) Req(req *TransLeaderReq) *StorageAdminServiceTransLeaderArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceTransLeaderArgs) SetReq(req *TransLeaderReq) *StorageAdminServiceTransLeaderArgs {
+  s.Req = req
+  return s
 }
 
 func (p *StorageAdminServiceTransLeaderArgs) Read(iprot thrift.Protocol) error {
@@ -2043,7 +2056,7 @@ func (p *StorageAdminServiceTransLeaderArgs) String() string {
 //  - Success
 type StorageAdminServiceTransLeaderResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceTransLeaderResult() *StorageAdminServiceTransLeaderResult {
@@ -2059,6 +2072,32 @@ return p.Success
 }
 func (p *StorageAdminServiceTransLeaderResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceTransLeaderResultBuilder struct {
+  obj *StorageAdminServiceTransLeaderResult
+}
+
+func NewStorageAdminServiceTransLeaderResultBuilder() *StorageAdminServiceTransLeaderResultBuilder{
+  return &StorageAdminServiceTransLeaderResultBuilder{
+    obj: NewStorageAdminServiceTransLeaderResult(),
+  }
+}
+
+func (p StorageAdminServiceTransLeaderResultBuilder) Emit() *StorageAdminServiceTransLeaderResult{
+  return &StorageAdminServiceTransLeaderResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceTransLeaderResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceTransLeaderResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceTransLeaderResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceTransLeaderResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceTransLeaderResult) Read(iprot thrift.Protocol) error {
@@ -2163,6 +2202,32 @@ func (p *StorageAdminServiceAddPartArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceAddPartArgsBuilder struct {
+  obj *StorageAdminServiceAddPartArgs
+}
+
+func NewStorageAdminServiceAddPartArgsBuilder() *StorageAdminServiceAddPartArgsBuilder{
+  return &StorageAdminServiceAddPartArgsBuilder{
+    obj: NewStorageAdminServiceAddPartArgs(),
+  }
+}
+
+func (p StorageAdminServiceAddPartArgsBuilder) Emit() *StorageAdminServiceAddPartArgs{
+  return &StorageAdminServiceAddPartArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceAddPartArgsBuilder) Req(req *AddPartReq) *StorageAdminServiceAddPartArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceAddPartArgs) SetReq(req *AddPartReq) *StorageAdminServiceAddPartArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceAddPartArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -2243,7 +2308,7 @@ func (p *StorageAdminServiceAddPartArgs) String() string {
 //  - Success
 type StorageAdminServiceAddPartResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceAddPartResult() *StorageAdminServiceAddPartResult {
@@ -2259,6 +2324,32 @@ return p.Success
 }
 func (p *StorageAdminServiceAddPartResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceAddPartResultBuilder struct {
+  obj *StorageAdminServiceAddPartResult
+}
+
+func NewStorageAdminServiceAddPartResultBuilder() *StorageAdminServiceAddPartResultBuilder{
+  return &StorageAdminServiceAddPartResultBuilder{
+    obj: NewStorageAdminServiceAddPartResult(),
+  }
+}
+
+func (p StorageAdminServiceAddPartResultBuilder) Emit() *StorageAdminServiceAddPartResult{
+  return &StorageAdminServiceAddPartResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceAddPartResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceAddPartResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceAddPartResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceAddPartResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceAddPartResult) Read(iprot thrift.Protocol) error {
@@ -2363,6 +2454,32 @@ func (p *StorageAdminServiceAddLearnerArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceAddLearnerArgsBuilder struct {
+  obj *StorageAdminServiceAddLearnerArgs
+}
+
+func NewStorageAdminServiceAddLearnerArgsBuilder() *StorageAdminServiceAddLearnerArgsBuilder{
+  return &StorageAdminServiceAddLearnerArgsBuilder{
+    obj: NewStorageAdminServiceAddLearnerArgs(),
+  }
+}
+
+func (p StorageAdminServiceAddLearnerArgsBuilder) Emit() *StorageAdminServiceAddLearnerArgs{
+  return &StorageAdminServiceAddLearnerArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceAddLearnerArgsBuilder) Req(req *AddLearnerReq) *StorageAdminServiceAddLearnerArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceAddLearnerArgs) SetReq(req *AddLearnerReq) *StorageAdminServiceAddLearnerArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceAddLearnerArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -2443,7 +2560,7 @@ func (p *StorageAdminServiceAddLearnerArgs) String() string {
 //  - Success
 type StorageAdminServiceAddLearnerResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceAddLearnerResult() *StorageAdminServiceAddLearnerResult {
@@ -2459,6 +2576,32 @@ return p.Success
 }
 func (p *StorageAdminServiceAddLearnerResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceAddLearnerResultBuilder struct {
+  obj *StorageAdminServiceAddLearnerResult
+}
+
+func NewStorageAdminServiceAddLearnerResultBuilder() *StorageAdminServiceAddLearnerResultBuilder{
+  return &StorageAdminServiceAddLearnerResultBuilder{
+    obj: NewStorageAdminServiceAddLearnerResult(),
+  }
+}
+
+func (p StorageAdminServiceAddLearnerResultBuilder) Emit() *StorageAdminServiceAddLearnerResult{
+  return &StorageAdminServiceAddLearnerResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceAddLearnerResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceAddLearnerResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceAddLearnerResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceAddLearnerResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceAddLearnerResult) Read(iprot thrift.Protocol) error {
@@ -2563,6 +2706,32 @@ func (p *StorageAdminServiceRemovePartArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceRemovePartArgsBuilder struct {
+  obj *StorageAdminServiceRemovePartArgs
+}
+
+func NewStorageAdminServiceRemovePartArgsBuilder() *StorageAdminServiceRemovePartArgsBuilder{
+  return &StorageAdminServiceRemovePartArgsBuilder{
+    obj: NewStorageAdminServiceRemovePartArgs(),
+  }
+}
+
+func (p StorageAdminServiceRemovePartArgsBuilder) Emit() *StorageAdminServiceRemovePartArgs{
+  return &StorageAdminServiceRemovePartArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceRemovePartArgsBuilder) Req(req *RemovePartReq) *StorageAdminServiceRemovePartArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceRemovePartArgs) SetReq(req *RemovePartReq) *StorageAdminServiceRemovePartArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceRemovePartArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -2643,7 +2812,7 @@ func (p *StorageAdminServiceRemovePartArgs) String() string {
 //  - Success
 type StorageAdminServiceRemovePartResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceRemovePartResult() *StorageAdminServiceRemovePartResult {
@@ -2659,6 +2828,32 @@ return p.Success
 }
 func (p *StorageAdminServiceRemovePartResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceRemovePartResultBuilder struct {
+  obj *StorageAdminServiceRemovePartResult
+}
+
+func NewStorageAdminServiceRemovePartResultBuilder() *StorageAdminServiceRemovePartResultBuilder{
+  return &StorageAdminServiceRemovePartResultBuilder{
+    obj: NewStorageAdminServiceRemovePartResult(),
+  }
+}
+
+func (p StorageAdminServiceRemovePartResultBuilder) Emit() *StorageAdminServiceRemovePartResult{
+  return &StorageAdminServiceRemovePartResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceRemovePartResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceRemovePartResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceRemovePartResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceRemovePartResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceRemovePartResult) Read(iprot thrift.Protocol) error {
@@ -2763,6 +2958,32 @@ func (p *StorageAdminServiceMemberChangeArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceMemberChangeArgsBuilder struct {
+  obj *StorageAdminServiceMemberChangeArgs
+}
+
+func NewStorageAdminServiceMemberChangeArgsBuilder() *StorageAdminServiceMemberChangeArgsBuilder{
+  return &StorageAdminServiceMemberChangeArgsBuilder{
+    obj: NewStorageAdminServiceMemberChangeArgs(),
+  }
+}
+
+func (p StorageAdminServiceMemberChangeArgsBuilder) Emit() *StorageAdminServiceMemberChangeArgs{
+  return &StorageAdminServiceMemberChangeArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceMemberChangeArgsBuilder) Req(req *MemberChangeReq) *StorageAdminServiceMemberChangeArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceMemberChangeArgs) SetReq(req *MemberChangeReq) *StorageAdminServiceMemberChangeArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceMemberChangeArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -2843,7 +3064,7 @@ func (p *StorageAdminServiceMemberChangeArgs) String() string {
 //  - Success
 type StorageAdminServiceMemberChangeResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceMemberChangeResult() *StorageAdminServiceMemberChangeResult {
@@ -2859,6 +3080,32 @@ return p.Success
 }
 func (p *StorageAdminServiceMemberChangeResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceMemberChangeResultBuilder struct {
+  obj *StorageAdminServiceMemberChangeResult
+}
+
+func NewStorageAdminServiceMemberChangeResultBuilder() *StorageAdminServiceMemberChangeResultBuilder{
+  return &StorageAdminServiceMemberChangeResultBuilder{
+    obj: NewStorageAdminServiceMemberChangeResult(),
+  }
+}
+
+func (p StorageAdminServiceMemberChangeResultBuilder) Emit() *StorageAdminServiceMemberChangeResult{
+  return &StorageAdminServiceMemberChangeResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceMemberChangeResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceMemberChangeResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceMemberChangeResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceMemberChangeResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceMemberChangeResult) Read(iprot thrift.Protocol) error {
@@ -2963,6 +3210,32 @@ func (p *StorageAdminServiceWaitingForCatchUpDataArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceWaitingForCatchUpDataArgsBuilder struct {
+  obj *StorageAdminServiceWaitingForCatchUpDataArgs
+}
+
+func NewStorageAdminServiceWaitingForCatchUpDataArgsBuilder() *StorageAdminServiceWaitingForCatchUpDataArgsBuilder{
+  return &StorageAdminServiceWaitingForCatchUpDataArgsBuilder{
+    obj: NewStorageAdminServiceWaitingForCatchUpDataArgs(),
+  }
+}
+
+func (p StorageAdminServiceWaitingForCatchUpDataArgsBuilder) Emit() *StorageAdminServiceWaitingForCatchUpDataArgs{
+  return &StorageAdminServiceWaitingForCatchUpDataArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceWaitingForCatchUpDataArgsBuilder) Req(req *CatchUpDataReq) *StorageAdminServiceWaitingForCatchUpDataArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceWaitingForCatchUpDataArgs) SetReq(req *CatchUpDataReq) *StorageAdminServiceWaitingForCatchUpDataArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceWaitingForCatchUpDataArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -3043,7 +3316,7 @@ func (p *StorageAdminServiceWaitingForCatchUpDataArgs) String() string {
 //  - Success
 type StorageAdminServiceWaitingForCatchUpDataResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceWaitingForCatchUpDataResult() *StorageAdminServiceWaitingForCatchUpDataResult {
@@ -3059,6 +3332,32 @@ return p.Success
 }
 func (p *StorageAdminServiceWaitingForCatchUpDataResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceWaitingForCatchUpDataResultBuilder struct {
+  obj *StorageAdminServiceWaitingForCatchUpDataResult
+}
+
+func NewStorageAdminServiceWaitingForCatchUpDataResultBuilder() *StorageAdminServiceWaitingForCatchUpDataResultBuilder{
+  return &StorageAdminServiceWaitingForCatchUpDataResultBuilder{
+    obj: NewStorageAdminServiceWaitingForCatchUpDataResult(),
+  }
+}
+
+func (p StorageAdminServiceWaitingForCatchUpDataResultBuilder) Emit() *StorageAdminServiceWaitingForCatchUpDataResult{
+  return &StorageAdminServiceWaitingForCatchUpDataResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceWaitingForCatchUpDataResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceWaitingForCatchUpDataResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceWaitingForCatchUpDataResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceWaitingForCatchUpDataResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceWaitingForCatchUpDataResult) Read(iprot thrift.Protocol) error {
@@ -3163,6 +3462,32 @@ func (p *StorageAdminServiceCreateCheckpointArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceCreateCheckpointArgsBuilder struct {
+  obj *StorageAdminServiceCreateCheckpointArgs
+}
+
+func NewStorageAdminServiceCreateCheckpointArgsBuilder() *StorageAdminServiceCreateCheckpointArgsBuilder{
+  return &StorageAdminServiceCreateCheckpointArgsBuilder{
+    obj: NewStorageAdminServiceCreateCheckpointArgs(),
+  }
+}
+
+func (p StorageAdminServiceCreateCheckpointArgsBuilder) Emit() *StorageAdminServiceCreateCheckpointArgs{
+  return &StorageAdminServiceCreateCheckpointArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceCreateCheckpointArgsBuilder) Req(req *CreateCPRequest) *StorageAdminServiceCreateCheckpointArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceCreateCheckpointArgs) SetReq(req *CreateCPRequest) *StorageAdminServiceCreateCheckpointArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceCreateCheckpointArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -3243,7 +3568,7 @@ func (p *StorageAdminServiceCreateCheckpointArgs) String() string {
 //  - Success
 type StorageAdminServiceCreateCheckpointResult struct {
   thrift.IResponse
-  Success *CreateCPResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *CreateCPResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceCreateCheckpointResult() *StorageAdminServiceCreateCheckpointResult {
@@ -3259,6 +3584,32 @@ return p.Success
 }
 func (p *StorageAdminServiceCreateCheckpointResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceCreateCheckpointResultBuilder struct {
+  obj *StorageAdminServiceCreateCheckpointResult
+}
+
+func NewStorageAdminServiceCreateCheckpointResultBuilder() *StorageAdminServiceCreateCheckpointResultBuilder{
+  return &StorageAdminServiceCreateCheckpointResultBuilder{
+    obj: NewStorageAdminServiceCreateCheckpointResult(),
+  }
+}
+
+func (p StorageAdminServiceCreateCheckpointResultBuilder) Emit() *StorageAdminServiceCreateCheckpointResult{
+  return &StorageAdminServiceCreateCheckpointResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceCreateCheckpointResultBuilder) Success(success *CreateCPResp) *StorageAdminServiceCreateCheckpointResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceCreateCheckpointResult) SetSuccess(success *CreateCPResp) *StorageAdminServiceCreateCheckpointResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceCreateCheckpointResult) Read(iprot thrift.Protocol) error {
@@ -3363,6 +3714,32 @@ func (p *StorageAdminServiceDropCheckpointArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceDropCheckpointArgsBuilder struct {
+  obj *StorageAdminServiceDropCheckpointArgs
+}
+
+func NewStorageAdminServiceDropCheckpointArgsBuilder() *StorageAdminServiceDropCheckpointArgsBuilder{
+  return &StorageAdminServiceDropCheckpointArgsBuilder{
+    obj: NewStorageAdminServiceDropCheckpointArgs(),
+  }
+}
+
+func (p StorageAdminServiceDropCheckpointArgsBuilder) Emit() *StorageAdminServiceDropCheckpointArgs{
+  return &StorageAdminServiceDropCheckpointArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceDropCheckpointArgsBuilder) Req(req *DropCPRequest) *StorageAdminServiceDropCheckpointArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceDropCheckpointArgs) SetReq(req *DropCPRequest) *StorageAdminServiceDropCheckpointArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceDropCheckpointArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -3443,7 +3820,7 @@ func (p *StorageAdminServiceDropCheckpointArgs) String() string {
 //  - Success
 type StorageAdminServiceDropCheckpointResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceDropCheckpointResult() *StorageAdminServiceDropCheckpointResult {
@@ -3459,6 +3836,32 @@ return p.Success
 }
 func (p *StorageAdminServiceDropCheckpointResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceDropCheckpointResultBuilder struct {
+  obj *StorageAdminServiceDropCheckpointResult
+}
+
+func NewStorageAdminServiceDropCheckpointResultBuilder() *StorageAdminServiceDropCheckpointResultBuilder{
+  return &StorageAdminServiceDropCheckpointResultBuilder{
+    obj: NewStorageAdminServiceDropCheckpointResult(),
+  }
+}
+
+func (p StorageAdminServiceDropCheckpointResultBuilder) Emit() *StorageAdminServiceDropCheckpointResult{
+  return &StorageAdminServiceDropCheckpointResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceDropCheckpointResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceDropCheckpointResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceDropCheckpointResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceDropCheckpointResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceDropCheckpointResult) Read(iprot thrift.Protocol) error {
@@ -3563,6 +3966,32 @@ func (p *StorageAdminServiceBlockingWritesArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceBlockingWritesArgsBuilder struct {
+  obj *StorageAdminServiceBlockingWritesArgs
+}
+
+func NewStorageAdminServiceBlockingWritesArgsBuilder() *StorageAdminServiceBlockingWritesArgsBuilder{
+  return &StorageAdminServiceBlockingWritesArgsBuilder{
+    obj: NewStorageAdminServiceBlockingWritesArgs(),
+  }
+}
+
+func (p StorageAdminServiceBlockingWritesArgsBuilder) Emit() *StorageAdminServiceBlockingWritesArgs{
+  return &StorageAdminServiceBlockingWritesArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceBlockingWritesArgsBuilder) Req(req *BlockingSignRequest) *StorageAdminServiceBlockingWritesArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceBlockingWritesArgs) SetReq(req *BlockingSignRequest) *StorageAdminServiceBlockingWritesArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceBlockingWritesArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -3643,7 +4072,7 @@ func (p *StorageAdminServiceBlockingWritesArgs) String() string {
 //  - Success
 type StorageAdminServiceBlockingWritesResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceBlockingWritesResult() *StorageAdminServiceBlockingWritesResult {
@@ -3659,6 +4088,32 @@ return p.Success
 }
 func (p *StorageAdminServiceBlockingWritesResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceBlockingWritesResultBuilder struct {
+  obj *StorageAdminServiceBlockingWritesResult
+}
+
+func NewStorageAdminServiceBlockingWritesResultBuilder() *StorageAdminServiceBlockingWritesResultBuilder{
+  return &StorageAdminServiceBlockingWritesResultBuilder{
+    obj: NewStorageAdminServiceBlockingWritesResult(),
+  }
+}
+
+func (p StorageAdminServiceBlockingWritesResultBuilder) Emit() *StorageAdminServiceBlockingWritesResult{
+  return &StorageAdminServiceBlockingWritesResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceBlockingWritesResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceBlockingWritesResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceBlockingWritesResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceBlockingWritesResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceBlockingWritesResult) Read(iprot thrift.Protocol) error {
@@ -3763,6 +4218,32 @@ func (p *StorageAdminServiceRebuildTagIndexArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceRebuildTagIndexArgsBuilder struct {
+  obj *StorageAdminServiceRebuildTagIndexArgs
+}
+
+func NewStorageAdminServiceRebuildTagIndexArgsBuilder() *StorageAdminServiceRebuildTagIndexArgsBuilder{
+  return &StorageAdminServiceRebuildTagIndexArgsBuilder{
+    obj: NewStorageAdminServiceRebuildTagIndexArgs(),
+  }
+}
+
+func (p StorageAdminServiceRebuildTagIndexArgsBuilder) Emit() *StorageAdminServiceRebuildTagIndexArgs{
+  return &StorageAdminServiceRebuildTagIndexArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceRebuildTagIndexArgsBuilder) Req(req *RebuildIndexRequest) *StorageAdminServiceRebuildTagIndexArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceRebuildTagIndexArgs) SetReq(req *RebuildIndexRequest) *StorageAdminServiceRebuildTagIndexArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceRebuildTagIndexArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -3843,7 +4324,7 @@ func (p *StorageAdminServiceRebuildTagIndexArgs) String() string {
 //  - Success
 type StorageAdminServiceRebuildTagIndexResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceRebuildTagIndexResult() *StorageAdminServiceRebuildTagIndexResult {
@@ -3859,6 +4340,32 @@ return p.Success
 }
 func (p *StorageAdminServiceRebuildTagIndexResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceRebuildTagIndexResultBuilder struct {
+  obj *StorageAdminServiceRebuildTagIndexResult
+}
+
+func NewStorageAdminServiceRebuildTagIndexResultBuilder() *StorageAdminServiceRebuildTagIndexResultBuilder{
+  return &StorageAdminServiceRebuildTagIndexResultBuilder{
+    obj: NewStorageAdminServiceRebuildTagIndexResult(),
+  }
+}
+
+func (p StorageAdminServiceRebuildTagIndexResultBuilder) Emit() *StorageAdminServiceRebuildTagIndexResult{
+  return &StorageAdminServiceRebuildTagIndexResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceRebuildTagIndexResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceRebuildTagIndexResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceRebuildTagIndexResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceRebuildTagIndexResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceRebuildTagIndexResult) Read(iprot thrift.Protocol) error {
@@ -3963,6 +4470,32 @@ func (p *StorageAdminServiceRebuildEdgeIndexArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceRebuildEdgeIndexArgsBuilder struct {
+  obj *StorageAdminServiceRebuildEdgeIndexArgs
+}
+
+func NewStorageAdminServiceRebuildEdgeIndexArgsBuilder() *StorageAdminServiceRebuildEdgeIndexArgsBuilder{
+  return &StorageAdminServiceRebuildEdgeIndexArgsBuilder{
+    obj: NewStorageAdminServiceRebuildEdgeIndexArgs(),
+  }
+}
+
+func (p StorageAdminServiceRebuildEdgeIndexArgsBuilder) Emit() *StorageAdminServiceRebuildEdgeIndexArgs{
+  return &StorageAdminServiceRebuildEdgeIndexArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceRebuildEdgeIndexArgsBuilder) Req(req *RebuildIndexRequest) *StorageAdminServiceRebuildEdgeIndexArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceRebuildEdgeIndexArgs) SetReq(req *RebuildIndexRequest) *StorageAdminServiceRebuildEdgeIndexArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceRebuildEdgeIndexArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -4043,7 +4576,7 @@ func (p *StorageAdminServiceRebuildEdgeIndexArgs) String() string {
 //  - Success
 type StorageAdminServiceRebuildEdgeIndexResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceRebuildEdgeIndexResult() *StorageAdminServiceRebuildEdgeIndexResult {
@@ -4059,6 +4592,32 @@ return p.Success
 }
 func (p *StorageAdminServiceRebuildEdgeIndexResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceRebuildEdgeIndexResultBuilder struct {
+  obj *StorageAdminServiceRebuildEdgeIndexResult
+}
+
+func NewStorageAdminServiceRebuildEdgeIndexResultBuilder() *StorageAdminServiceRebuildEdgeIndexResultBuilder{
+  return &StorageAdminServiceRebuildEdgeIndexResultBuilder{
+    obj: NewStorageAdminServiceRebuildEdgeIndexResult(),
+  }
+}
+
+func (p StorageAdminServiceRebuildEdgeIndexResultBuilder) Emit() *StorageAdminServiceRebuildEdgeIndexResult{
+  return &StorageAdminServiceRebuildEdgeIndexResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceRebuildEdgeIndexResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceRebuildEdgeIndexResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceRebuildEdgeIndexResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceRebuildEdgeIndexResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceRebuildEdgeIndexResult) Read(iprot thrift.Protocol) error {
@@ -4163,6 +4722,32 @@ func (p *StorageAdminServiceGetLeaderPartsArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceGetLeaderPartsArgsBuilder struct {
+  obj *StorageAdminServiceGetLeaderPartsArgs
+}
+
+func NewStorageAdminServiceGetLeaderPartsArgsBuilder() *StorageAdminServiceGetLeaderPartsArgsBuilder{
+  return &StorageAdminServiceGetLeaderPartsArgsBuilder{
+    obj: NewStorageAdminServiceGetLeaderPartsArgs(),
+  }
+}
+
+func (p StorageAdminServiceGetLeaderPartsArgsBuilder) Emit() *StorageAdminServiceGetLeaderPartsArgs{
+  return &StorageAdminServiceGetLeaderPartsArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceGetLeaderPartsArgsBuilder) Req(req *GetLeaderReq) *StorageAdminServiceGetLeaderPartsArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceGetLeaderPartsArgs) SetReq(req *GetLeaderReq) *StorageAdminServiceGetLeaderPartsArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceGetLeaderPartsArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -4243,7 +4828,7 @@ func (p *StorageAdminServiceGetLeaderPartsArgs) String() string {
 //  - Success
 type StorageAdminServiceGetLeaderPartsResult struct {
   thrift.IResponse
-  Success *GetLeaderPartsResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *GetLeaderPartsResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceGetLeaderPartsResult() *StorageAdminServiceGetLeaderPartsResult {
@@ -4259,6 +4844,32 @@ return p.Success
 }
 func (p *StorageAdminServiceGetLeaderPartsResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceGetLeaderPartsResultBuilder struct {
+  obj *StorageAdminServiceGetLeaderPartsResult
+}
+
+func NewStorageAdminServiceGetLeaderPartsResultBuilder() *StorageAdminServiceGetLeaderPartsResultBuilder{
+  return &StorageAdminServiceGetLeaderPartsResultBuilder{
+    obj: NewStorageAdminServiceGetLeaderPartsResult(),
+  }
+}
+
+func (p StorageAdminServiceGetLeaderPartsResultBuilder) Emit() *StorageAdminServiceGetLeaderPartsResult{
+  return &StorageAdminServiceGetLeaderPartsResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceGetLeaderPartsResultBuilder) Success(success *GetLeaderPartsResp) *StorageAdminServiceGetLeaderPartsResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceGetLeaderPartsResult) SetSuccess(success *GetLeaderPartsResp) *StorageAdminServiceGetLeaderPartsResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceGetLeaderPartsResult) Read(iprot thrift.Protocol) error {
@@ -4363,6 +4974,32 @@ func (p *StorageAdminServiceCheckPeersArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceCheckPeersArgsBuilder struct {
+  obj *StorageAdminServiceCheckPeersArgs
+}
+
+func NewStorageAdminServiceCheckPeersArgsBuilder() *StorageAdminServiceCheckPeersArgsBuilder{
+  return &StorageAdminServiceCheckPeersArgsBuilder{
+    obj: NewStorageAdminServiceCheckPeersArgs(),
+  }
+}
+
+func (p StorageAdminServiceCheckPeersArgsBuilder) Emit() *StorageAdminServiceCheckPeersArgs{
+  return &StorageAdminServiceCheckPeersArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceCheckPeersArgsBuilder) Req(req *CheckPeersReq) *StorageAdminServiceCheckPeersArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceCheckPeersArgs) SetReq(req *CheckPeersReq) *StorageAdminServiceCheckPeersArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceCheckPeersArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -4443,7 +5080,7 @@ func (p *StorageAdminServiceCheckPeersArgs) String() string {
 //  - Success
 type StorageAdminServiceCheckPeersResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceCheckPeersResult() *StorageAdminServiceCheckPeersResult {
@@ -4459,6 +5096,32 @@ return p.Success
 }
 func (p *StorageAdminServiceCheckPeersResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceCheckPeersResultBuilder struct {
+  obj *StorageAdminServiceCheckPeersResult
+}
+
+func NewStorageAdminServiceCheckPeersResultBuilder() *StorageAdminServiceCheckPeersResultBuilder{
+  return &StorageAdminServiceCheckPeersResultBuilder{
+    obj: NewStorageAdminServiceCheckPeersResult(),
+  }
+}
+
+func (p StorageAdminServiceCheckPeersResultBuilder) Emit() *StorageAdminServiceCheckPeersResult{
+  return &StorageAdminServiceCheckPeersResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceCheckPeersResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceCheckPeersResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceCheckPeersResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceCheckPeersResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceCheckPeersResult) Read(iprot thrift.Protocol) error {
@@ -4563,6 +5226,32 @@ func (p *StorageAdminServiceAddAdminTaskArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceAddAdminTaskArgsBuilder struct {
+  obj *StorageAdminServiceAddAdminTaskArgs
+}
+
+func NewStorageAdminServiceAddAdminTaskArgsBuilder() *StorageAdminServiceAddAdminTaskArgsBuilder{
+  return &StorageAdminServiceAddAdminTaskArgsBuilder{
+    obj: NewStorageAdminServiceAddAdminTaskArgs(),
+  }
+}
+
+func (p StorageAdminServiceAddAdminTaskArgsBuilder) Emit() *StorageAdminServiceAddAdminTaskArgs{
+  return &StorageAdminServiceAddAdminTaskArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceAddAdminTaskArgsBuilder) Req(req *AddAdminTaskRequest) *StorageAdminServiceAddAdminTaskArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceAddAdminTaskArgs) SetReq(req *AddAdminTaskRequest) *StorageAdminServiceAddAdminTaskArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceAddAdminTaskArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -4643,7 +5332,7 @@ func (p *StorageAdminServiceAddAdminTaskArgs) String() string {
 //  - Success
 type StorageAdminServiceAddAdminTaskResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceAddAdminTaskResult() *StorageAdminServiceAddAdminTaskResult {
@@ -4659,6 +5348,32 @@ return p.Success
 }
 func (p *StorageAdminServiceAddAdminTaskResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceAddAdminTaskResultBuilder struct {
+  obj *StorageAdminServiceAddAdminTaskResult
+}
+
+func NewStorageAdminServiceAddAdminTaskResultBuilder() *StorageAdminServiceAddAdminTaskResultBuilder{
+  return &StorageAdminServiceAddAdminTaskResultBuilder{
+    obj: NewStorageAdminServiceAddAdminTaskResult(),
+  }
+}
+
+func (p StorageAdminServiceAddAdminTaskResultBuilder) Emit() *StorageAdminServiceAddAdminTaskResult{
+  return &StorageAdminServiceAddAdminTaskResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceAddAdminTaskResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceAddAdminTaskResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceAddAdminTaskResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceAddAdminTaskResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceAddAdminTaskResult) Read(iprot thrift.Protocol) error {
@@ -4763,6 +5478,32 @@ func (p *StorageAdminServiceStopAdminTaskArgs) IsSetReq() bool {
   return p != nil && p.Req != nil
 }
 
+type StorageAdminServiceStopAdminTaskArgsBuilder struct {
+  obj *StorageAdminServiceStopAdminTaskArgs
+}
+
+func NewStorageAdminServiceStopAdminTaskArgsBuilder() *StorageAdminServiceStopAdminTaskArgsBuilder{
+  return &StorageAdminServiceStopAdminTaskArgsBuilder{
+    obj: NewStorageAdminServiceStopAdminTaskArgs(),
+  }
+}
+
+func (p StorageAdminServiceStopAdminTaskArgsBuilder) Emit() *StorageAdminServiceStopAdminTaskArgs{
+  return &StorageAdminServiceStopAdminTaskArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (s *StorageAdminServiceStopAdminTaskArgsBuilder) Req(req *StopAdminTaskRequest) *StorageAdminServiceStopAdminTaskArgsBuilder {
+  s.obj.Req = req
+  return s
+}
+
+func (s *StorageAdminServiceStopAdminTaskArgs) SetReq(req *StopAdminTaskRequest) *StorageAdminServiceStopAdminTaskArgs {
+  s.Req = req
+  return s
+}
+
 func (p *StorageAdminServiceStopAdminTaskArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -4843,7 +5584,7 @@ func (p *StorageAdminServiceStopAdminTaskArgs) String() string {
 //  - Success
 type StorageAdminServiceStopAdminTaskResult struct {
   thrift.IResponse
-  Success *AdminExecResp `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AdminExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewStorageAdminServiceStopAdminTaskResult() *StorageAdminServiceStopAdminTaskResult {
@@ -4859,6 +5600,32 @@ return p.Success
 }
 func (p *StorageAdminServiceStopAdminTaskResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type StorageAdminServiceStopAdminTaskResultBuilder struct {
+  obj *StorageAdminServiceStopAdminTaskResult
+}
+
+func NewStorageAdminServiceStopAdminTaskResultBuilder() *StorageAdminServiceStopAdminTaskResultBuilder{
+  return &StorageAdminServiceStopAdminTaskResultBuilder{
+    obj: NewStorageAdminServiceStopAdminTaskResult(),
+  }
+}
+
+func (p StorageAdminServiceStopAdminTaskResultBuilder) Emit() *StorageAdminServiceStopAdminTaskResult{
+  return &StorageAdminServiceStopAdminTaskResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (s *StorageAdminServiceStopAdminTaskResultBuilder) Success(success *AdminExecResp) *StorageAdminServiceStopAdminTaskResultBuilder {
+  s.obj.Success = success
+  return s
+}
+
+func (s *StorageAdminServiceStopAdminTaskResult) SetSuccess(success *AdminExecResp) *StorageAdminServiceStopAdminTaskResult {
+  s.Success = success
+  return s
 }
 
 func (p *StorageAdminServiceStopAdminTaskResult) Read(iprot thrift.Protocol) error {
@@ -4937,206 +5704,6 @@ func (p *StorageAdminServiceStopAdminTaskResult) String() string {
     successVal = fmt.Sprintf("%v", p.Success)
   }
   return fmt.Sprintf("StorageAdminServiceStopAdminTaskResult({Success:%s})", successVal)
-}
-
-// Attributes:
-//  - Req
-type StorageAdminServiceListClusterInfoArgs struct {
-  thrift.IRequest
-  Req *ListClusterInfoReq `thrift:"req,1" db:"req" json:"req"`
-}
-
-func NewStorageAdminServiceListClusterInfoArgs() *StorageAdminServiceListClusterInfoArgs {
-  return &StorageAdminServiceListClusterInfoArgs{
-    Req: NewListClusterInfoReq(),
-  }
-}
-
-var StorageAdminServiceListClusterInfoArgs_Req_DEFAULT *ListClusterInfoReq
-func (p *StorageAdminServiceListClusterInfoArgs) GetReq() *ListClusterInfoReq {
-  if !p.IsSetReq() {
-    return StorageAdminServiceListClusterInfoArgs_Req_DEFAULT
-  }
-return p.Req
-}
-func (p *StorageAdminServiceListClusterInfoArgs) IsSetReq() bool {
-  return p != nil && p.Req != nil
-}
-
-func (p *StorageAdminServiceListClusterInfoArgs) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *StorageAdminServiceListClusterInfoArgs)  ReadField1(iprot thrift.Protocol) error {
-  p.Req = NewListClusterInfoReq()
-  if err := p.Req.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
-  }
-  return nil
-}
-
-func (p *StorageAdminServiceListClusterInfoArgs) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("listClusterInfo_args"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *StorageAdminServiceListClusterInfoArgs) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
-  if err := p.Req.Write(oprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
-  return err
-}
-
-func (p *StorageAdminServiceListClusterInfoArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var reqVal string
-  if p.Req == nil {
-    reqVal = "<nil>"
-  } else {
-    reqVal = fmt.Sprintf("%v", p.Req)
-  }
-  return fmt.Sprintf("StorageAdminServiceListClusterInfoArgs({Req:%s})", reqVal)
-}
-
-// Attributes:
-//  - Success
-type StorageAdminServiceListClusterInfoResult struct {
-  thrift.IResponse
-  Success *ListClusterInfoResp `thrift:"success,0" db:"success" json:"success,omitempty"`
-}
-
-func NewStorageAdminServiceListClusterInfoResult() *StorageAdminServiceListClusterInfoResult {
-  return &StorageAdminServiceListClusterInfoResult{}
-}
-
-var StorageAdminServiceListClusterInfoResult_Success_DEFAULT *ListClusterInfoResp
-func (p *StorageAdminServiceListClusterInfoResult) GetSuccess() *ListClusterInfoResp {
-  if !p.IsSetSuccess() {
-    return StorageAdminServiceListClusterInfoResult_Success_DEFAULT
-  }
-return p.Success
-}
-func (p *StorageAdminServiceListClusterInfoResult) IsSetSuccess() bool {
-  return p != nil && p.Success != nil
-}
-
-func (p *StorageAdminServiceListClusterInfoResult) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 0:
-      if err := p.ReadField0(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *StorageAdminServiceListClusterInfoResult)  ReadField0(iprot thrift.Protocol) error {
-  p.Success = NewListClusterInfoResp()
-  if err := p.Success.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
-  }
-  return nil
-}
-
-func (p *StorageAdminServiceListClusterInfoResult) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("listClusterInfo_result"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField0(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *StorageAdminServiceListClusterInfoResult) writeField0(oprot thrift.Protocol) (err error) {
-  if p.IsSetSuccess() {
-    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
-    if err := p.Success.Write(oprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
-    }
-    if err := oprot.WriteFieldEnd(); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
-  }
-  return err
-}
-
-func (p *StorageAdminServiceListClusterInfoResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  var successVal string
-  if p.Success == nil {
-    successVal = "<nil>"
-  } else {
-    successVal = fmt.Sprintf("%v", p.Success)
-  }
-  return fmt.Sprintf("StorageAdminServiceListClusterInfoResult({Success:%s})", successVal)
 }
 
 

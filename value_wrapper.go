@@ -1,7 +1,9 @@
-/* Copyright (c) 2020 vesoft inc. All rights reserved.
+/*
  *
- * This source code is licensed under Apache 2.0 License,
- * attached with Common Clause Condition 1.0, found in the LICENSES directory.
+ * Copyright (c) 2020 vesoft inc. All rights reserved.
+ *
+ * This source code is licensed under Apache 2.0 License.
+ *
  */
 
 package nebula_go
@@ -80,6 +82,15 @@ func (valWrap ValueWrapper) IsPath() bool {
 	return valWrap.value.IsSetPVal()
 }
 
+func (valWrap ValueWrapper) IsGeography() bool {
+	return valWrap.value.IsSetGgVal()
+}
+
+func (valWrap ValueWrapper) IsDuration() bool {
+	return valWrap.value.IsSetDuVal()
+}
+
+// AsNull converts the ValueWrapper to nebula.NullType
 func (valWrap ValueWrapper) AsNull() (nebula.NullType, error) {
 	if valWrap.value.IsSetNVal() {
 		return valWrap.value.GetNVal(), nil
@@ -87,6 +98,7 @@ func (valWrap ValueWrapper) AsNull() (nebula.NullType, error) {
 	return -1, fmt.Errorf("failed to convert value %s to Null", valWrap.GetType())
 }
 
+// AsBool converts the ValueWrapper to a boolean value
 func (valWrap ValueWrapper) AsBool() (bool, error) {
 	if valWrap.value.IsSetBVal() {
 		return valWrap.value.GetBVal(), nil
@@ -94,6 +106,7 @@ func (valWrap ValueWrapper) AsBool() (bool, error) {
 	return false, fmt.Errorf("failed to convert value %s to bool", valWrap.GetType())
 }
 
+// AsInt converts the ValueWrapper to an int64
 func (valWrap ValueWrapper) AsInt() (int64, error) {
 	if valWrap.value.IsSetIVal() {
 		return valWrap.value.GetIVal(), nil
@@ -101,6 +114,7 @@ func (valWrap ValueWrapper) AsInt() (int64, error) {
 	return -1, fmt.Errorf("failed to convert value %s to int", valWrap.GetType())
 }
 
+// AsFloat converts the ValueWrapper to a float64
 func (valWrap ValueWrapper) AsFloat() (float64, error) {
 	if valWrap.value.IsSetFVal() {
 		return valWrap.value.GetFVal(), nil
@@ -108,6 +122,7 @@ func (valWrap ValueWrapper) AsFloat() (float64, error) {
 	return -1, fmt.Errorf("failed to convert value %s to float", valWrap.GetType())
 }
 
+// AsString converts the ValueWrapper to a String
 func (valWrap ValueWrapper) AsString() (string, error) {
 	if valWrap.value.IsSetSVal() {
 		return string(valWrap.value.GetSVal()), nil
@@ -115,6 +130,7 @@ func (valWrap ValueWrapper) AsString() (string, error) {
 	return "", fmt.Errorf("failed to convert value %s to string", valWrap.GetType())
 }
 
+// AsTime converts the ValueWrapper to a TimeWrapper
 func (valWrap ValueWrapper) AsTime() (*TimeWrapper, error) {
 	if valWrap.value.IsSetTVal() {
 		rawTime := valWrap.value.GetTVal()
@@ -127,6 +143,7 @@ func (valWrap ValueWrapper) AsTime() (*TimeWrapper, error) {
 	return nil, fmt.Errorf("failed to convert value %s to Time", valWrap.GetType())
 }
 
+// AsDate converts the ValueWrapper to a nebula.Date
 func (valWrap ValueWrapper) AsDate() (*nebula.Date, error) {
 	if valWrap.value.IsSetDVal() {
 		return valWrap.value.GetDVal(), nil
@@ -134,6 +151,7 @@ func (valWrap ValueWrapper) AsDate() (*nebula.Date, error) {
 	return nil, fmt.Errorf("failed to convert value %s to Date", valWrap.GetType())
 }
 
+// AsDateTime converts the ValueWrapper to a DateTimeWrapper
 func (valWrap ValueWrapper) AsDateTime() (*DateTimeWrapper, error) {
 	if valWrap.value.IsSetDtVal() {
 		rawTimeDate := valWrap.value.GetDtVal()
@@ -146,6 +164,7 @@ func (valWrap ValueWrapper) AsDateTime() (*DateTimeWrapper, error) {
 	return nil, fmt.Errorf("failed to convert value %s to DateTime", valWrap.GetType())
 }
 
+// AsList converts the ValueWrapper to a slice of ValueWrapper
 func (valWrap ValueWrapper) AsList() ([]ValueWrapper, error) {
 	if valWrap.value.IsSetLVal() {
 		var varList []ValueWrapper
@@ -158,6 +177,7 @@ func (valWrap ValueWrapper) AsList() ([]ValueWrapper, error) {
 	return nil, fmt.Errorf("failed to convert value %s to List", valWrap.GetType())
 }
 
+// AsDedupList converts the ValueWrapper to a slice of ValueWrapper that has unique elements
 func (valWrap ValueWrapper) AsDedupList() ([]ValueWrapper, error) {
 	if valWrap.value.IsSetUVal() {
 		var varList []ValueWrapper
@@ -170,6 +190,7 @@ func (valWrap ValueWrapper) AsDedupList() ([]ValueWrapper, error) {
 	return nil, fmt.Errorf("failed to convert value %s to set(deduped list)", valWrap.GetType())
 }
 
+// AsMap converts the ValueWrapper to a map of string and ValueWrapper
 func (valWrap ValueWrapper) AsMap() (map[string]ValueWrapper, error) {
 	if valWrap.value.IsSetMVal() {
 		newMap := make(map[string]ValueWrapper)
@@ -183,6 +204,7 @@ func (valWrap ValueWrapper) AsMap() (map[string]ValueWrapper, error) {
 	return nil, fmt.Errorf("failed to convert value %s to Map", valWrap.GetType())
 }
 
+// AsNode converts the ValueWrapper to a Node
 func (valWrap ValueWrapper) AsNode() (*Node, error) {
 	if !valWrap.value.IsSetVVal() {
 		return nil, fmt.Errorf("failed to convert value %s to Node, value is not an vertex", valWrap.GetType())
@@ -195,6 +217,7 @@ func (valWrap ValueWrapper) AsNode() (*Node, error) {
 	return node, nil
 }
 
+// AsRelationship converts the ValueWrapper to a Relationship
 func (valWrap ValueWrapper) AsRelationship() (*Relationship, error) {
 	if !valWrap.value.IsSetEVal() {
 		return nil, fmt.Errorf("failed to convert value %s to Relationship, value is not an edge", valWrap.GetType())
@@ -207,6 +230,7 @@ func (valWrap ValueWrapper) AsRelationship() (*Relationship, error) {
 	return relationship, nil
 }
 
+// AsPath converts the ValueWrapper to a PathWrapper
 func (valWrap ValueWrapper) AsPath() (*PathWrapper, error) {
 	if !valWrap.value.IsSetPVal() {
 		return nil, fmt.Errorf("failed to convert value %s to PathWrapper, value is not an edge", valWrap.GetType())
@@ -218,7 +242,24 @@ func (valWrap ValueWrapper) AsPath() (*PathWrapper, error) {
 	return path, nil
 }
 
-// Returns the value type of value in the valWrap in string
+// AsPath converts the ValueWrapper to a nebula.Geography
+func (valWrap ValueWrapper) AsGeography() (*nebula.Geography, error) {
+	if valWrap.value.IsSetGgVal() {
+		return valWrap.value.GetGgVal(), nil
+	}
+	return nil, fmt.Errorf("failed to convert value %s to nebula.Geography, value is not an geography", valWrap.GetType())
+}
+
+// AsDuration converts the ValueWrapper to a DurationWrapper
+func (valWrap ValueWrapper) AsDuration() (*nebula.Duration, error) {
+	if valWrap.value.IsSetDuVal() {
+		rawDuration := valWrap.value.GetDuVal()
+		return rawDuration, nil
+	}
+	return nil, fmt.Errorf("failed to convert value %s to Duration", valWrap.GetType())
+}
+
+// GetType returns the value type of value in the valWrap as a string
 func (valWrap ValueWrapper) GetType() string {
 	if valWrap.value.IsSetNVal() {
 		return "null"
@@ -248,6 +289,10 @@ func (valWrap ValueWrapper) GetType() string {
 		return "map"
 	} else if valWrap.value.IsSetUVal() {
 		return "set"
+	} else if valWrap.value.IsSetGgVal() {
+		return "geography"
+	} else if valWrap.value.IsSetDuVal() {
+		return "duration"
 	}
 	return "empty"
 }
@@ -272,7 +317,7 @@ func (valWrap ValueWrapper) String() string {
 	} else if value.IsSetIVal() {
 		return fmt.Sprintf("%d", value.GetIVal())
 	} else if value.IsSetFVal() {
-		fStr := strconv.FormatFloat(value.GetFVal(), 'f', -1, 64)
+		fStr := strconv.FormatFloat(value.GetFVal(), 'g', -1, 64)
 		if !strings.Contains(fStr, ".") {
 			fStr = fStr + ".0"
 		}
@@ -353,8 +398,59 @@ func (valWrap ValueWrapper) String() string {
 		for _, val := range uval.Values {
 			strs = append(strs, ValueWrapper{val, valWrap.timezoneInfo}.String())
 		}
-		return fmt.Sprintf("[%s]", strings.Join(strs, ", "))
+		return fmt.Sprintf("{%s}", strings.Join(strs, ", "))
+	} else if value.IsSetGgVal() {
+		ggval := value.GetGgVal()
+		return toWKT(ggval)
+	} else if value.IsSetDuVal() {
+		duval := value.GetDuVal()
+		days := duval.GetSeconds() / (24 * 60 * 60)
+		return fmt.Sprintf("P%vM%vDT%vS", duval.GetMonths(), days, duval.GetSeconds())
 	} else { // is empty
 		return ""
 	}
+}
+
+func toWKT(geo *nebula.Geography) string {
+	if geo == nil {
+		return ""
+	}
+	if geo.IsSetPtVal() {
+		ptVal := geo.GetPtVal()
+		coord := ptVal.GetCoord()
+		return fmt.Sprintf("POINT(%v %v)", coord.GetX(), coord.GetY())
+	} else if geo.IsSetLsVal() {
+		lsVal := geo.GetLsVal()
+		coordList := lsVal.GetCoordList()
+		wkt := "LINESTRING("
+		for i, coord := range coordList {
+			wkt += fmt.Sprintf("%v %v", coord.GetX(), coord.GetY())
+			if i != len(coordList)-1 {
+				wkt += ", "
+			}
+		}
+		wkt += ")"
+		return wkt
+	} else if geo.IsSetPgVal() {
+		pgVal := geo.GetPgVal()
+		coordListList := pgVal.GetCoordListList()
+		wkt := "POLYGON("
+		for i, coordList := range coordListList {
+			wkt += "("
+			for j, coord := range coordList {
+				wkt += fmt.Sprintf("%v %v", coord.GetX(), coord.GetY())
+				if j != len(coordList)-1 {
+					wkt += ", "
+				}
+			}
+			wkt += ")"
+			if i != len(coordListList)-1 {
+				wkt += ", "
+			}
+		}
+		wkt += ")"
+
+		return wkt
+	}
+	return ""
 }

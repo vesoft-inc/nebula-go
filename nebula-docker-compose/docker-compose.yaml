@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   metad0:
-    image: vesoft/nebula-metad:v2-nightly
+    image: vesoft/nebula-metad:nightly
     environment:
       USER: root
       TZ:   "${TZ}"
@@ -17,6 +17,12 @@ services:
       - --minloglevel=0
       - --timezone_name=+08:00
       - --heartbeat_interval_secs=1
+      # ssl
+      - --ca_path=${ca_path}
+      - --cert_path=${cert_path}
+      - --key_path=${key_path}
+      - --enable_ssl=${enable_ssl}
+      - --password_path=${password_path}
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad0:11000/status"]
       interval: 30s
@@ -28,6 +34,7 @@ services:
       - 11000
       - 11002
     volumes:
+      - ./secrets:/secrets
       - ./data/meta0:/data/meta
       - ./logs/meta0:/logs
     networks:
@@ -37,7 +44,7 @@ services:
       - SYS_PTRACE
 
   metad1:
-    image: vesoft/nebula-metad:v2-nightly
+    image: vesoft/nebula-metad:nightly
     environment:
       USER: root
       TZ:   "${TZ}"
@@ -53,6 +60,12 @@ services:
       - --minloglevel=0
       - --timezone_name=+08:00
       - --heartbeat_interval_secs=1
+      # ssl
+      - --ca_path=${ca_path}
+      - --cert_path=${cert_path}
+      - --key_path=${key_path}
+      - --enable_ssl=${enable_ssl}
+      - --password_path=${password_path}
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad1:11000/status"]
       interval: 30s
@@ -64,6 +77,7 @@ services:
       - 11000
       - 11002
     volumes:
+      - ./secrets:/secrets
       - ./data/meta1:/data/meta
       - ./logs/meta1:/logs
     networks:
@@ -73,7 +87,7 @@ services:
       - SYS_PTRACE
 
   metad2:
-    image: vesoft/nebula-metad:v2-nightly
+    image: vesoft/nebula-metad:nightly
     environment:
       USER: root
       TZ:   "${TZ}"
@@ -89,6 +103,12 @@ services:
       - --minloglevel=0
       - --timezone_name=+08:00
       - --heartbeat_interval_secs=1
+      # ssl
+      - --ca_path=${ca_path}
+      - --cert_path=${cert_path}
+      - --key_path=${key_path}
+      - --enable_ssl=${enable_ssl}
+      - --password_path=${password_path}
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad2:11000/status"]
       interval: 30s
@@ -100,6 +120,7 @@ services:
       - 11000
       - 11002
     volumes:
+      - ./secrets:/secrets
       - ./data/meta2:/data/meta
       - ./logs/meta2:/logs
     networks:
@@ -109,7 +130,7 @@ services:
       - SYS_PTRACE
 
   storaged0:
-    image: vesoft/nebula-storaged:v2-nightly
+    image: vesoft/nebula-storaged:nightly
     environment:
       USER: root
       TZ:   "${TZ}"
@@ -125,6 +146,12 @@ services:
       - --minloglevel=0
       - --timezone_name=+08:00
       - --heartbeat_interval_secs=1
+      # ssl
+      - --ca_path=${ca_path}
+      - --cert_path=${cert_path}
+      - --key_path=${key_path}
+      - --enable_ssl=${enable_ssl}
+      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -140,6 +167,7 @@ services:
       - 12000
       - 12002
     volumes:
+      - ./secrets:/secrets
       - ./data/storage0:/data/storage
       - ./logs/storage0:/logs
     networks:
@@ -149,7 +177,7 @@ services:
       - SYS_PTRACE
 
   storaged1:
-    image: vesoft/nebula-storaged:v2-nightly
+    image: vesoft/nebula-storaged:nightly
     environment:
       USER: root
       TZ:   "${TZ}"
@@ -165,6 +193,12 @@ services:
       - --minloglevel=0
       - --timezone_name=+08:00
       - --heartbeat_interval_secs=1
+      # ssl
+      - --ca_path=${ca_path}
+      - --cert_path=${cert_path}
+      - --key_path=${key_path}
+      - --enable_ssl=${enable_ssl}
+      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -180,6 +214,7 @@ services:
       - 12000
       - 12002
     volumes:
+      - ./secrets:/secrets
       - ./data/storage1:/data/storage
       - ./logs/storage1:/logs
     networks:
@@ -189,7 +224,7 @@ services:
       - SYS_PTRACE
 
   storaged2:
-    image: vesoft/nebula-storaged:v2-nightly
+    image: vesoft/nebula-storaged:nightly
     environment:
       USER: root
       TZ:   "${TZ}"
@@ -205,6 +240,12 @@ services:
       - --minloglevel=0
       - --timezone_name=+08:00
       - --heartbeat_interval_secs=1
+      # ssl
+      - --ca_path=${ca_path}
+      - --cert_path=${cert_path}
+      - --key_path=${key_path}
+      - --enable_ssl=${enable_ssl}
+      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -220,6 +261,7 @@ services:
       - 12000
       - 12002
     volumes:
+      - ./secrets:/secrets
       - ./data/storage2:/data/storage
       - ./logs/storage2:/logs
     networks:
@@ -229,7 +271,7 @@ services:
       - SYS_PTRACE
 
   graphd:
-    image: vesoft/nebula-graphd:v2-nightly
+    image: vesoft/nebula-graphd:nightly
     environment:
       USER: root
       TZ:   "${TZ}"
@@ -245,6 +287,12 @@ services:
       - --timezone_name=+08:00
       - --system_memory_high_watermark_ratio=0.99
       - --heartbeat_interval_secs=1
+      # ssl
+      - --ca_path=${ca_path}
+      - --cert_path=${cert_path}
+      - --key_path=${key_path}
+      - --enable_ssl=${enable_ssl}
+      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -260,6 +308,7 @@ services:
       - 13000
       - 13002
     volumes:
+      - ./secrets:/secrets
       - ./logs/graph:/logs
     networks:
       - nebula-net
@@ -268,7 +317,7 @@ services:
       - SYS_PTRACE
 
   graphd1:
-    image: vesoft/nebula-graphd:v2-nightly
+    image: vesoft/nebula-graphd:nightly
     environment:
       USER: root
       TZ:   "${TZ}"
@@ -284,6 +333,12 @@ services:
       - --timezone_name=+08:00
       - --system_memory_high_watermark_ratio=0.99
       - --heartbeat_interval_secs=1
+      # ssl
+      - --ca_path=${ca_path}
+      - --cert_path=${cert_path}
+      - --key_path=${key_path}
+      - --enable_ssl=${enable_ssl}
+      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -299,6 +354,7 @@ services:
       - 13000
       - 13002
     volumes:
+      - ./secrets:/secrets
       - ./logs/graph1:/logs
     networks:
       - nebula-net
@@ -307,7 +363,7 @@ services:
       - SYS_PTRACE
 
   graphd2:
-    image: vesoft/nebula-graphd:v2-nightly
+    image: vesoft/nebula-graphd:nightly
     environment:
       USER: root
       TZ:   "${TZ}"
@@ -323,6 +379,14 @@ services:
       - --timezone_name=+08:00
       - --system_memory_high_watermark_ratio=0.99
       - --heartbeat_interval_secs=1
+      # ssl
+      - --ca_path=${ca_path}
+      - --cert_path=${cert_path}
+      - --key_path=${key_path}
+      - --enable_ssl=${enable_ssl}
+      - --password_path=${password_path}
+
+
     depends_on:
       - metad0
       - metad1
@@ -338,12 +402,28 @@ services:
       - 13000
       - 13002
     volumes:
+      - ./secrets:/secrets
       - ./logs/graph2:/logs
     networks:
       - nebula-net
     restart: on-failure
     cap_add:
       - SYS_PTRACE
+
+  console:
+    image: vesoft/nebula-console:nightly
+    entrypoint: ""
+    command: 
+      - sh
+      - -c
+      - |
+        sleep 3 &&
+        nebula-console -addr graphd -port 3699 -u root -p nebula -e 'ADD HOSTS "storaged0":44500,"storaged1":44500,"storaged2":44500' &&
+        sleep 36000
+    depends_on:
+      - graphd
+    networks:
+      - nebula-net
 
 networks:
   nebula-net:

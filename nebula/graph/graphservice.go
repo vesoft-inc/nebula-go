@@ -37,7 +37,20 @@ type GraphService interface {
   // Parameters:
   //  - SessionId
   //  - Stmt
+  //  - ParameterMap
+  ExecuteWithParameter(ctx context.Context, sessionId int64, stmt []byte, parameterMap map[string]*nebula0.Value) (_r *ExecutionResponse, err error)
+  // Parameters:
+  //  - SessionId
+  //  - Stmt
   ExecuteJson(ctx context.Context, sessionId int64, stmt []byte) (_r []byte, err error)
+  // Parameters:
+  //  - SessionId
+  //  - Stmt
+  //  - ParameterMap
+  ExecuteJsonWithParameter(ctx context.Context, sessionId int64, stmt []byte, parameterMap map[string]*nebula0.Value) (_r []byte, err error)
+  // Parameters:
+  //  - Req
+  VerifyClientVersion(ctx context.Context, req *VerifyClientVersionReq) (_r *VerifyClientVersionResp, err error)
 }
 
 type GraphServiceClientInterface interface {
@@ -56,7 +69,20 @@ type GraphServiceClientInterface interface {
   // Parameters:
   //  - SessionId
   //  - Stmt
+  //  - ParameterMap
+  ExecuteWithParameter(sessionId int64, stmt []byte, parameterMap map[string]*nebula0.Value) (_r *ExecutionResponse, err error)
+  // Parameters:
+  //  - SessionId
+  //  - Stmt
   ExecuteJson(sessionId int64, stmt []byte) (_r []byte, err error)
+  // Parameters:
+  //  - SessionId
+  //  - Stmt
+  //  - ParameterMap
+  ExecuteJsonWithParameter(sessionId int64, stmt []byte, parameterMap map[string]*nebula0.Value) (_r []byte, err error)
+  // Parameters:
+  //  - Req
+  VerifyClientVersion(req *VerifyClientVersionReq) (_r *VerifyClientVersionResp, err error)
 }
 
 type GraphServiceClient struct {
@@ -146,6 +172,30 @@ func (p *GraphServiceClient) recvExecute() (value *ExecutionResponse, err error)
 // Parameters:
 //  - SessionId
 //  - Stmt
+//  - ParameterMap
+func (p *GraphServiceClient) ExecuteWithParameter(sessionId int64, stmt []byte, parameterMap map[string]*nebula0.Value) (_r *ExecutionResponse, err error) {
+  args := GraphServiceExecuteWithParameterArgs{
+    SessionId : sessionId,
+    Stmt : stmt,
+    ParameterMap : parameterMap,
+  }
+  err = p.CC.SendMsg("executeWithParameter", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvExecuteWithParameter()
+}
+
+
+func (p *GraphServiceClient) recvExecuteWithParameter() (value *ExecutionResponse, err error) {
+  var result GraphServiceExecuteWithParameterResult
+  err = p.CC.RecvMsg("executeWithParameter", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - SessionId
+//  - Stmt
 func (p *GraphServiceClient) ExecuteJson(sessionId int64, stmt []byte) (_r []byte, err error) {
   args := GraphServiceExecuteJsonArgs{
     SessionId : sessionId,
@@ -160,6 +210,50 @@ func (p *GraphServiceClient) ExecuteJson(sessionId int64, stmt []byte) (_r []byt
 func (p *GraphServiceClient) recvExecuteJson() (value []byte, err error) {
   var result GraphServiceExecuteJsonResult
   err = p.CC.RecvMsg("executeJson", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - SessionId
+//  - Stmt
+//  - ParameterMap
+func (p *GraphServiceClient) ExecuteJsonWithParameter(sessionId int64, stmt []byte, parameterMap map[string]*nebula0.Value) (_r []byte, err error) {
+  args := GraphServiceExecuteJsonWithParameterArgs{
+    SessionId : sessionId,
+    Stmt : stmt,
+    ParameterMap : parameterMap,
+  }
+  err = p.CC.SendMsg("executeJsonWithParameter", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvExecuteJsonWithParameter()
+}
+
+
+func (p *GraphServiceClient) recvExecuteJsonWithParameter() (value []byte, err error) {
+  var result GraphServiceExecuteJsonWithParameterResult
+  err = p.CC.RecvMsg("executeJsonWithParameter", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphServiceClient) VerifyClientVersion(req *VerifyClientVersionReq) (_r *VerifyClientVersionResp, err error) {
+  args := GraphServiceVerifyClientVersionArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("verifyClientVersion", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvVerifyClientVersion()
+}
+
+
+func (p *GraphServiceClient) recvVerifyClientVersion() (value *VerifyClientVersionResp, err error) {
+  var result GraphServiceVerifyClientVersionResult
+  err = p.CC.RecvMsg("verifyClientVersion", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -266,6 +360,32 @@ func (p *GraphServiceThreadsafeClient) recvExecute() (value *ExecutionResponse, 
 // Parameters:
 //  - SessionId
 //  - Stmt
+//  - ParameterMap
+func (p *GraphServiceThreadsafeClient) ExecuteWithParameter(sessionId int64, stmt []byte, parameterMap map[string]*nebula0.Value) (_r *ExecutionResponse, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := GraphServiceExecuteWithParameterArgs{
+    SessionId : sessionId,
+    Stmt : stmt,
+    ParameterMap : parameterMap,
+  }
+  err = p.CC.SendMsg("executeWithParameter", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvExecuteWithParameter()
+}
+
+
+func (p *GraphServiceThreadsafeClient) recvExecuteWithParameter() (value *ExecutionResponse, err error) {
+  var result GraphServiceExecuteWithParameterResult
+  err = p.CC.RecvMsg("executeWithParameter", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - SessionId
+//  - Stmt
 func (p *GraphServiceThreadsafeClient) ExecuteJson(sessionId int64, stmt []byte) (_r []byte, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
@@ -282,6 +402,54 @@ func (p *GraphServiceThreadsafeClient) ExecuteJson(sessionId int64, stmt []byte)
 func (p *GraphServiceThreadsafeClient) recvExecuteJson() (value []byte, err error) {
   var result GraphServiceExecuteJsonResult
   err = p.CC.RecvMsg("executeJson", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - SessionId
+//  - Stmt
+//  - ParameterMap
+func (p *GraphServiceThreadsafeClient) ExecuteJsonWithParameter(sessionId int64, stmt []byte, parameterMap map[string]*nebula0.Value) (_r []byte, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := GraphServiceExecuteJsonWithParameterArgs{
+    SessionId : sessionId,
+    Stmt : stmt,
+    ParameterMap : parameterMap,
+  }
+  err = p.CC.SendMsg("executeJsonWithParameter", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvExecuteJsonWithParameter()
+}
+
+
+func (p *GraphServiceThreadsafeClient) recvExecuteJsonWithParameter() (value []byte, err error) {
+  var result GraphServiceExecuteJsonWithParameterResult
+  err = p.CC.RecvMsg("executeJsonWithParameter", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphServiceThreadsafeClient) VerifyClientVersion(req *VerifyClientVersionReq) (_r *VerifyClientVersionResp, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := GraphServiceVerifyClientVersionArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("verifyClientVersion", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvVerifyClientVersion()
+}
+
+
+func (p *GraphServiceThreadsafeClient) recvVerifyClientVersion() (value *VerifyClientVersionResp, err error) {
+  var result GraphServiceVerifyClientVersionResult
+  err = p.CC.RecvMsg("verifyClientVersion", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -353,6 +521,23 @@ func (p *GraphServiceChannelClient) Execute(ctx context.Context, sessionId int64
 // Parameters:
 //  - SessionId
 //  - Stmt
+//  - ParameterMap
+func (p *GraphServiceChannelClient) ExecuteWithParameter(ctx context.Context, sessionId int64, stmt []byte, parameterMap map[string]*nebula0.Value) (_r *ExecutionResponse, err error) {
+  args := GraphServiceExecuteWithParameterArgs{
+    SessionId : sessionId,
+    Stmt : stmt,
+    ParameterMap : parameterMap,
+  }
+  var result GraphServiceExecuteWithParameterResult
+  err = p.RequestChannel.Call(ctx, "executeWithParameter", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - SessionId
+//  - Stmt
 func (p *GraphServiceChannelClient) ExecuteJson(ctx context.Context, sessionId int64, stmt []byte) (_r []byte, err error) {
   args := GraphServiceExecuteJsonArgs{
     SessionId : sessionId,
@@ -365,14 +550,49 @@ func (p *GraphServiceChannelClient) ExecuteJson(ctx context.Context, sessionId i
   return result.GetSuccess(), nil
 }
 
+// Parameters:
+//  - SessionId
+//  - Stmt
+//  - ParameterMap
+func (p *GraphServiceChannelClient) ExecuteJsonWithParameter(ctx context.Context, sessionId int64, stmt []byte, parameterMap map[string]*nebula0.Value) (_r []byte, err error) {
+  args := GraphServiceExecuteJsonWithParameterArgs{
+    SessionId : sessionId,
+    Stmt : stmt,
+    ParameterMap : parameterMap,
+  }
+  var result GraphServiceExecuteJsonWithParameterResult
+  err = p.RequestChannel.Call(ctx, "executeJsonWithParameter", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphServiceChannelClient) VerifyClientVersion(ctx context.Context, req *VerifyClientVersionReq) (_r *VerifyClientVersionResp, err error) {
+  args := GraphServiceVerifyClientVersionArgs{
+    Req : req,
+  }
+  var result GraphServiceVerifyClientVersionResult
+  err = p.RequestChannel.Call(ctx, "verifyClientVersion", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
 
 type GraphServiceProcessor struct {
   processorMap map[string]thrift.ProcessorFunctionContext
+  functionServiceMap map[string]string
   handler GraphService
 }
 
 func (p *GraphServiceProcessor) AddToProcessorMap(key string, processor thrift.ProcessorFunctionContext) {
   p.processorMap[key] = processor
+}
+
+func (p *GraphServiceProcessor) AddToFunctionServiceMap(key, service string) {
+  p.functionServiceMap[key] = service
 }
 
 func (p *GraphServiceProcessor) GetProcessorFunctionContext(key string) (processor thrift.ProcessorFunctionContext, err error) {
@@ -386,17 +606,36 @@ func (p *GraphServiceProcessor) ProcessorMap() map[string]thrift.ProcessorFuncti
   return p.processorMap
 }
 
+func (p *GraphServiceProcessor) FunctionServiceMap() map[string]string {
+  return p.functionServiceMap
+}
+
 func NewGraphServiceProcessor(handler GraphService) *GraphServiceProcessor {
-  self9 := &GraphServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext)}
+  self9 := &GraphServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext), functionServiceMap:make(map[string]string)}
   self9.processorMap["authenticate"] = &graphServiceProcessorAuthenticate{handler:handler}
   self9.processorMap["signout"] = &graphServiceProcessorSignout{handler:handler}
   self9.processorMap["execute"] = &graphServiceProcessorExecute{handler:handler}
+  self9.processorMap["executeWithParameter"] = &graphServiceProcessorExecuteWithParameter{handler:handler}
   self9.processorMap["executeJson"] = &graphServiceProcessorExecuteJson{handler:handler}
+  self9.processorMap["executeJsonWithParameter"] = &graphServiceProcessorExecuteJsonWithParameter{handler:handler}
+  self9.processorMap["verifyClientVersion"] = &graphServiceProcessorVerifyClientVersion{handler:handler}
+  self9.functionServiceMap["authenticate"] = "GraphService"
+  self9.functionServiceMap["signout"] = "GraphService"
+  self9.functionServiceMap["execute"] = "GraphService"
+  self9.functionServiceMap["executeWithParameter"] = "GraphService"
+  self9.functionServiceMap["executeJson"] = "GraphService"
+  self9.functionServiceMap["executeJsonWithParameter"] = "GraphService"
+  self9.functionServiceMap["verifyClientVersion"] = "GraphService"
   return self9
 }
 
 type graphServiceProcessorAuthenticate struct {
   handler GraphService
+}
+
+func (p *GraphServiceAuthenticateResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *graphServiceProcessorAuthenticate) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -496,6 +735,11 @@ type graphServiceProcessorExecute struct {
   handler GraphService
 }
 
+func (p *GraphServiceExecuteResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
 func (p *graphServiceProcessorExecute) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
   args := GraphServiceExecuteArgs{}
   if err := args.Read(iprot); err != nil {
@@ -542,8 +786,68 @@ func (p *graphServiceProcessorExecute) RunContext(ctx context.Context, argStruct
   return &result, nil
 }
 
+type graphServiceProcessorExecuteWithParameter struct {
+  handler GraphService
+}
+
+func (p *GraphServiceExecuteWithParameterResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
+func (p *graphServiceProcessorExecuteWithParameter) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := GraphServiceExecuteWithParameterArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *graphServiceProcessorExecuteWithParameter) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("executeWithParameter", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *graphServiceProcessorExecuteWithParameter) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*GraphServiceExecuteWithParameterArgs)
+  var result GraphServiceExecuteWithParameterResult
+  if retval, err := p.handler.ExecuteWithParameter(ctx, args.SessionId, args.Stmt, args.ParameterMap); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing executeWithParameter: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
 type graphServiceProcessorExecuteJson struct {
   handler GraphService
+}
+
+func (p *GraphServiceExecuteJsonResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
 }
 
 func (p *graphServiceProcessorExecuteJson) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
@@ -592,6 +896,116 @@ func (p *graphServiceProcessorExecuteJson) RunContext(ctx context.Context, argSt
   return &result, nil
 }
 
+type graphServiceProcessorExecuteJsonWithParameter struct {
+  handler GraphService
+}
+
+func (p *GraphServiceExecuteJsonWithParameterResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
+func (p *graphServiceProcessorExecuteJsonWithParameter) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := GraphServiceExecuteJsonWithParameterArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *graphServiceProcessorExecuteJsonWithParameter) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("executeJsonWithParameter", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *graphServiceProcessorExecuteJsonWithParameter) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*GraphServiceExecuteJsonWithParameterArgs)
+  var result GraphServiceExecuteJsonWithParameterResult
+  if retval, err := p.handler.ExecuteJsonWithParameter(ctx, args.SessionId, args.Stmt, args.ParameterMap); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing executeJsonWithParameter: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type graphServiceProcessorVerifyClientVersion struct {
+  handler GraphService
+}
+
+func (p *GraphServiceVerifyClientVersionResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
+func (p *graphServiceProcessorVerifyClientVersion) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := GraphServiceVerifyClientVersionArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *graphServiceProcessorVerifyClientVersion) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("verifyClientVersion", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *graphServiceProcessorVerifyClientVersion) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*GraphServiceVerifyClientVersionArgs)
+  var result GraphServiceVerifyClientVersionResult
+  if retval, err := p.handler.VerifyClientVersion(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing verifyClientVersion: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
 
 // HELPER FUNCTIONS AND STRUCTURES
 
@@ -616,6 +1030,43 @@ func (p *GraphServiceAuthenticateArgs) GetUsername() []byte {
 func (p *GraphServiceAuthenticateArgs) GetPassword() []byte {
   return p.Password
 }
+type GraphServiceAuthenticateArgsBuilder struct {
+  obj *GraphServiceAuthenticateArgs
+}
+
+func NewGraphServiceAuthenticateArgsBuilder() *GraphServiceAuthenticateArgsBuilder{
+  return &GraphServiceAuthenticateArgsBuilder{
+    obj: NewGraphServiceAuthenticateArgs(),
+  }
+}
+
+func (p GraphServiceAuthenticateArgsBuilder) Emit() *GraphServiceAuthenticateArgs{
+  return &GraphServiceAuthenticateArgs{
+    Username: p.obj.Username,
+    Password: p.obj.Password,
+  }
+}
+
+func (g *GraphServiceAuthenticateArgsBuilder) Username(username []byte) *GraphServiceAuthenticateArgsBuilder {
+  g.obj.Username = username
+  return g
+}
+
+func (g *GraphServiceAuthenticateArgsBuilder) Password(password []byte) *GraphServiceAuthenticateArgsBuilder {
+  g.obj.Password = password
+  return g
+}
+
+func (g *GraphServiceAuthenticateArgs) SetUsername(username []byte) *GraphServiceAuthenticateArgs {
+  g.Username = username
+  return g
+}
+
+func (g *GraphServiceAuthenticateArgs) SetPassword(password []byte) *GraphServiceAuthenticateArgs {
+  g.Password = password
+  return g
+}
+
 func (p *GraphServiceAuthenticateArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -654,19 +1105,19 @@ func (p *GraphServiceAuthenticateArgs) Read(iprot thrift.Protocol) error {
 
 func (p *GraphServiceAuthenticateArgs)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.Username = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.Username = v
+  }
   return nil
 }
 
 func (p *GraphServiceAuthenticateArgs)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Password = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Password = v
+  }
   return nil
 }
 
@@ -716,7 +1167,7 @@ func (p *GraphServiceAuthenticateArgs) String() string {
 //  - Success
 type GraphServiceAuthenticateResult struct {
   thrift.IResponse
-  Success *AuthResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *AuthResponse `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewGraphServiceAuthenticateResult() *GraphServiceAuthenticateResult {
@@ -732,6 +1183,32 @@ return p.Success
 }
 func (p *GraphServiceAuthenticateResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type GraphServiceAuthenticateResultBuilder struct {
+  obj *GraphServiceAuthenticateResult
+}
+
+func NewGraphServiceAuthenticateResultBuilder() *GraphServiceAuthenticateResultBuilder{
+  return &GraphServiceAuthenticateResultBuilder{
+    obj: NewGraphServiceAuthenticateResult(),
+  }
+}
+
+func (p GraphServiceAuthenticateResultBuilder) Emit() *GraphServiceAuthenticateResult{
+  return &GraphServiceAuthenticateResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphServiceAuthenticateResultBuilder) Success(success *AuthResponse) *GraphServiceAuthenticateResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphServiceAuthenticateResult) SetSuccess(success *AuthResponse) *GraphServiceAuthenticateResult {
+  g.Success = success
+  return g
 }
 
 func (p *GraphServiceAuthenticateResult) Read(iprot thrift.Protocol) error {
@@ -827,6 +1304,32 @@ func NewGraphServiceSignoutArgs() *GraphServiceSignoutArgs {
 func (p *GraphServiceSignoutArgs) GetSessionId() int64 {
   return p.SessionId
 }
+type GraphServiceSignoutArgsBuilder struct {
+  obj *GraphServiceSignoutArgs
+}
+
+func NewGraphServiceSignoutArgsBuilder() *GraphServiceSignoutArgsBuilder{
+  return &GraphServiceSignoutArgsBuilder{
+    obj: NewGraphServiceSignoutArgs(),
+  }
+}
+
+func (p GraphServiceSignoutArgsBuilder) Emit() *GraphServiceSignoutArgs{
+  return &GraphServiceSignoutArgs{
+    SessionId: p.obj.SessionId,
+  }
+}
+
+func (g *GraphServiceSignoutArgsBuilder) SessionId(sessionId int64) *GraphServiceSignoutArgsBuilder {
+  g.obj.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceSignoutArgs) SetSessionId(sessionId int64) *GraphServiceSignoutArgs {
+  g.SessionId = sessionId
+  return g
+}
+
 func (p *GraphServiceSignoutArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -861,10 +1364,10 @@ func (p *GraphServiceSignoutArgs) Read(iprot thrift.Protocol) error {
 
 func (p *GraphServiceSignoutArgs)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.SessionId = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.SessionId = v
+  }
   return nil
 }
 
@@ -919,6 +1422,43 @@ func (p *GraphServiceExecuteArgs) GetSessionId() int64 {
 func (p *GraphServiceExecuteArgs) GetStmt() []byte {
   return p.Stmt
 }
+type GraphServiceExecuteArgsBuilder struct {
+  obj *GraphServiceExecuteArgs
+}
+
+func NewGraphServiceExecuteArgsBuilder() *GraphServiceExecuteArgsBuilder{
+  return &GraphServiceExecuteArgsBuilder{
+    obj: NewGraphServiceExecuteArgs(),
+  }
+}
+
+func (p GraphServiceExecuteArgsBuilder) Emit() *GraphServiceExecuteArgs{
+  return &GraphServiceExecuteArgs{
+    SessionId: p.obj.SessionId,
+    Stmt: p.obj.Stmt,
+  }
+}
+
+func (g *GraphServiceExecuteArgsBuilder) SessionId(sessionId int64) *GraphServiceExecuteArgsBuilder {
+  g.obj.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteArgsBuilder) Stmt(stmt []byte) *GraphServiceExecuteArgsBuilder {
+  g.obj.Stmt = stmt
+  return g
+}
+
+func (g *GraphServiceExecuteArgs) SetSessionId(sessionId int64) *GraphServiceExecuteArgs {
+  g.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteArgs) SetStmt(stmt []byte) *GraphServiceExecuteArgs {
+  g.Stmt = stmt
+  return g
+}
+
 func (p *GraphServiceExecuteArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -957,19 +1497,19 @@ func (p *GraphServiceExecuteArgs) Read(iprot thrift.Protocol) error {
 
 func (p *GraphServiceExecuteArgs)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.SessionId = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.SessionId = v
+  }
   return nil
 }
 
 func (p *GraphServiceExecuteArgs)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Stmt = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Stmt = v
+  }
   return nil
 }
 
@@ -1019,7 +1559,7 @@ func (p *GraphServiceExecuteArgs) String() string {
 //  - Success
 type GraphServiceExecuteResult struct {
   thrift.IResponse
-  Success *ExecutionResponse `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success *ExecutionResponse `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewGraphServiceExecuteResult() *GraphServiceExecuteResult {
@@ -1035,6 +1575,32 @@ return p.Success
 }
 func (p *GraphServiceExecuteResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type GraphServiceExecuteResultBuilder struct {
+  obj *GraphServiceExecuteResult
+}
+
+func NewGraphServiceExecuteResultBuilder() *GraphServiceExecuteResultBuilder{
+  return &GraphServiceExecuteResultBuilder{
+    obj: NewGraphServiceExecuteResult(),
+  }
+}
+
+func (p GraphServiceExecuteResultBuilder) Emit() *GraphServiceExecuteResult{
+  return &GraphServiceExecuteResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphServiceExecuteResultBuilder) Success(success *ExecutionResponse) *GraphServiceExecuteResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphServiceExecuteResult) SetSuccess(success *ExecutionResponse) *GraphServiceExecuteResult {
+  g.Success = success
+  return g
 }
 
 func (p *GraphServiceExecuteResult) Read(iprot thrift.Protocol) error {
@@ -1118,6 +1684,356 @@ func (p *GraphServiceExecuteResult) String() string {
 // Attributes:
 //  - SessionId
 //  - Stmt
+//  - ParameterMap
+type GraphServiceExecuteWithParameterArgs struct {
+  thrift.IRequest
+  SessionId int64 `thrift:"sessionId,1" db:"sessionId" json:"sessionId"`
+  Stmt []byte `thrift:"stmt,2" db:"stmt" json:"stmt"`
+  ParameterMap map[string]*nebula0.Value `thrift:"parameterMap,3" db:"parameterMap" json:"parameterMap"`
+}
+
+func NewGraphServiceExecuteWithParameterArgs() *GraphServiceExecuteWithParameterArgs {
+  return &GraphServiceExecuteWithParameterArgs{}
+}
+
+
+func (p *GraphServiceExecuteWithParameterArgs) GetSessionId() int64 {
+  return p.SessionId
+}
+
+func (p *GraphServiceExecuteWithParameterArgs) GetStmt() []byte {
+  return p.Stmt
+}
+
+func (p *GraphServiceExecuteWithParameterArgs) GetParameterMap() map[string]*nebula0.Value {
+  return p.ParameterMap
+}
+type GraphServiceExecuteWithParameterArgsBuilder struct {
+  obj *GraphServiceExecuteWithParameterArgs
+}
+
+func NewGraphServiceExecuteWithParameterArgsBuilder() *GraphServiceExecuteWithParameterArgsBuilder{
+  return &GraphServiceExecuteWithParameterArgsBuilder{
+    obj: NewGraphServiceExecuteWithParameterArgs(),
+  }
+}
+
+func (p GraphServiceExecuteWithParameterArgsBuilder) Emit() *GraphServiceExecuteWithParameterArgs{
+  return &GraphServiceExecuteWithParameterArgs{
+    SessionId: p.obj.SessionId,
+    Stmt: p.obj.Stmt,
+    ParameterMap: p.obj.ParameterMap,
+  }
+}
+
+func (g *GraphServiceExecuteWithParameterArgsBuilder) SessionId(sessionId int64) *GraphServiceExecuteWithParameterArgsBuilder {
+  g.obj.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteWithParameterArgsBuilder) Stmt(stmt []byte) *GraphServiceExecuteWithParameterArgsBuilder {
+  g.obj.Stmt = stmt
+  return g
+}
+
+func (g *GraphServiceExecuteWithParameterArgsBuilder) ParameterMap(parameterMap map[string]*nebula0.Value) *GraphServiceExecuteWithParameterArgsBuilder {
+  g.obj.ParameterMap = parameterMap
+  return g
+}
+
+func (g *GraphServiceExecuteWithParameterArgs) SetSessionId(sessionId int64) *GraphServiceExecuteWithParameterArgs {
+  g.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteWithParameterArgs) SetStmt(stmt []byte) *GraphServiceExecuteWithParameterArgs {
+  g.Stmt = stmt
+  return g
+}
+
+func (g *GraphServiceExecuteWithParameterArgs) SetParameterMap(parameterMap map[string]*nebula0.Value) *GraphServiceExecuteWithParameterArgs {
+  g.ParameterMap = parameterMap
+  return g
+}
+
+func (p *GraphServiceExecuteWithParameterArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceExecuteWithParameterArgs)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.SessionId = v
+  }
+  return nil
+}
+
+func (p *GraphServiceExecuteWithParameterArgs)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Stmt = v
+  }
+  return nil
+}
+
+func (p *GraphServiceExecuteWithParameterArgs)  ReadField3(iprot thrift.Protocol) error {
+  _, _, size, err := iprot.ReadMapBegin()
+  if err != nil {
+    return thrift.PrependError("error reading map begin: ", err)
+  }
+  tMap := make(map[string]*nebula0.Value, size)
+  p.ParameterMap =  tMap
+  for i := 0; i < size; i ++ {
+    var _key11 string
+    if v, err := iprot.ReadString(); err != nil {
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _key11 = v
+    }
+    _val12 := nebula0.NewValue()
+    if err := _val12.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val12), err)
+    }
+    p.ParameterMap[_key11] = _val12
+  }
+  if err := iprot.ReadMapEnd(); err != nil {
+    return thrift.PrependError("error reading map end: ", err)
+  }
+  return nil
+}
+
+func (p *GraphServiceExecuteWithParameterArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("executeWithParameter_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphServiceExecuteWithParameterArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("sessionId", thrift.I64, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:sessionId: ", p), err) }
+  if err := oprot.WriteI64(int64(p.SessionId)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.sessionId (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:sessionId: ", p), err) }
+  return err
+}
+
+func (p *GraphServiceExecuteWithParameterArgs) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("stmt", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:stmt: ", p), err) }
+  if err := oprot.WriteBinary(p.Stmt); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.stmt (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:stmt: ", p), err) }
+  return err
+}
+
+func (p *GraphServiceExecuteWithParameterArgs) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("parameterMap", thrift.MAP, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:parameterMap: ", p), err) }
+  if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRUCT, len(p.ParameterMap)); err != nil {
+    return thrift.PrependError("error writing map begin: ", err)
+  }
+  for k, v := range p.ParameterMap {
+    if err := oprot.WriteString(string(k)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+    if err := v.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+    }
+  }
+  if err := oprot.WriteMapEnd(); err != nil {
+    return thrift.PrependError("error writing map end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:parameterMap: ", p), err) }
+  return err
+}
+
+func (p *GraphServiceExecuteWithParameterArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  sessionIdVal := fmt.Sprintf("%v", p.SessionId)
+  stmtVal := fmt.Sprintf("%v", p.Stmt)
+  parameterMapVal := fmt.Sprintf("%v", p.ParameterMap)
+  return fmt.Sprintf("GraphServiceExecuteWithParameterArgs({SessionId:%s Stmt:%s ParameterMap:%s})", sessionIdVal, stmtVal, parameterMapVal)
+}
+
+// Attributes:
+//  - Success
+type GraphServiceExecuteWithParameterResult struct {
+  thrift.IResponse
+  Success *ExecutionResponse `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
+}
+
+func NewGraphServiceExecuteWithParameterResult() *GraphServiceExecuteWithParameterResult {
+  return &GraphServiceExecuteWithParameterResult{}
+}
+
+var GraphServiceExecuteWithParameterResult_Success_DEFAULT *ExecutionResponse
+func (p *GraphServiceExecuteWithParameterResult) GetSuccess() *ExecutionResponse {
+  if !p.IsSetSuccess() {
+    return GraphServiceExecuteWithParameterResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *GraphServiceExecuteWithParameterResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+type GraphServiceExecuteWithParameterResultBuilder struct {
+  obj *GraphServiceExecuteWithParameterResult
+}
+
+func NewGraphServiceExecuteWithParameterResultBuilder() *GraphServiceExecuteWithParameterResultBuilder{
+  return &GraphServiceExecuteWithParameterResultBuilder{
+    obj: NewGraphServiceExecuteWithParameterResult(),
+  }
+}
+
+func (p GraphServiceExecuteWithParameterResultBuilder) Emit() *GraphServiceExecuteWithParameterResult{
+  return &GraphServiceExecuteWithParameterResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphServiceExecuteWithParameterResultBuilder) Success(success *ExecutionResponse) *GraphServiceExecuteWithParameterResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphServiceExecuteWithParameterResult) SetSuccess(success *ExecutionResponse) *GraphServiceExecuteWithParameterResult {
+  g.Success = success
+  return g
+}
+
+func (p *GraphServiceExecuteWithParameterResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceExecuteWithParameterResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewExecutionResponse()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceExecuteWithParameterResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("executeWithParameter_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphServiceExecuteWithParameterResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *GraphServiceExecuteWithParameterResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GraphServiceExecuteWithParameterResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - SessionId
+//  - Stmt
 type GraphServiceExecuteJsonArgs struct {
   thrift.IRequest
   SessionId int64 `thrift:"sessionId,1" db:"sessionId" json:"sessionId"`
@@ -1136,6 +2052,43 @@ func (p *GraphServiceExecuteJsonArgs) GetSessionId() int64 {
 func (p *GraphServiceExecuteJsonArgs) GetStmt() []byte {
   return p.Stmt
 }
+type GraphServiceExecuteJsonArgsBuilder struct {
+  obj *GraphServiceExecuteJsonArgs
+}
+
+func NewGraphServiceExecuteJsonArgsBuilder() *GraphServiceExecuteJsonArgsBuilder{
+  return &GraphServiceExecuteJsonArgsBuilder{
+    obj: NewGraphServiceExecuteJsonArgs(),
+  }
+}
+
+func (p GraphServiceExecuteJsonArgsBuilder) Emit() *GraphServiceExecuteJsonArgs{
+  return &GraphServiceExecuteJsonArgs{
+    SessionId: p.obj.SessionId,
+    Stmt: p.obj.Stmt,
+  }
+}
+
+func (g *GraphServiceExecuteJsonArgsBuilder) SessionId(sessionId int64) *GraphServiceExecuteJsonArgsBuilder {
+  g.obj.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteJsonArgsBuilder) Stmt(stmt []byte) *GraphServiceExecuteJsonArgsBuilder {
+  g.obj.Stmt = stmt
+  return g
+}
+
+func (g *GraphServiceExecuteJsonArgs) SetSessionId(sessionId int64) *GraphServiceExecuteJsonArgs {
+  g.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteJsonArgs) SetStmt(stmt []byte) *GraphServiceExecuteJsonArgs {
+  g.Stmt = stmt
+  return g
+}
+
 func (p *GraphServiceExecuteJsonArgs) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
@@ -1174,19 +2127,19 @@ func (p *GraphServiceExecuteJsonArgs) Read(iprot thrift.Protocol) error {
 
 func (p *GraphServiceExecuteJsonArgs)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-  return thrift.PrependError("error reading field 1: ", err)
-} else {
-  p.SessionId = v
-}
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.SessionId = v
+  }
   return nil
 }
 
 func (p *GraphServiceExecuteJsonArgs)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 2: ", err)
-} else {
-  p.Stmt = v
-}
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Stmt = v
+  }
   return nil
 }
 
@@ -1236,7 +2189,7 @@ func (p *GraphServiceExecuteJsonArgs) String() string {
 //  - Success
 type GraphServiceExecuteJsonResult struct {
   thrift.IResponse
-  Success []byte `thrift:"success,0" db:"success" json:"success,omitempty"`
+  Success []byte `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewGraphServiceExecuteJsonResult() *GraphServiceExecuteJsonResult {
@@ -1250,6 +2203,32 @@ func (p *GraphServiceExecuteJsonResult) GetSuccess() []byte {
 }
 func (p *GraphServiceExecuteJsonResult) IsSetSuccess() bool {
   return p != nil && p.Success != nil
+}
+
+type GraphServiceExecuteJsonResultBuilder struct {
+  obj *GraphServiceExecuteJsonResult
+}
+
+func NewGraphServiceExecuteJsonResultBuilder() *GraphServiceExecuteJsonResultBuilder{
+  return &GraphServiceExecuteJsonResultBuilder{
+    obj: NewGraphServiceExecuteJsonResult(),
+  }
+}
+
+func (p GraphServiceExecuteJsonResultBuilder) Emit() *GraphServiceExecuteJsonResult{
+  return &GraphServiceExecuteJsonResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphServiceExecuteJsonResultBuilder) Success(success []byte) *GraphServiceExecuteJsonResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphServiceExecuteJsonResult) SetSuccess(success []byte) *GraphServiceExecuteJsonResult {
+  g.Success = success
+  return g
 }
 
 func (p *GraphServiceExecuteJsonResult) Read(iprot thrift.Protocol) error {
@@ -1286,10 +2265,10 @@ func (p *GraphServiceExecuteJsonResult) Read(iprot thrift.Protocol) error {
 
 func (p *GraphServiceExecuteJsonResult)  ReadField0(iprot thrift.Protocol) error {
   if v, err := iprot.ReadBinary(); err != nil {
-  return thrift.PrependError("error reading field 0: ", err)
-} else {
-  p.Success = v
-}
+    return thrift.PrependError("error reading field 0: ", err)
+  } else {
+    p.Success = v
+  }
   return nil
 }
 
@@ -1323,6 +2302,601 @@ func (p *GraphServiceExecuteJsonResult) String() string {
 
   successVal := fmt.Sprintf("%v", p.Success)
   return fmt.Sprintf("GraphServiceExecuteJsonResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - SessionId
+//  - Stmt
+//  - ParameterMap
+type GraphServiceExecuteJsonWithParameterArgs struct {
+  thrift.IRequest
+  SessionId int64 `thrift:"sessionId,1" db:"sessionId" json:"sessionId"`
+  Stmt []byte `thrift:"stmt,2" db:"stmt" json:"stmt"`
+  ParameterMap map[string]*nebula0.Value `thrift:"parameterMap,3" db:"parameterMap" json:"parameterMap"`
+}
+
+func NewGraphServiceExecuteJsonWithParameterArgs() *GraphServiceExecuteJsonWithParameterArgs {
+  return &GraphServiceExecuteJsonWithParameterArgs{}
+}
+
+
+func (p *GraphServiceExecuteJsonWithParameterArgs) GetSessionId() int64 {
+  return p.SessionId
+}
+
+func (p *GraphServiceExecuteJsonWithParameterArgs) GetStmt() []byte {
+  return p.Stmt
+}
+
+func (p *GraphServiceExecuteJsonWithParameterArgs) GetParameterMap() map[string]*nebula0.Value {
+  return p.ParameterMap
+}
+type GraphServiceExecuteJsonWithParameterArgsBuilder struct {
+  obj *GraphServiceExecuteJsonWithParameterArgs
+}
+
+func NewGraphServiceExecuteJsonWithParameterArgsBuilder() *GraphServiceExecuteJsonWithParameterArgsBuilder{
+  return &GraphServiceExecuteJsonWithParameterArgsBuilder{
+    obj: NewGraphServiceExecuteJsonWithParameterArgs(),
+  }
+}
+
+func (p GraphServiceExecuteJsonWithParameterArgsBuilder) Emit() *GraphServiceExecuteJsonWithParameterArgs{
+  return &GraphServiceExecuteJsonWithParameterArgs{
+    SessionId: p.obj.SessionId,
+    Stmt: p.obj.Stmt,
+    ParameterMap: p.obj.ParameterMap,
+  }
+}
+
+func (g *GraphServiceExecuteJsonWithParameterArgsBuilder) SessionId(sessionId int64) *GraphServiceExecuteJsonWithParameterArgsBuilder {
+  g.obj.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteJsonWithParameterArgsBuilder) Stmt(stmt []byte) *GraphServiceExecuteJsonWithParameterArgsBuilder {
+  g.obj.Stmt = stmt
+  return g
+}
+
+func (g *GraphServiceExecuteJsonWithParameterArgsBuilder) ParameterMap(parameterMap map[string]*nebula0.Value) *GraphServiceExecuteJsonWithParameterArgsBuilder {
+  g.obj.ParameterMap = parameterMap
+  return g
+}
+
+func (g *GraphServiceExecuteJsonWithParameterArgs) SetSessionId(sessionId int64) *GraphServiceExecuteJsonWithParameterArgs {
+  g.SessionId = sessionId
+  return g
+}
+
+func (g *GraphServiceExecuteJsonWithParameterArgs) SetStmt(stmt []byte) *GraphServiceExecuteJsonWithParameterArgs {
+  g.Stmt = stmt
+  return g
+}
+
+func (g *GraphServiceExecuteJsonWithParameterArgs) SetParameterMap(parameterMap map[string]*nebula0.Value) *GraphServiceExecuteJsonWithParameterArgs {
+  g.ParameterMap = parameterMap
+  return g
+}
+
+func (p *GraphServiceExecuteJsonWithParameterArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceExecuteJsonWithParameterArgs)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.SessionId = v
+  }
+  return nil
+}
+
+func (p *GraphServiceExecuteJsonWithParameterArgs)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.Stmt = v
+  }
+  return nil
+}
+
+func (p *GraphServiceExecuteJsonWithParameterArgs)  ReadField3(iprot thrift.Protocol) error {
+  _, _, size, err := iprot.ReadMapBegin()
+  if err != nil {
+    return thrift.PrependError("error reading map begin: ", err)
+  }
+  tMap := make(map[string]*nebula0.Value, size)
+  p.ParameterMap =  tMap
+  for i := 0; i < size; i ++ {
+    var _key13 string
+    if v, err := iprot.ReadString(); err != nil {
+      return thrift.PrependError("error reading field 0: ", err)
+    } else {
+      _key13 = v
+    }
+    _val14 := nebula0.NewValue()
+    if err := _val14.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val14), err)
+    }
+    p.ParameterMap[_key13] = _val14
+  }
+  if err := iprot.ReadMapEnd(); err != nil {
+    return thrift.PrependError("error reading map end: ", err)
+  }
+  return nil
+}
+
+func (p *GraphServiceExecuteJsonWithParameterArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("executeJsonWithParameter_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphServiceExecuteJsonWithParameterArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("sessionId", thrift.I64, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:sessionId: ", p), err) }
+  if err := oprot.WriteI64(int64(p.SessionId)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.sessionId (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:sessionId: ", p), err) }
+  return err
+}
+
+func (p *GraphServiceExecuteJsonWithParameterArgs) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("stmt", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:stmt: ", p), err) }
+  if err := oprot.WriteBinary(p.Stmt); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.stmt (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:stmt: ", p), err) }
+  return err
+}
+
+func (p *GraphServiceExecuteJsonWithParameterArgs) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("parameterMap", thrift.MAP, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:parameterMap: ", p), err) }
+  if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRUCT, len(p.ParameterMap)); err != nil {
+    return thrift.PrependError("error writing map begin: ", err)
+  }
+  for k, v := range p.ParameterMap {
+    if err := oprot.WriteString(string(k)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
+    if err := v.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
+    }
+  }
+  if err := oprot.WriteMapEnd(); err != nil {
+    return thrift.PrependError("error writing map end: ", err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:parameterMap: ", p), err) }
+  return err
+}
+
+func (p *GraphServiceExecuteJsonWithParameterArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  sessionIdVal := fmt.Sprintf("%v", p.SessionId)
+  stmtVal := fmt.Sprintf("%v", p.Stmt)
+  parameterMapVal := fmt.Sprintf("%v", p.ParameterMap)
+  return fmt.Sprintf("GraphServiceExecuteJsonWithParameterArgs({SessionId:%s Stmt:%s ParameterMap:%s})", sessionIdVal, stmtVal, parameterMapVal)
+}
+
+// Attributes:
+//  - Success
+type GraphServiceExecuteJsonWithParameterResult struct {
+  thrift.IResponse
+  Success []byte `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
+}
+
+func NewGraphServiceExecuteJsonWithParameterResult() *GraphServiceExecuteJsonWithParameterResult {
+  return &GraphServiceExecuteJsonWithParameterResult{}
+}
+
+var GraphServiceExecuteJsonWithParameterResult_Success_DEFAULT []byte
+
+func (p *GraphServiceExecuteJsonWithParameterResult) GetSuccess() []byte {
+  return p.Success
+}
+func (p *GraphServiceExecuteJsonWithParameterResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+type GraphServiceExecuteJsonWithParameterResultBuilder struct {
+  obj *GraphServiceExecuteJsonWithParameterResult
+}
+
+func NewGraphServiceExecuteJsonWithParameterResultBuilder() *GraphServiceExecuteJsonWithParameterResultBuilder{
+  return &GraphServiceExecuteJsonWithParameterResultBuilder{
+    obj: NewGraphServiceExecuteJsonWithParameterResult(),
+  }
+}
+
+func (p GraphServiceExecuteJsonWithParameterResultBuilder) Emit() *GraphServiceExecuteJsonWithParameterResult{
+  return &GraphServiceExecuteJsonWithParameterResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphServiceExecuteJsonWithParameterResultBuilder) Success(success []byte) *GraphServiceExecuteJsonWithParameterResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphServiceExecuteJsonWithParameterResult) SetSuccess(success []byte) *GraphServiceExecuteJsonWithParameterResult {
+  g.Success = success
+  return g
+}
+
+func (p *GraphServiceExecuteJsonWithParameterResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceExecuteJsonWithParameterResult)  ReadField0(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+    return thrift.PrependError("error reading field 0: ", err)
+  } else {
+    p.Success = v
+  }
+  return nil
+}
+
+func (p *GraphServiceExecuteJsonWithParameterResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("executeJsonWithParameter_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphServiceExecuteJsonWithParameterResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := oprot.WriteBinary(p.Success); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.success (0) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *GraphServiceExecuteJsonWithParameterResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  successVal := fmt.Sprintf("%v", p.Success)
+  return fmt.Sprintf("GraphServiceExecuteJsonWithParameterResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type GraphServiceVerifyClientVersionArgs struct {
+  thrift.IRequest
+  Req *VerifyClientVersionReq `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewGraphServiceVerifyClientVersionArgs() *GraphServiceVerifyClientVersionArgs {
+  return &GraphServiceVerifyClientVersionArgs{
+    Req: NewVerifyClientVersionReq(),
+  }
+}
+
+var GraphServiceVerifyClientVersionArgs_Req_DEFAULT *VerifyClientVersionReq
+func (p *GraphServiceVerifyClientVersionArgs) GetReq() *VerifyClientVersionReq {
+  if !p.IsSetReq() {
+    return GraphServiceVerifyClientVersionArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *GraphServiceVerifyClientVersionArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+type GraphServiceVerifyClientVersionArgsBuilder struct {
+  obj *GraphServiceVerifyClientVersionArgs
+}
+
+func NewGraphServiceVerifyClientVersionArgsBuilder() *GraphServiceVerifyClientVersionArgsBuilder{
+  return &GraphServiceVerifyClientVersionArgsBuilder{
+    obj: NewGraphServiceVerifyClientVersionArgs(),
+  }
+}
+
+func (p GraphServiceVerifyClientVersionArgsBuilder) Emit() *GraphServiceVerifyClientVersionArgs{
+  return &GraphServiceVerifyClientVersionArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (g *GraphServiceVerifyClientVersionArgsBuilder) Req(req *VerifyClientVersionReq) *GraphServiceVerifyClientVersionArgsBuilder {
+  g.obj.Req = req
+  return g
+}
+
+func (g *GraphServiceVerifyClientVersionArgs) SetReq(req *VerifyClientVersionReq) *GraphServiceVerifyClientVersionArgs {
+  g.Req = req
+  return g
+}
+
+func (p *GraphServiceVerifyClientVersionArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceVerifyClientVersionArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewVerifyClientVersionReq()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceVerifyClientVersionArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("verifyClientVersion_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphServiceVerifyClientVersionArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *GraphServiceVerifyClientVersionArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("GraphServiceVerifyClientVersionArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type GraphServiceVerifyClientVersionResult struct {
+  thrift.IResponse
+  Success *VerifyClientVersionResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
+}
+
+func NewGraphServiceVerifyClientVersionResult() *GraphServiceVerifyClientVersionResult {
+  return &GraphServiceVerifyClientVersionResult{}
+}
+
+var GraphServiceVerifyClientVersionResult_Success_DEFAULT *VerifyClientVersionResp
+func (p *GraphServiceVerifyClientVersionResult) GetSuccess() *VerifyClientVersionResp {
+  if !p.IsSetSuccess() {
+    return GraphServiceVerifyClientVersionResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *GraphServiceVerifyClientVersionResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+type GraphServiceVerifyClientVersionResultBuilder struct {
+  obj *GraphServiceVerifyClientVersionResult
+}
+
+func NewGraphServiceVerifyClientVersionResultBuilder() *GraphServiceVerifyClientVersionResultBuilder{
+  return &GraphServiceVerifyClientVersionResultBuilder{
+    obj: NewGraphServiceVerifyClientVersionResult(),
+  }
+}
+
+func (p GraphServiceVerifyClientVersionResultBuilder) Emit() *GraphServiceVerifyClientVersionResult{
+  return &GraphServiceVerifyClientVersionResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphServiceVerifyClientVersionResultBuilder) Success(success *VerifyClientVersionResp) *GraphServiceVerifyClientVersionResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphServiceVerifyClientVersionResult) SetSuccess(success *VerifyClientVersionResp) *GraphServiceVerifyClientVersionResult {
+  g.Success = success
+  return g
+}
+
+func (p *GraphServiceVerifyClientVersionResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceVerifyClientVersionResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewVerifyClientVersionResp()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *GraphServiceVerifyClientVersionResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("verifyClientVersion_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphServiceVerifyClientVersionResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *GraphServiceVerifyClientVersionResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GraphServiceVerifyClientVersionResult({Success:%s})", successVal)
 }
 
 

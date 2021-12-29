@@ -1,7 +1,9 @@
-/* Copyright (c) 2020 vesoft inc. All rights reserved.
-*
-* This source code is licensed under Apache 2.0 License,
-* attached with Common Clause Condition 1.0, found in the LICENSES directory.
+/*
+ *
+ * Copyright (c) 2020 vesoft inc. All rights reserved.
+ *
+ * This source code is licensed under Apache 2.0 License.
+ *
  */
 
 package nebula_go
@@ -333,7 +335,7 @@ func (res ResultSet) GetErrorCode() ErrorCode {
 	return ErrorCode(res.resp.ErrorCode)
 }
 
-func (res ResultSet) GetLatency() int32 {
+func (res ResultSet) GetLatency() int64 {
 	return res.resp.LatencyInUs
 }
 
@@ -678,7 +680,7 @@ func (path *PathWrapper) GetStartNode() (*Node, error) {
 
 func (path *PathWrapper) GetEndNode() (*Node, error) {
 	if len(path.segments) == 0 {
-		return nil, fmt.Errorf("failed to get start node, no node in the path")
+		return nil, fmt.Errorf("failed to get end node, no node in the path")
 	}
 	return path.segments[len(path.segments)-1].endNode, nil
 }
@@ -885,7 +887,7 @@ func (t1 TimeWrapper) IsEqualTo(t2 TimeWrapper) bool {
 
 func genDateWrapper(date *nebula.Date) (*DateWrapper, error) {
 	if date == nil {
-		return nil, fmt.Errorf("failed to generate datetime: invalid datetime")
+		return nil, fmt.Errorf("failed to generate date: invalid date")
 	}
 	return &DateWrapper{
 		date: date,

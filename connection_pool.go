@@ -1,13 +1,16 @@
-/* Copyright (c) 2020 vesoft inc. All rights reserved.
+/*
  *
- * This source code is licensed under Apache 2.0 License,
- * attached with Common Clause Condition 1.0, found in the LICENSES directory.
+ * Copyright (c) 2020 vesoft inc. All rights reserved.
+ *
+ * This source code is licensed under Apache 2.0 License.
+ *
  */
 
 package nebula_go
 
 import (
 	"container/list"
+	"crypto/tls"
 	"fmt"
 	"sync"
 	"time"
@@ -25,9 +28,16 @@ type ConnectionPool struct {
 	rwLock                sync.RWMutex
 	cleanerChan           chan struct{} //notify when pool is close
 	closed                bool
+	sslConfig             *tls.Config
 }
 
+// NewConnectionPool constructs a new connection pool using the given addresses and configs
 func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*ConnectionPool, error) {
+	return NewSslConnectionPool(addresses, conf, nil, log)
+}
+
+// NewConnectionPool constructs a new SSL connection pool using the given addresses and configs
+func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *tls.Config, log Logger) (*ConnectionPool, error) {
 	// Process domain to IP
 	convAddress, err := DomainToIP(addresses)
 	if err != nil {
@@ -47,7 +57,10 @@ func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*C
 		log:       log,
 		addresses: convAddress,
 		hostIndex: 0,
+		sslConfig: sslConfig,
 	}
+
+	// Init pool with SSL socket
 	if err = newPool.initPool(); err != nil {
 		return nil, err
 	}
@@ -55,14 +68,18 @@ func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*C
 	return newPool, nil
 }
 
+// initPool initializes the connection pool
 func (pool *ConnectionPool) initPool() error {
+	if err := pool.checkAddresses(); err != nil {
+		return fmt.Errorf("failed to open connection, error: %s ", err.Error())
+	}
+
 	for i := 0; i < pool.conf.MinConnPoolSize; i++ {
 		// Simple round-robin
 		newConn := newConnection(pool.addresses[i%len(pool.addresses)])
 
 		// Open connection to host
-		err := newConn.open(newConn.severAddress, pool.conf.TimeOut)
-		if err != nil {
+		if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig); err != nil {
 			// If initialization failed, clean idle queue
 			idleLen := pool.idleConnectionQueue.Len()
 			for i := 0; i < idleLen; i++ {
@@ -74,10 +91,11 @@ func (pool *ConnectionPool) initPool() error {
 		// Mark connection as in use
 		pool.idleConnectionQueue.PushBack(newConn)
 	}
-	pool.log.Info("connection pool is initialized successfully")
 	return nil
 }
 
+// GetSession authenticates the username and password.
+// It returns a session if the authentication succeed.
 func (pool *ConnectionPool) GetSession(username, password string) (*Session, error) {
 	// Get valid and usable connection
 	var conn *connection = nil
@@ -159,18 +177,18 @@ func (pool *ConnectionPool) release(conn *connection) {
 	pool.idleConnectionQueue.PushBack(conn)
 }
 
-// Check avaliability of host
+// Ping checks avaliability of host
 func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error {
 	newConn := newConnection(host)
 	// Open connection to host
-	if err := newConn.open(newConn.severAddress, timeout); err != nil {
+	if err := newConn.open(newConn.severAddress, timeout, pool.sslConfig); err != nil {
 		return err
 	}
 	newConn.close()
 	return nil
 }
 
-// Close all connection
+// Close closes all connection
 func (pool *ConnectionPool) Close() {
 	pool.rwLock.Lock()
 	defer pool.rwLock.Unlock()
@@ -216,8 +234,7 @@ func (pool *ConnectionPool) newConnToHost() (*connection, error) {
 	host := pool.getHost()
 	newConn := newConnection(host)
 	// Open connection to host
-	err := newConn.open(newConn.severAddress, pool.conf.TimeOut)
-	if err != nil {
+	if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig); err != nil {
 		return nil, err
 	}
 	// Add connection to active queue
@@ -319,4 +336,17 @@ func (pool *ConnectionPool) timeoutConnectionList() (closing []*connection) {
 		}
 	}
 	return
+}
+
+func (pool *ConnectionPool) checkAddresses() error {
+	var timeout = 3 * time.Second
+	if pool.conf.TimeOut != 0 && pool.conf.TimeOut < timeout {
+		timeout = pool.conf.TimeOut
+	}
+	for _, address := range pool.addresses {
+		if err := pool.Ping(address, timeout); err != nil {
+			return err
+		}
+	}
+	return nil
 }

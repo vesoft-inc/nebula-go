@@ -24,7 +24,10 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "  AuthResponse authenticate(string username, string password)")
   fmt.Fprintln(os.Stderr, "  void signout(i64 sessionId)")
   fmt.Fprintln(os.Stderr, "  ExecutionResponse execute(i64 sessionId, string stmt)")
+  fmt.Fprintln(os.Stderr, "  ExecutionResponse executeWithParameter(i64 sessionId, string stmt,  parameterMap)")
   fmt.Fprintln(os.Stderr, "  string executeJson(i64 sessionId, string stmt)")
+  fmt.Fprintln(os.Stderr, "  string executeJsonWithParameter(i64 sessionId, string stmt,  parameterMap)")
+  fmt.Fprintln(os.Stderr, "  VerifyClientVersionResp verifyClientVersion(VerifyClientVersionReq req)")
   fmt.Fprintln(os.Stderr)
   os.Exit(0)
 }
@@ -136,8 +139,8 @@ func main() {
       fmt.Fprintln(os.Stderr, "Signout requires 1 args")
       flag.Usage()
     }
-    argvalue0, err13 := (strconv.ParseInt(flag.Arg(1), 10, 64))
-    if err13 != nil {
+    argvalue0, err17 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err17 != nil {
       Usage()
       return
     }
@@ -150,8 +153,8 @@ func main() {
       fmt.Fprintln(os.Stderr, "Execute requires 2 args")
       flag.Usage()
     }
-    argvalue0, err14 := (strconv.ParseInt(flag.Arg(1), 10, 64))
-    if err14 != nil {
+    argvalue0, err18 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err18 != nil {
       Usage()
       return
     }
@@ -161,13 +164,47 @@ func main() {
     fmt.Print(client.Execute(value0, value1))
     fmt.Print("\n")
     break
+  case "executeWithParameter":
+    if flag.NArg() - 1 != 3 {
+      fmt.Fprintln(os.Stderr, "ExecuteWithParameter requires 3 args")
+      flag.Usage()
+    }
+    argvalue0, err20 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err20 != nil {
+      Usage()
+      return
+    }
+    value0 := argvalue0
+    argvalue1 := []byte(flag.Arg(2))
+    value1 := argvalue1
+    arg22 := flag.Arg(3)
+    mbTrans23 := thrift.NewMemoryBufferLen(len(arg22))
+    defer mbTrans23.Close()
+    _, err24 := mbTrans23.WriteString(arg22)
+    if err24 != nil { 
+      Usage()
+      return
+    }
+    factory25 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt26 := factory25.GetProtocol(mbTrans23)
+    containerStruct2 := graph.NewGraphServiceExecuteWithParameterArgs()
+    err27 := containerStruct2.ReadField3(jsProt26)
+    if err27 != nil {
+      Usage()
+      return
+    }
+    argvalue2 := containerStruct2.ParameterMap
+    value2 := argvalue2
+    fmt.Print(client.ExecuteWithParameter(value0, value1, value2))
+    fmt.Print("\n")
+    break
   case "executeJson":
     if flag.NArg() - 1 != 2 {
       fmt.Fprintln(os.Stderr, "ExecuteJson requires 2 args")
       flag.Usage()
     }
-    argvalue0, err16 := (strconv.ParseInt(flag.Arg(1), 10, 64))
-    if err16 != nil {
+    argvalue0, err28 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err28 != nil {
       Usage()
       return
     }
@@ -175,6 +212,65 @@ func main() {
     argvalue1 := []byte(flag.Arg(2))
     value1 := argvalue1
     fmt.Print(client.ExecuteJson(value0, value1))
+    fmt.Print("\n")
+    break
+  case "executeJsonWithParameter":
+    if flag.NArg() - 1 != 3 {
+      fmt.Fprintln(os.Stderr, "ExecuteJsonWithParameter requires 3 args")
+      flag.Usage()
+    }
+    argvalue0, err30 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err30 != nil {
+      Usage()
+      return
+    }
+    value0 := argvalue0
+    argvalue1 := []byte(flag.Arg(2))
+    value1 := argvalue1
+    arg32 := flag.Arg(3)
+    mbTrans33 := thrift.NewMemoryBufferLen(len(arg32))
+    defer mbTrans33.Close()
+    _, err34 := mbTrans33.WriteString(arg32)
+    if err34 != nil { 
+      Usage()
+      return
+    }
+    factory35 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt36 := factory35.GetProtocol(mbTrans33)
+    containerStruct2 := graph.NewGraphServiceExecuteJsonWithParameterArgs()
+    err37 := containerStruct2.ReadField3(jsProt36)
+    if err37 != nil {
+      Usage()
+      return
+    }
+    argvalue2 := containerStruct2.ParameterMap
+    value2 := argvalue2
+    fmt.Print(client.ExecuteJsonWithParameter(value0, value1, value2))
+    fmt.Print("\n")
+    break
+  case "verifyClientVersion":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "VerifyClientVersion requires 1 args")
+      flag.Usage()
+    }
+    arg38 := flag.Arg(1)
+    mbTrans39 := thrift.NewMemoryBufferLen(len(arg38))
+    defer mbTrans39.Close()
+    _, err40 := mbTrans39.WriteString(arg38)
+    if err40 != nil {
+      Usage()
+      return
+    }
+    factory41 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt42 := factory41.GetProtocol(mbTrans39)
+    argvalue0 := graph.NewVerifyClientVersionReq()
+    err43 := argvalue0.Read(jsProt42)
+    if err43 != nil {
+      Usage()
+      return
+    }
+    value0 := argvalue0
+    fmt.Print(client.VerifyClientVersion(value0))
     fmt.Print("\n")
     break
   case "":
