@@ -12,7 +12,6 @@ import (
 	"sync"
 
 	nebulago "github.com/vesoft-inc/nebula-go/v2"
-	nebula "github.com/vesoft-inc/nebula-go/v2/nebula"
 )
 
 const (
@@ -60,30 +59,11 @@ func main() {
 			}
 		}
 
-		var params map[string]*nebula.Value
-		params = make(map[string]*nebula.Value)
-
-		var bVal bool = true
-		var iVal int64 = 3
-		// bool
-		p1 := nebula.Value{BVal: &bVal}
-		// int
-		p2 := nebula.Value{IVal: &iVal}
-		// list
-		lSlice := []*nebula.Value{&p1, &p2}
-		var lVal nebula.NList
-		lVal.Values = lSlice
-		p3 := nebula.Value{LVal: &lVal}
-		// map
-		var nmap map[string]*nebula.Value = map[string]*nebula.Value{"a": &p1, "b": &p2}
-		var mVal nebula.NMap
-		mVal.Kvs = nmap
-		p4 := nebula.Value{MVal: &mVal}
-
-		params["p1"] = &p1
-		params["p2"] = &p2
-		params["p3"] = &p3
-		params["p4"] = &p4
+		params := make(map[string]interface{})
+		params["p1"] = true
+		params["p2"] = 3
+		params["p3"] = []interface{}{true, 3}
+		params["p4"] = map[string]interface{}{"a":true, "b":3}
 
 		// Extract data from the resultSet
 		{

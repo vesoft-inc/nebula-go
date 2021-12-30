@@ -49,8 +49,6 @@ var nebulaLog = DefaultLogger{}
 // Create default configs
 var testPoolConfig = GetDefaultConf()
 
-var params map[string]*nebula.Value
-
 // Before run `go test -v`, you should start a nebula server listening on 3699 port.
 // Using docker-compose is the easiest way and you can reference this file:
 //   https://github.com/vesoft-inc/nebula/blob/master/docker/docker-compose.yaml
@@ -992,8 +990,14 @@ func TestExecuteWithParameter(t *testing.T) {
 	createTestDataSchema(t, session)
 	// Load data
 	loadTestData(t, session)
+
 	// p1:true  p2:3  p3:[true,3]  p4:{"a":true,"b":"Bob"}
-	prepareParameter()
+	params := make(map[string]interface{})
+	params["p1"] = true
+	params["p2"] = 3
+	params["p3"] = []interface{}{true, 3}
+	params["p4"] = map[string]interface{}{"a": true, "b": "Bob"}
+
 	// Simple result
 	{
 		resp, err := tryToExecuteWithParameter(session, "RETURN toBoolean($p1) and false, $p2+3, $p3[1]>3", params)
@@ -1208,7 +1212,7 @@ func tryToExecute(session *Session, query string) (resp *ResultSet, err error) {
 	return
 }
 
-func tryToExecuteWithParameter(session *Session, query string, params map[string]*nebula.Value) (resp *ResultSet, err error) {
+func tryToExecuteWithParameter(session *Session, query string, params map[string]interface{}) (resp *ResultSet, err error) {
 	for i := 3; i > 0; i-- {
 		resp, err = session.ExecuteWithParameter(query, params)
 		if err == nil && resp.IsSucceed() {
@@ -1307,28 +1311,6 @@ func loadTestData(t *testing.T, session *Session) {
 		return
 	}
 	checkResultSet(t, query, resultSet)
-}
-
-func prepareParameter() {
-	// p1:true  p2:3  p3:[true,3]  p4:{"a":true,"b":"Bob"}
-	params = make(map[string]*nebula.Value)
-	var bVal bool = true
-	var iVal int64 = 3
-	p1 := nebula.Value{BVal: &bVal}
-	p2 := nebula.Value{IVal: &iVal}
-	p5 := nebula.Value{SVal: []byte("Bob")}
-	lSlice := []*nebula.Value{&p1, &p2}
-	var lVal nebula.NList
-	lVal.Values = lSlice
-	p3 := nebula.Value{LVal: &lVal}
-	var nmap map[string]*nebula.Value = map[string]*nebula.Value{"a": &p1, "b": &p5}
-	var mVal nebula.NMap
-	mVal.Kvs = nmap
-	p4 := nebula.Value{MVal: &mVal}
-	params["p1"] = &p1
-	params["p2"] = &p2
-	params["p3"] = &p3
-	params["p4"] = &p4
 }
 
 func dropSpace(t *testing.T, session *Session, spaceName string) {

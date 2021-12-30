@@ -111,21 +111,7 @@ func (cn *connection) authenticate(username, password string) (*graph.AuthRespon
 }
 
 func (cn *connection) execute(sessionID int64, stmt string) (*graph.ExecutionResponse, error) {
-	resp, err := cn.graph.Execute(sessionID, []byte(stmt))
-	if err != nil {
-		// reopen the connection if timeout
-		if _, ok := err.(thrift.TransportException); ok {
-			if err.(thrift.TransportException).TypeID() == thrift.TIMED_OUT {
-				reopenErr := cn.reopen()
-				if reopenErr != nil {
-					return nil, reopenErr
-				}
-				return cn.graph.Execute(sessionID, []byte(stmt))
-			}
-		}
-	}
-
-	return resp, err
+	return cn.executeWithParameter(sessionID, stmt, map[string]*nebula.Value{})
 }
 
 func (cn *connection) executeWithParameter(sessionID int64, stmt string, params map[string]*nebula.Value) (*graph.ExecutionResponse, error) {
@@ -145,8 +131,13 @@ func (cn *connection) executeWithParameter(sessionID int64, stmt string, params 
 
 	return resp, err
 }
+
 func (cn *connection) executeJson(sessionID int64, stmt string) ([]byte, error) {
-	jsonResp, err := cn.graph.ExecuteJson(sessionID, []byte(stmt))
+	return cn.ExecuteJsonWithParameter(sessionID, stmt, map[string]*nebula.Value{})
+}
+
+func (cn *connection) ExecuteJsonWithParameter(sessionID int64, stmt string, params map[string]*nebula.Value) ([]byte, error) {
+	jsonResp, err := cn.graph.ExecuteJsonWithParameter(sessionID, []byte(stmt), params)
 	if err != nil {
 		// reopen the connection if timeout
 		if _, ok := err.(thrift.TransportException); ok {
@@ -155,7 +146,7 @@ func (cn *connection) executeJson(sessionID int64, stmt string) ([]byte, error) 
 				if reopenErr != nil {
 					return nil, reopenErr
 				}
-				return cn.graph.ExecuteJson(sessionID, []byte(stmt))
+				return cn.graph.ExecuteJsonWithParameter(sessionID, []byte(stmt), params)
 			}
 		}
 	}

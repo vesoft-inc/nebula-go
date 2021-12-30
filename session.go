@@ -61,16 +61,23 @@ func (session *Session) executeWithReconnect(f func() (interface{}, error)) (int
 
 }
 
-// Execute returns the result of the given query as a ResultSet
-func (session *Session) Execute(stmt string) (*ResultSet, error) {
+// Execute returns the result of given query as a ResultSet
+func (session *Session) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
 	}
-
+	paramsMap := make(map[string]*nebula.Value)
+	for k, v := range params {
+		nv, er := value2Nvalue(v)
+		if er != nil {
+			return nil, er
+		}
+		paramsMap[k] = nv
+	}
 	execFunc := func() (interface{}, error) {
-		resp, err := session.connection.execute(session.sessionID, stmt)
+		resp, err := session.connection.executeWithParameter(session.sessionID, stmt, paramsMap)
 		if err != nil {
 			return nil, err
 		}
@@ -80,38 +87,18 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 		}
 		return resSet, nil
 	}
+
 	resp, err := session.executeWithReconnect(execFunc)
 	if err != nil {
 		return nil, err
 	}
 	return resp.(*ResultSet), err
+
 }
 
-// Execute returns the result of given query as a ResultSet
-func (session *Session) ExecuteWithParameter(stmt string, params map[string]*nebula.Value) (*ResultSet, error) {
-	session.mu.Lock()
-	defer session.mu.Unlock()
-	if session.connection == nil {
-		return nil, fmt.Errorf("failed to execute: Session has been released")
-	}
-	execFunc := func() (interface{}, error) {
-		resp, err := session.connection.executeWithParameter(session.sessionID, stmt, params)
-		if err != nil {
-			return nil, err
-		}
-		resSet, err := genResultSet(resp, session.timezoneInfo)
-		if err != nil {
-			return nil, err
-		}
-		return resSet, nil
-	}
-
-	resp, err := session.executeWithReconnect(execFunc)
-	if err != nil {
-		return nil, err
-	}
-	return resp.(*ResultSet), err
-
+// Execute returns the result of the given query as a ResultSet
+func (session *Session) Execute(stmt string) (*ResultSet, error) {
+	return session.ExecuteWithParameter(stmt, map[string]interface{}{})
 }
 
 // ExecuteJson returns the result of the given query as a json string
@@ -173,14 +160,84 @@ func (session *Session) ExecuteWithParameter(stmt string, params map[string]*neb
 //     ]
 // }
 func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
+	return session.ExecuteJsonWithParameter(stmt, map[string]interface{}{})
+}
+
+// ExecuteJson returns the result of the given query as a json string
+// Date and Datetime will be returned in UTC
+//	JSON struct:
+// {
+//     "results":[
+//         {
+//             "columns":[
+//             ],
+//             "data":[
+//                 {
+//                     "row":[
+//                         "row-data"
+//                     ],
+//                     "meta":[
+//                         "metadata"
+//                     ]
+//                 }
+//             ],
+//             "latencyInUs":0,
+//             "spaceName":"",
+//             "planDesc ":{
+//                 "planNodeDescs":[
+//                     {
+//                         "name":"",
+//                         "id":0,
+//                         "outputVar":"",
+//                         "description":{
+//                             "key":""
+//                         },
+//                         "profiles":[
+//                             {
+//                                 "rows":1,
+//                                 "execDurationInUs":0,
+//                                 "totalDurationInUs":0,
+//                                 "otherStats":{}
+//                             }
+//                         ],
+//                         "branchInfo":{
+//                             "isDoBranch":false,
+//                             "conditionNodeId":-1
+//                         },
+//                         "dependencies":[]
+//                     }
+//                 ],
+//                 "nodeIndexMap":{},
+//                 "format":"",
+//                 "optimize_time_in_us":0
+//             },
+//             "comment ":""
+//         }
+//     ],
+//     "errors":[
+//         {
+//       		"code": 0,
+//       		"message": ""
+//         }
+//     ]
+// }
+func (session *Session) ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
 	}
 
+	paramsMap := make(map[string]*nebula.Value)
+	for k, v := range params {
+		nv, er := value2Nvalue(v)
+		if er != nil {
+			return nil, er
+		}
+		paramsMap[k] = nv
+	}
 	execFunc := func() (interface{}, error) {
-		resp, err := session.connection.executeJson(session.sessionID, stmt)
+		resp, err := session.connection.ExecuteJsonWithParameter(session.sessionID, stmt, paramsMap)
 		if err != nil {
 			return nil, err
 		}
@@ -233,4 +290,93 @@ func (session *Session) GetSessionID() int64 {
 
 func IsError(resp *graph.ExecutionResponse) bool {
 	return resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED
+}
+
+// construct Slice to nebula.NList
+func Slice2Nlist(list []interface{}) (*nebula.NList, error) {
+	sv := []*nebula.Value{}
+	var ret nebula.NList
+	for _, item := range list {
+		nv, er := value2Nvalue(item)
+		if er != nil {
+			return nil, er
+		}
+		sv = append(sv, nv)
+	}
+	ret.Values = sv
+	return &ret, nil
+}
+
+// construct map to nebula.NMap
+func Map2Nmap(m map[string]interface{}) (*nebula.NMap, error) {
+	var ret nebula.NMap
+	kvs := map[string]*nebula.Value{}
+	for k, v := range m {
+		nv, err := value2Nvalue(v)
+		if err != nil {
+			return nil, err
+		}
+		kvs[k] = nv
+	}
+	ret.Kvs = kvs
+	return &ret, nil
+}
+
+// construct go-type to nebula.Value
+func value2Nvalue(any interface{}) (value *nebula.Value, err error) {
+	value = nebula.NewValue()
+	if v, ok := any.(bool); ok {
+		value.BVal = &v
+	} else if v, ok := any.(int); ok {
+		ival := int64(v)
+		value.IVal = &ival
+	} else if v, ok := any.(float64); ok {
+		if v == float64(int64(v)) {
+			iv := int64(v)
+			value.IVal = &iv
+		} else {
+			value.FVal = &v
+		}
+	} else if v, ok := any.(float32); ok {
+		if v == float32(int64(v)) {
+			iv := int64(v)
+			value.IVal = &iv
+		} else {
+			fval := float64(v)
+			value.FVal = &fval
+		}
+	} else if v, ok := any.(string); ok {
+		value.SVal = []byte(v)
+	} else if any == nil {
+		nval := nebula.NullType___NULL__
+		value.NVal = &nval
+	} else if v, ok := any.([]interface{}); ok {
+		nv, er := Slice2Nlist([]interface{}(v))
+		if er != nil {
+			err = er
+		}
+		value.LVal = nv
+	} else if v, ok := any.(map[string]interface{}); ok {
+		nv, er := Map2Nmap(map[string]interface{}(v))
+		if er != nil {
+			err = er
+		}
+		value.MVal = nv
+	} else if v, ok := any.(nebula.Value); ok {
+		value = &v
+	} else if v, ok := any.(nebula.Date); ok {
+		value.SetDVal(&v)
+	} else if v, ok := any.(nebula.DateTime); ok {
+		value.SetDtVal(&v)
+	} else if v, ok := any.(nebula.Duration); ok {
+		value.SetDuVal(&v)
+	} else if v, ok := any.(nebula.Time); ok {
+		value.SetTVal(&v)
+	} else if v, ok := any.(nebula.Geography); ok {
+		value.SetGgVal(&v)
+	} else {
+		// unsupport other Value type, use this function carefully
+		err = fmt.Errorf("Only support convert boolean/float/int/string/map/list to nebula.Value but %T", any)
+	}
+	return
 }
