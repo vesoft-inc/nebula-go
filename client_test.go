@@ -193,7 +193,7 @@ func TestAuthentication(t *testing.T) {
 	defer conn.close()
 
 	_, authErr := conn.authenticate(username, password)
-	assert.EqualError(t, authErr, "fail to authenticate, error: Bad username/password")
+	assert.EqualError(t, authErr, "fail to authenticate, error: User not exist")
 }
 
 func TestInvalidHostTimeout(t *testing.T) {
@@ -369,7 +369,7 @@ func TestServiceDataIO(t *testing.T) {
 			return
 		}
 		assert.Equal(t,
-			"(\"Bob\" :student{interval: P12M0DT0S, name: \"Bob\"} "+
+			"(\"Bob\" :student{interval: P1MT100.000020000S, name: \"Bob\"} "+
 				":person{age: 10, birthday: 2010-09-10T10:08:02.000000, book_num: 100, "+
 				"child_name: \"Hello Worl\", expend: 100.0, "+
 				"first_out_city: 1111, friends: 10, grade: 3, "+
@@ -929,7 +929,7 @@ func TestExecuteJson(t *testing.T) {
 				"person.property":       float64(1000),
 				"person.start_school":   `2017-09-10`,
 				"student.name":          "Bob",
-				"student.interval":      `P12M0DT0S`,
+				"student.interval":      `P1MT100.000020000S`,
 			},
 		}
 
@@ -1066,7 +1066,7 @@ func TestExecuteWithParameter(t *testing.T) {
 	}
 	// Complex result
 	{
-		resp, err := tryToExecuteWithParameter(session, "MATCH (v:person {name: $p4.b}) WHERE v.age>$p2-3 and $p1==true RETURN v ORDER BY $p3[0] LIMIT $p2", params)
+		resp, err := tryToExecuteWithParameter(session, "MATCH (v:person {name: $p4.b}) WHERE v.person.age>$p2-3 and $p1==true RETURN v ORDER BY $p3[0] LIMIT $p2", params)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -1088,7 +1088,7 @@ func TestExecuteWithParameter(t *testing.T) {
 			return
 		}
 		assert.Equal(t,
-			"(\"Bob\" :student{interval: P12M0DT0S, name: \"Bob\"} "+
+			"(\"Bob\" :student{interval: P1MT100.000020000S, name: \"Bob\"} "+
 				":person{age: 10, birthday: 2010-09-10T10:08:02.000000, book_num: 100, "+
 				"child_name: \"Hello Worl\", expend: 100.0, "+
 				"first_out_city: 1111, friends: 10, grade: 3, "+
@@ -1275,7 +1275,7 @@ func loadTestData(t *testing.T, session *Session) {
 
 	query =
 		"INSERT VERTEX student(name, interval) VALUES " +
-			"'Bob':('Bob', duration({years: 1, seconds: 0})), 'Lily':('Lily', duration({years: 1, seconds: 0})), " +
+			"'Bob':('Bob', duration({months:1, seconds:100, microseconds:20})), 'Lily':('Lily', duration({years: 1, seconds: 0})), " +
 			"'Tom':('Tom', duration({years: 1, seconds: 0})), 'Jerry':('Jerry', duration({years: 1, seconds: 0})), 'John':('John', duration({years: 1, seconds: 0}))"
 	resultSet, err = tryToExecute(session, query)
 	if err != nil {
