@@ -76,6 +76,7 @@ func (cn *connection) verifyClientVersion() error {
 	req := graph.NewVerifyClientVersionReq()
 	resp, err := cn.graph.VerifyClientVersion(req)
 	if err != nil {
+		cn.close()
 		return fmt.Errorf("failed to verify client version: %s", err.Error())
 	}
 	if resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
