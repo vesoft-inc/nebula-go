@@ -1066,7 +1066,7 @@ func TestExecuteWithParameter(t *testing.T) {
 	}
 	// Complex result
 	{
-		resp, err := tryToExecuteWithParameter(session, "MATCH (v:person {name: $p4.b}) WHERE v.age>$p2-3 and $p1==true RETURN v ORDER BY $p3[0] LIMIT $p2", params)
+		resp, err := tryToExecuteWithParameter(session, "MATCH (v:person {name: $p4.b}) WHERE v.person.age>$p2-3 and $p1==true RETURN v ORDER BY $p3[0] LIMIT $p2", params)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
