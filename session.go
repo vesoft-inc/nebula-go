@@ -61,7 +61,7 @@ func (session *Session) executeWithReconnect(f func() (interface{}, error)) (int
 
 }
 
-// Execute returns the result of given query as a ResultSet
+// ExecuteWithParameter returns the result of the given query as a ResultSet
 func (session *Session) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
@@ -293,7 +293,7 @@ func IsError(resp *graph.ExecutionResponse) bool {
 }
 
 // construct Slice to nebula.NList
-func Slice2Nlist(list []interface{}) (*nebula.NList, error) {
+func slice2Nlist(list []interface{}) (*nebula.NList, error) {
 	sv := []*nebula.Value{}
 	var ret nebula.NList
 	for _, item := range list {
@@ -308,7 +308,7 @@ func Slice2Nlist(list []interface{}) (*nebula.NList, error) {
 }
 
 // construct map to nebula.NMap
-func Map2Nmap(m map[string]interface{}) (*nebula.NMap, error) {
+func map2Nmap(m map[string]interface{}) (*nebula.NMap, error) {
 	var ret nebula.NMap
 	kvs := map[string]*nebula.Value{}
 	for k, v := range m {
@@ -351,13 +351,13 @@ func value2Nvalue(any interface{}) (value *nebula.Value, err error) {
 		nval := nebula.NullType___NULL__
 		value.NVal = &nval
 	} else if v, ok := any.([]interface{}); ok {
-		nv, er := Slice2Nlist([]interface{}(v))
+		nv, er := slice2Nlist([]interface{}(v))
 		if er != nil {
 			err = er
 		}
 		value.LVal = nv
 	} else if v, ok := any.(map[string]interface{}); ok {
-		nv, er := Map2Nmap(map[string]interface{}(v))
+		nv, er := map2Nmap(map[string]interface{}(v))
 		if er != nil {
 			err = er
 		}
