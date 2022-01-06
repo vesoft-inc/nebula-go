@@ -404,7 +404,7 @@ func (valWrap ValueWrapper) String() string {
 		return toWKT(ggval)
 	} else if value.IsSetDuVal() {
 		duval := value.GetDuVal()
-		totalSeconds := duval.GetSeconds() + int64(duval.GetMicroseconds()) / 1000000;
+		totalSeconds := duval.GetSeconds() + int64(duval.GetMicroseconds())/1000000
 		remainMicroSeconds := duval.GetMicroseconds() % 1000000
 		s := fmt.Sprintf("P%vMT%v.%06d000S", duval.GetMonths(), totalSeconds, remainMicroSeconds)
 		return s
