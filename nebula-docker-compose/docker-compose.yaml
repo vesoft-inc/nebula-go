@@ -418,7 +418,8 @@ services:
       - -c
       - |
         for i in `seq 1 60`;do
-          var=`nebula-console -addr graphd -port 3699 -u root -p nebula -e 'ADD HOSTS "storaged0":44500,"storaged1":44500,"storaged2":44500'`;          if [[ $$? == 0 ]];then
+          var=`nebula-console -addr graphd -port 3699 -u root -p nebula -e 'ADD HOSTS "storaged0":44500,"storaged1":44500,"storaged2":44500'`;
+          if [[ $$? == 0 ]];then
             break;
           fi;
           sleep 1;

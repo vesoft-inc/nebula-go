@@ -16,7 +16,7 @@ up:
 	cd ./nebula-docker-compose && docker-compose up -d
 
 up-ssl:
-	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d
+	cd ./nebula-docker-compose && enable_ssl=true docker-compose -f docker-compose-ssl.yaml up -d
 
 down:
 	cd ./nebula-docker-compose && docker-compose down -v
@@ -25,9 +25,6 @@ ssl-test:
 	ssl_test=true go test -v -run TestSslConnection;
 
 ssl-test-self-signed:
-	cd ./nebula-docker-compose && enable_ssl=true docker-compose up -d && \
-	sleep 10 && \
-	cd .. && \
 	self_signed=true go test -v -run TestSslConnection;
 
 run-examples:
