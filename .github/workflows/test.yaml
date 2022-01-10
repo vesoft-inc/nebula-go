@@ -36,10 +36,12 @@ jobs:
       - name: Test SSL connection with CA
         run: |
           make up-ssl
+          sleep 10
           make ssl-test
       - name: Test SSL connection self-signed
         run: |
           make up-ssl
+          sleep 10
           make ssl-test-self-signed
       - name: down
         if: always()
