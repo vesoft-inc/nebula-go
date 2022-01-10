@@ -404,8 +404,10 @@ func (valWrap ValueWrapper) String() string {
 		return toWKT(ggval)
 	} else if value.IsSetDuVal() {
 		duval := value.GetDuVal()
-		days := duval.GetSeconds() / (24 * 60 * 60)
-		return fmt.Sprintf("P%vM%vDT%vS", duval.GetMonths(), days, duval.GetSeconds())
+		totalSeconds := duval.GetSeconds() + int64(duval.GetMicroseconds())/1000000
+		remainMicroSeconds := duval.GetMicroseconds() % 1000000
+		s := fmt.Sprintf("P%vMT%v.%06d000S", duval.GetMonths(), totalSeconds, remainMicroSeconds)
+		return s
 	} else { // is empty
 		return ""
 	}

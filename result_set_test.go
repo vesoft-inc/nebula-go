@@ -423,7 +423,7 @@ func TestAsDuration(t *testing.T) {
 	value := nebula.Value{DuVal: &nebula.Duration{86400, 3000, 12}}
 	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsDuration())
-	assert.Equal(t, "P12M1DT86400S", valWrap.String())
+	assert.Equal(t, "P12MT86400.003000000S", valWrap.String())
 }
 func TestNode(t *testing.T) {
 	vertex := getVertex("Tom", 3, 5)
