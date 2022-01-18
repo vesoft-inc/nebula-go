@@ -11,7 +11,7 @@ import (
 	"strings"
 	"sync"
 
-	nebulago "github.com/vesoft-inc/nebula-go/v2"
+	nebulago "github.com/vesoft-inc/nebula-go/v3"
 )
 
 const (
@@ -63,7 +63,7 @@ func main() {
 		params["p1"] = true
 		params["p2"] = 3
 		params["p3"] = []interface{}{true, 3}
-		params["p4"] = map[string]interface{}{"a":true, "b":3}
+		params["p4"] = map[string]interface{}{"a": true, "b": 3}
 
 		// Extract data from the resultSet
 		{

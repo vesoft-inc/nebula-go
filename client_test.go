@@ -18,8 +18,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vesoft-inc/nebula-go/v2/nebula"
-	"github.com/vesoft-inc/nebula-go/v2/nebula/graph"
+	"github.com/vesoft-inc/nebula-go/v3/nebula"
+	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
 
 const (

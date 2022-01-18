@@ -13,7 +13,7 @@ import (
 	"fmt"
 	"time"
 
-	nebula "github.com/vesoft-inc/nebula-go/v2"
+	nebula "github.com/vesoft-inc/nebula-go/v3"
 )
 
 const (

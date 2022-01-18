@@ -10,8 +10,8 @@ import (
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
-	nebula0 "github.com/vesoft-inc/nebula-go/v2/nebula"
-	meta1 "github.com/vesoft-inc/nebula-go/v2/nebula/meta"
+	nebula0 "github.com/vesoft-inc/nebula-go/v3/nebula"
+	meta1 "github.com/vesoft-inc/nebula-go/v3/nebula/meta"
 
 )
 
@@ -1064,38 +1064,38 @@ func (p *StorageAdminServiceProcessor) FunctionServiceMap() map[string]string {
 }
 
 func NewStorageAdminServiceProcessor(handler StorageAdminService) *StorageAdminServiceProcessor {
-  self213 := &StorageAdminServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext), functionServiceMap:make(map[string]string)}
-  self213.processorMap["transLeader"] = &storageAdminServiceProcessorTransLeader{handler:handler}
-  self213.processorMap["addPart"] = &storageAdminServiceProcessorAddPart{handler:handler}
-  self213.processorMap["addLearner"] = &storageAdminServiceProcessorAddLearner{handler:handler}
-  self213.processorMap["removePart"] = &storageAdminServiceProcessorRemovePart{handler:handler}
-  self213.processorMap["memberChange"] = &storageAdminServiceProcessorMemberChange{handler:handler}
-  self213.processorMap["waitingForCatchUpData"] = &storageAdminServiceProcessorWaitingForCatchUpData{handler:handler}
-  self213.processorMap["createCheckpoint"] = &storageAdminServiceProcessorCreateCheckpoint{handler:handler}
-  self213.processorMap["dropCheckpoint"] = &storageAdminServiceProcessorDropCheckpoint{handler:handler}
-  self213.processorMap["blockingWrites"] = &storageAdminServiceProcessorBlockingWrites{handler:handler}
-  self213.processorMap["rebuildTagIndex"] = &storageAdminServiceProcessorRebuildTagIndex{handler:handler}
-  self213.processorMap["rebuildEdgeIndex"] = &storageAdminServiceProcessorRebuildEdgeIndex{handler:handler}
-  self213.processorMap["getLeaderParts"] = &storageAdminServiceProcessorGetLeaderParts{handler:handler}
-  self213.processorMap["checkPeers"] = &storageAdminServiceProcessorCheckPeers{handler:handler}
-  self213.processorMap["addAdminTask"] = &storageAdminServiceProcessorAddAdminTask{handler:handler}
-  self213.processorMap["stopAdminTask"] = &storageAdminServiceProcessorStopAdminTask{handler:handler}
-  self213.functionServiceMap["transLeader"] = "StorageAdminService"
-  self213.functionServiceMap["addPart"] = "StorageAdminService"
-  self213.functionServiceMap["addLearner"] = "StorageAdminService"
-  self213.functionServiceMap["removePart"] = "StorageAdminService"
-  self213.functionServiceMap["memberChange"] = "StorageAdminService"
-  self213.functionServiceMap["waitingForCatchUpData"] = "StorageAdminService"
-  self213.functionServiceMap["createCheckpoint"] = "StorageAdminService"
-  self213.functionServiceMap["dropCheckpoint"] = "StorageAdminService"
-  self213.functionServiceMap["blockingWrites"] = "StorageAdminService"
-  self213.functionServiceMap["rebuildTagIndex"] = "StorageAdminService"
-  self213.functionServiceMap["rebuildEdgeIndex"] = "StorageAdminService"
-  self213.functionServiceMap["getLeaderParts"] = "StorageAdminService"
-  self213.functionServiceMap["checkPeers"] = "StorageAdminService"
-  self213.functionServiceMap["addAdminTask"] = "StorageAdminService"
-  self213.functionServiceMap["stopAdminTask"] = "StorageAdminService"
-  return self213
+  self219 := &StorageAdminServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext), functionServiceMap:make(map[string]string)}
+  self219.processorMap["transLeader"] = &storageAdminServiceProcessorTransLeader{handler:handler}
+  self219.processorMap["addPart"] = &storageAdminServiceProcessorAddPart{handler:handler}
+  self219.processorMap["addLearner"] = &storageAdminServiceProcessorAddLearner{handler:handler}
+  self219.processorMap["removePart"] = &storageAdminServiceProcessorRemovePart{handler:handler}
+  self219.processorMap["memberChange"] = &storageAdminServiceProcessorMemberChange{handler:handler}
+  self219.processorMap["waitingForCatchUpData"] = &storageAdminServiceProcessorWaitingForCatchUpData{handler:handler}
+  self219.processorMap["createCheckpoint"] = &storageAdminServiceProcessorCreateCheckpoint{handler:handler}
+  self219.processorMap["dropCheckpoint"] = &storageAdminServiceProcessorDropCheckpoint{handler:handler}
+  self219.processorMap["blockingWrites"] = &storageAdminServiceProcessorBlockingWrites{handler:handler}
+  self219.processorMap["rebuildTagIndex"] = &storageAdminServiceProcessorRebuildTagIndex{handler:handler}
+  self219.processorMap["rebuildEdgeIndex"] = &storageAdminServiceProcessorRebuildEdgeIndex{handler:handler}
+  self219.processorMap["getLeaderParts"] = &storageAdminServiceProcessorGetLeaderParts{handler:handler}
+  self219.processorMap["checkPeers"] = &storageAdminServiceProcessorCheckPeers{handler:handler}
+  self219.processorMap["addAdminTask"] = &storageAdminServiceProcessorAddAdminTask{handler:handler}
+  self219.processorMap["stopAdminTask"] = &storageAdminServiceProcessorStopAdminTask{handler:handler}
+  self219.functionServiceMap["transLeader"] = "StorageAdminService"
+  self219.functionServiceMap["addPart"] = "StorageAdminService"
+  self219.functionServiceMap["addLearner"] = "StorageAdminService"
+  self219.functionServiceMap["removePart"] = "StorageAdminService"
+  self219.functionServiceMap["memberChange"] = "StorageAdminService"
+  self219.functionServiceMap["waitingForCatchUpData"] = "StorageAdminService"
+  self219.functionServiceMap["createCheckpoint"] = "StorageAdminService"
+  self219.functionServiceMap["dropCheckpoint"] = "StorageAdminService"
+  self219.functionServiceMap["blockingWrites"] = "StorageAdminService"
+  self219.functionServiceMap["rebuildTagIndex"] = "StorageAdminService"
+  self219.functionServiceMap["rebuildEdgeIndex"] = "StorageAdminService"
+  self219.functionServiceMap["getLeaderParts"] = "StorageAdminService"
+  self219.functionServiceMap["checkPeers"] = "StorageAdminService"
+  self219.functionServiceMap["addAdminTask"] = "StorageAdminService"
+  self219.functionServiceMap["stopAdminTask"] = "StorageAdminService"
+  return self219
 }
 
 type storageAdminServiceProcessorTransLeader struct {
