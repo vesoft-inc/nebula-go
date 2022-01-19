@@ -19,7 +19,7 @@ var _ = sync.Mutex{}
 var _ = bytes.Equal
 var _ = context.Background
 
-const Version = "2.6.0"
+const Version = "3.0.0"
 
 func init() {
 }

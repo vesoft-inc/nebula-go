@@ -10,7 +10,7 @@ import (
 	"sync"
 	"fmt"
 	thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
-	nebula0 "github.com/vesoft-inc/nebula-go/v2/nebula"
+	nebula0 "github.com/vesoft-inc/nebula-go/v3/nebula"
 
 )
 
@@ -2342,7 +2342,7 @@ type VerifyClientVersionReq struct {
 
 func NewVerifyClientVersionReq() *VerifyClientVersionReq {
   return &VerifyClientVersionReq{
-    Version: []byte("2.6.0"),
+    Version: []byte("3.0.0"),
   }
 }
 

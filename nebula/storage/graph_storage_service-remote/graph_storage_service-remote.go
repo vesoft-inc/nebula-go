@@ -14,7 +14,7 @@ import (
         "strconv"
         "strings"
         thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
-        "../../github.com/vesoft-inc/nebula-go/v2/nebula/storage"
+        "../../github.com/vesoft-inc/nebula-go/v3/nebula/storage"
 )
 
 func Usage() {
@@ -37,6 +37,7 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "  GetNeighborsResponse lookupAndTraverse(LookupAndTraverseRequest req)")
   fmt.Fprintln(os.Stderr, "  UpdateResponse chainUpdateEdge(UpdateEdgeRequest req)")
   fmt.Fprintln(os.Stderr, "  ExecResponse chainAddEdges(AddEdgesRequest req)")
+  fmt.Fprintln(os.Stderr, "  ExecResponse chainDeleteEdges(DeleteEdgesRequest req)")
   fmt.Fprintln(os.Stderr, "  KVGetResponse get(KVGetRequest req)")
   fmt.Fprintln(os.Stderr, "  ExecResponse put(KVPutRequest req)")
   fmt.Fprintln(os.Stderr, "  ExecResponse remove(KVRemoveRequest req)")
@@ -534,9 +535,9 @@ func main() {
     fmt.Print(client.ChainAddEdges(value0))
     fmt.Print("\n")
     break
-  case "get":
+  case "chainDeleteEdges":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Get requires 1 args")
+      fmt.Fprintln(os.Stderr, "ChainDeleteEdges requires 1 args")
       flag.Usage()
     }
     arg195 := flag.Arg(1)
@@ -549,19 +550,19 @@ func main() {
     }
     factory198 := thrift.NewSimpleJSONProtocolFactory()
     jsProt199 := factory198.GetProtocol(mbTrans196)
-    argvalue0 := storage.NewKVGetRequest()
+    argvalue0 := storage.NewDeleteEdgesRequest()
     err200 := argvalue0.Read(jsProt199)
     if err200 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.Get(value0))
+    fmt.Print(client.ChainDeleteEdges(value0))
     fmt.Print("\n")
     break
-  case "put":
+  case "get":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Put requires 1 args")
+      fmt.Fprintln(os.Stderr, "Get requires 1 args")
       flag.Usage()
     }
     arg201 := flag.Arg(1)
@@ -574,19 +575,19 @@ func main() {
     }
     factory204 := thrift.NewSimpleJSONProtocolFactory()
     jsProt205 := factory204.GetProtocol(mbTrans202)
-    argvalue0 := storage.NewKVPutRequest()
+    argvalue0 := storage.NewKVGetRequest()
     err206 := argvalue0.Read(jsProt205)
     if err206 != nil {
       Usage()
       return
     }
     value0 := argvalue0
-    fmt.Print(client.Put(value0))
+    fmt.Print(client.Get(value0))
     fmt.Print("\n")
     break
-  case "remove":
+  case "put":
     if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Remove requires 1 args")
+      fmt.Fprintln(os.Stderr, "Put requires 1 args")
       flag.Usage()
     }
     arg207 := flag.Arg(1)
@@ -599,9 +600,34 @@ func main() {
     }
     factory210 := thrift.NewSimpleJSONProtocolFactory()
     jsProt211 := factory210.GetProtocol(mbTrans208)
-    argvalue0 := storage.NewKVRemoveRequest()
+    argvalue0 := storage.NewKVPutRequest()
     err212 := argvalue0.Read(jsProt211)
     if err212 != nil {
+      Usage()
+      return
+    }
+    value0 := argvalue0
+    fmt.Print(client.Put(value0))
+    fmt.Print("\n")
+    break
+  case "remove":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "Remove requires 1 args")
+      flag.Usage()
+    }
+    arg213 := flag.Arg(1)
+    mbTrans214 := thrift.NewMemoryBufferLen(len(arg213))
+    defer mbTrans214.Close()
+    _, err215 := mbTrans214.WriteString(arg213)
+    if err215 != nil {
+      Usage()
+      return
+    }
+    factory216 := thrift.NewSimpleJSONProtocolFactory()
+    jsProt217 := factory216.GetProtocol(mbTrans214)
+    argvalue0 := storage.NewKVRemoveRequest()
+    err218 := argvalue0.Read(jsProt217)
+    if err218 != nil {
       Usage()
       return
     }
