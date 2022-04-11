@@ -287,6 +287,7 @@ services:
       - --timezone_name=+08:00
       - --system_memory_high_watermark_ratio=0.99
       - --heartbeat_interval_secs=1
+      - --max_sessions_per_ip_per_user=1200
       # ssl
       - --ca_path=${ca_path}
       - --cert_path=${cert_path}
@@ -333,6 +334,7 @@ services:
       - --timezone_name=+08:00
       - --system_memory_high_watermark_ratio=0.99
       - --heartbeat_interval_secs=1
+      - --max_sessions_per_ip_per_user=1200
       # ssl
       - --ca_path=${ca_path}
       - --cert_path=${cert_path}
@@ -379,6 +381,7 @@ services:
       - --timezone_name=+08:00
       - --system_memory_high_watermark_ratio=0.99
       - --heartbeat_interval_secs=1
+      - --max_sessions_per_ip_per_user=1200
       # ssl
       - --ca_path=${ca_path}
       - --cert_path=${cert_path}
