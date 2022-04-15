@@ -18,6 +18,9 @@ import (
 
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
 	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
+
+	graphviz "github.com/goccy/go-graphviz"
+	"github.com/goccy/go-graphviz/cgraph"
 )
 
 type ResultSet struct {
@@ -1066,10 +1069,51 @@ func checkIndex(index int, list interface{}) error {
 	return fmt.Errorf("given list type is invalid")
 }
 
+type dotGraphPrinter struct {
+	g       *graphviz.Graphviz
+	graph   *cgraph.Graph
+	nodeMap map[string]*cgraph.Node
+}
+
+func newDotGraphPrinter() *dotGraphPrinter {
+	g := graphviz.New()
+	graph, _ := g.Graph(graphviz.Name("exec_plan"), graphviz.Directed)
+	graph.SetRankDir(cgraph.BTRank)
+	return &dotGraphPrinter{
+		g:       g,
+		graph:   graph,
+		nodeMap: make(map[string]*cgraph.Node),
+	}
+}
+
+func (p *dotGraphPrinter) close() {
+	p.graph.Close()
+	p.g.Close()
+}
+
+func (p *dotGraphPrinter) createNode(name string) *cgraph.Node {
+	n, _ := p.graph.CreateNode(name)
+	p.nodeMap[name] = n
+	return n
+}
+
+func (p *dotGraphPrinter) node(name string) *cgraph.Node {
+	if n, ok := p.nodeMap[name]; ok {
+		return n
+	}
+	return p.createNode(name)
+}
+
+func (p *dotGraphPrinter) renderString() string {
+	w := new(bytes.Buffer)
+	p.g.Render(p.graph, graphviz.XDOT, w)
+	return w.String()
+}
+
 func graphvizString(s string) string {
 	s = strings.Replace(s, "{", "\\{", -1)
 	s = strings.Replace(s, "}", "\\}", -1)
-	s = strings.Replace(s, "\"", "\\\"", -1)
+	// s = strings.Replace(s, "\"", "\\\"", -1)
 	s = strings.Replace(s, "[", "\\[", -1)
 	s = strings.Replace(s, "]", "\\]", -1)
 	return s
@@ -1103,32 +1147,58 @@ func condEdgeLabel(condNode *graph.PlanNodeDescription, doBranch bool) string {
 	return ""
 }
 
-func nodeString(planNodeDesc *graph.PlanNodeDescription, planNodeName string) string {
+func (p *dotGraphPrinter) nodeString(planNodeDesc *graph.PlanNodeDescription, planNodeName string) {
+	var labels []string
+
+	appendLabel := func(l string) {
+		if len(l) > 0 {
+			labels = append(labels, l)
+		}
+	}
+
+	appendLabel(planNodeName)
+
 	var outputVar = graphvizString(string(planNodeDesc.GetOutputVar()))
+	appendLabel(fmt.Sprintf("outputVar: %s", outputVar))
+
 	var inputVar string
 	if planNodeDesc.IsSetDescription() {
 		desc := planNodeDesc.GetDescription()
 		for _, pair := range desc {
 			key := string(pair.GetKey())
 			if key == "inputVar" {
-				inputVar = graphvizString(string(pair.GetValue()))
+				inputVar = fmt.Sprintf("inputVar: %s", graphvizString(string(pair.GetValue())))
 			}
 		}
 	}
-	return fmt.Sprintf("\t\"%s\"[label=\"{%s|outputVar: %s|inputVar: %s}\", shape=Mrecord];\n",
-		planNodeName, planNodeName, outputVar, inputVar)
+	appendLabel(inputVar)
+
+	var totalDurationLabel string
+	if planNodeDesc.IsSetProfiles() && len(planNodeDesc.GetProfiles()) > 0 {
+		var durations []string
+		for _, p := range planNodeDesc.GetProfiles() {
+			durations = append(durations, fmt.Sprintf("%dus", p.GetTotalDurationInUs()))
+		}
+		totalDurationLabel = fmt.Sprintf("totalDurations: %s", strings.Join(durations, ","))
+	}
+	appendLabel(totalDurationLabel)
+
+	n := p.createNode(planNodeName)
+	n.SetShape(cgraph.Shape("Mrecord")) // cgraph.Mrecord
+	n.SetLabel(fmt.Sprintf("{%s}", strings.Join(labels, "|")))
 }
 
-func edgeString(start, end string) string {
-	return fmt.Sprintf("\t\"%s\"->\"%s\";\n", start, end)
+func (p *dotGraphPrinter) edgeString(start, end string) {
+	p.graph.CreateEdge("", p.node(start), p.node(end))
 }
 
-func conditionalEdgeString(start, end, label string) string {
-	return fmt.Sprintf("\t\"%s\"->\"%s\"[label=\"%s\", style=dashed];\n", start, end, label)
+func (p *dotGraphPrinter) conditionalEdgeString(start, end, label string) {
+	e, _ := p.graph.CreateEdge("", p.node(start), p.node(end))
+	e.SetLabel(label).SetStyle(cgraph.DashedEdgeStyle)
 }
 
-func conditionalNodeString(name string) string {
-	return fmt.Sprintf("\t\"%s\"[shape=diamond];\n", name)
+func (p *dotGraphPrinter) conditionalNodeString(name string) {
+	p.createNode(name).SetShape(cgraph.DiamondShape)
 }
 
 func nodeById(p *graph.PlanDescription, nodeId int64) *graph.PlanNodeDescription {
@@ -1166,72 +1236,73 @@ func findFirstStartNodeFrom(p *graph.PlanDescription, nodeId int64) int64 {
 func (res ResultSet) MakeDotGraph() string {
 	p := res.GetPlanDesc()
 	planNodeDescs := p.GetPlanNodeDescs()
-	var builder strings.Builder
-	builder.WriteString("digraph exec_plan {\n")
-	builder.WriteString("\trankdir=BT;\n")
+
+	dgp := newDotGraphPrinter()
+	defer func() { dgp.close() }()
+
 	for _, planNodeDesc := range planNodeDescs {
 		planNodeName := name(planNodeDesc)
 		switch strings.ToLower(string(planNodeDesc.GetName())) {
 		case "select":
-			builder.WriteString(conditionalNodeString(planNodeName))
+			dgp.conditionalNodeString(planNodeName)
 			dep := nodeById(p, planNodeDesc.GetDependencies()[0])
 			// then branch
 			thenNodeId := findBranchEndNode(p, planNodeDesc.GetId(), true)
-			builder.WriteString(edgeString(name(nodeById(p, thenNodeId)), name(dep)))
+			dgp.edgeString(name(nodeById(p, thenNodeId)), name(dep))
 			thenStartId := findFirstStartNodeFrom(p, thenNodeId)
-			builder.WriteString(conditionalEdgeString(name(planNodeDesc), name(nodeById(p, thenStartId)), "Y"))
+			dgp.conditionalEdgeString(name(planNodeDesc), name(nodeById(p, thenStartId)), "Y")
 			// else branch
 			elseNodeId := findBranchEndNode(p, planNodeDesc.GetId(), false)
-			builder.WriteString(edgeString(name(nodeById(p, elseNodeId)), name(dep)))
+			dgp.edgeString(name(nodeById(p, elseNodeId)), name(dep))
 			elseStartId := findFirstStartNodeFrom(p, elseNodeId)
-			builder.WriteString(conditionalEdgeString(name(planNodeDesc), name(nodeById(p, elseStartId)), "N"))
+			dgp.conditionalEdgeString(name(planNodeDesc), name(nodeById(p, elseStartId)), "N")
 			// dep
-			builder.WriteString(edgeString(name(dep), planNodeName))
+			dgp.edgeString(name(dep), planNodeName)
 		case "loop":
-			builder.WriteString(conditionalNodeString(planNodeName))
+			dgp.conditionalNodeString(planNodeName)
 			dep := nodeById(p, planNodeDesc.GetDependencies()[0])
 			// do branch
 			doNodeId := findBranchEndNode(p, planNodeDesc.GetId(), true)
-			builder.WriteString(edgeString(name(nodeById(p, doNodeId)), name(planNodeDesc)))
+			dgp.edgeString(name(nodeById(p, doNodeId)), name(planNodeDesc))
 			doStartId := findFirstStartNodeFrom(p, doNodeId)
-			builder.WriteString(conditionalEdgeString(name(planNodeDesc), name(nodeById(p, doStartId)), "Do"))
+			dgp.conditionalEdgeString(name(planNodeDesc), name(nodeById(p, doStartId)), "Do")
 			// dep
-			builder.WriteString(edgeString(name(dep), planNodeName))
+			dgp.edgeString(name(dep), planNodeName)
 		default:
-			builder.WriteString(nodeString(planNodeDesc, planNodeName))
+			dgp.nodeString(planNodeDesc, planNodeName)
 			if planNodeDesc.IsSetDependencies() {
 				for _, depId := range planNodeDesc.GetDependencies() {
-					builder.WriteString(edgeString(name(nodeById(p, depId)), planNodeName))
+					dgp.edgeString(name(nodeById(p, depId)), planNodeName)
 				}
 			}
 		}
 	}
-	builder.WriteString("}")
-	return builder.String()
+	return dgp.renderString()
 }
 
 // explain/profile format="dot:struct"
 func (res ResultSet) MakeDotGraphByStruct() string {
 	p := res.GetPlanDesc()
 	planNodeDescs := p.GetPlanNodeDescs()
-	var builder strings.Builder
-	builder.WriteString("digraph exec_plan {\n")
-	builder.WriteString("\trankdir=BT;\n")
+
+	dgp := newDotGraphPrinter()
+	defer func() { dgp.close() }()
+
 	for _, planNodeDesc := range planNodeDescs {
 		planNodeName := name(planNodeDesc)
 		switch strings.ToLower(string(planNodeDesc.GetName())) {
 		case "select":
-			builder.WriteString(conditionalNodeString(planNodeName))
+			dgp.conditionalNodeString(planNodeName)
 		case "loop":
-			builder.WriteString(conditionalNodeString(planNodeName))
+			dgp.conditionalNodeString(planNodeName)
 		default:
-			builder.WriteString(nodeString(planNodeDesc, planNodeName))
+			dgp.nodeString(planNodeDesc, planNodeName)
 		}
 
 		if planNodeDesc.IsSetDependencies() {
 			for _, depId := range planNodeDesc.GetDependencies() {
 				dep := nodeById(p, depId)
-				builder.WriteString(edgeString(name(dep), planNodeName))
+				dgp.edgeString(name(dep), planNodeName)
 			}
 		}
 
@@ -1239,11 +1310,10 @@ func (res ResultSet) MakeDotGraphByStruct() string {
 			branchInfo := planNodeDesc.GetBranchInfo()
 			condNode := nodeById(p, branchInfo.GetConditionNodeID())
 			label := condEdgeLabel(condNode, branchInfo.GetIsDoBranch())
-			builder.WriteString(conditionalEdgeString(planNodeName, name(condNode), label))
+			dgp.conditionalEdgeString(planNodeName, name(condNode), label)
 		}
 	}
-	builder.WriteString("}")
-	return builder.String()
+	return dgp.renderString()
 }
 
 // explain/profile format="row"

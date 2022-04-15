@@ -14,7 +14,7 @@ import (
         "strconv"
         "strings"
         thrift "github.com/facebook/fbthrift/thrift/lib/go/thrift"
-        "../../github.com/vesoft-inc/nebula-go/v3/nebula/storage"
+        "github.com/vesoft-inc/nebula-go/v3/nebula/storage"
 )
 
 func Usage() {
