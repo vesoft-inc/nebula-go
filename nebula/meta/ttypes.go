@@ -353,32 +353,32 @@ func AlterSpaceOpFromString(s string) (AlterSpaceOp, error) {
 
 func AlterSpaceOpPtr(v AlterSpaceOp) *AlterSpaceOp { return &v }
 
-type AdminJobOp int64
+type JobOp int64
 const (
-  AdminJobOp_ADD AdminJobOp = 1
-  AdminJobOp_SHOW_All AdminJobOp = 2
-  AdminJobOp_SHOW AdminJobOp = 3
-  AdminJobOp_STOP AdminJobOp = 4
-  AdminJobOp_RECOVER AdminJobOp = 5
+  JobOp_ADD JobOp = 1
+  JobOp_SHOW_All JobOp = 2
+  JobOp_SHOW JobOp = 3
+  JobOp_STOP JobOp = 4
+  JobOp_RECOVER JobOp = 5
 )
 
-var AdminJobOpToName = map[AdminJobOp]string {
-  AdminJobOp_ADD: "ADD",
-  AdminJobOp_SHOW_All: "SHOW_All",
-  AdminJobOp_SHOW: "SHOW",
-  AdminJobOp_STOP: "STOP",
-  AdminJobOp_RECOVER: "RECOVER",
+var JobOpToName = map[JobOp]string {
+  JobOp_ADD: "ADD",
+  JobOp_SHOW_All: "SHOW_All",
+  JobOp_SHOW: "SHOW",
+  JobOp_STOP: "STOP",
+  JobOp_RECOVER: "RECOVER",
 }
 
-var AdminJobOpToValue = map[string]AdminJobOp {
-  "ADD": AdminJobOp_ADD,
-  "SHOW_All": AdminJobOp_SHOW_All,
-  "SHOW": AdminJobOp_SHOW,
-  "STOP": AdminJobOp_STOP,
-  "RECOVER": AdminJobOp_RECOVER,
+var JobOpToValue = map[string]JobOp {
+  "ADD": JobOp_ADD,
+  "SHOW_All": JobOp_SHOW_All,
+  "SHOW": JobOp_SHOW,
+  "STOP": JobOp_STOP,
+  "RECOVER": JobOp_RECOVER,
 }
 
-var AdminJobOpNames = []string {
+var JobOpNames = []string {
   "ADD",
   "SHOW_All",
   "SHOW",
@@ -386,77 +386,77 @@ var AdminJobOpNames = []string {
   "RECOVER",
 }
 
-var AdminJobOpValues = []AdminJobOp {
-  AdminJobOp_ADD,
-  AdminJobOp_SHOW_All,
-  AdminJobOp_SHOW,
-  AdminJobOp_STOP,
-  AdminJobOp_RECOVER,
+var JobOpValues = []JobOp {
+  JobOp_ADD,
+  JobOp_SHOW_All,
+  JobOp_SHOW,
+  JobOp_STOP,
+  JobOp_RECOVER,
 }
 
-func (p AdminJobOp) String() string {
-  if v, ok := AdminJobOpToName[p]; ok {
+func (p JobOp) String() string {
+  if v, ok := JobOpToName[p]; ok {
     return v
   }
   return "<UNSET>"
 }
 
-func AdminJobOpFromString(s string) (AdminJobOp, error) {
-  if v, ok := AdminJobOpToValue[s]; ok {
+func JobOpFromString(s string) (JobOp, error) {
+  if v, ok := JobOpToValue[s]; ok {
     return v, nil
   }
-  return AdminJobOp(0), fmt.Errorf("not a valid AdminJobOp string")
+  return JobOp(0), fmt.Errorf("not a valid JobOp string")
 }
 
-func AdminJobOpPtr(v AdminJobOp) *AdminJobOp { return &v }
+func JobOpPtr(v JobOp) *JobOp { return &v }
 
-type AdminCmd int64
+type JobType int64
 const (
-  AdminCmd_COMPACT AdminCmd = 0
-  AdminCmd_FLUSH AdminCmd = 1
-  AdminCmd_REBUILD_TAG_INDEX AdminCmd = 2
-  AdminCmd_REBUILD_EDGE_INDEX AdminCmd = 3
-  AdminCmd_REBUILD_FULLTEXT_INDEX AdminCmd = 4
-  AdminCmd_STATS AdminCmd = 5
-  AdminCmd_DATA_BALANCE AdminCmd = 6
-  AdminCmd_DOWNLOAD AdminCmd = 7
-  AdminCmd_INGEST AdminCmd = 8
-  AdminCmd_LEADER_BALANCE AdminCmd = 9
-  AdminCmd_ZONE_BALANCE AdminCmd = 10
-  AdminCmd_UNKNOWN AdminCmd = 99
+  JobType_COMPACT JobType = 0
+  JobType_FLUSH JobType = 1
+  JobType_REBUILD_TAG_INDEX JobType = 2
+  JobType_REBUILD_EDGE_INDEX JobType = 3
+  JobType_REBUILD_FULLTEXT_INDEX JobType = 4
+  JobType_STATS JobType = 5
+  JobType_DATA_BALANCE JobType = 6
+  JobType_DOWNLOAD JobType = 7
+  JobType_INGEST JobType = 8
+  JobType_LEADER_BALANCE JobType = 9
+  JobType_ZONE_BALANCE JobType = 10
+  JobType_UNKNOWN JobType = 99
 )
 
-var AdminCmdToName = map[AdminCmd]string {
-  AdminCmd_COMPACT: "COMPACT",
-  AdminCmd_FLUSH: "FLUSH",
-  AdminCmd_REBUILD_TAG_INDEX: "REBUILD_TAG_INDEX",
-  AdminCmd_REBUILD_EDGE_INDEX: "REBUILD_EDGE_INDEX",
-  AdminCmd_REBUILD_FULLTEXT_INDEX: "REBUILD_FULLTEXT_INDEX",
-  AdminCmd_STATS: "STATS",
-  AdminCmd_DATA_BALANCE: "DATA_BALANCE",
-  AdminCmd_DOWNLOAD: "DOWNLOAD",
-  AdminCmd_INGEST: "INGEST",
-  AdminCmd_LEADER_BALANCE: "LEADER_BALANCE",
-  AdminCmd_ZONE_BALANCE: "ZONE_BALANCE",
-  AdminCmd_UNKNOWN: "UNKNOWN",
+var JobTypeToName = map[JobType]string {
+  JobType_COMPACT: "COMPACT",
+  JobType_FLUSH: "FLUSH",
+  JobType_REBUILD_TAG_INDEX: "REBUILD_TAG_INDEX",
+  JobType_REBUILD_EDGE_INDEX: "REBUILD_EDGE_INDEX",
+  JobType_REBUILD_FULLTEXT_INDEX: "REBUILD_FULLTEXT_INDEX",
+  JobType_STATS: "STATS",
+  JobType_DATA_BALANCE: "DATA_BALANCE",
+  JobType_DOWNLOAD: "DOWNLOAD",
+  JobType_INGEST: "INGEST",
+  JobType_LEADER_BALANCE: "LEADER_BALANCE",
+  JobType_ZONE_BALANCE: "ZONE_BALANCE",
+  JobType_UNKNOWN: "UNKNOWN",
 }
 
-var AdminCmdToValue = map[string]AdminCmd {
-  "COMPACT": AdminCmd_COMPACT,
-  "FLUSH": AdminCmd_FLUSH,
-  "REBUILD_TAG_INDEX": AdminCmd_REBUILD_TAG_INDEX,
-  "REBUILD_EDGE_INDEX": AdminCmd_REBUILD_EDGE_INDEX,
-  "REBUILD_FULLTEXT_INDEX": AdminCmd_REBUILD_FULLTEXT_INDEX,
-  "STATS": AdminCmd_STATS,
-  "DATA_BALANCE": AdminCmd_DATA_BALANCE,
-  "DOWNLOAD": AdminCmd_DOWNLOAD,
-  "INGEST": AdminCmd_INGEST,
-  "LEADER_BALANCE": AdminCmd_LEADER_BALANCE,
-  "ZONE_BALANCE": AdminCmd_ZONE_BALANCE,
-  "UNKNOWN": AdminCmd_UNKNOWN,
+var JobTypeToValue = map[string]JobType {
+  "COMPACT": JobType_COMPACT,
+  "FLUSH": JobType_FLUSH,
+  "REBUILD_TAG_INDEX": JobType_REBUILD_TAG_INDEX,
+  "REBUILD_EDGE_INDEX": JobType_REBUILD_EDGE_INDEX,
+  "REBUILD_FULLTEXT_INDEX": JobType_REBUILD_FULLTEXT_INDEX,
+  "STATS": JobType_STATS,
+  "DATA_BALANCE": JobType_DATA_BALANCE,
+  "DOWNLOAD": JobType_DOWNLOAD,
+  "INGEST": JobType_INGEST,
+  "LEADER_BALANCE": JobType_LEADER_BALANCE,
+  "ZONE_BALANCE": JobType_ZONE_BALANCE,
+  "UNKNOWN": JobType_UNKNOWN,
 }
 
-var AdminCmdNames = []string {
+var JobTypeNames = []string {
   "COMPACT",
   "FLUSH",
   "REBUILD_TAG_INDEX",
@@ -471,36 +471,36 @@ var AdminCmdNames = []string {
   "UNKNOWN",
 }
 
-var AdminCmdValues = []AdminCmd {
-  AdminCmd_COMPACT,
-  AdminCmd_FLUSH,
-  AdminCmd_REBUILD_TAG_INDEX,
-  AdminCmd_REBUILD_EDGE_INDEX,
-  AdminCmd_REBUILD_FULLTEXT_INDEX,
-  AdminCmd_STATS,
-  AdminCmd_DATA_BALANCE,
-  AdminCmd_DOWNLOAD,
-  AdminCmd_INGEST,
-  AdminCmd_LEADER_BALANCE,
-  AdminCmd_ZONE_BALANCE,
-  AdminCmd_UNKNOWN,
+var JobTypeValues = []JobType {
+  JobType_COMPACT,
+  JobType_FLUSH,
+  JobType_REBUILD_TAG_INDEX,
+  JobType_REBUILD_EDGE_INDEX,
+  JobType_REBUILD_FULLTEXT_INDEX,
+  JobType_STATS,
+  JobType_DATA_BALANCE,
+  JobType_DOWNLOAD,
+  JobType_INGEST,
+  JobType_LEADER_BALANCE,
+  JobType_ZONE_BALANCE,
+  JobType_UNKNOWN,
 }
 
-func (p AdminCmd) String() string {
-  if v, ok := AdminCmdToName[p]; ok {
+func (p JobType) String() string {
+  if v, ok := JobTypeToName[p]; ok {
     return v
   }
   return "<UNSET>"
 }
 
-func AdminCmdFromString(s string) (AdminCmd, error) {
-  if v, ok := AdminCmdToValue[s]; ok {
+func JobTypeFromString(s string) (JobType, error) {
+  if v, ok := JobTypeToValue[s]; ok {
     return v, nil
   }
-  return AdminCmd(0), fmt.Errorf("not a valid AdminCmd string")
+  return JobType(0), fmt.Errorf("not a valid JobType string")
 }
 
-func AdminCmdPtr(v AdminCmd) *AdminCmd { return &v }
+func JobTypePtr(v JobType) *JobType { return &v }
 
 type JobStatus int64
 const (
@@ -2523,7 +2523,7 @@ func (p *SpaceDesc) GetCollateName() []byte {
 }
 var SpaceDesc_VidType_DEFAULT *ColumnTypeDef = &ColumnTypeDef{
   Type: 7,
-  TypeLength: const_lit_vid_type_type_length,
+  TypeLength: &const_lit_vid_type_type_length,
 }
 func (p *SpaceDesc) GetVidType() *ColumnTypeDef {
   if !p.IsSetVidType() {
@@ -5913,13 +5913,15 @@ func (p *AlterSpaceReq) String() string {
 }
 
 // Attributes:
+//  - SpaceID
 //  - Op
-//  - Cmd
+//  - Type
 //  - Paras
 type AdminJobReq struct {
-  Op AdminJobOp `thrift:"op,1" db:"op" json:"op"`
-  Cmd AdminCmd `thrift:"cmd,2" db:"cmd" json:"cmd"`
-  Paras [][]byte `thrift:"paras,3" db:"paras" json:"paras"`
+  SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
+  Op JobOp `thrift:"op,2" db:"op" json:"op"`
+  Type JobType `thrift:"type,3" db:"type" json:"type"`
+  Paras [][]byte `thrift:"paras,4" db:"paras" json:"paras"`
 }
 
 func NewAdminJobReq() *AdminJobReq {
@@ -5927,12 +5929,16 @@ func NewAdminJobReq() *AdminJobReq {
 }
 
 
-func (p *AdminJobReq) GetOp() AdminJobOp {
+func (p *AdminJobReq) GetSpaceID() nebula0.GraphSpaceID {
+  return p.SpaceID
+}
+
+func (p *AdminJobReq) GetOp() JobOp {
   return p.Op
 }
 
-func (p *AdminJobReq) GetCmd() AdminCmd {
-  return p.Cmd
+func (p *AdminJobReq) GetType() JobType {
+  return p.Type
 }
 
 func (p *AdminJobReq) GetParas() [][]byte {
@@ -5950,19 +5956,25 @@ func NewAdminJobReqBuilder() *AdminJobReqBuilder{
 
 func (p AdminJobReqBuilder) Emit() *AdminJobReq{
   return &AdminJobReq{
+    SpaceID: p.obj.SpaceID,
     Op: p.obj.Op,
-    Cmd: p.obj.Cmd,
+    Type: p.obj.Type,
     Paras: p.obj.Paras,
   }
 }
 
-func (a *AdminJobReqBuilder) Op(op AdminJobOp) *AdminJobReqBuilder {
+func (a *AdminJobReqBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *AdminJobReqBuilder {
+  a.obj.SpaceID = spaceID
+  return a
+}
+
+func (a *AdminJobReqBuilder) Op(op JobOp) *AdminJobReqBuilder {
   a.obj.Op = op
   return a
 }
 
-func (a *AdminJobReqBuilder) Cmd(cmd AdminCmd) *AdminJobReqBuilder {
-  a.obj.Cmd = cmd
+func (a *AdminJobReqBuilder) Type(type_a1 JobType) *AdminJobReqBuilder {
+  a.obj.Type = type_a1
   return a
 }
 
@@ -5971,13 +5983,18 @@ func (a *AdminJobReqBuilder) Paras(paras [][]byte) *AdminJobReqBuilder {
   return a
 }
 
-func (a *AdminJobReq) SetOp(op AdminJobOp) *AdminJobReq {
+func (a *AdminJobReq) SetSpaceID(spaceID nebula0.GraphSpaceID) *AdminJobReq {
+  a.SpaceID = spaceID
+  return a
+}
+
+func (a *AdminJobReq) SetOp(op JobOp) *AdminJobReq {
   a.Op = op
   return a
 }
 
-func (a *AdminJobReq) SetCmd(cmd AdminCmd) *AdminJobReq {
-  a.Cmd = cmd
+func (a *AdminJobReq) SetType(type_a1 JobType) *AdminJobReq {
+  a.Type = type_a1
   return a
 }
 
@@ -6011,6 +6028,10 @@ func (p *AdminJobReq) Read(iprot thrift.Protocol) error {
       if err := p.ReadField3(iprot); err != nil {
         return err
       }
+    case 4:
+      if err := p.ReadField4(iprot); err != nil {
+        return err
+      }
     default:
       if err := iprot.Skip(fieldTypeId); err != nil {
         return err
@@ -6030,8 +6051,8 @@ func (p *AdminJobReq)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 1: ", err)
   } else {
-    temp := AdminJobOp(v)
-    p.Op = temp
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
   }
   return nil
 }
@@ -6040,13 +6061,23 @@ func (p *AdminJobReq)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 2: ", err)
   } else {
-    temp := AdminCmd(v)
-    p.Cmd = temp
+    temp := JobOp(v)
+    p.Op = temp
   }
   return nil
 }
 
 func (p *AdminJobReq)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    temp := JobType(v)
+    p.Type = temp
+  }
+  return nil
+}
+
+func (p *AdminJobReq)  ReadField4(iprot thrift.Protocol) error {
   _, size, err := iprot.ReadListBegin()
   if err != nil {
     return thrift.PrependError("error reading list begin: ", err)
@@ -6074,6 +6105,7 @@ func (p *AdminJobReq) Write(oprot thrift.Protocol) error {
   if err := p.writeField1(oprot); err != nil { return err }
   if err := p.writeField2(oprot); err != nil { return err }
   if err := p.writeField3(oprot); err != nil { return err }
+  if err := p.writeField4(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -6082,28 +6114,38 @@ func (p *AdminJobReq) Write(oprot thrift.Protocol) error {
 }
 
 func (p *AdminJobReq) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("op", thrift.I32, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:op: ", p), err) }
-  if err := oprot.WriteI32(int32(p.Op)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.op (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("space_id", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.SpaceID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.space_id (1) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:op: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space_id: ", p), err) }
   return err
 }
 
 func (p *AdminJobReq) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("cmd", thrift.I32, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:cmd: ", p), err) }
-  if err := oprot.WriteI32(int32(p.Cmd)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.cmd (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("op", thrift.I32, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:op: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Op)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.op (2) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:cmd: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:op: ", p), err) }
   return err
 }
 
 func (p *AdminJobReq) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("paras", thrift.LIST, 3); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:paras: ", p), err) }
+  if err := oprot.WriteFieldBegin("type", thrift.I32, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:type: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Type)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.type (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:type: ", p), err) }
+  return err
+}
+
+func (p *AdminJobReq) writeField4(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("paras", thrift.LIST, 4); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:paras: ", p), err) }
   if err := oprot.WriteListBegin(thrift.STRING, len(p.Paras)); err != nil {
     return thrift.PrependError("error writing list begin: ", err)
   }
@@ -6115,7 +6157,7 @@ func (p *AdminJobReq) writeField3(oprot thrift.Protocol) (err error) {
     return thrift.PrependError("error writing list end: ", err)
   }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:paras: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:paras: ", p), err) }
   return err
 }
 
@@ -6124,26 +6166,31 @@ func (p *AdminJobReq) String() string {
     return "<nil>"
   }
 
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
   opVal := fmt.Sprintf("%v", p.Op)
-  cmdVal := fmt.Sprintf("%v", p.Cmd)
+  typeVal := fmt.Sprintf("%v", p.Type)
   parasVal := fmt.Sprintf("%v", p.Paras)
-  return fmt.Sprintf("AdminJobReq({Op:%s Cmd:%s Paras:%s})", opVal, cmdVal, parasVal)
+  return fmt.Sprintf("AdminJobReq({SpaceID:%s Op:%s Type:%s Paras:%s})", spaceIDVal, opVal, typeVal, parasVal)
 }
 
 // Attributes:
-//  - Id
-//  - Cmd
+//  - SpaceID
+//  - JobID
+//  - Type
 //  - Paras
 //  - Status
 //  - StartTime
 //  - StopTime
+//  - Code
 type JobDesc struct {
-  Id int32 `thrift:"id,1" db:"id" json:"id"`
-  Cmd AdminCmd `thrift:"cmd,2" db:"cmd" json:"cmd"`
-  Paras []string `thrift:"paras,3" db:"paras" json:"paras"`
-  Status JobStatus `thrift:"status,4" db:"status" json:"status"`
-  StartTime int64 `thrift:"start_time,5" db:"start_time" json:"start_time"`
-  StopTime int64 `thrift:"stop_time,6" db:"stop_time" json:"stop_time"`
+  SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
+  JobID int32 `thrift:"job_id,2" db:"job_id" json:"job_id"`
+  Type JobType `thrift:"type,3" db:"type" json:"type"`
+  Paras []string `thrift:"paras,4" db:"paras" json:"paras"`
+  Status JobStatus `thrift:"status,5" db:"status" json:"status"`
+  StartTime int64 `thrift:"start_time,6" db:"start_time" json:"start_time"`
+  StopTime int64 `thrift:"stop_time,7" db:"stop_time" json:"stop_time"`
+  Code nebula0.ErrorCode `thrift:"code,8" db:"code" json:"code"`
 }
 
 func NewJobDesc() *JobDesc {
@@ -6151,12 +6198,16 @@ func NewJobDesc() *JobDesc {
 }
 
 
-func (p *JobDesc) GetId() int32 {
-  return p.Id
+func (p *JobDesc) GetSpaceID() nebula0.GraphSpaceID {
+  return p.SpaceID
 }
 
-func (p *JobDesc) GetCmd() AdminCmd {
-  return p.Cmd
+func (p *JobDesc) GetJobID() int32 {
+  return p.JobID
+}
+
+func (p *JobDesc) GetType() JobType {
+  return p.Type
 }
 
 func (p *JobDesc) GetParas() []string {
@@ -6174,6 +6225,10 @@ func (p *JobDesc) GetStartTime() int64 {
 func (p *JobDesc) GetStopTime() int64 {
   return p.StopTime
 }
+
+func (p *JobDesc) GetCode() nebula0.ErrorCode {
+  return p.Code
+}
 type JobDescBuilder struct {
   obj *JobDesc
 }
@@ -6186,22 +6241,29 @@ func NewJobDescBuilder() *JobDescBuilder{
 
 func (p JobDescBuilder) Emit() *JobDesc{
   return &JobDesc{
-    Id: p.obj.Id,
-    Cmd: p.obj.Cmd,
+    SpaceID: p.obj.SpaceID,
+    JobID: p.obj.JobID,
+    Type: p.obj.Type,
     Paras: p.obj.Paras,
     Status: p.obj.Status,
     StartTime: p.obj.StartTime,
     StopTime: p.obj.StopTime,
+    Code: p.obj.Code,
   }
 }
 
-func (j *JobDescBuilder) Id(id int32) *JobDescBuilder {
-  j.obj.Id = id
+func (j *JobDescBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *JobDescBuilder {
+  j.obj.SpaceID = spaceID
   return j
 }
 
-func (j *JobDescBuilder) Cmd(cmd AdminCmd) *JobDescBuilder {
-  j.obj.Cmd = cmd
+func (j *JobDescBuilder) JobID(jobID int32) *JobDescBuilder {
+  j.obj.JobID = jobID
+  return j
+}
+
+func (j *JobDescBuilder) Type(type_a1 JobType) *JobDescBuilder {
+  j.obj.Type = type_a1
   return j
 }
 
@@ -6225,13 +6287,23 @@ func (j *JobDescBuilder) StopTime(stopTime int64) *JobDescBuilder {
   return j
 }
 
-func (j *JobDesc) SetId(id int32) *JobDesc {
-  j.Id = id
+func (j *JobDescBuilder) Code(code nebula0.ErrorCode) *JobDescBuilder {
+  j.obj.Code = code
   return j
 }
 
-func (j *JobDesc) SetCmd(cmd AdminCmd) *JobDesc {
-  j.Cmd = cmd
+func (j *JobDesc) SetSpaceID(spaceID nebula0.GraphSpaceID) *JobDesc {
+  j.SpaceID = spaceID
+  return j
+}
+
+func (j *JobDesc) SetJobID(jobID int32) *JobDesc {
+  j.JobID = jobID
+  return j
+}
+
+func (j *JobDesc) SetType(type_a1 JobType) *JobDesc {
+  j.Type = type_a1
   return j
 }
 
@@ -6252,6 +6324,11 @@ func (j *JobDesc) SetStartTime(startTime int64) *JobDesc {
 
 func (j *JobDesc) SetStopTime(stopTime int64) *JobDesc {
   j.StopTime = stopTime
+  return j
+}
+
+func (j *JobDesc) SetCode(code nebula0.ErrorCode) *JobDesc {
+  j.Code = code
   return j
 }
 
@@ -6292,6 +6369,14 @@ func (p *JobDesc) Read(iprot thrift.Protocol) error {
       if err := p.ReadField6(iprot); err != nil {
         return err
       }
+    case 7:
+      if err := p.ReadField7(iprot); err != nil {
+        return err
+      }
+    case 8:
+      if err := p.ReadField8(iprot); err != nil {
+        return err
+      }
     default:
       if err := iprot.Skip(fieldTypeId); err != nil {
         return err
@@ -6311,7 +6396,8 @@ func (p *JobDesc)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 1: ", err)
   } else {
-    p.Id = v
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
   }
   return nil
 }
@@ -6320,13 +6406,22 @@ func (p *JobDesc)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 2: ", err)
   } else {
-    temp := AdminCmd(v)
-    p.Cmd = temp
+    p.JobID = v
   }
   return nil
 }
 
 func (p *JobDesc)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    temp := JobType(v)
+    p.Type = temp
+  }
+  return nil
+}
+
+func (p *JobDesc)  ReadField4(iprot thrift.Protocol) error {
   _, size, err := iprot.ReadListBegin()
   if err != nil {
     return thrift.PrependError("error reading list begin: ", err)
@@ -6348,21 +6443,12 @@ func (p *JobDesc)  ReadField3(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *JobDesc)  ReadField4(iprot thrift.Protocol) error {
+func (p *JobDesc)  ReadField5(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 4: ", err)
+    return thrift.PrependError("error reading field 5: ", err)
   } else {
     temp := JobStatus(v)
     p.Status = temp
-  }
-  return nil
-}
-
-func (p *JobDesc)  ReadField5(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI64(); err != nil {
-    return thrift.PrependError("error reading field 5: ", err)
-  } else {
-    p.StartTime = v
   }
   return nil
 }
@@ -6371,7 +6457,26 @@ func (p *JobDesc)  ReadField6(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
     return thrift.PrependError("error reading field 6: ", err)
   } else {
+    p.StartTime = v
+  }
+  return nil
+}
+
+func (p *JobDesc)  ReadField7(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+    return thrift.PrependError("error reading field 7: ", err)
+  } else {
     p.StopTime = v
+  }
+  return nil
+}
+
+func (p *JobDesc)  ReadField8(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+    return thrift.PrependError("error reading field 8: ", err)
+  } else {
+    temp := nebula0.ErrorCode(v)
+    p.Code = temp
   }
   return nil
 }
@@ -6385,6 +6490,8 @@ func (p *JobDesc) Write(oprot thrift.Protocol) error {
   if err := p.writeField4(oprot); err != nil { return err }
   if err := p.writeField5(oprot); err != nil { return err }
   if err := p.writeField6(oprot); err != nil { return err }
+  if err := p.writeField7(oprot); err != nil { return err }
+  if err := p.writeField8(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -6393,28 +6500,38 @@ func (p *JobDesc) Write(oprot thrift.Protocol) error {
 }
 
 func (p *JobDesc) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("id", thrift.I32, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:id: ", p), err) }
-  if err := oprot.WriteI32(int32(p.Id)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.id (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("space_id", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.SpaceID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.space_id (1) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:id: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space_id: ", p), err) }
   return err
 }
 
 func (p *JobDesc) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("cmd", thrift.I32, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:cmd: ", p), err) }
-  if err := oprot.WriteI32(int32(p.Cmd)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.cmd (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("job_id", thrift.I32, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:job_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.JobID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.job_id (2) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:cmd: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:job_id: ", p), err) }
   return err
 }
 
 func (p *JobDesc) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("paras", thrift.LIST, 3); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:paras: ", p), err) }
+  if err := oprot.WriteFieldBegin("type", thrift.I32, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:type: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Type)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.type (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:type: ", p), err) }
+  return err
+}
+
+func (p *JobDesc) writeField4(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("paras", thrift.LIST, 4); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:paras: ", p), err) }
   if err := oprot.WriteListBegin(thrift.STRING, len(p.Paras)); err != nil {
     return thrift.PrependError("error writing list begin: ", err)
   }
@@ -6426,37 +6543,47 @@ func (p *JobDesc) writeField3(oprot thrift.Protocol) (err error) {
     return thrift.PrependError("error writing list end: ", err)
   }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:paras: ", p), err) }
-  return err
-}
-
-func (p *JobDesc) writeField4(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("status", thrift.I32, 4); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:status: ", p), err) }
-  if err := oprot.WriteI32(int32(p.Status)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.status (4) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:status: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:paras: ", p), err) }
   return err
 }
 
 func (p *JobDesc) writeField5(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("start_time", thrift.I64, 5); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:start_time: ", p), err) }
-  if err := oprot.WriteI64(int64(p.StartTime)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.start_time (5) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("status", thrift.I32, 5); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:status: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Status)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.status (5) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 5:start_time: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 5:status: ", p), err) }
   return err
 }
 
 func (p *JobDesc) writeField6(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("stop_time", thrift.I64, 6); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 6:stop_time: ", p), err) }
-  if err := oprot.WriteI64(int64(p.StopTime)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.stop_time (6) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("start_time", thrift.I64, 6); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 6:start_time: ", p), err) }
+  if err := oprot.WriteI64(int64(p.StartTime)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.start_time (6) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 6:stop_time: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 6:start_time: ", p), err) }
+  return err
+}
+
+func (p *JobDesc) writeField7(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("stop_time", thrift.I64, 7); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 7:stop_time: ", p), err) }
+  if err := oprot.WriteI64(int64(p.StopTime)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.stop_time (7) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 7:stop_time: ", p), err) }
+  return err
+}
+
+func (p *JobDesc) writeField8(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("code", thrift.I32, 8); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 8:code: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Code)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.code (8) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 8:code: ", p), err) }
   return err
 }
 
@@ -6465,29 +6592,35 @@ func (p *JobDesc) String() string {
     return "<nil>"
   }
 
-  idVal := fmt.Sprintf("%v", p.Id)
-  cmdVal := fmt.Sprintf("%v", p.Cmd)
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  jobIDVal := fmt.Sprintf("%v", p.JobID)
+  typeVal := fmt.Sprintf("%v", p.Type)
   parasVal := fmt.Sprintf("%v", p.Paras)
   statusVal := fmt.Sprintf("%v", p.Status)
   startTimeVal := fmt.Sprintf("%v", p.StartTime)
   stopTimeVal := fmt.Sprintf("%v", p.StopTime)
-  return fmt.Sprintf("JobDesc({Id:%s Cmd:%s Paras:%s Status:%s StartTime:%s StopTime:%s})", idVal, cmdVal, parasVal, statusVal, startTimeVal, stopTimeVal)
+  codeVal := fmt.Sprintf("%v", p.Code)
+  return fmt.Sprintf("JobDesc({SpaceID:%s JobID:%s Type:%s Paras:%s Status:%s StartTime:%s StopTime:%s Code:%s})", spaceIDVal, jobIDVal, typeVal, parasVal, statusVal, startTimeVal, stopTimeVal, codeVal)
 }
 
 // Attributes:
+//  - SpaceID
+//  - JobID
 //  - TaskID
 //  - Host
 //  - Status
 //  - StartTime
 //  - StopTime
-//  - JobID
+//  - Code
 type TaskDesc struct {
-  TaskID int32 `thrift:"task_id,1" db:"task_id" json:"task_id"`
-  Host *nebula0.HostAddr `thrift:"host,2" db:"host" json:"host"`
-  Status JobStatus `thrift:"status,3" db:"status" json:"status"`
-  StartTime int64 `thrift:"start_time,4" db:"start_time" json:"start_time"`
-  StopTime int64 `thrift:"stop_time,5" db:"stop_time" json:"stop_time"`
-  JobID int32 `thrift:"job_id,6" db:"job_id" json:"job_id"`
+  SpaceID nebula0.GraphSpaceID `thrift:"space_id,1" db:"space_id" json:"space_id"`
+  JobID int32 `thrift:"job_id,2" db:"job_id" json:"job_id"`
+  TaskID int32 `thrift:"task_id,3" db:"task_id" json:"task_id"`
+  Host *nebula0.HostAddr `thrift:"host,4" db:"host" json:"host"`
+  Status JobStatus `thrift:"status,5" db:"status" json:"status"`
+  StartTime int64 `thrift:"start_time,6" db:"start_time" json:"start_time"`
+  StopTime int64 `thrift:"stop_time,7" db:"stop_time" json:"stop_time"`
+  Code nebula0.ErrorCode `thrift:"code,8" db:"code" json:"code"`
 }
 
 func NewTaskDesc() *TaskDesc {
@@ -6496,6 +6629,14 @@ func NewTaskDesc() *TaskDesc {
   }
 }
 
+
+func (p *TaskDesc) GetSpaceID() nebula0.GraphSpaceID {
+  return p.SpaceID
+}
+
+func (p *TaskDesc) GetJobID() int32 {
+  return p.JobID
+}
 
 func (p *TaskDesc) GetTaskID() int32 {
   return p.TaskID
@@ -6520,8 +6661,8 @@ func (p *TaskDesc) GetStopTime() int64 {
   return p.StopTime
 }
 
-func (p *TaskDesc) GetJobID() int32 {
-  return p.JobID
+func (p *TaskDesc) GetCode() nebula0.ErrorCode {
+  return p.Code
 }
 func (p *TaskDesc) IsSetHost() bool {
   return p != nil && p.Host != nil
@@ -6539,13 +6680,25 @@ func NewTaskDescBuilder() *TaskDescBuilder{
 
 func (p TaskDescBuilder) Emit() *TaskDesc{
   return &TaskDesc{
+    SpaceID: p.obj.SpaceID,
+    JobID: p.obj.JobID,
     TaskID: p.obj.TaskID,
     Host: p.obj.Host,
     Status: p.obj.Status,
     StartTime: p.obj.StartTime,
     StopTime: p.obj.StopTime,
-    JobID: p.obj.JobID,
+    Code: p.obj.Code,
   }
+}
+
+func (t *TaskDescBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *TaskDescBuilder {
+  t.obj.SpaceID = spaceID
+  return t
+}
+
+func (t *TaskDescBuilder) JobID(jobID int32) *TaskDescBuilder {
+  t.obj.JobID = jobID
+  return t
 }
 
 func (t *TaskDescBuilder) TaskID(taskID int32) *TaskDescBuilder {
@@ -6573,8 +6726,18 @@ func (t *TaskDescBuilder) StopTime(stopTime int64) *TaskDescBuilder {
   return t
 }
 
-func (t *TaskDescBuilder) JobID(jobID int32) *TaskDescBuilder {
-  t.obj.JobID = jobID
+func (t *TaskDescBuilder) Code(code nebula0.ErrorCode) *TaskDescBuilder {
+  t.obj.Code = code
+  return t
+}
+
+func (t *TaskDesc) SetSpaceID(spaceID nebula0.GraphSpaceID) *TaskDesc {
+  t.SpaceID = spaceID
+  return t
+}
+
+func (t *TaskDesc) SetJobID(jobID int32) *TaskDesc {
+  t.JobID = jobID
   return t
 }
 
@@ -6603,8 +6766,8 @@ func (t *TaskDesc) SetStopTime(stopTime int64) *TaskDesc {
   return t
 }
 
-func (t *TaskDesc) SetJobID(jobID int32) *TaskDesc {
-  t.JobID = jobID
+func (t *TaskDesc) SetCode(code nebula0.ErrorCode) *TaskDesc {
+  t.Code = code
   return t
 }
 
@@ -6645,6 +6808,14 @@ func (p *TaskDesc) Read(iprot thrift.Protocol) error {
       if err := p.ReadField6(iprot); err != nil {
         return err
       }
+    case 7:
+      if err := p.ReadField7(iprot); err != nil {
+        return err
+      }
+    case 8:
+      if err := p.ReadField8(iprot); err != nil {
+        return err
+      }
     default:
       if err := iprot.Skip(fieldTypeId); err != nil {
         return err
@@ -6664,15 +6835,17 @@ func (p *TaskDesc)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 1: ", err)
   } else {
-    p.TaskID = v
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
   }
   return nil
 }
 
 func (p *TaskDesc)  ReadField2(iprot thrift.Protocol) error {
-  p.Host = nebula0.NewHostAddr()
-  if err := p.Host.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Host), err)
+  if v, err := iprot.ReadI32(); err != nil {
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.JobID = v
   }
   return nil
 }
@@ -6681,35 +6854,53 @@ func (p *TaskDesc)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 3: ", err)
   } else {
+    p.TaskID = v
+  }
+  return nil
+}
+
+func (p *TaskDesc)  ReadField4(iprot thrift.Protocol) error {
+  p.Host = nebula0.NewHostAddr()
+  if err := p.Host.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Host), err)
+  }
+  return nil
+}
+
+func (p *TaskDesc)  ReadField5(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+    return thrift.PrependError("error reading field 5: ", err)
+  } else {
     temp := JobStatus(v)
     p.Status = temp
   }
   return nil
 }
 
-func (p *TaskDesc)  ReadField4(iprot thrift.Protocol) error {
+func (p *TaskDesc)  ReadField6(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-    return thrift.PrependError("error reading field 4: ", err)
+    return thrift.PrependError("error reading field 6: ", err)
   } else {
     p.StartTime = v
   }
   return nil
 }
 
-func (p *TaskDesc)  ReadField5(iprot thrift.Protocol) error {
+func (p *TaskDesc)  ReadField7(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI64(); err != nil {
-    return thrift.PrependError("error reading field 5: ", err)
+    return thrift.PrependError("error reading field 7: ", err)
   } else {
     p.StopTime = v
   }
   return nil
 }
 
-func (p *TaskDesc)  ReadField6(iprot thrift.Protocol) error {
+func (p *TaskDesc)  ReadField8(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 6: ", err)
+    return thrift.PrependError("error reading field 8: ", err)
   } else {
-    p.JobID = v
+    temp := nebula0.ErrorCode(v)
+    p.Code = temp
   }
   return nil
 }
@@ -6723,6 +6914,8 @@ func (p *TaskDesc) Write(oprot thrift.Protocol) error {
   if err := p.writeField4(oprot); err != nil { return err }
   if err := p.writeField5(oprot); err != nil { return err }
   if err := p.writeField6(oprot); err != nil { return err }
+  if err := p.writeField7(oprot); err != nil { return err }
+  if err := p.writeField8(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -6731,63 +6924,83 @@ func (p *TaskDesc) Write(oprot thrift.Protocol) error {
 }
 
 func (p *TaskDesc) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("task_id", thrift.I32, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:task_id: ", p), err) }
-  if err := oprot.WriteI32(int32(p.TaskID)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.task_id (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("space_id", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.SpaceID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.space_id (1) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:task_id: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space_id: ", p), err) }
   return err
 }
 
 func (p *TaskDesc) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("host", thrift.STRUCT, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:host: ", p), err) }
-  if err := p.Host.Write(oprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Host), err)
-  }
+  if err := oprot.WriteFieldBegin("job_id", thrift.I32, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:job_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.JobID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.job_id (2) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:host: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:job_id: ", p), err) }
   return err
 }
 
 func (p *TaskDesc) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("status", thrift.I32, 3); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:status: ", p), err) }
-  if err := oprot.WriteI32(int32(p.Status)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.status (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("task_id", thrift.I32, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:task_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.TaskID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.task_id (3) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:status: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:task_id: ", p), err) }
   return err
 }
 
 func (p *TaskDesc) writeField4(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("start_time", thrift.I64, 4); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:start_time: ", p), err) }
-  if err := oprot.WriteI64(int64(p.StartTime)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.start_time (4) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("host", thrift.STRUCT, 4); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:host: ", p), err) }
+  if err := p.Host.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Host), err)
+  }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:start_time: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:host: ", p), err) }
   return err
 }
 
 func (p *TaskDesc) writeField5(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("stop_time", thrift.I64, 5); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:stop_time: ", p), err) }
-  if err := oprot.WriteI64(int64(p.StopTime)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.stop_time (5) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("status", thrift.I32, 5); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:status: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Status)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.status (5) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 5:stop_time: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 5:status: ", p), err) }
   return err
 }
 
 func (p *TaskDesc) writeField6(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("job_id", thrift.I32, 6); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 6:job_id: ", p), err) }
-  if err := oprot.WriteI32(int32(p.JobID)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.job_id (6) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("start_time", thrift.I64, 6); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 6:start_time: ", p), err) }
+  if err := oprot.WriteI64(int64(p.StartTime)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.start_time (6) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 6:job_id: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 6:start_time: ", p), err) }
+  return err
+}
+
+func (p *TaskDesc) writeField7(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("stop_time", thrift.I64, 7); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 7:stop_time: ", p), err) }
+  if err := oprot.WriteI64(int64(p.StopTime)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.stop_time (7) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 7:stop_time: ", p), err) }
+  return err
+}
+
+func (p *TaskDesc) writeField8(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("code", thrift.I32, 8); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 8:code: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Code)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.code (8) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 8:code: ", p), err) }
   return err
 }
 
@@ -6796,6 +7009,8 @@ func (p *TaskDesc) String() string {
     return "<nil>"
   }
 
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
+  jobIDVal := fmt.Sprintf("%v", p.JobID)
   taskIDVal := fmt.Sprintf("%v", p.TaskID)
   var hostVal string
   if p.Host == nil {
@@ -6806,8 +7021,8 @@ func (p *TaskDesc) String() string {
   statusVal := fmt.Sprintf("%v", p.Status)
   startTimeVal := fmt.Sprintf("%v", p.StartTime)
   stopTimeVal := fmt.Sprintf("%v", p.StopTime)
-  jobIDVal := fmt.Sprintf("%v", p.JobID)
-  return fmt.Sprintf("TaskDesc({TaskID:%s Host:%s Status:%s StartTime:%s StopTime:%s JobID:%s})", taskIDVal, hostVal, statusVal, startTimeVal, stopTimeVal, jobIDVal)
+  codeVal := fmt.Sprintf("%v", p.Code)
+  return fmt.Sprintf("TaskDesc({SpaceID:%s JobID:%s TaskID:%s Host:%s Status:%s StartTime:%s StopTime:%s Code:%s})", spaceIDVal, jobIDVal, taskIDVal, hostVal, statusVal, startTimeVal, stopTimeVal, codeVal)
 }
 
 // Attributes:
@@ -8497,6 +8712,159 @@ func (p *DropSpaceReq) String() string {
   spaceNameVal := fmt.Sprintf("%v", p.SpaceName)
   ifExistsVal := fmt.Sprintf("%v", p.IfExists)
   return fmt.Sprintf("DropSpaceReq({SpaceName:%s IfExists:%s})", spaceNameVal, ifExistsVal)
+}
+
+// Attributes:
+//  - SpaceName
+//  - IfExists
+type ClearSpaceReq struct {
+  SpaceName []byte `thrift:"space_name,1" db:"space_name" json:"space_name"`
+  IfExists bool `thrift:"if_exists,2" db:"if_exists" json:"if_exists"`
+}
+
+func NewClearSpaceReq() *ClearSpaceReq {
+  return &ClearSpaceReq{}
+}
+
+
+func (p *ClearSpaceReq) GetSpaceName() []byte {
+  return p.SpaceName
+}
+
+func (p *ClearSpaceReq) GetIfExists() bool {
+  return p.IfExists
+}
+type ClearSpaceReqBuilder struct {
+  obj *ClearSpaceReq
+}
+
+func NewClearSpaceReqBuilder() *ClearSpaceReqBuilder{
+  return &ClearSpaceReqBuilder{
+    obj: NewClearSpaceReq(),
+  }
+}
+
+func (p ClearSpaceReqBuilder) Emit() *ClearSpaceReq{
+  return &ClearSpaceReq{
+    SpaceName: p.obj.SpaceName,
+    IfExists: p.obj.IfExists,
+  }
+}
+
+func (c *ClearSpaceReqBuilder) SpaceName(spaceName []byte) *ClearSpaceReqBuilder {
+  c.obj.SpaceName = spaceName
+  return c
+}
+
+func (c *ClearSpaceReqBuilder) IfExists(ifExists bool) *ClearSpaceReqBuilder {
+  c.obj.IfExists = ifExists
+  return c
+}
+
+func (c *ClearSpaceReq) SetSpaceName(spaceName []byte) *ClearSpaceReq {
+  c.SpaceName = spaceName
+  return c
+}
+
+func (c *ClearSpaceReq) SetIfExists(ifExists bool) *ClearSpaceReq {
+  c.IfExists = ifExists
+  return c
+}
+
+func (p *ClearSpaceReq) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *ClearSpaceReq)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.SpaceName = v
+  }
+  return nil
+}
+
+func (p *ClearSpaceReq)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBool(); err != nil {
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.IfExists = v
+  }
+  return nil
+}
+
+func (p *ClearSpaceReq) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("ClearSpaceReq"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *ClearSpaceReq) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("space_name", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:space_name: ", p), err) }
+  if err := oprot.WriteBinary(p.SpaceName); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.space_name (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:space_name: ", p), err) }
+  return err
+}
+
+func (p *ClearSpaceReq) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("if_exists", thrift.BOOL, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:if_exists: ", p), err) }
+  if err := oprot.WriteBool(bool(p.IfExists)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.if_exists (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:if_exists: ", p), err) }
+  return err
+}
+
+func (p *ClearSpaceReq) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  spaceNameVal := fmt.Sprintf("%v", p.SpaceName)
+  ifExistsVal := fmt.Sprintf("%v", p.IfExists)
+  return fmt.Sprintf("ClearSpaceReq({SpaceName:%s IfExists:%s})", spaceNameVal, ifExistsVal)
 }
 
 type ListSpacesReq struct {
@@ -14181,63 +14549,46 @@ func (p *GetWorkerIdResp) String() string {
 }
 
 // Attributes:
-//  - Segment
-//  - Pairs
-type MultiPutReq struct {
-  Segment []byte `thrift:"segment,1" db:"segment" json:"segment"`
-  Pairs []*nebula0.KeyValue `thrift:"pairs,2" db:"pairs" json:"pairs"`
+//  - Length
+type GetSegmentIdReq struct {
+  Length int64 `thrift:"length,1" db:"length" json:"length"`
 }
 
-func NewMultiPutReq() *MultiPutReq {
-  return &MultiPutReq{}
+func NewGetSegmentIdReq() *GetSegmentIdReq {
+  return &GetSegmentIdReq{}
 }
 
 
-func (p *MultiPutReq) GetSegment() []byte {
-  return p.Segment
+func (p *GetSegmentIdReq) GetLength() int64 {
+  return p.Length
+}
+type GetSegmentIdReqBuilder struct {
+  obj *GetSegmentIdReq
 }
 
-func (p *MultiPutReq) GetPairs() []*nebula0.KeyValue {
-  return p.Pairs
-}
-type MultiPutReqBuilder struct {
-  obj *MultiPutReq
-}
-
-func NewMultiPutReqBuilder() *MultiPutReqBuilder{
-  return &MultiPutReqBuilder{
-    obj: NewMultiPutReq(),
+func NewGetSegmentIdReqBuilder() *GetSegmentIdReqBuilder{
+  return &GetSegmentIdReqBuilder{
+    obj: NewGetSegmentIdReq(),
   }
 }
 
-func (p MultiPutReqBuilder) Emit() *MultiPutReq{
-  return &MultiPutReq{
-    Segment: p.obj.Segment,
-    Pairs: p.obj.Pairs,
+func (p GetSegmentIdReqBuilder) Emit() *GetSegmentIdReq{
+  return &GetSegmentIdReq{
+    Length: p.obj.Length,
   }
 }
 
-func (m *MultiPutReqBuilder) Segment(segment []byte) *MultiPutReqBuilder {
-  m.obj.Segment = segment
-  return m
+func (g *GetSegmentIdReqBuilder) Length(length int64) *GetSegmentIdReqBuilder {
+  g.obj.Length = length
+  return g
 }
 
-func (m *MultiPutReqBuilder) Pairs(pairs []*nebula0.KeyValue) *MultiPutReqBuilder {
-  m.obj.Pairs = pairs
-  return m
+func (g *GetSegmentIdReq) SetLength(length int64) *GetSegmentIdReq {
+  g.Length = length
+  return g
 }
 
-func (m *MultiPutReq) SetSegment(segment []byte) *MultiPutReq {
-  m.Segment = segment
-  return m
-}
-
-func (m *MultiPutReq) SetPairs(pairs []*nebula0.KeyValue) *MultiPutReq {
-  m.Pairs = pairs
-  return m
-}
-
-func (p *MultiPutReq) Read(iprot thrift.Protocol) error {
+func (p *GetSegmentIdReq) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -14252,10 +14603,6 @@ func (p *MultiPutReq) Read(iprot thrift.Protocol) error {
     switch fieldId {
     case 1:
       if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    case 2:
-      if err := p.ReadField2(iprot); err != nil {
         return err
       }
     default:
@@ -14273,40 +14620,19 @@ func (p *MultiPutReq) Read(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MultiPutReq)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
+func (p *GetSegmentIdReq)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
     return thrift.PrependError("error reading field 1: ", err)
   } else {
-    p.Segment = v
+    p.Length = v
   }
   return nil
 }
 
-func (p *MultiPutReq)  ReadField2(iprot thrift.Protocol) error {
-  _, size, err := iprot.ReadListBegin()
-  if err != nil {
-    return thrift.PrependError("error reading list begin: ", err)
-  }
-  tSlice := make([]*nebula0.KeyValue, 0, size)
-  p.Pairs =  tSlice
-  for i := 0; i < size; i ++ {
-    _elem42 := nebula0.NewKeyValue()
-    if err := _elem42.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem42), err)
-    }
-    p.Pairs = append(p.Pairs, _elem42)
-  }
-  if err := iprot.ReadListEnd(); err != nil {
-    return thrift.PrependError("error reading list end: ", err)
-  }
-  return nil
-}
-
-func (p *MultiPutReq) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("MultiPutReq"); err != nil {
+func (p *GetSegmentIdReq) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("GetSegmentIdReq"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
-  if err := p.writeField2(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -14314,282 +14640,109 @@ func (p *MultiPutReq) Write(oprot thrift.Protocol) error {
   return nil
 }
 
-func (p *MultiPutReq) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("segment", thrift.STRING, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:segment: ", p), err) }
-  if err := oprot.WriteBinary(p.Segment); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.segment (1) field write error: ", p), err) }
+func (p *GetSegmentIdReq) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("length", thrift.I64, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:length: ", p), err) }
+  if err := oprot.WriteI64(int64(p.Length)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.length (1) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:segment: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:length: ", p), err) }
   return err
 }
 
-func (p *MultiPutReq) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("pairs", thrift.LIST, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:pairs: ", p), err) }
-  if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Pairs)); err != nil {
-    return thrift.PrependError("error writing list begin: ", err)
-  }
-  for _, v := range p.Pairs {
-    if err := v.Write(oprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", v), err)
-    }
-  }
-  if err := oprot.WriteListEnd(); err != nil {
-    return thrift.PrependError("error writing list end: ", err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:pairs: ", p), err) }
-  return err
-}
-
-func (p *MultiPutReq) String() string {
+func (p *GetSegmentIdReq) String() string {
   if p == nil {
     return "<nil>"
   }
 
-  segmentVal := fmt.Sprintf("%v", p.Segment)
-  pairsVal := fmt.Sprintf("%v", p.Pairs)
-  return fmt.Sprintf("MultiPutReq({Segment:%s Pairs:%s})", segmentVal, pairsVal)
-}
-
-// Attributes:
-//  - Segment
-//  - Key
-type GetReq struct {
-  Segment []byte `thrift:"segment,1" db:"segment" json:"segment"`
-  Key []byte `thrift:"key,2" db:"key" json:"key"`
-}
-
-func NewGetReq() *GetReq {
-  return &GetReq{}
-}
-
-
-func (p *GetReq) GetSegment() []byte {
-  return p.Segment
-}
-
-func (p *GetReq) GetKey() []byte {
-  return p.Key
-}
-type GetReqBuilder struct {
-  obj *GetReq
-}
-
-func NewGetReqBuilder() *GetReqBuilder{
-  return &GetReqBuilder{
-    obj: NewGetReq(),
-  }
-}
-
-func (p GetReqBuilder) Emit() *GetReq{
-  return &GetReq{
-    Segment: p.obj.Segment,
-    Key: p.obj.Key,
-  }
-}
-
-func (g *GetReqBuilder) Segment(segment []byte) *GetReqBuilder {
-  g.obj.Segment = segment
-  return g
-}
-
-func (g *GetReqBuilder) Key(key []byte) *GetReqBuilder {
-  g.obj.Key = key
-  return g
-}
-
-func (g *GetReq) SetSegment(segment []byte) *GetReq {
-  g.Segment = segment
-  return g
-}
-
-func (g *GetReq) SetKey(key []byte) *GetReq {
-  g.Key = key
-  return g
-}
-
-func (p *GetReq) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    case 2:
-      if err := p.ReadField2(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *GetReq)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 1: ", err)
-  } else {
-    p.Segment = v
-  }
-  return nil
-}
-
-func (p *GetReq)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 2: ", err)
-  } else {
-    p.Key = v
-  }
-  return nil
-}
-
-func (p *GetReq) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("GetReq"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := p.writeField2(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *GetReq) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("segment", thrift.STRING, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:segment: ", p), err) }
-  if err := oprot.WriteBinary(p.Segment); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.segment (1) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:segment: ", p), err) }
-  return err
-}
-
-func (p *GetReq) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("key", thrift.STRING, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:key: ", p), err) }
-  if err := oprot.WriteBinary(p.Key); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.key (2) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:key: ", p), err) }
-  return err
-}
-
-func (p *GetReq) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  segmentVal := fmt.Sprintf("%v", p.Segment)
-  keyVal := fmt.Sprintf("%v", p.Key)
-  return fmt.Sprintf("GetReq({Segment:%s Key:%s})", segmentVal, keyVal)
+  lengthVal := fmt.Sprintf("%v", p.Length)
+  return fmt.Sprintf("GetSegmentIdReq({Length:%s})", lengthVal)
 }
 
 // Attributes:
 //  - Code
 //  - Leader
-//  - Value
-type GetResp struct {
+//  - SegmentID
+type GetSegmentIdResp struct {
   Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
   Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
-  Value []byte `thrift:"value,3" db:"value" json:"value"`
+  SegmentID int64 `thrift:"segment_id,3" db:"segment_id" json:"segment_id"`
 }
 
-func NewGetResp() *GetResp {
-  return &GetResp{
+func NewGetSegmentIdResp() *GetSegmentIdResp {
+  return &GetSegmentIdResp{
     Leader: nebula0.NewHostAddr(),
   }
 }
 
 
-func (p *GetResp) GetCode() nebula0.ErrorCode {
+func (p *GetSegmentIdResp) GetCode() nebula0.ErrorCode {
   return p.Code
 }
-var GetResp_Leader_DEFAULT *nebula0.HostAddr
-func (p *GetResp) GetLeader() *nebula0.HostAddr {
+var GetSegmentIdResp_Leader_DEFAULT *nebula0.HostAddr
+func (p *GetSegmentIdResp) GetLeader() *nebula0.HostAddr {
   if !p.IsSetLeader() {
-    return GetResp_Leader_DEFAULT
+    return GetSegmentIdResp_Leader_DEFAULT
   }
 return p.Leader
 }
 
-func (p *GetResp) GetValue() []byte {
-  return p.Value
+func (p *GetSegmentIdResp) GetSegmentID() int64 {
+  return p.SegmentID
 }
-func (p *GetResp) IsSetLeader() bool {
+func (p *GetSegmentIdResp) IsSetLeader() bool {
   return p != nil && p.Leader != nil
 }
 
-type GetRespBuilder struct {
-  obj *GetResp
+type GetSegmentIdRespBuilder struct {
+  obj *GetSegmentIdResp
 }
 
-func NewGetRespBuilder() *GetRespBuilder{
-  return &GetRespBuilder{
-    obj: NewGetResp(),
+func NewGetSegmentIdRespBuilder() *GetSegmentIdRespBuilder{
+  return &GetSegmentIdRespBuilder{
+    obj: NewGetSegmentIdResp(),
   }
 }
 
-func (p GetRespBuilder) Emit() *GetResp{
-  return &GetResp{
+func (p GetSegmentIdRespBuilder) Emit() *GetSegmentIdResp{
+  return &GetSegmentIdResp{
     Code: p.obj.Code,
     Leader: p.obj.Leader,
-    Value: p.obj.Value,
+    SegmentID: p.obj.SegmentID,
   }
 }
 
-func (g *GetRespBuilder) Code(code nebula0.ErrorCode) *GetRespBuilder {
+func (g *GetSegmentIdRespBuilder) Code(code nebula0.ErrorCode) *GetSegmentIdRespBuilder {
   g.obj.Code = code
   return g
 }
 
-func (g *GetRespBuilder) Leader(leader *nebula0.HostAddr) *GetRespBuilder {
+func (g *GetSegmentIdRespBuilder) Leader(leader *nebula0.HostAddr) *GetSegmentIdRespBuilder {
   g.obj.Leader = leader
   return g
 }
 
-func (g *GetRespBuilder) Value(value []byte) *GetRespBuilder {
-  g.obj.Value = value
+func (g *GetSegmentIdRespBuilder) SegmentID(segmentID int64) *GetSegmentIdRespBuilder {
+  g.obj.SegmentID = segmentID
   return g
 }
 
-func (g *GetResp) SetCode(code nebula0.ErrorCode) *GetResp {
+func (g *GetSegmentIdResp) SetCode(code nebula0.ErrorCode) *GetSegmentIdResp {
   g.Code = code
   return g
 }
 
-func (g *GetResp) SetLeader(leader *nebula0.HostAddr) *GetResp {
+func (g *GetSegmentIdResp) SetLeader(leader *nebula0.HostAddr) *GetSegmentIdResp {
   g.Leader = leader
   return g
 }
 
-func (g *GetResp) SetValue(value []byte) *GetResp {
-  g.Value = value
+func (g *GetSegmentIdResp) SetSegmentID(segmentID int64) *GetSegmentIdResp {
+  g.SegmentID = segmentID
   return g
 }
 
-func (p *GetResp) Read(iprot thrift.Protocol) error {
+func (p *GetSegmentIdResp) Read(iprot thrift.Protocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
   }
@@ -14629,7 +14782,7 @@ func (p *GetResp) Read(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *GetResp)  ReadField1(iprot thrift.Protocol) error {
+func (p *GetSegmentIdResp)  ReadField1(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 1: ", err)
   } else {
@@ -14639,7 +14792,7 @@ func (p *GetResp)  ReadField1(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *GetResp)  ReadField2(iprot thrift.Protocol) error {
+func (p *GetSegmentIdResp)  ReadField2(iprot thrift.Protocol) error {
   p.Leader = nebula0.NewHostAddr()
   if err := p.Leader.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Leader), err)
@@ -14647,17 +14800,17 @@ func (p *GetResp)  ReadField2(iprot thrift.Protocol) error {
   return nil
 }
 
-func (p *GetResp)  ReadField3(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
+func (p *GetSegmentIdResp)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
     return thrift.PrependError("error reading field 3: ", err)
   } else {
-    p.Value = v
+    p.SegmentID = v
   }
   return nil
 }
 
-func (p *GetResp) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("GetResp"); err != nil {
+func (p *GetSegmentIdResp) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("GetSegmentIdResp"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if err := p.writeField1(oprot); err != nil { return err }
   if err := p.writeField2(oprot); err != nil { return err }
@@ -14669,7 +14822,7 @@ func (p *GetResp) Write(oprot thrift.Protocol) error {
   return nil
 }
 
-func (p *GetResp) writeField1(oprot thrift.Protocol) (err error) {
+func (p *GetSegmentIdResp) writeField1(oprot thrift.Protocol) (err error) {
   if err := oprot.WriteFieldBegin("code", thrift.I32, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:code: ", p), err) }
   if err := oprot.WriteI32(int32(p.Code)); err != nil {
@@ -14679,7 +14832,7 @@ func (p *GetResp) writeField1(oprot thrift.Protocol) (err error) {
   return err
 }
 
-func (p *GetResp) writeField2(oprot thrift.Protocol) (err error) {
+func (p *GetSegmentIdResp) writeField2(oprot thrift.Protocol) (err error) {
   if err := oprot.WriteFieldBegin("leader", thrift.STRUCT, 2); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:leader: ", p), err) }
   if err := p.Leader.Write(oprot); err != nil {
@@ -14690,17 +14843,17 @@ func (p *GetResp) writeField2(oprot thrift.Protocol) (err error) {
   return err
 }
 
-func (p *GetResp) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("value", thrift.STRING, 3); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:value: ", p), err) }
-  if err := oprot.WriteBinary(p.Value); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.value (3) field write error: ", p), err) }
+func (p *GetSegmentIdResp) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("segment_id", thrift.I64, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:segment_id: ", p), err) }
+  if err := oprot.WriteI64(int64(p.SegmentID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.segment_id (3) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:value: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:segment_id: ", p), err) }
   return err
 }
 
-func (p *GetResp) String() string {
+func (p *GetSegmentIdResp) String() string {
   if p == nil {
     return "<nil>"
   }
@@ -14712,1187 +14865,8 @@ func (p *GetResp) String() string {
   } else {
     leaderVal = fmt.Sprintf("%v", p.Leader)
   }
-  valueVal := fmt.Sprintf("%v", p.Value)
-  return fmt.Sprintf("GetResp({Code:%s Leader:%s Value:%s})", codeVal, leaderVal, valueVal)
-}
-
-// Attributes:
-//  - Segment
-//  - Keys
-type MultiGetReq struct {
-  Segment []byte `thrift:"segment,1" db:"segment" json:"segment"`
-  Keys [][]byte `thrift:"keys,2" db:"keys" json:"keys"`
-}
-
-func NewMultiGetReq() *MultiGetReq {
-  return &MultiGetReq{}
-}
-
-
-func (p *MultiGetReq) GetSegment() []byte {
-  return p.Segment
-}
-
-func (p *MultiGetReq) GetKeys() [][]byte {
-  return p.Keys
-}
-type MultiGetReqBuilder struct {
-  obj *MultiGetReq
-}
-
-func NewMultiGetReqBuilder() *MultiGetReqBuilder{
-  return &MultiGetReqBuilder{
-    obj: NewMultiGetReq(),
-  }
-}
-
-func (p MultiGetReqBuilder) Emit() *MultiGetReq{
-  return &MultiGetReq{
-    Segment: p.obj.Segment,
-    Keys: p.obj.Keys,
-  }
-}
-
-func (m *MultiGetReqBuilder) Segment(segment []byte) *MultiGetReqBuilder {
-  m.obj.Segment = segment
-  return m
-}
-
-func (m *MultiGetReqBuilder) Keys(keys [][]byte) *MultiGetReqBuilder {
-  m.obj.Keys = keys
-  return m
-}
-
-func (m *MultiGetReq) SetSegment(segment []byte) *MultiGetReq {
-  m.Segment = segment
-  return m
-}
-
-func (m *MultiGetReq) SetKeys(keys [][]byte) *MultiGetReq {
-  m.Keys = keys
-  return m
-}
-
-func (p *MultiGetReq) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    case 2:
-      if err := p.ReadField2(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *MultiGetReq)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 1: ", err)
-  } else {
-    p.Segment = v
-  }
-  return nil
-}
-
-func (p *MultiGetReq)  ReadField2(iprot thrift.Protocol) error {
-  _, size, err := iprot.ReadListBegin()
-  if err != nil {
-    return thrift.PrependError("error reading list begin: ", err)
-  }
-  tSlice := make([][]byte, 0, size)
-  p.Keys =  tSlice
-  for i := 0; i < size; i ++ {
-    var _elem43 []byte
-    if v, err := iprot.ReadBinary(); err != nil {
-      return thrift.PrependError("error reading field 0: ", err)
-    } else {
-      _elem43 = v
-    }
-    p.Keys = append(p.Keys, _elem43)
-  }
-  if err := iprot.ReadListEnd(); err != nil {
-    return thrift.PrependError("error reading list end: ", err)
-  }
-  return nil
-}
-
-func (p *MultiGetReq) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("MultiGetReq"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := p.writeField2(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *MultiGetReq) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("segment", thrift.STRING, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:segment: ", p), err) }
-  if err := oprot.WriteBinary(p.Segment); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.segment (1) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:segment: ", p), err) }
-  return err
-}
-
-func (p *MultiGetReq) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("keys", thrift.LIST, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:keys: ", p), err) }
-  if err := oprot.WriteListBegin(thrift.STRING, len(p.Keys)); err != nil {
-    return thrift.PrependError("error writing list begin: ", err)
-  }
-  for _, v := range p.Keys {
-    if err := oprot.WriteBinary(v); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
-  }
-  if err := oprot.WriteListEnd(); err != nil {
-    return thrift.PrependError("error writing list end: ", err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:keys: ", p), err) }
-  return err
-}
-
-func (p *MultiGetReq) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  segmentVal := fmt.Sprintf("%v", p.Segment)
-  keysVal := fmt.Sprintf("%v", p.Keys)
-  return fmt.Sprintf("MultiGetReq({Segment:%s Keys:%s})", segmentVal, keysVal)
-}
-
-// Attributes:
-//  - Code
-//  - Leader
-//  - Values
-type MultiGetResp struct {
-  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
-  Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
-  Values [][]byte `thrift:"values,3" db:"values" json:"values"`
-}
-
-func NewMultiGetResp() *MultiGetResp {
-  return &MultiGetResp{
-    Leader: nebula0.NewHostAddr(),
-  }
-}
-
-
-func (p *MultiGetResp) GetCode() nebula0.ErrorCode {
-  return p.Code
-}
-var MultiGetResp_Leader_DEFAULT *nebula0.HostAddr
-func (p *MultiGetResp) GetLeader() *nebula0.HostAddr {
-  if !p.IsSetLeader() {
-    return MultiGetResp_Leader_DEFAULT
-  }
-return p.Leader
-}
-
-func (p *MultiGetResp) GetValues() [][]byte {
-  return p.Values
-}
-func (p *MultiGetResp) IsSetLeader() bool {
-  return p != nil && p.Leader != nil
-}
-
-type MultiGetRespBuilder struct {
-  obj *MultiGetResp
-}
-
-func NewMultiGetRespBuilder() *MultiGetRespBuilder{
-  return &MultiGetRespBuilder{
-    obj: NewMultiGetResp(),
-  }
-}
-
-func (p MultiGetRespBuilder) Emit() *MultiGetResp{
-  return &MultiGetResp{
-    Code: p.obj.Code,
-    Leader: p.obj.Leader,
-    Values: p.obj.Values,
-  }
-}
-
-func (m *MultiGetRespBuilder) Code(code nebula0.ErrorCode) *MultiGetRespBuilder {
-  m.obj.Code = code
-  return m
-}
-
-func (m *MultiGetRespBuilder) Leader(leader *nebula0.HostAddr) *MultiGetRespBuilder {
-  m.obj.Leader = leader
-  return m
-}
-
-func (m *MultiGetRespBuilder) Values(values [][]byte) *MultiGetRespBuilder {
-  m.obj.Values = values
-  return m
-}
-
-func (m *MultiGetResp) SetCode(code nebula0.ErrorCode) *MultiGetResp {
-  m.Code = code
-  return m
-}
-
-func (m *MultiGetResp) SetLeader(leader *nebula0.HostAddr) *MultiGetResp {
-  m.Leader = leader
-  return m
-}
-
-func (m *MultiGetResp) SetValues(values [][]byte) *MultiGetResp {
-  m.Values = values
-  return m
-}
-
-func (p *MultiGetResp) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    case 2:
-      if err := p.ReadField2(iprot); err != nil {
-        return err
-      }
-    case 3:
-      if err := p.ReadField3(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *MultiGetResp)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 1: ", err)
-  } else {
-    temp := nebula0.ErrorCode(v)
-    p.Code = temp
-  }
-  return nil
-}
-
-func (p *MultiGetResp)  ReadField2(iprot thrift.Protocol) error {
-  p.Leader = nebula0.NewHostAddr()
-  if err := p.Leader.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Leader), err)
-  }
-  return nil
-}
-
-func (p *MultiGetResp)  ReadField3(iprot thrift.Protocol) error {
-  _, size, err := iprot.ReadListBegin()
-  if err != nil {
-    return thrift.PrependError("error reading list begin: ", err)
-  }
-  tSlice := make([][]byte, 0, size)
-  p.Values =  tSlice
-  for i := 0; i < size; i ++ {
-    var _elem44 []byte
-    if v, err := iprot.ReadBinary(); err != nil {
-      return thrift.PrependError("error reading field 0: ", err)
-    } else {
-      _elem44 = v
-    }
-    p.Values = append(p.Values, _elem44)
-  }
-  if err := iprot.ReadListEnd(); err != nil {
-    return thrift.PrependError("error reading list end: ", err)
-  }
-  return nil
-}
-
-func (p *MultiGetResp) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("MultiGetResp"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := p.writeField2(oprot); err != nil { return err }
-  if err := p.writeField3(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *MultiGetResp) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("code", thrift.I32, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:code: ", p), err) }
-  if err := oprot.WriteI32(int32(p.Code)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.code (1) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:code: ", p), err) }
-  return err
-}
-
-func (p *MultiGetResp) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("leader", thrift.STRUCT, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:leader: ", p), err) }
-  if err := p.Leader.Write(oprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Leader), err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:leader: ", p), err) }
-  return err
-}
-
-func (p *MultiGetResp) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("values", thrift.LIST, 3); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:values: ", p), err) }
-  if err := oprot.WriteListBegin(thrift.STRING, len(p.Values)); err != nil {
-    return thrift.PrependError("error writing list begin: ", err)
-  }
-  for _, v := range p.Values {
-    if err := oprot.WriteBinary(v); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
-  }
-  if err := oprot.WriteListEnd(); err != nil {
-    return thrift.PrependError("error writing list end: ", err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:values: ", p), err) }
-  return err
-}
-
-func (p *MultiGetResp) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  codeVal := fmt.Sprintf("%v", p.Code)
-  var leaderVal string
-  if p.Leader == nil {
-    leaderVal = "<nil>"
-  } else {
-    leaderVal = fmt.Sprintf("%v", p.Leader)
-  }
-  valuesVal := fmt.Sprintf("%v", p.Values)
-  return fmt.Sprintf("MultiGetResp({Code:%s Leader:%s Values:%s})", codeVal, leaderVal, valuesVal)
-}
-
-// Attributes:
-//  - Segment
-//  - Key
-type RemoveReq struct {
-  Segment []byte `thrift:"segment,1" db:"segment" json:"segment"`
-  Key []byte `thrift:"key,2" db:"key" json:"key"`
-}
-
-func NewRemoveReq() *RemoveReq {
-  return &RemoveReq{}
-}
-
-
-func (p *RemoveReq) GetSegment() []byte {
-  return p.Segment
-}
-
-func (p *RemoveReq) GetKey() []byte {
-  return p.Key
-}
-type RemoveReqBuilder struct {
-  obj *RemoveReq
-}
-
-func NewRemoveReqBuilder() *RemoveReqBuilder{
-  return &RemoveReqBuilder{
-    obj: NewRemoveReq(),
-  }
-}
-
-func (p RemoveReqBuilder) Emit() *RemoveReq{
-  return &RemoveReq{
-    Segment: p.obj.Segment,
-    Key: p.obj.Key,
-  }
-}
-
-func (r *RemoveReqBuilder) Segment(segment []byte) *RemoveReqBuilder {
-  r.obj.Segment = segment
-  return r
-}
-
-func (r *RemoveReqBuilder) Key(key []byte) *RemoveReqBuilder {
-  r.obj.Key = key
-  return r
-}
-
-func (r *RemoveReq) SetSegment(segment []byte) *RemoveReq {
-  r.Segment = segment
-  return r
-}
-
-func (r *RemoveReq) SetKey(key []byte) *RemoveReq {
-  r.Key = key
-  return r
-}
-
-func (p *RemoveReq) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    case 2:
-      if err := p.ReadField2(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *RemoveReq)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 1: ", err)
-  } else {
-    p.Segment = v
-  }
-  return nil
-}
-
-func (p *RemoveReq)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 2: ", err)
-  } else {
-    p.Key = v
-  }
-  return nil
-}
-
-func (p *RemoveReq) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("RemoveReq"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := p.writeField2(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *RemoveReq) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("segment", thrift.STRING, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:segment: ", p), err) }
-  if err := oprot.WriteBinary(p.Segment); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.segment (1) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:segment: ", p), err) }
-  return err
-}
-
-func (p *RemoveReq) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("key", thrift.STRING, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:key: ", p), err) }
-  if err := oprot.WriteBinary(p.Key); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.key (2) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:key: ", p), err) }
-  return err
-}
-
-func (p *RemoveReq) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  segmentVal := fmt.Sprintf("%v", p.Segment)
-  keyVal := fmt.Sprintf("%v", p.Key)
-  return fmt.Sprintf("RemoveReq({Segment:%s Key:%s})", segmentVal, keyVal)
-}
-
-// Attributes:
-//  - Segment
-//  - Start
-//  - End
-type RemoveRangeReq struct {
-  Segment []byte `thrift:"segment,1" db:"segment" json:"segment"`
-  Start []byte `thrift:"start,2" db:"start" json:"start"`
-  End []byte `thrift:"end,3" db:"end" json:"end"`
-}
-
-func NewRemoveRangeReq() *RemoveRangeReq {
-  return &RemoveRangeReq{}
-}
-
-
-func (p *RemoveRangeReq) GetSegment() []byte {
-  return p.Segment
-}
-
-func (p *RemoveRangeReq) GetStart() []byte {
-  return p.Start
-}
-
-func (p *RemoveRangeReq) GetEnd() []byte {
-  return p.End
-}
-type RemoveRangeReqBuilder struct {
-  obj *RemoveRangeReq
-}
-
-func NewRemoveRangeReqBuilder() *RemoveRangeReqBuilder{
-  return &RemoveRangeReqBuilder{
-    obj: NewRemoveRangeReq(),
-  }
-}
-
-func (p RemoveRangeReqBuilder) Emit() *RemoveRangeReq{
-  return &RemoveRangeReq{
-    Segment: p.obj.Segment,
-    Start: p.obj.Start,
-    End: p.obj.End,
-  }
-}
-
-func (r *RemoveRangeReqBuilder) Segment(segment []byte) *RemoveRangeReqBuilder {
-  r.obj.Segment = segment
-  return r
-}
-
-func (r *RemoveRangeReqBuilder) Start(start []byte) *RemoveRangeReqBuilder {
-  r.obj.Start = start
-  return r
-}
-
-func (r *RemoveRangeReqBuilder) End(end []byte) *RemoveRangeReqBuilder {
-  r.obj.End = end
-  return r
-}
-
-func (r *RemoveRangeReq) SetSegment(segment []byte) *RemoveRangeReq {
-  r.Segment = segment
-  return r
-}
-
-func (r *RemoveRangeReq) SetStart(start []byte) *RemoveRangeReq {
-  r.Start = start
-  return r
-}
-
-func (r *RemoveRangeReq) SetEnd(end []byte) *RemoveRangeReq {
-  r.End = end
-  return r
-}
-
-func (p *RemoveRangeReq) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    case 2:
-      if err := p.ReadField2(iprot); err != nil {
-        return err
-      }
-    case 3:
-      if err := p.ReadField3(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *RemoveRangeReq)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 1: ", err)
-  } else {
-    p.Segment = v
-  }
-  return nil
-}
-
-func (p *RemoveRangeReq)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 2: ", err)
-  } else {
-    p.Start = v
-  }
-  return nil
-}
-
-func (p *RemoveRangeReq)  ReadField3(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 3: ", err)
-  } else {
-    p.End = v
-  }
-  return nil
-}
-
-func (p *RemoveRangeReq) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("RemoveRangeReq"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := p.writeField2(oprot); err != nil { return err }
-  if err := p.writeField3(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *RemoveRangeReq) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("segment", thrift.STRING, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:segment: ", p), err) }
-  if err := oprot.WriteBinary(p.Segment); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.segment (1) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:segment: ", p), err) }
-  return err
-}
-
-func (p *RemoveRangeReq) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("start", thrift.STRING, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:start: ", p), err) }
-  if err := oprot.WriteBinary(p.Start); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.start (2) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:start: ", p), err) }
-  return err
-}
-
-func (p *RemoveRangeReq) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("end", thrift.STRING, 3); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:end: ", p), err) }
-  if err := oprot.WriteBinary(p.End); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.end (3) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:end: ", p), err) }
-  return err
-}
-
-func (p *RemoveRangeReq) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  segmentVal := fmt.Sprintf("%v", p.Segment)
-  startVal := fmt.Sprintf("%v", p.Start)
-  endVal := fmt.Sprintf("%v", p.End)
-  return fmt.Sprintf("RemoveRangeReq({Segment:%s Start:%s End:%s})", segmentVal, startVal, endVal)
-}
-
-// Attributes:
-//  - Segment
-//  - Start
-//  - End
-type ScanReq struct {
-  Segment []byte `thrift:"segment,1" db:"segment" json:"segment"`
-  Start []byte `thrift:"start,2" db:"start" json:"start"`
-  End []byte `thrift:"end,3" db:"end" json:"end"`
-}
-
-func NewScanReq() *ScanReq {
-  return &ScanReq{}
-}
-
-
-func (p *ScanReq) GetSegment() []byte {
-  return p.Segment
-}
-
-func (p *ScanReq) GetStart() []byte {
-  return p.Start
-}
-
-func (p *ScanReq) GetEnd() []byte {
-  return p.End
-}
-type ScanReqBuilder struct {
-  obj *ScanReq
-}
-
-func NewScanReqBuilder() *ScanReqBuilder{
-  return &ScanReqBuilder{
-    obj: NewScanReq(),
-  }
-}
-
-func (p ScanReqBuilder) Emit() *ScanReq{
-  return &ScanReq{
-    Segment: p.obj.Segment,
-    Start: p.obj.Start,
-    End: p.obj.End,
-  }
-}
-
-func (s *ScanReqBuilder) Segment(segment []byte) *ScanReqBuilder {
-  s.obj.Segment = segment
-  return s
-}
-
-func (s *ScanReqBuilder) Start(start []byte) *ScanReqBuilder {
-  s.obj.Start = start
-  return s
-}
-
-func (s *ScanReqBuilder) End(end []byte) *ScanReqBuilder {
-  s.obj.End = end
-  return s
-}
-
-func (s *ScanReq) SetSegment(segment []byte) *ScanReq {
-  s.Segment = segment
-  return s
-}
-
-func (s *ScanReq) SetStart(start []byte) *ScanReq {
-  s.Start = start
-  return s
-}
-
-func (s *ScanReq) SetEnd(end []byte) *ScanReq {
-  s.End = end
-  return s
-}
-
-func (p *ScanReq) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    case 2:
-      if err := p.ReadField2(iprot); err != nil {
-        return err
-      }
-    case 3:
-      if err := p.ReadField3(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *ScanReq)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 1: ", err)
-  } else {
-    p.Segment = v
-  }
-  return nil
-}
-
-func (p *ScanReq)  ReadField2(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 2: ", err)
-  } else {
-    p.Start = v
-  }
-  return nil
-}
-
-func (p *ScanReq)  ReadField3(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadBinary(); err != nil {
-    return thrift.PrependError("error reading field 3: ", err)
-  } else {
-    p.End = v
-  }
-  return nil
-}
-
-func (p *ScanReq) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("ScanReq"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := p.writeField2(oprot); err != nil { return err }
-  if err := p.writeField3(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *ScanReq) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("segment", thrift.STRING, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:segment: ", p), err) }
-  if err := oprot.WriteBinary(p.Segment); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.segment (1) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:segment: ", p), err) }
-  return err
-}
-
-func (p *ScanReq) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("start", thrift.STRING, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:start: ", p), err) }
-  if err := oprot.WriteBinary(p.Start); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.start (2) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:start: ", p), err) }
-  return err
-}
-
-func (p *ScanReq) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("end", thrift.STRING, 3); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:end: ", p), err) }
-  if err := oprot.WriteBinary(p.End); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.end (3) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:end: ", p), err) }
-  return err
-}
-
-func (p *ScanReq) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  segmentVal := fmt.Sprintf("%v", p.Segment)
-  startVal := fmt.Sprintf("%v", p.Start)
-  endVal := fmt.Sprintf("%v", p.End)
-  return fmt.Sprintf("ScanReq({Segment:%s Start:%s End:%s})", segmentVal, startVal, endVal)
-}
-
-// Attributes:
-//  - Code
-//  - Leader
-//  - Values
-type ScanResp struct {
-  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
-  Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
-  Values [][]byte `thrift:"values,3" db:"values" json:"values"`
-}
-
-func NewScanResp() *ScanResp {
-  return &ScanResp{
-    Leader: nebula0.NewHostAddr(),
-  }
-}
-
-
-func (p *ScanResp) GetCode() nebula0.ErrorCode {
-  return p.Code
-}
-var ScanResp_Leader_DEFAULT *nebula0.HostAddr
-func (p *ScanResp) GetLeader() *nebula0.HostAddr {
-  if !p.IsSetLeader() {
-    return ScanResp_Leader_DEFAULT
-  }
-return p.Leader
-}
-
-func (p *ScanResp) GetValues() [][]byte {
-  return p.Values
-}
-func (p *ScanResp) IsSetLeader() bool {
-  return p != nil && p.Leader != nil
-}
-
-type ScanRespBuilder struct {
-  obj *ScanResp
-}
-
-func NewScanRespBuilder() *ScanRespBuilder{
-  return &ScanRespBuilder{
-    obj: NewScanResp(),
-  }
-}
-
-func (p ScanRespBuilder) Emit() *ScanResp{
-  return &ScanResp{
-    Code: p.obj.Code,
-    Leader: p.obj.Leader,
-    Values: p.obj.Values,
-  }
-}
-
-func (s *ScanRespBuilder) Code(code nebula0.ErrorCode) *ScanRespBuilder {
-  s.obj.Code = code
-  return s
-}
-
-func (s *ScanRespBuilder) Leader(leader *nebula0.HostAddr) *ScanRespBuilder {
-  s.obj.Leader = leader
-  return s
-}
-
-func (s *ScanRespBuilder) Values(values [][]byte) *ScanRespBuilder {
-  s.obj.Values = values
-  return s
-}
-
-func (s *ScanResp) SetCode(code nebula0.ErrorCode) *ScanResp {
-  s.Code = code
-  return s
-}
-
-func (s *ScanResp) SetLeader(leader *nebula0.HostAddr) *ScanResp {
-  s.Leader = leader
-  return s
-}
-
-func (s *ScanResp) SetValues(values [][]byte) *ScanResp {
-  s.Values = values
-  return s
-}
-
-func (p *ScanResp) Read(iprot thrift.Protocol) error {
-  if _, err := iprot.ReadStructBegin(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
-  }
-
-
-  for {
-    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    switch fieldId {
-    case 1:
-      if err := p.ReadField1(iprot); err != nil {
-        return err
-      }
-    case 2:
-      if err := p.ReadField2(iprot); err != nil {
-        return err
-      }
-    case 3:
-      if err := p.ReadField3(iprot); err != nil {
-        return err
-      }
-    default:
-      if err := iprot.Skip(fieldTypeId); err != nil {
-        return err
-      }
-    }
-    if err := iprot.ReadFieldEnd(); err != nil {
-      return err
-    }
-  }
-  if err := iprot.ReadStructEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-  }
-  return nil
-}
-
-func (p *ScanResp)  ReadField1(iprot thrift.Protocol) error {
-  if v, err := iprot.ReadI32(); err != nil {
-    return thrift.PrependError("error reading field 1: ", err)
-  } else {
-    temp := nebula0.ErrorCode(v)
-    p.Code = temp
-  }
-  return nil
-}
-
-func (p *ScanResp)  ReadField2(iprot thrift.Protocol) error {
-  p.Leader = nebula0.NewHostAddr()
-  if err := p.Leader.Read(iprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Leader), err)
-  }
-  return nil
-}
-
-func (p *ScanResp)  ReadField3(iprot thrift.Protocol) error {
-  _, size, err := iprot.ReadListBegin()
-  if err != nil {
-    return thrift.PrependError("error reading list begin: ", err)
-  }
-  tSlice := make([][]byte, 0, size)
-  p.Values =  tSlice
-  for i := 0; i < size; i ++ {
-    var _elem45 []byte
-    if v, err := iprot.ReadBinary(); err != nil {
-      return thrift.PrependError("error reading field 0: ", err)
-    } else {
-      _elem45 = v
-    }
-    p.Values = append(p.Values, _elem45)
-  }
-  if err := iprot.ReadListEnd(); err != nil {
-    return thrift.PrependError("error reading list end: ", err)
-  }
-  return nil
-}
-
-func (p *ScanResp) Write(oprot thrift.Protocol) error {
-  if err := oprot.WriteStructBegin("ScanResp"); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
-  if err := p.writeField1(oprot); err != nil { return err }
-  if err := p.writeField2(oprot); err != nil { return err }
-  if err := p.writeField3(oprot); err != nil { return err }
-  if err := oprot.WriteFieldStop(); err != nil {
-    return thrift.PrependError("write field stop error: ", err) }
-  if err := oprot.WriteStructEnd(); err != nil {
-    return thrift.PrependError("write struct stop error: ", err) }
-  return nil
-}
-
-func (p *ScanResp) writeField1(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("code", thrift.I32, 1); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:code: ", p), err) }
-  if err := oprot.WriteI32(int32(p.Code)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.code (1) field write error: ", p), err) }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:code: ", p), err) }
-  return err
-}
-
-func (p *ScanResp) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("leader", thrift.STRUCT, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:leader: ", p), err) }
-  if err := p.Leader.Write(oprot); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Leader), err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:leader: ", p), err) }
-  return err
-}
-
-func (p *ScanResp) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("values", thrift.LIST, 3); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:values: ", p), err) }
-  if err := oprot.WriteListBegin(thrift.STRING, len(p.Values)); err != nil {
-    return thrift.PrependError("error writing list begin: ", err)
-  }
-  for _, v := range p.Values {
-    if err := oprot.WriteBinary(v); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T. (0) field write error: ", p), err) }
-  }
-  if err := oprot.WriteListEnd(); err != nil {
-    return thrift.PrependError("error writing list end: ", err)
-  }
-  if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:values: ", p), err) }
-  return err
-}
-
-func (p *ScanResp) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-
-  codeVal := fmt.Sprintf("%v", p.Code)
-  var leaderVal string
-  if p.Leader == nil {
-    leaderVal = "<nil>"
-  } else {
-    leaderVal = fmt.Sprintf("%v", p.Leader)
-  }
-  valuesVal := fmt.Sprintf("%v", p.Values)
-  return fmt.Sprintf("ScanResp({Code:%s Leader:%s Values:%s})", codeVal, leaderVal, valuesVal)
+  segmentIDVal := fmt.Sprintf("%v", p.SegmentID)
+  return fmt.Sprintf("GetSegmentIdResp({Code:%s Leader:%s SegmentID:%s})", codeVal, leaderVal, segmentIDVal)
 }
 
 // Attributes:
@@ -16424,14 +15398,14 @@ func (p *PartitionList)  ReadField1(iprot thrift.Protocol) error {
   tSlice := make([]nebula0.PartitionID, 0, size)
   p.PartList =  tSlice
   for i := 0; i < size; i ++ {
-    var _elem46 nebula0.PartitionID
+    var _elem42 nebula0.PartitionID
     if v, err := iprot.ReadI32(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
       temp := nebula0.PartitionID(v)
-      _elem46 = temp
+      _elem42 = temp
     }
-    p.PartList = append(p.PartList, _elem46)
+    p.PartList = append(p.PartList, _elem42)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -16763,30 +15737,30 @@ func (p *HBReq)  ReadField4(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.GraphSpaceID][]*LeaderInfo, size)
   p.LeaderPartIds =  tMap
   for i := 0; i < size; i ++ {
-    var _key47 nebula0.GraphSpaceID
+    var _key43 nebula0.GraphSpaceID
     if v, err := iprot.ReadI32(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
       temp := nebula0.GraphSpaceID(v)
-      _key47 = temp
+      _key43 = temp
     }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
     }
     tSlice := make([]*LeaderInfo, 0, size)
-    _val48 :=  tSlice
+    _val44 :=  tSlice
     for i := 0; i < size; i ++ {
-      _elem49 := NewLeaderInfo()
-      if err := _elem49.Read(iprot); err != nil {
-        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem49), err)
+      _elem45 := NewLeaderInfo()
+      if err := _elem45.Read(iprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem45), err)
       }
-      _val48 = append(_val48, _elem49)
+      _val44 = append(_val44, _elem45)
     }
     if err := iprot.ReadListEnd(); err != nil {
       return thrift.PrependError("error reading list end: ", err)
     }
-    p.LeaderPartIds[_key47] = _val48
+    p.LeaderPartIds[_key43] = _val44
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -16811,36 +15785,36 @@ func (p *HBReq)  ReadField6(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.GraphSpaceID]map[string]*PartitionList, size)
   p.DiskParts =  tMap
   for i := 0; i < size; i ++ {
-    var _key50 nebula0.GraphSpaceID
+    var _key46 nebula0.GraphSpaceID
     if v, err := iprot.ReadI32(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
       temp := nebula0.GraphSpaceID(v)
-      _key50 = temp
+      _key46 = temp
     }
     _, _, size, err := iprot.ReadMapBegin()
     if err != nil {
       return thrift.PrependError("error reading map begin: ", err)
     }
     tMap := make(map[string]*PartitionList, size)
-    _val51 :=  tMap
+    _val47 :=  tMap
     for i := 0; i < size; i ++ {
-      var _key52 string
+      var _key48 string
       if v, err := iprot.ReadString(); err != nil {
         return thrift.PrependError("error reading field 0: ", err)
       } else {
-        _key52 = v
+        _key48 = v
       }
-      _val53 := NewPartitionList()
-      if err := _val53.Read(iprot); err != nil {
-        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val53), err)
+      _val49 := NewPartitionList()
+      if err := _val49.Read(iprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val49), err)
       }
-      _val51[_key52] = _val53
+      _val47[_key48] = _val49
     }
     if err := iprot.ReadMapEnd(); err != nil {
       return thrift.PrependError("error reading map end: ", err)
     }
-    p.DiskParts[_key50] = _val51
+    p.DiskParts[_key46] = _val47
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -17627,11 +16601,11 @@ func (p *AgentHBResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*ServiceInfo, 0, size)
   p.ServiceList =  tSlice
   for i := 0; i < size; i ++ {
-    _elem54 := NewServiceInfo()
-    if err := _elem54.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem54), err)
+    _elem50 := NewServiceInfo()
+    if err := _elem50.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem50), err)
     }
-    p.ServiceList = append(p.ServiceList, _elem54)
+    p.ServiceList = append(p.ServiceList, _elem50)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -18126,11 +17100,11 @@ func (p *CreateTagIndexReq)  ReadField4(iprot thrift.Protocol) error {
   tSlice := make([]*IndexFieldDef, 0, size)
   p.Fields =  tSlice
   for i := 0; i < size; i ++ {
-    _elem55 := NewIndexFieldDef()
-    if err := _elem55.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem55), err)
+    _elem51 := NewIndexFieldDef()
+    if err := _elem51.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem51), err)
     }
-    p.Fields = append(p.Fields, _elem55)
+    p.Fields = append(p.Fields, _elem51)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -19119,11 +18093,11 @@ func (p *ListTagIndexesResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*IndexItem, 0, size)
   p.Items =  tSlice
   for i := 0; i < size; i ++ {
-    _elem56 := NewIndexItem()
-    if err := _elem56.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem56), err)
+    _elem52 := NewIndexItem()
+    if err := _elem52.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem52), err)
     }
-    p.Items = append(p.Items, _elem56)
+    p.Items = append(p.Items, _elem52)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -19446,11 +18420,11 @@ func (p *CreateEdgeIndexReq)  ReadField4(iprot thrift.Protocol) error {
   tSlice := make([]*IndexFieldDef, 0, size)
   p.Fields =  tSlice
   for i := 0; i < size; i ++ {
-    _elem57 := NewIndexFieldDef()
-    if err := _elem57.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem57), err)
+    _elem53 := NewIndexFieldDef()
+    if err := _elem53.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem53), err)
     }
-    p.Fields = append(p.Fields, _elem57)
+    p.Fields = append(p.Fields, _elem53)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -20439,11 +19413,11 @@ func (p *ListEdgeIndexesResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*IndexItem, 0, size)
   p.Items =  tSlice
   for i := 0; i < size; i ++ {
-    _elem58 := NewIndexItem()
-    if err := _elem58.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem58), err)
+    _elem54 := NewIndexItem()
+    if err := _elem54.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem54), err)
     }
-    p.Items = append(p.Items, _elem58)
+    p.Items = append(p.Items, _elem54)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -21639,19 +20613,19 @@ func (p *ListUsersResp)  ReadField3(iprot thrift.Protocol) error {
   tMap := make(map[string][]byte, size)
   p.Users =  tMap
   for i := 0; i < size; i ++ {
-    var _key59 string
+    var _key55 string
     if v, err := iprot.ReadString(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
-      _key59 = v
+      _key55 = v
     }
-    var _val60 []byte
+    var _val56 []byte
     if v, err := iprot.ReadBinary(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
-      _val60 = v
+      _val56 = v
     }
-    p.Users[_key59] = _val60
+    p.Users[_key55] = _val56
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -21990,11 +20964,11 @@ func (p *ListRolesResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*RoleItem, 0, size)
   p.Roles =  tSlice
   for i := 0; i < size; i ++ {
-    _elem61 := NewRoleItem()
-    if err := _elem61.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem61), err)
+    _elem57 := NewRoleItem()
+    if err := _elem57.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem57), err)
     }
-    p.Roles = append(p.Roles, _elem61)
+    p.Roles = append(p.Roles, _elem57)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -22988,11 +21962,11 @@ func (p *RegConfigReq)  ReadField1(iprot thrift.Protocol) error {
   tSlice := make([]*ConfigItem, 0, size)
   p.Items =  tSlice
   for i := 0; i < size; i ++ {
-    _elem62 := NewConfigItem()
-    if err := _elem62.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem62), err)
+    _elem58 := NewConfigItem()
+    if err := _elem58.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem58), err)
     }
-    p.Items = append(p.Items, _elem62)
+    p.Items = append(p.Items, _elem58)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -23313,11 +22287,11 @@ func (p *GetConfigResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*ConfigItem, 0, size)
   p.Items =  tSlice
   for i := 0; i < size; i ++ {
-    _elem63 := NewConfigItem()
-    if err := _elem63.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem63), err)
+    _elem59 := NewConfigItem()
+    if err := _elem59.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem59), err)
     }
-    p.Items = append(p.Items, _elem63)
+    p.Items = append(p.Items, _elem59)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -23822,11 +22796,11 @@ func (p *ListConfigsResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*ConfigItem, 0, size)
   p.Items =  tSlice
   for i := 0; i < size; i ++ {
-    _elem64 := NewConfigItem()
-    if err := _elem64.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem64), err)
+    _elem60 := NewConfigItem()
+    if err := _elem60.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem60), err)
     }
-    p.Items = append(p.Items, _elem64)
+    p.Items = append(p.Items, _elem60)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -24489,11 +23463,11 @@ func (p *ListSnapshotsResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*Snapshot, 0, size)
   p.Snapshots =  tSlice
   for i := 0; i < size; i ++ {
-    _elem65 := NewSnapshot()
-    if err := _elem65.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem65), err)
+    _elem61 := NewSnapshot()
+    if err := _elem61.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem61), err)
     }
-    p.Snapshots = append(p.Snapshots, _elem65)
+    p.Snapshots = append(p.Snapshots, _elem61)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -24984,11 +23958,11 @@ func (p *ListIndexStatusResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*IndexStatus, 0, size)
   p.Statuses =  tSlice
   for i := 0; i < size; i ++ {
-    _elem66 := NewIndexStatus()
-    if err := _elem66.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem66), err)
+    _elem62 := NewIndexStatus()
+    if err := _elem62.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem62), err)
     }
-    p.Statuses = append(p.Statuses, _elem66)
+    p.Statuses = append(p.Statuses, _elem62)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -25166,13 +24140,13 @@ func (p *MergeZoneReq)  ReadField1(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.Zones =  tSlice
   for i := 0; i < size; i ++ {
-    var _elem67 []byte
+    var _elem63 []byte
     if v, err := iprot.ReadBinary(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
-      _elem67 = v
+      _elem63 = v
     }
-    p.Zones = append(p.Zones, _elem67)
+    p.Zones = append(p.Zones, _elem63)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -25460,29 +24434,29 @@ func (p *DivideZoneReq)  ReadField2(iprot thrift.Protocol) error {
   tMap := make(map[string][]*nebula0.HostAddr, size)
   p.ZoneItems =  tMap
   for i := 0; i < size; i ++ {
-    var _key68 string
+    var _key64 string
     if v, err := iprot.ReadString(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
-      _key68 = v
+      _key64 = v
     }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
     }
     tSlice := make([]*nebula0.HostAddr, 0, size)
-    _val69 :=  tSlice
+    _val65 :=  tSlice
     for i := 0; i < size; i ++ {
-      _elem70 := nebula0.NewHostAddr()
-      if err := _elem70.Read(iprot); err != nil {
-        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem70), err)
+      _elem66 := nebula0.NewHostAddr()
+      if err := _elem66.Read(iprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem66), err)
       }
-      _val69 = append(_val69, _elem70)
+      _val65 = append(_val65, _elem66)
     }
     if err := iprot.ReadListEnd(); err != nil {
       return thrift.PrependError("error reading list end: ", err)
     }
-    p.ZoneItems[_key68] = _val69
+    p.ZoneItems[_key64] = _val65
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -25826,11 +24800,11 @@ func (p *AddHostsIntoZoneReq)  ReadField1(iprot thrift.Protocol) error {
   tSlice := make([]*nebula0.HostAddr, 0, size)
   p.Hosts =  tSlice
   for i := 0; i < size; i ++ {
-    _elem71 := nebula0.NewHostAddr()
-    if err := _elem71.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem71), err)
+    _elem67 := nebula0.NewHostAddr()
+    if err := _elem67.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem67), err)
     }
-    p.Hosts = append(p.Hosts, _elem71)
+    p.Hosts = append(p.Hosts, _elem67)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -26179,11 +25153,11 @@ func (p *GetZoneResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*nebula0.HostAddr, 0, size)
   p.Hosts =  tSlice
   for i := 0; i < size; i ++ {
-    _elem72 := nebula0.NewHostAddr()
-    if err := _elem72.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem72), err)
+    _elem68 := nebula0.NewHostAddr()
+    if err := _elem68.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem68), err)
     }
-    p.Hosts = append(p.Hosts, _elem72)
+    p.Hosts = append(p.Hosts, _elem68)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -26435,11 +25409,11 @@ func (p *Zone)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([]*nebula0.HostAddr, 0, size)
   p.Nodes =  tSlice
   for i := 0; i < size; i ++ {
-    _elem73 := nebula0.NewHostAddr()
-    if err := _elem73.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem73), err)
+    _elem69 := nebula0.NewHostAddr()
+    if err := _elem69.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem69), err)
     }
-    p.Nodes = append(p.Nodes, _elem73)
+    p.Nodes = append(p.Nodes, _elem69)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -26647,11 +25621,11 @@ func (p *ListZonesResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*Zone, 0, size)
   p.Zones =  tSlice
   for i := 0; i < size; i ++ {
-    _elem74 := NewZone()
-    if err := _elem74.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem74), err)
+    _elem70 := NewZone()
+    if err := _elem70.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem70), err)
     }
-    p.Zones = append(p.Zones, _elem74)
+    p.Zones = append(p.Zones, _elem70)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -26870,11 +25844,11 @@ func (p *AddListenerReq)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*nebula0.HostAddr, 0, size)
   p.Hosts =  tSlice
   for i := 0; i < size; i ++ {
-    _elem75 := nebula0.NewHostAddr()
-    if err := _elem75.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem75), err)
+    _elem71 := nebula0.NewHostAddr()
+    if err := _elem71.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem71), err)
     }
-    p.Hosts = append(p.Hosts, _elem75)
+    p.Hosts = append(p.Hosts, _elem71)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -27615,11 +26589,11 @@ func (p *ListListenerResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*ListenerInfo, 0, size)
   p.Listeners =  tSlice
   for i := 0; i < size; i ++ {
-    _elem76 := NewListenerInfo()
-    if err := _elem76.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem76), err)
+    _elem72 := NewListenerInfo()
+    if err := _elem72.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem72), err)
     }
-    p.Listeners = append(p.Listeners, _elem76)
+    p.Listeners = append(p.Listeners, _elem72)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -28149,11 +27123,11 @@ func (p *HostBackupInfo)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([]*nebula0.CheckpointInfo, 0, size)
   p.Checkpoints =  tSlice
   for i := 0; i < size; i ++ {
-    _elem77 := nebula0.NewCheckpointInfo()
-    if err := _elem77.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem77), err)
+    _elem73 := nebula0.NewCheckpointInfo()
+    if err := _elem73.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem73), err)
     }
-    p.Checkpoints = append(p.Checkpoints, _elem77)
+    p.Checkpoints = append(p.Checkpoints, _elem73)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -28336,11 +27310,11 @@ func (p *SpaceBackupInfo)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([]*HostBackupInfo, 0, size)
   p.HostBackups =  tSlice
   for i := 0; i < size; i ++ {
-    _elem78 := NewHostBackupInfo()
-    if err := _elem78.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem78), err)
+    _elem74 := NewHostBackupInfo()
+    if err := _elem74.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem74), err)
     }
-    p.HostBackups = append(p.HostBackups, _elem78)
+    p.HostBackups = append(p.HostBackups, _elem74)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -28590,18 +27564,18 @@ func (p *BackupMeta)  ReadField1(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.GraphSpaceID]*SpaceBackupInfo, size)
   p.SpaceBackups =  tMap
   for i := 0; i < size; i ++ {
-    var _key79 nebula0.GraphSpaceID
+    var _key75 nebula0.GraphSpaceID
     if v, err := iprot.ReadI32(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
       temp := nebula0.GraphSpaceID(v)
-      _key79 = temp
+      _key75 = temp
     }
-    _val80 := NewSpaceBackupInfo()
-    if err := _val80.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val80), err)
+    _val76 := NewSpaceBackupInfo()
+    if err := _val76.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val76), err)
     }
-    p.SpaceBackups[_key79] = _val80
+    p.SpaceBackups[_key75] = _val76
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -28617,13 +27591,13 @@ func (p *BackupMeta)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.MetaFiles =  tSlice
   for i := 0; i < size; i ++ {
-    var _elem81 []byte
+    var _elem77 []byte
     if v, err := iprot.ReadBinary(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
-      _elem81 = v
+      _elem77 = v
     }
-    p.MetaFiles = append(p.MetaFiles, _elem81)
+    p.MetaFiles = append(p.MetaFiles, _elem77)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -28861,13 +27835,13 @@ func (p *CreateBackupReq)  ReadField1(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.Spaces =  tSlice
   for i := 0; i < size; i ++ {
-    var _elem82 []byte
+    var _elem78 []byte
     if v, err := iprot.ReadBinary(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
-      _elem82 = v
+      _elem78 = v
     }
-    p.Spaces = append(p.Spaces, _elem82)
+    p.Spaces = append(p.Spaces, _elem78)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -29419,13 +28393,13 @@ func (p *RestoreMetaReq)  ReadField1(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.Files =  tSlice
   for i := 0; i < size; i ++ {
-    var _elem83 []byte
+    var _elem79 []byte
     if v, err := iprot.ReadBinary(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
-      _elem83 = v
+      _elem79 = v
     }
-    p.Files = append(p.Files, _elem83)
+    p.Files = append(p.Files, _elem79)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -29441,11 +28415,11 @@ func (p *RestoreMetaReq)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([]*HostPair, 0, size)
   p.Hosts =  tSlice
   for i := 0; i < size; i ++ {
-    _elem84 := NewHostPair()
-    if err := _elem84.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem84), err)
+    _elem80 := NewHostPair()
+    if err := _elem80.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem80), err)
     }
-    p.Hosts = append(p.Hosts, _elem84)
+    p.Hosts = append(p.Hosts, _elem80)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -29900,11 +28874,11 @@ func (p *SignInServiceReq)  ReadField2(iprot thrift.Protocol) error {
   tSlice := make([]*ServiceClient, 0, size)
   p.Clients =  tSlice
   for i := 0; i < size; i ++ {
-    _elem85 := NewServiceClient()
-    if err := _elem85.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem85), err)
+    _elem81 := NewServiceClient()
+    if err := _elem81.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem81), err)
     }
-    p.Clients = append(p.Clients, _elem85)
+    p.Clients = append(p.Clients, _elem81)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -30336,30 +29310,30 @@ func (p *ListServiceClientsResp)  ReadField3(iprot thrift.Protocol) error {
   tMap := make(map[ExternalServiceType][]*ServiceClient, size)
   p.Clients =  tMap
   for i := 0; i < size; i ++ {
-    var _key86 ExternalServiceType
+    var _key82 ExternalServiceType
     if v, err := iprot.ReadI32(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
       temp := ExternalServiceType(v)
-      _key86 = temp
+      _key82 = temp
     }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
     }
     tSlice := make([]*ServiceClient, 0, size)
-    _val87 :=  tSlice
+    _val83 :=  tSlice
     for i := 0; i < size; i ++ {
-      _elem88 := NewServiceClient()
-      if err := _elem88.Read(iprot); err != nil {
-        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem88), err)
+      _elem84 := NewServiceClient()
+      if err := _elem84.Read(iprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem84), err)
       }
-      _val87 = append(_val87, _elem88)
+      _val83 = append(_val83, _elem84)
     }
     if err := iprot.ReadListEnd(); err != nil {
       return thrift.PrependError("error reading list end: ", err)
     }
-    p.Clients[_key86] = _val87
+    p.Clients[_key82] = _val83
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -30593,13 +29567,13 @@ func (p *FTIndex)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([][]byte, 0, size)
   p.Fields =  tSlice
   for i := 0; i < size; i ++ {
-    var _elem89 []byte
+    var _elem85 []byte
     if v, err := iprot.ReadBinary(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
-      _elem89 = v
+      _elem85 = v
     }
-    p.Fields = append(p.Fields, _elem89)
+    p.Fields = append(p.Fields, _elem85)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -31210,17 +30184,17 @@ func (p *ListFTIndexesResp)  ReadField3(iprot thrift.Protocol) error {
   tMap := make(map[string]*FTIndex, size)
   p.Indexes =  tMap
   for i := 0; i < size; i ++ {
-    var _key90 string
+    var _key86 string
     if v, err := iprot.ReadString(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
-      _key90 = v
+      _key86 = v
     }
-    _val91 := NewFTIndex()
-    if err := _val91.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val91), err)
+    _val87 := NewFTIndex()
+    if err := _val87.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val87), err)
     }
-    p.Indexes[_key90] = _val91
+    p.Indexes[_key86] = _val87
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -31946,17 +30920,17 @@ func (p *Session)  ReadField9(iprot thrift.Protocol) error {
   tMap := make(map[string]*nebula0.Value, size)
   p.Configs =  tMap
   for i := 0; i < size; i ++ {
-    var _key92 string
+    var _key88 string
     if v, err := iprot.ReadString(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
-      _key92 = v
+      _key88 = v
     }
-    _val93 := nebula0.NewValue()
-    if err := _val93.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val93), err)
+    _val89 := nebula0.NewValue()
+    if err := _val89.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val89), err)
     }
-    p.Configs[_key92] = _val93
+    p.Configs[_key88] = _val89
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -31972,18 +30946,18 @@ func (p *Session)  ReadField10(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.ExecutionPlanID]*QueryDesc, size)
   p.Queries =  tMap
   for i := 0; i < size; i ++ {
-    var _key94 nebula0.ExecutionPlanID
+    var _key90 nebula0.ExecutionPlanID
     if v, err := iprot.ReadI64(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
       temp := nebula0.ExecutionPlanID(v)
-      _key94 = temp
+      _key90 = temp
     }
-    _val95 := NewQueryDesc()
-    if err := _val95.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val95), err)
+    _val91 := NewQueryDesc()
+    if err := _val91.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val91), err)
     }
-    p.Queries[_key94] = _val95
+    p.Queries[_key90] = _val91
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -32669,11 +31643,11 @@ func (p *UpdateSessionsReq)  ReadField1(iprot thrift.Protocol) error {
   tSlice := make([]*Session, 0, size)
   p.Sessions =  tSlice
   for i := 0; i < size; i ++ {
-    _elem96 := NewSession()
-    if err := _elem96.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem96), err)
+    _elem92 := NewSession()
+    if err := _elem92.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem92), err)
     }
-    p.Sessions = append(p.Sessions, _elem96)
+    p.Sessions = append(p.Sessions, _elem92)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -32869,37 +31843,37 @@ func (p *UpdateSessionsResp)  ReadField3(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.SessionID]map[nebula0.ExecutionPlanID]*QueryDesc, size)
   p.KilledQueries =  tMap
   for i := 0; i < size; i ++ {
-    var _key97 nebula0.SessionID
+    var _key93 nebula0.SessionID
     if v, err := iprot.ReadI64(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
       temp := nebula0.SessionID(v)
-      _key97 = temp
+      _key93 = temp
     }
     _, _, size, err := iprot.ReadMapBegin()
     if err != nil {
       return thrift.PrependError("error reading map begin: ", err)
     }
     tMap := make(map[nebula0.ExecutionPlanID]*QueryDesc, size)
-    _val98 :=  tMap
+    _val94 :=  tMap
     for i := 0; i < size; i ++ {
-      var _key99 nebula0.ExecutionPlanID
+      var _key95 nebula0.ExecutionPlanID
       if v, err := iprot.ReadI64(); err != nil {
         return thrift.PrependError("error reading field 0: ", err)
       } else {
         temp := nebula0.ExecutionPlanID(v)
-        _key99 = temp
+        _key95 = temp
       }
-      _val100 := NewQueryDesc()
-      if err := _val100.Read(iprot); err != nil {
-        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val100), err)
+      _val96 := NewQueryDesc()
+      if err := _val96.Read(iprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _val96), err)
       }
-      _val98[_key99] = _val100
+      _val94[_key95] = _val96
     }
     if err := iprot.ReadMapEnd(); err != nil {
       return thrift.PrependError("error reading map end: ", err)
     }
-    p.KilledQueries[_key97] = _val98
+    p.KilledQueries[_key93] = _val94
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -33202,11 +32176,11 @@ func (p *ListSessionsResp)  ReadField3(iprot thrift.Protocol) error {
   tSlice := make([]*Session, 0, size)
   p.Sessions =  tSlice
   for i := 0; i < size; i ++ {
-    _elem101 := NewSession()
-    if err := _elem101.Read(iprot); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem101), err)
+    _elem97 := NewSession()
+    if err := _elem97.Read(iprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem97), err)
     }
-    p.Sessions = append(p.Sessions, _elem101)
+    p.Sessions = append(p.Sessions, _elem97)
   }
   if err := iprot.ReadListEnd(); err != nil {
     return thrift.PrependError("error reading list end: ", err)
@@ -33810,33 +32784,33 @@ func (p *KillQueryReq)  ReadField1(iprot thrift.Protocol) error {
   tMap := make(map[nebula0.SessionID][]nebula0.ExecutionPlanID, size)
   p.KillQueries =  tMap
   for i := 0; i < size; i ++ {
-    var _key102 nebula0.SessionID
+    var _key98 nebula0.SessionID
     if v, err := iprot.ReadI64(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
       temp := nebula0.SessionID(v)
-      _key102 = temp
+      _key98 = temp
     }
     _, size, err := iprot.ReadSetBegin()
     if err != nil {
       return thrift.PrependError("error reading set begin: ", err)
     }
     tSet := make([]nebula0.ExecutionPlanID, 0, size)
-    _val103 :=  tSet
+    _val99 :=  tSet
     for i := 0; i < size; i ++ {
-      var _elem104 nebula0.ExecutionPlanID
+      var _elem100 nebula0.ExecutionPlanID
       if v, err := iprot.ReadI64(); err != nil {
         return thrift.PrependError("error reading field 0: ", err)
       } else {
         temp := nebula0.ExecutionPlanID(v)
-        _elem104 = temp
+        _elem100 = temp
       }
-      _val103 = append(_val103, _elem104)
+      _val99 = append(_val99, _elem100)
     }
     if err := iprot.ReadSetEnd(); err != nil {
       return thrift.PrependError("error reading set end: ", err)
     }
-    p.KillQueries[_key102] = _val103
+    p.KillQueries[_key98] = _val99
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -33901,14 +32875,16 @@ func (p *KillQueryReq) String() string {
 
 // Attributes:
 //  - Code
+//  - SpaceID
 //  - JobID
 //  - TaskID
 //  - Stats
 type ReportTaskReq struct {
   Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
-  JobID int32 `thrift:"job_id,2" db:"job_id" json:"job_id"`
-  TaskID int32 `thrift:"task_id,3" db:"task_id" json:"task_id"`
-  Stats *StatsItem `thrift:"stats,4,optional" db:"stats" json:"stats,omitempty"`
+  SpaceID nebula0.GraphSpaceID `thrift:"space_id,2" db:"space_id" json:"space_id"`
+  JobID int32 `thrift:"job_id,3" db:"job_id" json:"job_id"`
+  TaskID int32 `thrift:"task_id,4" db:"task_id" json:"task_id"`
+  Stats *StatsItem `thrift:"stats,5,optional" db:"stats" json:"stats,omitempty"`
 }
 
 func NewReportTaskReq() *ReportTaskReq {
@@ -33918,6 +32894,10 @@ func NewReportTaskReq() *ReportTaskReq {
 
 func (p *ReportTaskReq) GetCode() nebula0.ErrorCode {
   return p.Code
+}
+
+func (p *ReportTaskReq) GetSpaceID() nebula0.GraphSpaceID {
+  return p.SpaceID
 }
 
 func (p *ReportTaskReq) GetJobID() int32 {
@@ -33951,6 +32931,7 @@ func NewReportTaskReqBuilder() *ReportTaskReqBuilder{
 func (p ReportTaskReqBuilder) Emit() *ReportTaskReq{
   return &ReportTaskReq{
     Code: p.obj.Code,
+    SpaceID: p.obj.SpaceID,
     JobID: p.obj.JobID,
     TaskID: p.obj.TaskID,
     Stats: p.obj.Stats,
@@ -33959,6 +32940,11 @@ func (p ReportTaskReqBuilder) Emit() *ReportTaskReq{
 
 func (r *ReportTaskReqBuilder) Code(code nebula0.ErrorCode) *ReportTaskReqBuilder {
   r.obj.Code = code
+  return r
+}
+
+func (r *ReportTaskReqBuilder) SpaceID(spaceID nebula0.GraphSpaceID) *ReportTaskReqBuilder {
+  r.obj.SpaceID = spaceID
   return r
 }
 
@@ -33979,6 +32965,11 @@ func (r *ReportTaskReqBuilder) Stats(stats *StatsItem) *ReportTaskReqBuilder {
 
 func (r *ReportTaskReq) SetCode(code nebula0.ErrorCode) *ReportTaskReq {
   r.Code = code
+  return r
+}
+
+func (r *ReportTaskReq) SetSpaceID(spaceID nebula0.GraphSpaceID) *ReportTaskReq {
+  r.SpaceID = spaceID
   return r
 }
 
@@ -34026,6 +33017,10 @@ func (p *ReportTaskReq) Read(iprot thrift.Protocol) error {
       if err := p.ReadField4(iprot); err != nil {
         return err
       }
+    case 5:
+      if err := p.ReadField5(iprot); err != nil {
+        return err
+      }
     default:
       if err := iprot.Skip(fieldTypeId); err != nil {
         return err
@@ -34055,7 +33050,8 @@ func (p *ReportTaskReq)  ReadField2(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 2: ", err)
   } else {
-    p.JobID = v
+    temp := nebula0.GraphSpaceID(v)
+    p.SpaceID = temp
   }
   return nil
 }
@@ -34064,12 +33060,21 @@ func (p *ReportTaskReq)  ReadField3(iprot thrift.Protocol) error {
   if v, err := iprot.ReadI32(); err != nil {
     return thrift.PrependError("error reading field 3: ", err)
   } else {
-    p.TaskID = v
+    p.JobID = v
   }
   return nil
 }
 
 func (p *ReportTaskReq)  ReadField4(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+    return thrift.PrependError("error reading field 4: ", err)
+  } else {
+    p.TaskID = v
+  }
+  return nil
+}
+
+func (p *ReportTaskReq)  ReadField5(iprot thrift.Protocol) error {
   p.Stats = NewStatsItem()
   if err := p.Stats.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Stats), err)
@@ -34084,6 +33089,7 @@ func (p *ReportTaskReq) Write(oprot thrift.Protocol) error {
   if err := p.writeField2(oprot); err != nil { return err }
   if err := p.writeField3(oprot); err != nil { return err }
   if err := p.writeField4(oprot); err != nil { return err }
+  if err := p.writeField5(oprot); err != nil { return err }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
   if err := oprot.WriteStructEnd(); err != nil {
@@ -34102,34 +33108,44 @@ func (p *ReportTaskReq) writeField1(oprot thrift.Protocol) (err error) {
 }
 
 func (p *ReportTaskReq) writeField2(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("job_id", thrift.I32, 2); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:job_id: ", p), err) }
-  if err := oprot.WriteI32(int32(p.JobID)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.job_id (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("space_id", thrift.I32, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:space_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.SpaceID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.space_id (2) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:job_id: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:space_id: ", p), err) }
   return err
 }
 
 func (p *ReportTaskReq) writeField3(oprot thrift.Protocol) (err error) {
-  if err := oprot.WriteFieldBegin("task_id", thrift.I32, 3); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:task_id: ", p), err) }
-  if err := oprot.WriteI32(int32(p.TaskID)); err != nil {
-  return thrift.PrependError(fmt.Sprintf("%T.task_id (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldBegin("job_id", thrift.I32, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:job_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.JobID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.job_id (3) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
-    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:task_id: ", p), err) }
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:job_id: ", p), err) }
   return err
 }
 
 func (p *ReportTaskReq) writeField4(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("task_id", thrift.I32, 4); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:task_id: ", p), err) }
+  if err := oprot.WriteI32(int32(p.TaskID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.task_id (4) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:task_id: ", p), err) }
+  return err
+}
+
+func (p *ReportTaskReq) writeField5(oprot thrift.Protocol) (err error) {
   if p.IsSetStats() {
-    if err := oprot.WriteFieldBegin("stats", thrift.STRUCT, 4); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:stats: ", p), err) }
+    if err := oprot.WriteFieldBegin("stats", thrift.STRUCT, 5); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:stats: ", p), err) }
     if err := p.Stats.Write(oprot); err != nil {
       return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Stats), err)
     }
     if err := oprot.WriteFieldEnd(); err != nil {
-      return thrift.PrependError(fmt.Sprintf("%T write field end error 4:stats: ", p), err) }
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 5:stats: ", p), err) }
   }
   return err
 }
@@ -34140,6 +33156,7 @@ func (p *ReportTaskReq) String() string {
   }
 
   codeVal := fmt.Sprintf("%v", p.Code)
+  spaceIDVal := fmt.Sprintf("%v", p.SpaceID)
   jobIDVal := fmt.Sprintf("%v", p.JobID)
   taskIDVal := fmt.Sprintf("%v", p.TaskID)
   var statsVal string
@@ -34148,7 +33165,7 @@ func (p *ReportTaskReq) String() string {
   } else {
     statsVal = fmt.Sprintf("%v", p.Stats)
   }
-  return fmt.Sprintf("ReportTaskReq({Code:%s JobID:%s TaskID:%s Stats:%s})", codeVal, jobIDVal, taskIDVal, statsVal)
+  return fmt.Sprintf("ReportTaskReq({Code:%s SpaceID:%s JobID:%s TaskID:%s Stats:%s})", codeVal, spaceIDVal, jobIDVal, taskIDVal, statsVal)
 }
 
 // Attributes:
@@ -34300,29 +33317,29 @@ func (p *ListClusterInfoResp)  ReadField3(iprot thrift.Protocol) error {
   tMap := make(map[string][]*ServiceInfo, size)
   p.HostServices =  tMap
   for i := 0; i < size; i ++ {
-    var _key105 string
+    var _key101 string
     if v, err := iprot.ReadString(); err != nil {
       return thrift.PrependError("error reading field 0: ", err)
     } else {
-      _key105 = v
+      _key101 = v
     }
     _, size, err := iprot.ReadListBegin()
     if err != nil {
       return thrift.PrependError("error reading list begin: ", err)
     }
     tSlice := make([]*ServiceInfo, 0, size)
-    _val106 :=  tSlice
+    _val102 :=  tSlice
     for i := 0; i < size; i ++ {
-      _elem107 := NewServiceInfo()
-      if err := _elem107.Read(iprot); err != nil {
-        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem107), err)
+      _elem103 := NewServiceInfo()
+      if err := _elem103.Read(iprot); err != nil {
+        return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", _elem103), err)
       }
-      _val106 = append(_val106, _elem107)
+      _val102 = append(_val102, _elem103)
     }
     if err := iprot.ReadListEnd(); err != nil {
       return thrift.PrependError("error reading list end: ", err)
     }
-    p.HostServices[_key105] = _val106
+    p.HostServices[_key101] = _val102
   }
   if err := iprot.ReadMapEnd(); err != nil {
     return thrift.PrependError("error reading map end: ", err)
@@ -35137,5 +34154,437 @@ func (p *VerifyClientVersionReq) String() string {
   }
   buildVersionVal := fmt.Sprintf("%v", p.BuildVersion)
   return fmt.Sprintf("VerifyClientVersionReq({ClientVersion:%s Host:%s BuildVersion:%s})", clientVersionVal, hostVal, buildVersionVal)
+}
+
+// Attributes:
+//  - Code
+//  - Leader
+//  - ErrorMsg
+type SaveGraphVersionResp struct {
+  Code nebula0.ErrorCode `thrift:"code,1" db:"code" json:"code"`
+  Leader *nebula0.HostAddr `thrift:"leader,2" db:"leader" json:"leader"`
+  ErrorMsg []byte `thrift:"error_msg,3,optional" db:"error_msg" json:"error_msg,omitempty"`
+}
+
+func NewSaveGraphVersionResp() *SaveGraphVersionResp {
+  return &SaveGraphVersionResp{
+    Leader: nebula0.NewHostAddr(),
+  }
+}
+
+
+func (p *SaveGraphVersionResp) GetCode() nebula0.ErrorCode {
+  return p.Code
+}
+var SaveGraphVersionResp_Leader_DEFAULT *nebula0.HostAddr
+func (p *SaveGraphVersionResp) GetLeader() *nebula0.HostAddr {
+  if !p.IsSetLeader() {
+    return SaveGraphVersionResp_Leader_DEFAULT
+  }
+return p.Leader
+}
+var SaveGraphVersionResp_ErrorMsg_DEFAULT []byte
+
+func (p *SaveGraphVersionResp) GetErrorMsg() []byte {
+  return p.ErrorMsg
+}
+func (p *SaveGraphVersionResp) IsSetLeader() bool {
+  return p != nil && p.Leader != nil
+}
+
+func (p *SaveGraphVersionResp) IsSetErrorMsg() bool {
+  return p != nil && p.ErrorMsg != nil
+}
+
+type SaveGraphVersionRespBuilder struct {
+  obj *SaveGraphVersionResp
+}
+
+func NewSaveGraphVersionRespBuilder() *SaveGraphVersionRespBuilder{
+  return &SaveGraphVersionRespBuilder{
+    obj: NewSaveGraphVersionResp(),
+  }
+}
+
+func (p SaveGraphVersionRespBuilder) Emit() *SaveGraphVersionResp{
+  return &SaveGraphVersionResp{
+    Code: p.obj.Code,
+    Leader: p.obj.Leader,
+    ErrorMsg: p.obj.ErrorMsg,
+  }
+}
+
+func (s *SaveGraphVersionRespBuilder) Code(code nebula0.ErrorCode) *SaveGraphVersionRespBuilder {
+  s.obj.Code = code
+  return s
+}
+
+func (s *SaveGraphVersionRespBuilder) Leader(leader *nebula0.HostAddr) *SaveGraphVersionRespBuilder {
+  s.obj.Leader = leader
+  return s
+}
+
+func (s *SaveGraphVersionRespBuilder) ErrorMsg(errorMsg []byte) *SaveGraphVersionRespBuilder {
+  s.obj.ErrorMsg = errorMsg
+  return s
+}
+
+func (s *SaveGraphVersionResp) SetCode(code nebula0.ErrorCode) *SaveGraphVersionResp {
+  s.Code = code
+  return s
+}
+
+func (s *SaveGraphVersionResp) SetLeader(leader *nebula0.HostAddr) *SaveGraphVersionResp {
+  s.Leader = leader
+  return s
+}
+
+func (s *SaveGraphVersionResp) SetErrorMsg(errorMsg []byte) *SaveGraphVersionResp {
+  s.ErrorMsg = errorMsg
+  return s
+}
+
+func (p *SaveGraphVersionResp) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *SaveGraphVersionResp)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    temp := nebula0.ErrorCode(v)
+    p.Code = temp
+  }
+  return nil
+}
+
+func (p *SaveGraphVersionResp)  ReadField2(iprot thrift.Protocol) error {
+  p.Leader = nebula0.NewHostAddr()
+  if err := p.Leader.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Leader), err)
+  }
+  return nil
+}
+
+func (p *SaveGraphVersionResp)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.ErrorMsg = v
+  }
+  return nil
+}
+
+func (p *SaveGraphVersionResp) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("SaveGraphVersionResp"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *SaveGraphVersionResp) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("code", thrift.I32, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:code: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Code)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.code (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:code: ", p), err) }
+  return err
+}
+
+func (p *SaveGraphVersionResp) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("leader", thrift.STRUCT, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:leader: ", p), err) }
+  if err := p.Leader.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Leader), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:leader: ", p), err) }
+  return err
+}
+
+func (p *SaveGraphVersionResp) writeField3(oprot thrift.Protocol) (err error) {
+  if p.IsSetErrorMsg() {
+    if err := oprot.WriteFieldBegin("error_msg", thrift.STRING, 3); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:error_msg: ", p), err) }
+    if err := oprot.WriteBinary(p.ErrorMsg); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.error_msg (3) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 3:error_msg: ", p), err) }
+  }
+  return err
+}
+
+func (p *SaveGraphVersionResp) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  codeVal := fmt.Sprintf("%v", p.Code)
+  var leaderVal string
+  if p.Leader == nil {
+    leaderVal = "<nil>"
+  } else {
+    leaderVal = fmt.Sprintf("%v", p.Leader)
+  }
+  errorMsgVal := fmt.Sprintf("%v", p.ErrorMsg)
+  return fmt.Sprintf("SaveGraphVersionResp({Code:%s Leader:%s ErrorMsg:%s})", codeVal, leaderVal, errorMsgVal)
+}
+
+// Attributes:
+//  - ClientVersion
+//  - Host
+//  - BuildVersion
+type SaveGraphVersionReq struct {
+  ClientVersion []byte `thrift:"client_version,1,required" db:"client_version" json:"client_version"`
+  Host *nebula0.HostAddr `thrift:"host,2" db:"host" json:"host"`
+  BuildVersion []byte `thrift:"build_version,3" db:"build_version" json:"build_version"`
+}
+
+func NewSaveGraphVersionReq() *SaveGraphVersionReq {
+  return &SaveGraphVersionReq{
+    ClientVersion: []byte("3.0.0"),
+    Host: nebula0.NewHostAddr(),
+  }
+}
+
+
+func (p *SaveGraphVersionReq) GetClientVersion() []byte {
+  return p.ClientVersion
+}
+var SaveGraphVersionReq_Host_DEFAULT *nebula0.HostAddr
+func (p *SaveGraphVersionReq) GetHost() *nebula0.HostAddr {
+  if !p.IsSetHost() {
+    return SaveGraphVersionReq_Host_DEFAULT
+  }
+return p.Host
+}
+
+func (p *SaveGraphVersionReq) GetBuildVersion() []byte {
+  return p.BuildVersion
+}
+func (p *SaveGraphVersionReq) IsSetHost() bool {
+  return p != nil && p.Host != nil
+}
+
+type SaveGraphVersionReqBuilder struct {
+  obj *SaveGraphVersionReq
+}
+
+func NewSaveGraphVersionReqBuilder() *SaveGraphVersionReqBuilder{
+  return &SaveGraphVersionReqBuilder{
+    obj: NewSaveGraphVersionReq(),
+  }
+}
+
+func (p SaveGraphVersionReqBuilder) Emit() *SaveGraphVersionReq{
+  return &SaveGraphVersionReq{
+    ClientVersion: p.obj.ClientVersion,
+    Host: p.obj.Host,
+    BuildVersion: p.obj.BuildVersion,
+  }
+}
+
+func (s *SaveGraphVersionReqBuilder) ClientVersion(clientVersion []byte) *SaveGraphVersionReqBuilder {
+  s.obj.ClientVersion = clientVersion
+  return s
+}
+
+func (s *SaveGraphVersionReqBuilder) Host(host *nebula0.HostAddr) *SaveGraphVersionReqBuilder {
+  s.obj.Host = host
+  return s
+}
+
+func (s *SaveGraphVersionReqBuilder) BuildVersion(buildVersion []byte) *SaveGraphVersionReqBuilder {
+  s.obj.BuildVersion = buildVersion
+  return s
+}
+
+func (s *SaveGraphVersionReq) SetClientVersion(clientVersion []byte) *SaveGraphVersionReq {
+  s.ClientVersion = clientVersion
+  return s
+}
+
+func (s *SaveGraphVersionReq) SetHost(host *nebula0.HostAddr) *SaveGraphVersionReq {
+  s.Host = host
+  return s
+}
+
+func (s *SaveGraphVersionReq) SetBuildVersion(buildVersion []byte) *SaveGraphVersionReq {
+  s.BuildVersion = buildVersion
+  return s
+}
+
+func (p *SaveGraphVersionReq) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+  var issetClientVersion bool = false;
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+      issetClientVersion = true
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  if !issetClientVersion{
+    return thrift.NewProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field ClientVersion is not set"));
+  }
+  return nil
+}
+
+func (p *SaveGraphVersionReq)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.ClientVersion = v
+  }
+  return nil
+}
+
+func (p *SaveGraphVersionReq)  ReadField2(iprot thrift.Protocol) error {
+  p.Host = nebula0.NewHostAddr()
+  if err := p.Host.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Host), err)
+  }
+  return nil
+}
+
+func (p *SaveGraphVersionReq)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadBinary(); err != nil {
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    p.BuildVersion = v
+  }
+  return nil
+}
+
+func (p *SaveGraphVersionReq) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("SaveGraphVersionReq"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *SaveGraphVersionReq) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("client_version", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:client_version: ", p), err) }
+  if err := oprot.WriteBinary(p.ClientVersion); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.client_version (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:client_version: ", p), err) }
+  return err
+}
+
+func (p *SaveGraphVersionReq) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("host", thrift.STRUCT, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:host: ", p), err) }
+  if err := p.Host.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Host), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:host: ", p), err) }
+  return err
+}
+
+func (p *SaveGraphVersionReq) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("build_version", thrift.STRING, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:build_version: ", p), err) }
+  if err := oprot.WriteBinary(p.BuildVersion); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.build_version (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:build_version: ", p), err) }
+  return err
+}
+
+func (p *SaveGraphVersionReq) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  clientVersionVal := fmt.Sprintf("%v", p.ClientVersion)
+  var hostVal string
+  if p.Host == nil {
+    hostVal = "<nil>"
+  } else {
+    hostVal = fmt.Sprintf("%v", p.Host)
+  }
+  buildVersionVal := fmt.Sprintf("%v", p.BuildVersion)
+  return fmt.Sprintf("SaveGraphVersionReq({ClientVersion:%s Host:%s BuildVersion:%s})", clientVersionVal, hostVal, buildVersionVal)
 }
 
