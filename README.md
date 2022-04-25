@@ -4,7 +4,7 @@
 **IMPORTANT: Code of Nebula go client has been transferred from [nebula-clients](https://github.com/vesoft-inc/nebula-clients) to this repository(nebula-go), and new releases in the future will be published in this repository.
 Please update your go.mod and imports correspondingly.**
 
-Official Nebula Go client which communicates with the server using [fbthrift](https://github.com/facebook/fbthrift/). Currently the latest stable release is **[v3.0.0](https://github.com/vesoft-inc/nebula-go/tree/release-v3.0.0)**
+Official Nebula Go client which communicates with the server using [fbthrift](https://github.com/facebook/fbthrift/). Currently the latest stable release is **[v3.1.0](https://github.com/vesoft-inc/nebula-go/tree/release-v3.1)**
 
 The code in **master branch** will be updated to accommodate the nightly changes made in Nebula Graph.
 To Use the console with a stable release of Nebula Graph, please check the branches and use the corresponding version.
@@ -16,6 +16,7 @@ To Use the console with a stable release of Nebula Graph, please check the branc
 |   **[v2.5.1](https://github.com/vesoft-inc/nebula-go/tree/v2.5.1)**      |       2.5.0    |
 |   **[v2.6.0](https://github.com/vesoft-inc/nebula-go/tree/v2.6.0)**      |       2.6.0    |
 |   **[v3.0.0](https://github.com/vesoft-inc/nebula-go/tree/v3.0.0)**      |       3.0.0    |
+|   **[v3.1.x](https://github.com/vesoft-inc/nebula-go/tree/v3.1.0)**      |       3.1.x    |
 |   **[master](https://github.com/vesoft-inc/nebula-go/tree/master)**     |       3.x-nightly |
 
 
@@ -31,7 +32,7 @@ $ go get -u -v github.com/vesoft-inc/nebula-go/v3@master
 You can specify the version of Nebula-go by substituting `<tag>` in `$ go get -u -v github.com/vesoft-inc/nebula-go@<tag>`.
 For example: 
     
-    for v3: `$ go get -u -v github.com/vesoft-inc/nebula-go/v3@v3.0.0`
+    for v3: `$ go get -u -v github.com/vesoft-inc/nebula-go/v3@v3.1.0`
     for v2: `$ go get -u -v github.com/vesoft-inc/nebula-go/v2@v2.6.0`
 
 **Note**: You will get a message like this if you don't specify a tag:
