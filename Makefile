@@ -10,7 +10,7 @@ unit:
 	go test -v -race --covermode=atomic --coverprofile coverage.out
 test:
 	go mod tidy
-	go test -v -race --tags=integration
+	go test -v -race --tags=integration --covermode=atomic --coverprofile coverage.out
 
 fmt:
 	go fmt
