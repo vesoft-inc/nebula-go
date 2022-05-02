@@ -5,10 +5,12 @@ default: build
 build: fmt
 	go mod tidy
 	go build
-
+unit:
+	go mod tidy
+	go test -v -race --covermode=atomic --coverprofile coverage.out
 test:
 	go mod tidy
-	go test -v -race
+	go test -v -race --tags=integration
 
 fmt:
 	go fmt
@@ -22,10 +24,10 @@ down:
 	cd ./nebula-docker-compose && docker-compose down -v
 
 ssl-test:
-	ssl_test=true go test -v -run TestSslConnection;
+	ssl_test=true go test -v --tags=integration -run TestSslConnection;
 
 ssl-test-self-signed:
-	self_signed=true go test -v -run TestSslConnection;
+	self_signed=true go test -v --tags=integration -run TestSslConnection;
 
 run-examples:
 	go run basic_example/graph_client_basic_example.go && \
