@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-// PoolConfig is the configs of connection pool
+// PoolConfig is the configs of connection pool.
 type PoolConfig struct {
 	// Socket timeout and Socket connection timeout, unit: seconds
 	TimeOut time.Duration
@@ -31,7 +31,7 @@ type PoolConfig struct {
 	MinConnPoolSize int
 }
 
-// validateConf validates config
+// validateConf validates config.
 func (conf *PoolConfig) validateConf(log Logger) {
 	if conf.TimeOut < 0 {
 		conf.TimeOut = 0 * time.Millisecond
@@ -51,7 +51,7 @@ func (conf *PoolConfig) validateConf(log Logger) {
 	}
 }
 
-// GetDefaultConf returns the default config
+// GetDefaultConf returns the default config.
 func GetDefaultConf() PoolConfig {
 	return PoolConfig{
 		TimeOut:         0 * time.Millisecond,
@@ -61,7 +61,7 @@ func GetDefaultConf() PoolConfig {
 	}
 }
 
-// GetDefaultSSLConfig reads the files in the given path and returns a tls.Config object
+// GetDefaultSSLConfig reads the files in the given path and returns a tls.Config object.
 func GetDefaultSSLConfig(rootCAPath, certPath, privateKeyPath string) (*tls.Config, error) {
 	rootCA, err := openAndReadFile(rootCAPath)
 	if err != nil {

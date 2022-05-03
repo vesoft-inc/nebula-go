@@ -60,7 +60,7 @@ func (session *Session) executeWithReconnect(f func() (interface{}, error)) (int
 	return f()
 }
 
-// ExecuteWithParameter returns the result of the given query as a ResultSet
+// ExecuteWithParameter returns the result of the given query as a ResultSet.
 func (session *Session) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
@@ -94,7 +94,7 @@ func (session *Session) ExecuteWithParameter(stmt string, params map[string]inte
 	return resp.(*ResultSet), err
 }
 
-// Execute returns the result of the given query as a ResultSet
+// Execute returns the result of the given query as a ResultSet.
 func (session *Session) Execute(stmt string) (*ResultSet, error) {
 	return session.ExecuteWithParameter(stmt, map[string]interface{}{})
 }
@@ -156,7 +156,7 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 //       		"message": ""
 //         }
 //     ]
-// }
+// }.
 func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
 	return session.ExecuteJsonWithParameter(stmt, map[string]interface{}{})
 }
@@ -218,7 +218,7 @@ func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
 //       		"message": ""
 //         }
 //     ]
-// }
+// }.
 func (session *Session) ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
@@ -290,7 +290,7 @@ func IsError(resp *graph.ExecutionResponse) bool {
 	return resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED
 }
 
-// construct Slice to nebula.NList
+// construct Slice to nebula.NList.
 func slice2Nlist(list []interface{}) (*nebula.NList, error) {
 	sv := []*nebula.Value{}
 	var ret nebula.NList
@@ -305,7 +305,7 @@ func slice2Nlist(list []interface{}) (*nebula.NList, error) {
 	return &ret, nil
 }
 
-// construct map to nebula.NMap
+// construct map to nebula.NMap.
 func map2Nmap(m map[string]interface{}) (*nebula.NMap, error) {
 	var ret nebula.NMap
 	kvs := map[string]*nebula.Value{}
@@ -320,7 +320,7 @@ func map2Nmap(m map[string]interface{}) (*nebula.NMap, error) {
 	return &ret, nil
 }
 
-// construct go-type to nebula.Value
+// construct go-type to nebula.Value.
 func value2Nvalue(any interface{}) (value *nebula.Value, err error) {
 	value = nebula.NewValue()
 	if v, ok := any.(bool); ok {

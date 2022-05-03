@@ -38,7 +38,7 @@ func newConnection(severAddress HostAddress) *connection {
 }
 
 // open opens a transport for the connection
-// if sslConfig is not nil, an SSL transport will be created
+// if sslConfig is not nil, an SSL transport will be created.
 func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config) error {
 	ip := hostAddress.Host
 	port := hostAddress.Port
@@ -94,7 +94,7 @@ func (cn *connection) reopen() error {
 	return cn.open(cn.severAddress, cn.timeout, cn.sslConfig)
 }
 
-// Authenticate
+// Authenticate.
 func (cn *connection) authenticate(username, password string) (*graph.AuthResponse, error) {
 	resp, err := cn.graph.Authenticate([]byte(username), []byte(password))
 	if err != nil {
@@ -154,30 +154,30 @@ func (cn *connection) ExecuteJsonWithParameter(sessionID int64, stmt string, par
 	return jsonResp, err
 }
 
-// Check connection to host address
+// Check connection to host address.
 func (cn *connection) ping() bool {
 	_, err := cn.execute(0, "YIELD 1")
 	return err == nil
 }
 
-// Check connection to host address
+// Check connection to host address.
 func (cn *connection) pingWithParameter() bool {
 	_, err := cn.executeWithParameter(0, "YIELD 1", nil)
 	return err == nil
 }
 
-// Sign out and release seesin ID
+// Sign out and release seesin ID.
 func (cn *connection) signOut(sessionID int64) error {
 	// Release session ID to graphd
 	return cn.graph.Signout(sessionID)
 }
 
-// Update returnedAt for cleaner
+// Update returnedAt for cleaner.
 func (cn *connection) release() {
 	cn.returnedAt = time.Now()
 }
 
-// Close transport
+// Close transport.
 func (cn *connection) close() {
 	cn.graph.Close()
 }

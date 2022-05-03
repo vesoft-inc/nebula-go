@@ -369,7 +369,7 @@ func TestAsRelationship(t *testing.T) {
 }
 
 func TestAsPathWrapper(t *testing.T) {
-	//("Tim Duncan" :tag0{prop0: 0, prop1: 1})-[:serve@0]->("Spurs")<-[:serve@0]-("Tony Parker" :tag0{prop0: 0, prop1: 1})
+	// ("Tim Duncan" :tag0{prop0: 0, prop1: 1})-[:serve@0]->("Spurs")<-[:serve@0]-("Tony Parker" :tag0{prop0: 0, prop1: 1})
 	value := nebula.Value{PVal: getPath("Alice", 5)}
 	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsPath())

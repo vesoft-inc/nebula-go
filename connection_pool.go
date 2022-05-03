@@ -31,12 +31,12 @@ type ConnectionPool struct {
 	sslConfig             *tls.Config
 }
 
-// NewConnectionPool constructs a new connection pool using the given addresses and configs
+// NewConnectionPool constructs a new connection pool using the given addresses and configs.
 func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*ConnectionPool, error) {
 	return NewSslConnectionPool(addresses, conf, nil, log)
 }
 
-// NewConnectionPool constructs a new SSL connection pool using the given addresses and configs
+// NewConnectionPool constructs a new SSL connection pool using the given addresses and configs.
 func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *tls.Config, log Logger) (*ConnectionPool, error) {
 	// Process domain to IP
 	convAddress, err := DomainToIP(addresses)
@@ -68,7 +68,7 @@ func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *t
 	return newPool, nil
 }
 
-// initPool initializes the connection pool
+// initPool initializes the connection pool.
 func (pool *ConnectionPool) initPool() error {
 	if err := pool.checkAddresses(); err != nil {
 		return fmt.Errorf("failed to open connection, error: %s ", err.Error())
@@ -163,11 +163,11 @@ func (pool *ConnectionPool) getIdleConn() (*connection, error) {
 
 	// Create a new connection if there is no idle connection and total connection < pool max size
 	newConn, err := pool.createConnection()
-	// TODO: If no idle avaliable, wait for timeout and reconnect
+	// TODO: If no idle available, wait for timeout and reconnect
 	return newConn, err
 }
 
-// Release connection to pool
+// Release connection to pool.
 func (pool *ConnectionPool) release(conn *connection) {
 	pool.rwLock.Lock()
 	defer pool.rwLock.Unlock()
@@ -177,7 +177,7 @@ func (pool *ConnectionPool) release(conn *connection) {
 	pool.idleConnectionQueue.PushBack(conn)
 }
 
-// Ping checks avaliability of host
+// Ping checks avaliability of host.
 func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error {
 	newConn := newConnection(host)
 	// Open connection to host
@@ -188,7 +188,7 @@ func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error 
 	return nil
 }
 
-// Close closes all connection
+// Close closes all connection.
 func (pool *ConnectionPool) Close() {
 	pool.rwLock.Lock()
 	defer pool.rwLock.Unlock()
@@ -218,7 +218,7 @@ func (pool *ConnectionPool) getIdleConnCount() int {
 	return pool.idleConnectionQueue.Len()
 }
 
-// Get a valid host (round robin)
+// Get a valid host (round robin).
 func (pool *ConnectionPool) getHost() HostAddress {
 	if pool.hostIndex == len(pool.addresses) {
 		pool.hostIndex = 0
@@ -228,7 +228,7 @@ func (pool *ConnectionPool) getHost() HostAddress {
 	return host
 }
 
-// Select a new host to create a new connection
+// Select a new host to create a new connection.
 func (pool *ConnectionPool) newConnToHost() (*connection, error) {
 	// Get a valid host (round robin)
 	host := pool.getHost()
@@ -243,7 +243,7 @@ func (pool *ConnectionPool) newConnToHost() (*connection, error) {
 	return newConn, nil
 }
 
-// Remove a connection from list
+// Remove a connection from list.
 func removeFromList(l *list.List, conn *connection) {
 	for ele := l.Front(); ele != nil; ele = ele.Next() {
 		if ele.Value.(*connection) == conn {
@@ -252,10 +252,10 @@ func removeFromList(l *list.List, conn *connection) {
 	}
 }
 
-// Compare total connection number with pool max size and return a connection if capable
+// Compare total connection number with pool max size and return a connection if capable.
 func (pool *ConnectionPool) createConnection() (*connection, error) {
 	totalConn := pool.idleConnectionQueue.Len() + pool.activeConnectionQueue.Len()
-	// If no idle avaliable and the number of total connection reaches the max pool size, return error/wait for timeout
+	// If no idle available and the number of total connection reaches the max pool size, return error/wait for timeout
 	if totalConn >= pool.conf.MaxConnPoolSize {
 		return nil, fmt.Errorf("failed to get connection: No valid connection" +
 			" in the idle queue and connection number has reached the pool capacity")

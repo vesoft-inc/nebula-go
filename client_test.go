@@ -46,7 +46,7 @@ var poolAddress = []HostAddress{
 
 var nebulaLog = DefaultLogger{}
 
-// Create default configs
+// Create default configs.
 var testPoolConfig = GetDefaultConf()
 
 // Before run `go test -v`, you should start a nebula server listening on 3699 port.
@@ -901,7 +901,6 @@ func TestExecuteJson(t *testing.T) {
 		// Get space name
 		respSpace := jsonObj["results"].([]interface{})[0].(map[string]interface{})["spaceName"]
 		assert.Equal(t, "test_data", respSpace)
-
 	}
 
 	// Complex result
@@ -1171,7 +1170,7 @@ func TestIpLookup(t *testing.T) {
 	}
 }
 
-// Method used to check execution response
+// Method used to check execution response.
 func checkResultSet(t *testing.T, prefix string, err *ResultSet) {
 	if !err.IsSucceed() {
 		t.Errorf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, err.GetErrorCode(), err.GetErrorMsg())
@@ -1222,7 +1221,7 @@ func tryToExecuteWithParameter(session *Session, query string, params map[string
 	return
 }
 
-// creates schema
+// creates schema.
 func createTestDataSchema(t *testing.T, session *Session) {
 	createSchema := "CREATE SPACE IF NOT EXISTS test_data(vid_type = FIXED_STRING(30));" +
 		"USE test_data; " +
@@ -1245,7 +1244,7 @@ func createTestDataSchema(t *testing.T, session *Session) {
 	time.Sleep(3 * time.Second)
 }
 
-// inserts data that used in tests
+// inserts data that used in tests.
 func loadTestData(t *testing.T, session *Session) {
 	query := "INSERT VERTEX person(name, age, grade, friends, book_num," +
 		"birthday, start_school, morning, property," +

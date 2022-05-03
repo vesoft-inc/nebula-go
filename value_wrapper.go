@@ -90,7 +90,7 @@ func (valWrap ValueWrapper) IsDuration() bool {
 	return valWrap.value.IsSetDuVal()
 }
 
-// AsNull converts the ValueWrapper to nebula.NullType
+// AsNull converts the ValueWrapper to nebula.NullType.
 func (valWrap ValueWrapper) AsNull() (nebula.NullType, error) {
 	if valWrap.value.IsSetNVal() {
 		return valWrap.value.GetNVal(), nil
@@ -98,7 +98,7 @@ func (valWrap ValueWrapper) AsNull() (nebula.NullType, error) {
 	return -1, fmt.Errorf("failed to convert value %s to Null", valWrap.GetType())
 }
 
-// AsBool converts the ValueWrapper to a boolean value
+// AsBool converts the ValueWrapper to a boolean value.
 func (valWrap ValueWrapper) AsBool() (bool, error) {
 	if valWrap.value.IsSetBVal() {
 		return valWrap.value.GetBVal(), nil
@@ -106,7 +106,7 @@ func (valWrap ValueWrapper) AsBool() (bool, error) {
 	return false, fmt.Errorf("failed to convert value %s to bool", valWrap.GetType())
 }
 
-// AsInt converts the ValueWrapper to an int64
+// AsInt converts the ValueWrapper to an int64.
 func (valWrap ValueWrapper) AsInt() (int64, error) {
 	if valWrap.value.IsSetIVal() {
 		return valWrap.value.GetIVal(), nil
@@ -114,7 +114,7 @@ func (valWrap ValueWrapper) AsInt() (int64, error) {
 	return -1, fmt.Errorf("failed to convert value %s to int", valWrap.GetType())
 }
 
-// AsFloat converts the ValueWrapper to a float64
+// AsFloat converts the ValueWrapper to a float64.
 func (valWrap ValueWrapper) AsFloat() (float64, error) {
 	if valWrap.value.IsSetFVal() {
 		return valWrap.value.GetFVal(), nil
@@ -122,7 +122,7 @@ func (valWrap ValueWrapper) AsFloat() (float64, error) {
 	return -1, fmt.Errorf("failed to convert value %s to float", valWrap.GetType())
 }
 
-// AsString converts the ValueWrapper to a String
+// AsString converts the ValueWrapper to a String.
 func (valWrap ValueWrapper) AsString() (string, error) {
 	if valWrap.value.IsSetSVal() {
 		return string(valWrap.value.GetSVal()), nil
@@ -130,7 +130,7 @@ func (valWrap ValueWrapper) AsString() (string, error) {
 	return "", fmt.Errorf("failed to convert value %s to string", valWrap.GetType())
 }
 
-// AsTime converts the ValueWrapper to a TimeWrapper
+// AsTime converts the ValueWrapper to a TimeWrapper.
 func (valWrap ValueWrapper) AsTime() (*TimeWrapper, error) {
 	if valWrap.value.IsSetTVal() {
 		rawTime := valWrap.value.GetTVal()
@@ -143,7 +143,7 @@ func (valWrap ValueWrapper) AsTime() (*TimeWrapper, error) {
 	return nil, fmt.Errorf("failed to convert value %s to Time", valWrap.GetType())
 }
 
-// AsDate converts the ValueWrapper to a nebula.Date
+// AsDate converts the ValueWrapper to a nebula.Date.
 func (valWrap ValueWrapper) AsDate() (*nebula.Date, error) {
 	if valWrap.value.IsSetDVal() {
 		return valWrap.value.GetDVal(), nil
@@ -151,7 +151,7 @@ func (valWrap ValueWrapper) AsDate() (*nebula.Date, error) {
 	return nil, fmt.Errorf("failed to convert value %s to Date", valWrap.GetType())
 }
 
-// AsDateTime converts the ValueWrapper to a DateTimeWrapper
+// AsDateTime converts the ValueWrapper to a DateTimeWrapper.
 func (valWrap ValueWrapper) AsDateTime() (*DateTimeWrapper, error) {
 	if valWrap.value.IsSetDtVal() {
 		rawTimeDate := valWrap.value.GetDtVal()
@@ -164,7 +164,7 @@ func (valWrap ValueWrapper) AsDateTime() (*DateTimeWrapper, error) {
 	return nil, fmt.Errorf("failed to convert value %s to DateTime", valWrap.GetType())
 }
 
-// AsList converts the ValueWrapper to a slice of ValueWrapper
+// AsList converts the ValueWrapper to a slice of ValueWrapper.
 func (valWrap ValueWrapper) AsList() ([]ValueWrapper, error) {
 	if valWrap.value.IsSetLVal() {
 		var varList []ValueWrapper
@@ -177,7 +177,7 @@ func (valWrap ValueWrapper) AsList() ([]ValueWrapper, error) {
 	return nil, fmt.Errorf("failed to convert value %s to List", valWrap.GetType())
 }
 
-// AsDedupList converts the ValueWrapper to a slice of ValueWrapper that has unique elements
+// AsDedupList converts the ValueWrapper to a slice of ValueWrapper that has unique elements.
 func (valWrap ValueWrapper) AsDedupList() ([]ValueWrapper, error) {
 	if valWrap.value.IsSetUVal() {
 		var varList []ValueWrapper
@@ -190,7 +190,7 @@ func (valWrap ValueWrapper) AsDedupList() ([]ValueWrapper, error) {
 	return nil, fmt.Errorf("failed to convert value %s to set(deduped list)", valWrap.GetType())
 }
 
-// AsMap converts the ValueWrapper to a map of string and ValueWrapper
+// AsMap converts the ValueWrapper to a map of string and ValueWrapper.
 func (valWrap ValueWrapper) AsMap() (map[string]ValueWrapper, error) {
 	if valWrap.value.IsSetMVal() {
 		newMap := make(map[string]ValueWrapper)
@@ -204,7 +204,7 @@ func (valWrap ValueWrapper) AsMap() (map[string]ValueWrapper, error) {
 	return nil, fmt.Errorf("failed to convert value %s to Map", valWrap.GetType())
 }
 
-// AsNode converts the ValueWrapper to a Node
+// AsNode converts the ValueWrapper to a Node.
 func (valWrap ValueWrapper) AsNode() (*Node, error) {
 	if !valWrap.value.IsSetVVal() {
 		return nil, fmt.Errorf("failed to convert value %s to Node, value is not an vertex", valWrap.GetType())
@@ -217,7 +217,7 @@ func (valWrap ValueWrapper) AsNode() (*Node, error) {
 	return node, nil
 }
 
-// AsRelationship converts the ValueWrapper to a Relationship
+// AsRelationship converts the ValueWrapper to a Relationship.
 func (valWrap ValueWrapper) AsRelationship() (*Relationship, error) {
 	if !valWrap.value.IsSetEVal() {
 		return nil, fmt.Errorf("failed to convert value %s to Relationship, value is not an edge", valWrap.GetType())
@@ -230,7 +230,7 @@ func (valWrap ValueWrapper) AsRelationship() (*Relationship, error) {
 	return relationship, nil
 }
 
-// AsPath converts the ValueWrapper to a PathWrapper
+// AsPath converts the ValueWrapper to a PathWrapper.
 func (valWrap ValueWrapper) AsPath() (*PathWrapper, error) {
 	if !valWrap.value.IsSetPVal() {
 		return nil, fmt.Errorf("failed to convert value %s to PathWrapper, value is not an edge", valWrap.GetType())
@@ -242,7 +242,7 @@ func (valWrap ValueWrapper) AsPath() (*PathWrapper, error) {
 	return path, nil
 }
 
-// AsPath converts the ValueWrapper to a nebula.Geography
+// AsPath converts the ValueWrapper to a nebula.Geography.
 func (valWrap ValueWrapper) AsGeography() (*nebula.Geography, error) {
 	if valWrap.value.IsSetGgVal() {
 		return valWrap.value.GetGgVal(), nil
@@ -250,7 +250,7 @@ func (valWrap ValueWrapper) AsGeography() (*nebula.Geography, error) {
 	return nil, fmt.Errorf("failed to convert value %s to nebula.Geography, value is not an geography", valWrap.GetType())
 }
 
-// AsDuration converts the ValueWrapper to a DurationWrapper
+// AsDuration converts the ValueWrapper to a DurationWrapper.
 func (valWrap ValueWrapper) AsDuration() (*nebula.Duration, error) {
 	if valWrap.value.IsSetDuVal() {
 		rawDuration := valWrap.value.GetDuVal()
@@ -259,7 +259,7 @@ func (valWrap ValueWrapper) AsDuration() (*nebula.Duration, error) {
 	return nil, fmt.Errorf("failed to convert value %s to Duration", valWrap.GetType())
 }
 
-// GetType returns the value type of value in the valWrap as a string
+// GetType returns the value type of value in the valWrap as a string.
 func (valWrap ValueWrapper) GetType() string {
 	if valWrap.value.IsSetNVal() {
 		return "null"

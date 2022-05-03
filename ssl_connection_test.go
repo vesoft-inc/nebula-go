@@ -78,7 +78,7 @@ func TestSslConnection(t *testing.T) {
 	checkResultSet(t, "drop space", resp)
 }
 
-// TODO: generate certificate with hostName info and disable InsecureSkipVerify
+// TODO: generate certificate with hostName info and disable InsecureSkipVerify.
 func TestSslConnectionSelfSigned(t *testing.T) {
 	// skip test when ssl_test is not set to true
 	skipSslSelfSigned(t)
