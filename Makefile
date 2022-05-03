@@ -36,10 +36,11 @@ run-examples:
 
 .PHONY: lint gofumpt goimports gomod_tidy govet golint golangci-lint golangci-lint-fix
 
-GOLANGCI_LINT_CMD = docker run --rm -v $(PWD):/app -w /app golangci/golangci-lint:latest golangci-lint
+DOCKER_GOLANGCI_LINT_CMD = docker run --rm -v $(PWD):/app -w /app golangci/golangci-lint:latest golangci-lint
+GOLANGCI_LINT_CMD = golangci-lint
 GOLANGCI_LINT_FLAGS = -v --max-same-issues 0 --max-issues-per-linter 0 --deadline=300s
 
-lint: gofumpt goimports gomod_tidy govet golint golangci-lint-fix
+lint: fmt gofumpt goimports gomod_tidy govet golint golangci-lint-fix
 	$(info running all linters)
 
 gofumpt:
@@ -63,11 +64,21 @@ golint:
 	golint -set_exit_status
 
 golangci-lint:
-	$(info running golangci-lint)
+	$(info running local golangci-lint, to install check https://golangci-lint.run/usage/install/)
 	$(GOLANGCI_LINT_CMD) run $(GOLANGCI_LINT_FLAGS)
 
 golangci-lint-fix:
-	$(info running golangci-lint with --fix option)
+	$(info running golangci-lint with --fix option, to install check https://golangci-lint.run/usage/install/)
 	$(GOLANGCI_LINT_CMD) run $(GOLANGCI_LINT_FLAGS) --fix
+
+.PHONY: docker-golangci-lint docker-golangci-lint-fix
+
+docker-golangci-lint:
+	$(info running golangci-lint via docker)
+	$(DOCKER_GOLANGCI_LINT_CMD) run $(GOLANGCI_LINT_FLAGS)
+
+docker-golangci-lint-fix:
+	$(info running golangci-lint with --fix option via docker)
+	$(DOCKER_GOLANGCI_LINT_CMD) run $(GOLANGCI_LINT_FLAGS) --fix
 
 
