@@ -34,7 +34,7 @@ run-examples:
 	go run examples/gorountines_example/graph_client_goroutines_example.go && \
 	go run examples/json_example/parse_json_example.go
 
-.PHONY: lint gofumpt goimports gomod_tidy govet golint golangci-lint golangci-lint-fix
+.PHONY: lint gofumpt goimports gomod_tidy govet staticcheck golangci-lint golangci-lint-fix
 
 DOCKER_GOLANGCI_LINT_CMD = docker run --rm -v $(PWD):/app -w /app golangci/golangci-lint:latest golangci-lint
 GOLANGCI_LINT_CMD = golangci-lint
@@ -59,9 +59,9 @@ govet:
 	$(info Vet examines Go source code and reports suspicious constructs. See https://pkg.go.dev/cmd/vet)
 	go vet -all
 
-golint:
-	$(info install via go get -u / go install + golang.org/x/lint/golint@latest)
-	golint -set_exit_status
+staticcheck:
+	$(info install via go get -u / go install + honnef.co/go/tools/cmd/staticcheck@latest)
+	staticcheck
 
 golangci-lint:
 	$(info running local golangci-lint, to install check https://golangci-lint.run/usage/install/)
