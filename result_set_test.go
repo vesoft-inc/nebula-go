@@ -85,7 +85,7 @@ func TestAsString(t *testing.T) {
 }
 
 func TestAsList(t *testing.T) {
-	var valList = []*nebula.Value{
+	valList := []*nebula.Value{
 		{SVal: []byte("elem1")},
 		{SVal: []byte("elem2")},
 		{SVal: []byte("elem3")},
@@ -108,7 +108,7 @@ func TestAsList(t *testing.T) {
 }
 
 func TestAsDedupList(t *testing.T) {
-	var valList = []*nebula.Value{
+	valList := []*nebula.Value{
 		{SVal: []byte("elem1")},
 		{SVal: []byte("elem2")},
 		{SVal: []byte("elem3")},
@@ -188,7 +188,7 @@ func TestAsTime(t *testing.T) {
 		t.Error(err.Error())
 	}
 	expected = nebula.Time{
-		05, 12, 25, 29,
+		0o5, 12, 25, 29,
 	}
 	assert.Equal(t, expected, *localTime)
 
@@ -215,7 +215,7 @@ func TestAsTime(t *testing.T) {
 		t.Error(err.Error())
 	}
 	expected = nebula.Time{
-		01, 12, 25, 29,
+		0o1, 12, 25, 29,
 	}
 	assert.Equal(t, expected, *localTime)
 }
@@ -238,7 +238,7 @@ func TestAsDateTime(t *testing.T) {
 	}
 	expected := nebula.DateTime{
 		2020, 12, 26,
-		06, 12, 25, 29,
+		0o6, 12, 25, 29,
 	}
 	assert.Equal(t, expected, *localTime)
 
@@ -299,7 +299,7 @@ func TestAsNode(t *testing.T) {
 
 	// Vertex contains datetime
 	var tags []*nebula.Tag
-	var vidVal = nebula.NewValue()
+	vidVal := nebula.NewValue()
 	vidVal.SVal = []byte("Bob")
 	props := make(map[string]*nebula.Value)
 	props["datetimeProp"] = &nebula.Value{DtVal: &nebula.DateTime{2020, 12, 25, 22, 12, 25, 29}}
@@ -343,8 +343,8 @@ func TestAsRelationship(t *testing.T) {
 	assert.Equal(t, *relationship, *res)
 
 	// edge contains datetime
-	var srcVidVal = nebula.NewValue()
-	var dstVidVal = nebula.NewValue()
+	srcVidVal := nebula.NewValue()
+	dstVidVal := nebula.NewValue()
 	srcVidVal.SVal = []byte("Alice")
 	dstVidVal.SVal = []byte("Bob")
 	props := make(map[string]*nebula.Value)
@@ -425,6 +425,7 @@ func TestAsDuration(t *testing.T) {
 	assert.Equal(t, true, valWrap.IsDuration())
 	assert.Equal(t, "P12MT86400.003000000S", valWrap.String())
 }
+
 func TestNode(t *testing.T) {
 	vertex := getVertex("Tom", 3, 5)
 	node, err := genNode(vertex, testTimezone)
@@ -549,7 +550,8 @@ func TestResultSet(t *testing.T) {
 		nil,
 		nil,
 		nil,
-		nil}
+		nil,
+	}
 	resultSetWithNil, err := genResultSet(respWithNil, testTimezone)
 	if err != nil {
 		t.Error(err)
@@ -571,7 +573,8 @@ func TestResultSet(t *testing.T) {
 				[]*graph.Pair{},
 				[]*graph.ProfilingStats{},
 				nil,
-				[]int64{2}},
+				[]int64{2},
+			},
 			{
 				[]byte("Start"),
 				2,
@@ -579,7 +582,8 @@ func TestResultSet(t *testing.T) {
 				[]*graph.Pair{},
 				[]*graph.ProfilingStats{},
 				nil,
-				[]int64{}},
+				[]int64{},
+			},
 		},
 		map[int64]int64{0: 0, 2: 1},
 		[]byte("dot"),
@@ -593,7 +597,8 @@ func TestResultSet(t *testing.T) {
 		[]byte("test_space"),
 		[]byte("test_err_msg"),
 		&planDesc,
-		[]byte("test_comment")}
+		[]byte("test_comment"),
+	}
 
 	resultSet, err := genResultSet(resp, testTimezone)
 	if err != nil {
@@ -672,7 +677,8 @@ func TestAsStringTable(t *testing.T) {
 		[]byte("test_space"),
 		[]byte("test"),
 		graph.NewPlanDescription(),
-		[]byte("test_comment")}
+		[]byte("test_comment"),
+	}
 	resultSet, err := genResultSet(resp, testTimezone)
 	if err != nil {
 		t.Error(err)
@@ -737,9 +743,9 @@ func TestIntVid(t *testing.T) {
 	assert.Equal(t, true, node.GetID().IsInt())
 }
 
-func getVertex(vid string, tagNum int, propNum int) *nebula.Vertex {
+func getVertex(vid string, tagNum, propNum int) *nebula.Vertex {
 	var tags []*nebula.Tag
-	var vidVal = nebula.NewValue()
+	vidVal := nebula.NewValue()
 	vidVal.SVal = []byte(vid)
 
 	for i := 0; i < tagNum; i++ {
@@ -761,9 +767,9 @@ func getVertex(vid string, tagNum int, propNum int) *nebula.Vertex {
 	}
 }
 
-func getVertexInt(vid int, tagNum int, propNum int) *nebula.Vertex {
+func getVertexInt(vid, tagNum, propNum int) *nebula.Vertex {
 	var tags []*nebula.Tag
-	var vidVal = nebula.NewValue()
+	vidVal := nebula.NewValue()
 	newNum := new(int64)
 	*newNum = int64(vid)
 	vidVal.IVal = newNum
@@ -787,9 +793,9 @@ func getVertexInt(vid int, tagNum int, propNum int) *nebula.Vertex {
 	}
 }
 
-func getEdge(srcID string, dstID string, propNum int) *nebula.Edge {
-	var srcVidVal = nebula.NewValue()
-	var dstVidVal = nebula.NewValue()
+func getEdge(srcID, dstID string, propNum int) *nebula.Edge {
+	srcVidVal := nebula.NewValue()
+	dstVidVal := nebula.NewValue()
 	srcVidVal.SVal = []byte(srcID)
 	dstVidVal.SVal = []byte(dstID)
 
@@ -846,17 +852,17 @@ func getDateset() *nebula.DataSet {
 		[]byte("col3_edge"),
 		[]byte("col4_path"),
 	}
-	var v1 = nebula.NewValue()
+	v1 := nebula.NewValue()
 	newNum := new(int64)
 	*newNum = int64(1)
 	v1.IVal = newNum
-	var v2 = nebula.NewValue()
+	v2 := nebula.NewValue()
 	v2.SVal = []byte("value1")
-	var v3 = nebula.NewValue()
+	v3 := nebula.NewValue()
 	v3.VVal = getVertex("Tom", 3, 5)
-	var v4 = nebula.NewValue()
+	v4 := nebula.NewValue()
 	v4.EVal = getEdge("Tom", "Lily", 5)
-	var v5 = nebula.NewValue()
+	v5 := nebula.NewValue()
 	v5.PVal = getPath("Tom", 3)
 
 	valueList := []*nebula.Value{v1, v2, v3, v4, v5}
@@ -872,7 +878,7 @@ func getDateset() *nebula.DataSet {
 }
 
 func setIVal(ival int) *nebula.Value {
-	var value = nebula.NewValue()
+	value := nebula.NewValue()
 	newNum := new(int64)
 	*newNum = int64(ival)
 	value.IVal = newNum

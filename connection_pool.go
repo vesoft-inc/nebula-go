@@ -26,7 +26,7 @@ type ConnectionPool struct {
 	hostIndex             int
 	log                   Logger
 	rwLock                sync.RWMutex
-	cleanerChan           chan struct{} //notify when pool is close
+	cleanerChan           chan struct{} // notify when pool is close
 	closed                bool
 	sslConfig             *tls.Config
 }
@@ -312,7 +312,6 @@ func (pool *ConnectionPool) connectionCleaner() {
 }
 
 func (pool *ConnectionPool) timeoutConnectionList() (closing []*connection) {
-
 	if pool.conf.IdleTime > 0 {
 		expiredSince := time.Now().Add(-pool.conf.IdleTime)
 		var newEle *list.Element = nil
@@ -339,7 +338,7 @@ func (pool *ConnectionPool) timeoutConnectionList() (closing []*connection) {
 }
 
 func (pool *ConnectionPool) checkAddresses() error {
-	var timeout = 3 * time.Second
+	timeout := 3 * time.Second
 	if pool.conf.TimeOut != 0 && pool.conf.TimeOut < timeout {
 		timeout = pool.conf.TimeOut
 	}

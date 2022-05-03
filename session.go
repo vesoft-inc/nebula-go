@@ -58,7 +58,6 @@ func (session *Session) executeWithReconnect(f func() (interface{}, error)) (int
 	}
 	// Execute with the new connetion
 	return f()
-
 }
 
 // ExecuteWithParameter returns the result of the given query as a ResultSet
@@ -93,7 +92,6 @@ func (session *Session) ExecuteWithParameter(stmt string, params map[string]inte
 		return nil, err
 	}
 	return resp.(*ResultSet), err
-
 }
 
 // Execute returns the result of the given query as a ResultSet
