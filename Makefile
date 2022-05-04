@@ -40,7 +40,7 @@ DOCKER_GOLANGCI_LINT_CMD = docker run --rm -v $(PWD):/app -w /app golangci/golan
 GOLANGCI_LINT_CMD = golangci-lint
 GOLANGCI_LINT_FLAGS = -v --max-same-issues 0 --max-issues-per-linter 0 --deadline=300s
 
-lint: fmt gofumpt goimports gomod_tidy govet golint golangci-lint-fix
+lint: fmt gofumpt goimports gomod_tidy govet golangci-lint-fix staticcheck
 	$(info running all linters)
 
 gofumpt:
