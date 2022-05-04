@@ -34,7 +34,7 @@ run-examples:
 	go run examples/gorountines_example/graph_client_goroutines_example.go && \
 	go run examples/json_example/parse_json_example.go
 
-.PHONY: clean coverage lint gofumpt goimports gomod_tidy govet staticcheck golangci-lint golangci-lint-fix
+.PHONY: clean coverage lint gofumpt goimports gomod_tidy govet staticcheck consistent golangci-lint golangci-lint-fix
 
 clean:
 	rm coverage.*
@@ -43,7 +43,7 @@ coverage:
 	$(info should install from github.com/t-yuki/gocover-cobertura)
 	gocover-cobertura < coverage.out > coverage.xml
 
-lint: fmt gofumpt goimports gomod_tidy govet golangci-lint-fix staticcheck
+lint: fmt gofumpt goimports gomod_tidy govet golangci-lint-fix staticcheck consistent
 	$(info running all linters)
 
 gofumpt:
@@ -65,6 +65,10 @@ govet:
 staticcheck:
 	$(info install via go get -u / go install + honnef.co/go/tools/cmd/staticcheck@latest)
 	staticcheck
+
+consistent:
+	$(info install via go get -u / go install + github.com/quasilyte/go-consistent@latest)
+	go-consistent -exclude examples ./...
 
 GOLANGCI_LINT_FLAGS = -v --max-same-issues 0 --max-issues-per-linter 0 --deadline=300s
 
