@@ -34,11 +34,14 @@ run-examples:
 	go run examples/gorountines_example/graph_client_goroutines_example.go && \
 	go run examples/json_example/parse_json_example.go
 
-.PHONY: lint gofumpt goimports gomod_tidy govet staticcheck golangci-lint golangci-lint-fix
+.PHONY: clean coverage lint gofumpt goimports gomod_tidy govet staticcheck golangci-lint golangci-lint-fix
 
-DOCKER_GOLANGCI_LINT_CMD = docker run --rm -v $(PWD):/app -w /app golangci/golangci-lint:latest golangci-lint
-GOLANGCI_LINT_CMD = golangci-lint
-GOLANGCI_LINT_FLAGS = -v --max-same-issues 0 --max-issues-per-linter 0 --deadline=300s
+clean:
+	rm coverage.*
+
+coverage:
+	$(info should install from github.com/t-yuki/gocover-cobertura)
+	gocover-cobertura < coverage.out > coverage.xml
 
 lint: fmt gofumpt goimports gomod_tidy govet golangci-lint-fix staticcheck
 	$(info running all linters)
@@ -63,15 +66,19 @@ staticcheck:
 	$(info install via go get -u / go install + honnef.co/go/tools/cmd/staticcheck@latest)
 	staticcheck
 
+GOLANGCI_LINT_FLAGS = -v --max-same-issues 0 --max-issues-per-linter 0 --deadline=300s
+
 golangci-lint:
 	$(info running local golangci-lint, to install check https://golangci-lint.run/usage/install/)
-	$(GOLANGCI_LINT_CMD) run $(GOLANGCI_LINT_FLAGS)
+	golangci-lint run $(GOLANGCI_LINT_FLAGS)
 
 golangci-lint-fix:
 	$(info running golangci-lint with --fix option, to install check https://golangci-lint.run/usage/install/)
-	$(GOLANGCI_LINT_CMD) run $(GOLANGCI_LINT_FLAGS) --fix
+	golangci-lint run $(GOLANGCI_LINT_FLAGS) --fix
 
 .PHONY: docker-golangci-lint
+
+DOCKER_GOLANGCI_LINT_CMD = docker run --rm -v $(PWD):/app -w /app golangci/golangci-lint:latest golangci-lint
 
 docker-golangci-lint:
 	$(info running golangci-lint via docker)
