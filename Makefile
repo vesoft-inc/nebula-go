@@ -71,14 +71,9 @@ golangci-lint-fix:
 	$(info running golangci-lint with --fix option, to install check https://golangci-lint.run/usage/install/)
 	$(GOLANGCI_LINT_CMD) run $(GOLANGCI_LINT_FLAGS) --fix
 
-.PHONY: docker-golangci-lint docker-golangci-lint-fix
+.PHONY: docker-golangci-lint
 
 docker-golangci-lint:
 	$(info running golangci-lint via docker)
 	$(DOCKER_GOLANGCI_LINT_CMD) run $(GOLANGCI_LINT_FLAGS)
-
-docker-golangci-lint-fix:
-	$(info running golangci-lint with --fix option via docker)
-	$(DOCKER_GOLANGCI_LINT_CMD) run $(GOLANGCI_LINT_FLAGS) --fix
-
 
