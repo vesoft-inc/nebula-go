@@ -96,7 +96,7 @@ func (session *Session) ExecuteWithParameter(stmt string, params map[string]inte
 
 // Execute returns the result of the given query as a ResultSet.
 func (session *Session) Execute(stmt string) (*ResultSet, error) {
-	return session.ExecuteWithParameter(stmt, map[string]interface{}{})
+	return session.ExecuteWithParameter(stmt, make(map[string]interface{}))
 }
 
 // ExecuteJson returns the result of the given query as a json string
@@ -158,7 +158,7 @@ func (session *Session) Execute(stmt string) (*ResultSet, error) {
 //     ]
 // }.
 func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
-	return session.ExecuteJsonWithParameter(stmt, map[string]interface{}{})
+	return session.ExecuteJsonWithParameter(stmt, make(map[string]interface{}))
 }
 
 // ExecuteJson returns the result of the given query as a json string
@@ -308,7 +308,7 @@ func slice2Nlist(list []interface{}) (*nebula.NList, error) {
 // construct map to nebula.NMap.
 func map2Nmap(m map[string]interface{}) (*nebula.NMap, error) {
 	var ret nebula.NMap
-	kvs := map[string]*nebula.Value{}
+	kvs := make(map[string]*nebula.Value)
 	for k, v := range m {
 		nv, err := value2Nvalue(v)
 		if err != nil {

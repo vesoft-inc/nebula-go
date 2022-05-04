@@ -111,7 +111,7 @@ func (cn *connection) authenticate(username, password string) (*graph.AuthRespon
 }
 
 func (cn *connection) execute(sessionID int64, stmt string) (*graph.ExecutionResponse, error) {
-	return cn.executeWithParameter(sessionID, stmt, map[string]*nebula.Value{})
+	return cn.executeWithParameter(sessionID, stmt, make(map[string]*nebula.Value))
 }
 
 func (cn *connection) executeWithParameter(sessionID int64, stmt string, params map[string]*nebula.Value) (*graph.ExecutionResponse, error) {
@@ -133,7 +133,7 @@ func (cn *connection) executeWithParameter(sessionID int64, stmt string, params 
 }
 
 func (cn *connection) executeJson(sessionID int64, stmt string) ([]byte, error) {
-	return cn.ExecuteJsonWithParameter(sessionID, stmt, map[string]*nebula.Value{})
+	return cn.ExecuteJsonWithParameter(sessionID, stmt, make(map[string]*nebula.Value))
 }
 
 func (cn *connection) ExecuteJsonWithParameter(sessionID int64, stmt string, params map[string]*nebula.Value) ([]byte, error) {
