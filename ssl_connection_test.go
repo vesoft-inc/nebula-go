@@ -1,3 +1,6 @@
+//go:build integration
+// +build integration
+
 /*
  *
  * Copyright (c) 2020 vesoft inc. All rights reserved.
