@@ -32,7 +32,7 @@ ssl-test-self-signed:
 
 run-examples:
 	go run examples/basic_example/graph_client_basic_example.go && \
-	go run examples/basic_example/parameter_example.go && \
+	go run examples/parameter_example/parameter_example.go && \
 	go run examples/gorountines_example/graph_client_goroutines_example.go && \
 	go run examples/json_example/parse_json_example.go
 
