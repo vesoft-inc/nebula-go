@@ -10,12 +10,15 @@ on:
 jobs:
   go-client:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goVer: [1.13 1.17 1.18]
     steps:
       - uses: actions/checkout@v2
-      - name: Setup go
+      - name: Setup go ${{ matrix.goVer }}
         uses: actions/setup-go@v1
         with:
-          go-version: '1.13'
+          go-version: ${{ matrix.goVer }}
       - name: Test with GO test
         run: |
           make up
@@ -29,10 +32,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Setup go
+      - name: Setup go ${{ matrix.goVer }}
         uses: actions/setup-go@v1
         with:
-          go-version: '1.13'
+          go-version: ${{ matrix.goVer }}
       - name: Test SSL connection with CA
         run: |
           make up-ssl
@@ -51,10 +54,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Setup go
+      - name: Setup go ${{ matrix.goVer }}
         uses: actions/setup-go@v1
         with:
-          go-version: '1.13'
+          go-version: ${{ matrix.goVer }}
       - name: Run examples
         run: |
           make up
