@@ -58,10 +58,10 @@ func main() {
 		}
 		checkResultSet(createSchema, resultSet)
 
-		session.Release()
+		sessPool.Release(session)
 	}
 
-	err = sessPool.WithSession(func(session *nebula.Session) error {
+	err = sessPool.WithSession(func(session nebula.NebulaSession) error {
 		query := "DROP SPACE IF EXISTS basic_example_space"
 		// Send query
 		resultSet, err := session.Execute(query)

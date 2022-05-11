@@ -134,6 +134,10 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig, opts ...Connectio
 }
 
 // Acquire return an authenticated session or return an error.
+// Usage:
+//   session, err := sessionPool.Acquire()
+//   ... use session ...
+//   sessionPool.Release(session)
 func (s *SessionPool) Acquire() (NebulaSession, error) {
 	session, err := s.ConnectionPool.GetSession(s.Username, s.Password)
 	if err != nil {
@@ -168,6 +172,15 @@ type NebulaSession interface {
 }
 
 // WithSession execute a callback with an authenticated session, releasing it in the end.
+// Usage:
+//   err := sessionPool.WithSession(func(session NebulaSession)error{
+//	    ... use session ... no need for release
+//      return nil // or an error depending on the logic
+//   })
+// Equivalent of
+//   session, err := sessionPool.Acquire()
+//   ... use session ...
+//   sessionPool.Release(session)
 func (s *SessionPool) WithSession(callback func(session NebulaSession) error) error {
 	session, err := s.Acquire()
 	if err != nil {
