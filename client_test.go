@@ -109,7 +109,7 @@ func TestConfigs(t *testing.T) {
 	hostList := []HostAddress{}
 	hostList = append(hostList, hostAdress)
 
-	var configList = []PoolConfig{
+	configList := []PoolConfig{
 		// default
 		{
 			TimeOut:         0 * time.Millisecond,
@@ -260,13 +260,12 @@ func TestServiceDataIO(t *testing.T) {
 
 	// test base type
 	{
-		query :=
-			"FETCH PROP ON person \"Bob\" YIELD vertex as VertexID," +
-				"person.name, person.age, person.grade," +
-				"person.friends, person.book_num, person.birthday, " +
-				"person.start_school, person.morning, " +
-				"person.property, person.is_girl, person.child_name, " +
-				"person.expend, person.first_out_city, person.hobby"
+		query := "FETCH PROP ON person \"Bob\" YIELD vertex as VertexID," +
+			"person.name, person.age, person.grade," +
+			"person.friends, person.book_num, person.birthday, " +
+			"person.start_school, person.morning, " +
+			"person.property, person.is_girl, person.child_name, " +
+			"person.expend, person.first_out_city, person.hobby"
 		resp, err := tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -279,7 +278,8 @@ func TestServiceDataIO(t *testing.T) {
 		assert.Equal(t, "test_data", resp.GetSpaceName())
 		assert.False(t, resp.IsEmpty())
 		assert.Equal(t, 1, resp.GetRowSize())
-		names := []string{"VertexID",
+		names := []string{
+			"VertexID",
 			"person.name",
 			"person.age",
 			"person.grade",
@@ -293,7 +293,8 @@ func TestServiceDataIO(t *testing.T) {
 			"person.child_name",
 			"person.expend",
 			"person.first_out_city",
-			"person.hobby"}
+			"person.hobby",
+		}
 		assert.Equal(t, names, resp.GetColNames())
 
 		// test datetime
@@ -652,7 +653,6 @@ func TestMultiThreads(t *testing.T) {
 			}
 			sessCh <- session
 		}(sessCh, &wg)
-
 	}
 	go func(sessCh <-chan *Session) {
 		for session := range sessCh {
@@ -678,7 +678,7 @@ func TestMultiThreads(t *testing.T) {
 
 func TestLoadbalancer(t *testing.T) {
 	hostList := poolAddress
-	var loadPerHost = make(map[HostAddress]int)
+	loadPerHost := make(map[HostAddress]int)
 	testPoolConfig := PoolConfig{
 		TimeOut:         0 * time.Millisecond,
 		IdleTime:        0 * time.Millisecond,
@@ -791,11 +791,10 @@ func TestTimeout(t *testing.T) {
 
 	// Create schemas
 	{
-		createSchema :=
-			"CREATE SPACE IF NOT EXISTS test_timeout(VID_TYPE=FIXED_STRING(32));" +
-				"USE test_timeout;" +
-				"CREATE TAG IF NOT EXISTS person (name string, age int);" +
-				"CREATE EDGE IF NOT EXISTS like(likeness int);"
+		createSchema := "CREATE SPACE IF NOT EXISTS test_timeout(VID_TYPE=FIXED_STRING(32));" +
+			"USE test_timeout;" +
+			"CREATE TAG IF NOT EXISTS person (name string, age int);" +
+			"CREATE EDGE IF NOT EXISTS like(likeness int);"
 		resultSet, err := tryToExecute(session, createSchema)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -818,12 +817,11 @@ func TestTimeout(t *testing.T) {
 			return
 		}
 		assert.Truef(t, resultSet.IsSucceed(), resultSet.GetErrorMsg())
-		query =
-			"INSERT EDGE like(likeness) VALUES " +
-				"'A'->'B':(80), " +
-				"'B'->'C':(70), " +
-				"'C'->'D':(84), " +
-				"'D'->'A':(68)"
+		query = "INSERT EDGE like(likeness) VALUES " +
+			"'A'->'B':(80), " +
+			"'B'->'C':(70), " +
+			"'C'->'D':(84), " +
+			"'D'->'A':(68)"
 		resultSet, err = tryToExecute(session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -887,7 +885,8 @@ func TestExecuteJson(t *testing.T) {
 			float64(1), float64(2.2), "hello",
 			[]interface{}{float64(1), float64(2), "abc"},
 			map[string]interface{}{"key": "value"},
-			"汉字"}
+			"汉字",
+		}
 
 		// Parse JSON
 		json.Unmarshal(jsonStrResult, &jsonObj)
@@ -1275,10 +1274,9 @@ func loadTestData(t *testing.T, session *Session) {
 	}
 	checkResultSet(t, query, resultSet)
 
-	query =
-		"INSERT VERTEX student(name, interval) VALUES " +
-			"'Bob':('Bob', duration({months:1, seconds:100, microseconds:20})), 'Lily':('Lily', duration({years: 1, seconds: 0})), " +
-			"'Tom':('Tom', duration({years: 1, seconds: 0})), 'Jerry':('Jerry', duration({years: 1, seconds: 0})), 'John':('John', duration({years: 1, seconds: 0}))"
+	query = "INSERT VERTEX student(name, interval) VALUES " +
+		"'Bob':('Bob', duration({months:1, seconds:100, microseconds:20})), 'Lily':('Lily', duration({years: 1, seconds: 0})), " +
+		"'Tom':('Tom', duration({years: 1, seconds: 0})), 'Jerry':('Jerry', duration({years: 1, seconds: 0})), 'John':('John', duration({years: 1, seconds: 0}))"
 	resultSet, err = tryToExecute(session, query)
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -1286,13 +1284,12 @@ func loadTestData(t *testing.T, session *Session) {
 	}
 	checkResultSet(t, query, resultSet)
 
-	query =
-		"INSERT EDGE like(likeness) VALUES " +
-			"'Bob'->'Lily':(80.0), " +
-			"'Bob'->'Tom':(70.0), " +
-			"'Jerry'->'Lily':(84.0)," +
-			"'Tom'->'Jerry':(68.3), " +
-			"'Bob'->'John':(97.2)"
+	query = "INSERT EDGE like(likeness) VALUES " +
+		"'Bob'->'Lily':(80.0), " +
+		"'Bob'->'Tom':(70.0), " +
+		"'Jerry'->'Lily':(84.0)," +
+		"'Tom'->'Jerry':(68.3), " +
+		"'Bob'->'John':(97.2)"
 	resultSet, err = tryToExecute(session, query)
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -1300,13 +1297,12 @@ func loadTestData(t *testing.T, session *Session) {
 	}
 	checkResultSet(t, query, resultSet)
 
-	query =
-		"INSERT EDGE friend(start_Datetime, end_Datetime) VALUES " +
-			"'Bob'->'Lily':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
-			"'Bob'->'Tom':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
-			"'Jerry'->'Lily':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
-			"'Tom'->'Jerry':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
-			"'Bob'->'John':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02'))"
+	query = "INSERT EDGE friend(start_Datetime, end_Datetime) VALUES " +
+		"'Bob'->'Lily':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
+		"'Bob'->'Tom':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
+		"'Jerry'->'Lily':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
+		"'Tom'->'Jerry':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
+		"'Bob'->'John':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02'))"
 	resultSet, err = tryToExecute(session, query)
 	if err != nil {
 		t.Fatalf(err.Error())

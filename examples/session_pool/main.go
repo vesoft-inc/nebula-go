@@ -78,5 +78,5 @@ func main() {
 	}
 
 	fmt.Print("\n")
-	log.Info("Nebula Go Client Basic Example Finished")
+	log.Info("Nebula Go Sesion Pool Example Finished")
 }

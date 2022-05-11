@@ -8,7 +8,6 @@
 package nebula_go
 
 import (
-	"crypto/tls"
 	"fmt"
 )
 
@@ -17,46 +16,6 @@ var (
 
 	_ NebulaSession = (*Session)(nil)
 )
-
-// ConnectionOption type.
-type ConnectionOption func(*ConnectionConfig)
-
-// WithTLSConfig functional option to set the tls configuration.
-// use ClientConfigForX509 or GetDefaultSSLConfig to build based on files.
-func WithTLSConfig(tlsConfig *tls.Config) ConnectionOption {
-	return func(cfg *ConnectionConfig) {
-		cfg.TLSConfig = tlsConfig
-	}
-}
-
-// WithLogger functional option to substitute the default logger.
-func WithLogger(log Logger) ConnectionOption {
-	return func(cfg *ConnectionConfig) {
-		cfg.Log = log
-	}
-}
-
-// WithCredentials functional option to set a pair of username and password.
-func WithCredentials(username, password string) ConnectionOption {
-	return func(cfg *ConnectionConfig) {
-		cfg.Username = username
-		cfg.Password = password
-	}
-}
-
-// WithConnectionPoolBuilder functional option allow to use a custom connection pool.
-func WithConnectionPoolBuilder(connectionPoolBuilder ConnectionPoolBuilder) ConnectionOption {
-	return func(cfg *ConnectionConfig) {
-		cfg.ConnectionPoolBuilder = connectionPoolBuilder
-	}
-}
-
-// WithConnectionPoolConfig functional option to override the connection pool configuration.
-func WithConnectionPoolConfig(poolConfig PoolConfig) ConnectionOption {
-	return func(cfg *ConnectionConfig) {
-		cfg.PoolConfig = poolConfig
-	}
-}
 
 // SessionGetter interface.
 type SessionGetter interface {
@@ -112,12 +71,7 @@ func NewSessionPoolFromHostAddresses(addresses []HostAddress, opts ...Connection
 }
 
 func newSessionFromFromConnectionConfig(cfg *ConnectionConfig, opts ...ConnectionOption) (*SessionPool, error) {
-	cfg.ConnectionPoolBuilder = defaultConnectionPoolBuilder
-	cfg.Log = DefaultLogger{}
-
-	for _, opt := range opts {
-		opt(cfg)
-	}
+	cfg.Apply(opts)
 
 	connPool, err := cfg.BuildConnectionPool()
 	if err != nil {

@@ -57,9 +57,6 @@ func TestSessionPool(t *testing.T) {
 		{
 			label:      "should return error from connection pool constructor with tls skip-verify",
 			connString: "nebula://localhost?tls=skip-verify",
-			opts: []nebula_go.ConnectionOption{
-				nebula_go.WithLogger(nil),
-			},
 			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
 				_ *mockSessionGetter,
 				_ *nebula_go.Session,
@@ -70,7 +67,7 @@ func TestSessionPool(t *testing.T) {
 					},
 					nebula_go.GetDefaultConf(),
 					&tls.Config{InsecureSkipVerify: true},
-					nil).Return(nil, errors.New("ops"))
+					nebula_go.DefaultLogger{}).Return(nil, errors.New("ops"))
 			},
 			errMsg: "unable to build connection pool: ops",
 		},

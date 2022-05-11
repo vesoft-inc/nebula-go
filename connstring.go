@@ -42,6 +42,46 @@ type ConnectionConfig struct {
 	ConnectionPoolBuilder
 }
 
+// ConnectionOption type.
+type ConnectionOption func(*ConnectionConfig)
+
+// WithTLSConfig functional option to set the tls configuration.
+// use ClientConfigForX509 or GetDefaultSSLConfig to build based on files.
+func WithTLSConfig(tlsConfig *tls.Config) ConnectionOption {
+	return func(cfg *ConnectionConfig) {
+		cfg.TLSConfig = tlsConfig
+	}
+}
+
+// WithLogger functional option to substitute the default logger.
+func WithLogger(log Logger) ConnectionOption {
+	return func(cfg *ConnectionConfig) {
+		cfg.Log = log
+	}
+}
+
+// WithCredentials functional option to set a pair of username and password.
+func WithCredentials(username, password string) ConnectionOption {
+	return func(cfg *ConnectionConfig) {
+		cfg.Username = username
+		cfg.Password = password
+	}
+}
+
+// WithConnectionPoolBuilder functional option allow to use a custom connection pool.
+func WithConnectionPoolBuilder(connectionPoolBuilder ConnectionPoolBuilder) ConnectionOption {
+	return func(cfg *ConnectionConfig) {
+		cfg.ConnectionPoolBuilder = connectionPoolBuilder
+	}
+}
+
+// WithConnectionPoolConfig functional option to override the connection pool configuration.
+func WithConnectionPoolConfig(poolConfig PoolConfig) ConnectionOption {
+	return func(cfg *ConnectionConfig) {
+		cfg.PoolConfig = poolConfig
+	}
+}
+
 // ConnectionPoolBuilder type.
 type ConnectionPoolBuilder func([]HostAddress, PoolConfig, *tls.Config, Logger) (SessionGetter, error)
 
@@ -192,9 +232,20 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 	return conf, nil
 }
 
+// Apply method.
+func (cfg *ConnectionConfig) Apply(opts []ConnectionOption) {
+	for _, opt := range opts {
+		opt(cfg)
+	}
+}
+
 // BuildConnectionPool return an interface SessionGetter of ConnectionPool
 // based on the configuration / connection string.
 func (cfg *ConnectionConfig) BuildConnectionPool() (SessionGetter, error) {
+	if cfg.Log == nil {
+		cfg.Log = DefaultLogger{}
+	}
+
 	if cfg.ConnectionPoolBuilder == nil {
 		cfg.ConnectionPoolBuilder = defaultConnectionPoolBuilder
 	}

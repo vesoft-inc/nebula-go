@@ -95,7 +95,7 @@ const (
 
 func genResultSet(resp *graph.ExecutionResponse, timezoneInfo timezoneInfo) (*ResultSet, error) {
 	var colNames []string
-	var colNameIndexMap = make(map[string]int)
+	colNameIndexMap := make(map[string]int)
 
 	if resp.Data == nil { // if resp.Data != nil then resp.Data.row and resp.Data.colNames wont be nil
 		return &ResultSet{
@@ -814,7 +814,8 @@ func (t TimeWrapper) getLocalTime() (*nebula.Time, error) {
 		Hour:     int8(localTime.Hour()),
 		Minute:   int8(localTime.Minute()),
 		Sec:      int8(localTime.Second()),
-		Microsec: int32(localTime.Nanosecond() / 1000)}, nil
+		Microsec: int32(localTime.Nanosecond() / 1000),
+	}, nil
 }
 
 // getLocalTimeWithTimezoneOffset returns a nebula.Time object representing
@@ -842,7 +843,8 @@ func (t TimeWrapper) getLocalTimeWithTimezoneOffset(timezoneOffsetSeconds int32)
 		Hour:     int8(localTime.Hour()),
 		Minute:   int8(localTime.Minute()),
 		Sec:      int8(localTime.Second()),
-		Microsec: int32(localTime.Nanosecond() / 1000)}, nil
+		Microsec: int32(localTime.Nanosecond() / 1000),
+	}, nil
 }
 
 // getLocalTimeWithTimezoneName returns a nebula.Time object
@@ -875,7 +877,8 @@ func (t TimeWrapper) getLocalTimeWithTimezoneName(timezoneName string) (*nebula.
 		Hour:     int8(localTime.Hour()),
 		Minute:   int8(localTime.Minute()),
 		Sec:      int8(localTime.Second()),
-		Microsec: int32(localTime.Nanosecond() / 1000)}, nil
+		Microsec: int32(localTime.Nanosecond() / 1000),
+	}, nil
 }
 
 func (t1 TimeWrapper) IsEqualTo(t2 TimeWrapper) bool {
@@ -992,7 +995,8 @@ func (dt DateTimeWrapper) getLocalDateTime() (*nebula.DateTime, error) {
 		Hour:     int8(localDT.Hour()),
 		Minute:   int8(localDT.Minute()),
 		Sec:      int8(localDT.Second()),
-		Microsec: int32(localDT.Nanosecond() / 1000)}, nil
+		Microsec: int32(localDT.Nanosecond() / 1000),
+	}, nil
 }
 
 // getLocalDateTimeWithTimezoneOffset returns a nebula.DateTime object representing
@@ -1017,7 +1021,8 @@ func (dt DateTimeWrapper) getLocalDateTimeWithTimezoneOffset(timezoneOffsetSecon
 		Hour:     int8(localDT.Hour()),
 		Minute:   int8(localDT.Minute()),
 		Sec:      int8(localDT.Second()),
-		Microsec: int32(localDT.Nanosecond() / 1000)}, nil
+		Microsec: int32(localDT.Nanosecond() / 1000),
+	}, nil
 }
 
 // GetLocalDateTimeWithTimezoneName returns a nebula.DateTime object representing
@@ -1048,7 +1053,8 @@ func (dt DateTimeWrapper) GetLocalDateTimeWithTimezoneName(timezoneName string) 
 		Hour:     int8(localDT.Hour()),
 		Minute:   int8(localDT.Minute()),
 		Sec:      int8(localDT.Second()),
-		Microsec: int32(localDT.Nanosecond() / 1000)}, nil
+		Microsec: int32(localDT.Nanosecond() / 1000),
+	}, nil
 }
 
 func checkIndex(index int, list interface{}) error {
@@ -1108,7 +1114,7 @@ func condEdgeLabel(condNode *graph.PlanNodeDescription, doBranch bool) string {
 }
 
 func nodeString(planNodeDesc *graph.PlanNodeDescription, planNodeName string) string {
-	var outputVar = graphvizString(string(planNodeDesc.GetOutputVar()))
+	outputVar := graphvizString(string(planNodeDesc.GetOutputVar()))
 	var inputVar string
 	if planNodeDesc.IsSetDescription() {
 		desc := planNodeDesc.GetDescription()
