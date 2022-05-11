@@ -12,9 +12,7 @@ import (
 	"fmt"
 )
 
-var (
-	_ SessionGetter = (*ConnectionPool)(nil)
-)
+var _ SessionGetter = (*ConnectionPool)(nil)
 
 // ConnectionOption type.
 type ConnectionOption func(*ConnectionConfig)
@@ -110,7 +108,6 @@ func NewSessionPoolFromHostAddresses(addresses []HostAddress, opts ...Connection
 }
 
 func newSessionFromFromConnectionConfig(cfg *ConnectionConfig, opts ...ConnectionOption) (*SessionPool, error) {
-
 	cfg.ConnectionPoolBuilder = defaultConnectionPoolBuilder
 	cfg.Log = DefaultLogger{}
 
@@ -168,6 +165,7 @@ func (s *SessionPool) Close() error {
 func defaultConnectionPoolBuilder(addresses []HostAddress,
 	conf PoolConfig,
 	sslConfig *tls.Config,
-	log Logger) (SessionGetter, error) {
+	log Logger,
+) (SessionGetter, error) {
 	return NewSslConnectionPool(addresses, conf, sslConfig, log)
 }
