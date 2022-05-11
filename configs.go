@@ -13,7 +13,6 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"time"
 )
 
@@ -61,17 +60,29 @@ func GetDefaultConf() PoolConfig {
 	}
 }
 
-// GetDefaultSSLConfig reads the files in the given path and returns a tls.Config object
+var (
+	errMissingRootCA = fmt.Errorf("must define the rootCAPath")
+	errInvalidRootCA = fmt.Errorf("unable to append supplied cert into tls.Config, please make sure it is a valid certificate")
+)
+
+// GetDefaultSSLConfig reads the files in the given path and returns a tls.Config object.
+// rootCAPath is mandatory
 func GetDefaultSSLConfig(rootCAPath, certPath, privateKeyPath string) (*tls.Config, error) {
-	rootCA, err := openAndReadFile(rootCAPath)
+	if rootCAPath != "" {
+		return ClientConfigForX509(certPath, privateKeyPath, rootCAPath)
+	}
+
+	return nil, errMissingRootCA
+}
+
+// ClientConfigForX509 function. return a tls.Config based on the files.
+// with no rootFile will use the system root CA
+func ClientConfigForX509(certFile, keyFile, rootFile string) (*tls.Config, error) {
+	cert, err := ioutil.ReadFile(certFile)
 	if err != nil {
 		return nil, err
 	}
-	cert, err := openAndReadFile(certPath)
-	if err != nil {
-		return nil, err
-	}
-	privateKey, err := openAndReadFile(privateKeyPath)
+	privateKey, err := ioutil.ReadFile(keyFile)
 	if err != nil {
 		return nil, err
 	}
@@ -79,29 +90,27 @@ func GetDefaultSSLConfig(rootCAPath, certPath, privateKeyPath string) (*tls.Conf
 	if err != nil {
 		return nil, err
 	}
-	// parse root CA pem and add into CA pool
-	// for self-signed cert, use the local cert as the root ca
-	rootCAPool := x509.NewCertPool()
-	ok := rootCAPool.AppendCertsFromPEM(rootCA)
-	if !ok {
-		return nil, fmt.Errorf("unable to append supplied cert into tls.Config, please make sure it is a valid certificate")
-	}
-	return &tls.Config{
-		Certificates: []tls.Certificate{clientCert},
-		RootCAs:      rootCAPool,
-	}, nil
-}
 
-func openAndReadFile(path string) ([]byte, error) {
-	// open file
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("unable to open file %s: %s", path, err)
+	cfg := &tls.Config{
+		Certificates: []tls.Certificate{clientCert},
 	}
-	// read file
-	b, err := ioutil.ReadAll(f)
-	if err != nil {
-		return nil, fmt.Errorf("unable to ReadAll file %s: %s", path, err)
+
+	rootCAPool := x509.NewCertPool()
+
+	if rootFile != "" {
+		// parse root CA pem and add into CA pool
+		// for self-signed cert, use the local cert as the root ca
+		rootCA, err := ioutil.ReadFile(rootFile)
+		if err != nil {
+			return nil, err
+		}
+		ok := rootCAPool.AppendCertsFromPEM(rootCA)
+		if !ok {
+			return nil, errInvalidRootCA
+		}
 	}
-	return b, nil
+
+	cfg.RootCAs = rootCAPool
+
+	return cfg, nil
 }

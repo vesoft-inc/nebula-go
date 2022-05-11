@@ -12,6 +12,7 @@
 package nebula_go
 
 import (
+	"io/ioutil"
 	"os"
 	"testing"
 	"time"
@@ -147,7 +148,7 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 }
 
 func openAndReadFileTest(t *testing.T, path string) []byte {
-	b, err := openAndReadFile(path)
+	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
 	}
