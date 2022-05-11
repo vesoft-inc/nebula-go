@@ -192,6 +192,12 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 	return conf, nil
 }
 
+// BuildConnectionPool return an interface SessionGetter of ConnectionPool
+// based on the configuration / connection string.
+func (cfg *ConnectionConfig) BuildConnectionPool() (SessionGetter, error) {
+	return cfg.ConnectionPoolBuilder(cfg.HostAddresses, cfg.PoolConfig, cfg.TLSConfig, cfg.Log)
+}
+
 func getTLSConfig(key string) (*tls.Config, bool) {
 	tlsConfigLock.RLock()
 	defer tlsConfigLock.RUnlock()

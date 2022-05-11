@@ -115,7 +115,7 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig, opts ...Connectio
 		opt(cfg)
 	}
 
-	connPool, err := cfg.ConnectionPoolBuilder(cfg.HostAddresses, cfg.PoolConfig, cfg.TLSConfig, cfg.Log)
+	connPool, err := cfg.BuildConnectionPool()
 	if err != nil {
 		return nil, fmt.Errorf("unable to build connection pool: %s", err.Error())
 	}
