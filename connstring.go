@@ -195,7 +195,19 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 // BuildConnectionPool return an interface SessionGetter of ConnectionPool
 // based on the configuration / connection string.
 func (cfg *ConnectionConfig) BuildConnectionPool() (SessionGetter, error) {
+	if cfg.ConnectionPoolBuilder == nil {
+		cfg.ConnectionPoolBuilder = defaultConnectionPoolBuilder
+	}
+
 	return cfg.ConnectionPoolBuilder(cfg.HostAddresses, cfg.PoolConfig, cfg.TLSConfig, cfg.Log)
+}
+
+func defaultConnectionPoolBuilder(addresses []HostAddress,
+	conf PoolConfig,
+	sslConfig *tls.Config,
+	log Logger,
+) (SessionGetter, error) {
+	return NewSslConnectionPool(addresses, conf, sslConfig, log)
 }
 
 func getTLSConfig(key string) (*tls.Config, bool) {

@@ -126,6 +126,8 @@ func TestSessionPool(t *testing.T) {
 				got, err := sessPool.Acquire()
 				assert.Nil(t, got)
 				assert.EqualError(t, err, "unable to get session: ops")
+
+				sessPool.Release(got)
 			},
 		},
 		{
@@ -175,7 +177,7 @@ func TestSessionPool(t *testing.T) {
 					nebula_go.DefaultLogger{}).Return(sessGetter, nil)
 			},
 			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session *nebula_go.Session) {
-				err := sessPool.WithSession(func(got *nebula_go.Session) error {
+				err := sessPool.WithSession(func(got nebula_go.NebulaSession) error {
 					assert.Equal(t, session, got)
 					return nil
 				})

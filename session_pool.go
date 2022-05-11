@@ -12,7 +12,11 @@ import (
 	"fmt"
 )
 
-var _ SessionGetter = (*ConnectionPool)(nil)
+var (
+	_ SessionGetter = (*ConnectionPool)(nil)
+
+	_ NebulaSession = (*Session)(nil)
+)
 
 // ConnectionOption type.
 type ConnectionOption func(*ConnectionConfig)
@@ -130,7 +134,7 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig, opts ...Connectio
 }
 
 // Acquire return an authenticated session or return an error.
-func (s *SessionPool) Acquire() (*Session, error) {
+func (s *SessionPool) Acquire() (NebulaSession, error) {
 	session, err := s.ConnectionPool.GetSession(s.Username, s.Password)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get session: %s", err.Error())
@@ -143,14 +147,34 @@ func (s *SessionPool) Acquire() (*Session, error) {
 	return session, nil
 }
 
+// Release will handle the release of the nebula session.
+func (s *SessionPool) Release(session NebulaSession) {
+	if session == nil {
+		return
+	}
+
+	if releaser, ok := session.(interface{ Release() }); ok {
+		releaser.Release()
+	}
+}
+
+// NebulaSession subset interface of Session.
+type NebulaSession interface {
+	Execute(stmt string) (*ResultSet, error)
+	ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error)
+	ExecuteJson(stmt string) ([]byte, error)
+	ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error)
+	GetSessionID() int64
+}
+
 // WithSession execute a callback with an authenticated session, releasing it in the end.
-func (s *SessionPool) WithSession(callback func(session *Session) error) error {
+func (s *SessionPool) WithSession(callback func(session NebulaSession) error) error {
 	session, err := s.Acquire()
 	if err != nil {
 		return err
 	}
 
-	defer session.Release()
+	defer s.Release(session)
 
 	return callback(session)
 }
@@ -160,12 +184,4 @@ func (s *SessionPool) Close() error {
 	s.ConnectionPool.Close()
 
 	return nil
-}
-
-func defaultConnectionPoolBuilder(addresses []HostAddress,
-	conf PoolConfig,
-	sslConfig *tls.Config,
-	log Logger,
-) (SessionGetter, error) {
-	return NewSslConnectionPool(addresses, conf, sslConfig, log)
 }
