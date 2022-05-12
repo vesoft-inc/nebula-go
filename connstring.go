@@ -214,22 +214,105 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 	if tlsOption := query.Get("tls"); tlsOption != "" {
 		conf.TLS = tlsOption
 
-		switch tlsOption {
-		case "false", "0":
-		case "true", "1":
-			conf.TLSConfig = &tls.Config{}
-		case "skip-verify":
-			conf.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-		default:
-			if tlsConfig, ok := getTLSConfig(tlsOption); ok {
-				conf.TLSConfig = tlsConfig.Clone()
-			} else {
-				return nil, fmt.Errorf("tls configuration %q not found", tlsOption)
-			}
+		conf.TLSConfig, err = getTLSConfig(tlsOption)
+		if err != nil {
+			return nil, err
 		}
 	}
 
 	return conf, nil
+}
+
+// String return a string representation of this configuration.
+func (cfg *ConnectionConfig) String() string {
+	uri := cfg.toURI()
+
+	return uri.String()
+}
+
+// Redacted return a redacted string representation of this configuration to save password.
+func (cfg *ConnectionConfig) Redacted() string {
+	uri := cfg.toURI()
+
+	return uri.Redacted()
+}
+
+func (cfg *ConnectionConfig) toURI() *url.URL {
+	var userinfo *url.Userinfo
+	if cfg.Username != "" {
+		if cfg.Password != "" {
+			userinfo = url.UserPassword(cfg.Username, cfg.Password)
+		} else {
+			userinfo = url.User(cfg.Username)
+		}
+	}
+
+	var (
+		hostPort string
+		path     string
+	)
+
+	if n := len(cfg.HostAddresses); n > 0 {
+		hosts := make([]string, n)
+		ports := make([]int, n)
+		var hasDifferentPorts bool
+
+		firstPort := cfg.HostAddresses[0].Port
+
+		for i, hp := range cfg.HostAddresses {
+			hosts[i], ports[i] = hp.Host, hp.Port
+
+			if hp.Port != firstPort {
+				hasDifferentPorts = true
+			}
+		}
+
+		if hasDifferentPorts {
+			for i, host := range hosts {
+				hosts[i] = net.JoinHostPort(host, strconv.Itoa(ports[i]))
+			}
+
+			hostPort = fmt.Sprintf("[%s]", strings.Join(hosts, ","))
+		} else if n > 1 {
+			hostPort = fmt.Sprintf("[%s]:%d", strings.Join(hosts, ","), firstPort)
+		} else {
+			hostPort = net.JoinHostPort(hosts[0], strconv.Itoa(ports[0]))
+		}
+	}
+
+	query := url.Values{}
+
+	defaultConf := GetDefaultConf()
+	if cfg.PoolConfig.TimeOut != defaultConf.TimeOut {
+		query.Add("TimeOut", cfg.PoolConfig.TimeOut.String())
+	}
+	if cfg.PoolConfig.IdleTime != defaultConf.IdleTime {
+		query.Add("IdleTime", cfg.PoolConfig.IdleTime.String())
+	}
+	if cfg.PoolConfig.MaxConnPoolSize != defaultConf.MaxConnPoolSize {
+		query.Add("MaxConnPoolSize", strconv.Itoa(cfg.PoolConfig.MaxConnPoolSize))
+	}
+	if cfg.PoolConfig.MinConnPoolSize != defaultConf.MinConnPoolSize {
+		query.Add("MinConnPoolSize", strconv.Itoa(cfg.PoolConfig.MinConnPoolSize))
+	}
+
+	if cfg.TLS != "" {
+		query.Add("tls", cfg.TLS)
+	}
+
+	if cfg.Space != "" {
+		path = "/" + cfg.Space
+	}
+
+	uri := &url.URL{
+		Scheme:   "nebula",
+		User:     userinfo,
+		Host:     hostPort,
+		RawQuery: query.Encode(),
+		Path:     path,
+	}
+
+	return uri
 }
 
 // Apply method.
@@ -242,6 +325,14 @@ func (cfg *ConnectionConfig) Apply(opts []ConnectionOption) {
 // BuildConnectionPool return an interface SessionGetter of ConnectionPool
 // based on the configuration / connection string.
 func (cfg *ConnectionConfig) BuildConnectionPool() (SessionGetter, error) {
+	if cfg.TLS != "" && cfg.TLSConfig == nil {
+		tlsConfig, err := getTLSConfig(cfg.TLS)
+		if err != nil {
+			return nil, err
+		}
+
+		cfg.TLSConfig = tlsConfig
+	}
 	if cfg.Log == nil {
 		cfg.Log = DefaultLogger{}
 	}
@@ -261,15 +352,32 @@ func defaultConnectionPoolBuilder(addresses []HostAddress,
 	return NewSslConnectionPool(addresses, conf, sslConfig, log)
 }
 
-func getTLSConfig(key string) (*tls.Config, bool) {
+func getTLSConfig(key string) (*tls.Config, error) {
+	switch key {
+	case "false", "0":
+		return nil, nil
+	case "true", "1":
+		return &tls.Config{}, nil
+	case "skip-verify":
+		return &tls.Config{InsecureSkipVerify: true}, nil
+	default:
+		tlsConfig, err := getTLSConfigFromRegistry(key)
+		if err != nil {
+			return nil, err
+		}
+
+		return tlsConfig.Clone(), nil
+	}
+}
+func getTLSConfigFromRegistry(key string) (*tls.Config, error) {
 	tlsConfigLock.RLock()
 	defer tlsConfigLock.RUnlock()
 
 	if tlsConfig, ok := tlsConfigRegistry[key]; ok {
-		return tlsConfig.Clone(), true
+		return tlsConfig.Clone(), nil
 	}
 
-	return nil, false
+	return nil, fmt.Errorf("tls configuration %q not found", key)
 }
 
 // RegisterTLSConfig adds the tls.Config associated with key.

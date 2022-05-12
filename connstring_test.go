@@ -225,6 +225,234 @@ func TestParseString(t *testing.T) {
 	}
 }
 
+func TestConnStringConversion(t *testing.T) {
+	t.Parallel()
+
+	testcases := []struct {
+		label    string
+		cfg      nebula_go.ConnectionConfig
+		str      string
+		redacted string
+	}{
+		{
+			label: "basic configuration",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "localhost",
+						Port: 9669,
+					},
+				},
+				PoolConfig: nebula_go.GetDefaultConf(),
+			},
+			str:      "nebula://localhost:9669",
+			redacted: "nebula://localhost:9669",
+		},
+		{
+			label: "basic ipv4 configuration",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "127.0.0.1",
+						Port: 9669,
+					},
+				},
+				PoolConfig: nebula_go.GetDefaultConf(),
+			},
+			str:      "nebula://127.0.0.1:9669",
+			redacted: "nebula://127.0.0.1:9669",
+		},
+		{
+			label: "basic ipv6 configuration",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "fec0:bebe:cafe::01",
+						Port: 9669,
+					},
+				},
+				PoolConfig: nebula_go.GetDefaultConf(),
+			},
+			str:      "nebula://[fec0:bebe:cafe::01]:9669",
+			redacted: "nebula://[fec0:bebe:cafe::01]:9669",
+		},
+		{
+			label: "tls configuration",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "localhost",
+						Port: 9669,
+					},
+				},
+				PoolConfig: nebula_go.GetDefaultConf(),
+				TLS:        "skip-verify",
+			},
+			str:      "nebula://localhost:9669?tls=skip-verify",
+			redacted: "nebula://localhost:9669?tls=skip-verify",
+		},
+		{
+			label: "space configuration",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "localhost",
+						Port: 9669,
+					},
+				},
+				PoolConfig: nebula_go.GetDefaultConf(),
+				Space:      "test",
+			},
+			str:      "nebula://localhost:9669/test",
+			redacted: "nebula://localhost:9669/test",
+		},
+		{
+			label: "credentials no password configuration",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "localhost",
+						Port: 9669,
+					},
+				},
+				Username:   "foo",
+				PoolConfig: nebula_go.GetDefaultConf(),
+			},
+			str:      "nebula://foo@localhost:9669",
+			redacted: "nebula://foo@localhost:9669",
+		},
+		{
+			label: "credentials with password configuration",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "localhost",
+						Port: 9669,
+					},
+				},
+				Username:   "foo",
+				Password:   "bar",
+				PoolConfig: nebula_go.GetDefaultConf(),
+			},
+			str:      "nebula://foo:bar@localhost:9669",
+			redacted: "nebula://foo:xxxxx@localhost:9669",
+		},
+		{
+			label: "pool config configuration MaxConnPoolSize",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "localhost",
+						Port: 9669,
+					},
+				},
+				PoolConfig: nebula_go.PoolConfig{
+					MaxConnPoolSize: 7,
+				},
+			},
+			str:      "nebula://localhost:9669?MaxConnPoolSize=7",
+			redacted: "nebula://localhost:9669?MaxConnPoolSize=7",
+		},
+		{
+			label: "pool config configuration MinConnPoolSize",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "localhost",
+						Port: 9669,
+					},
+				},
+				PoolConfig: nebula_go.PoolConfig{
+					MaxConnPoolSize: 10,
+					MinConnPoolSize: 7,
+				},
+			},
+			str:      "nebula://localhost:9669?MinConnPoolSize=7",
+			redacted: "nebula://localhost:9669?MinConnPoolSize=7",
+		},
+		{
+			label: "pool config configuration TimeOut",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "localhost",
+						Port: 9669,
+					},
+				},
+				PoolConfig: nebula_go.PoolConfig{
+					MaxConnPoolSize: 10,
+					TimeOut:         7 * time.Second,
+				},
+			},
+			str:      "nebula://localhost:9669?TimeOut=7s",
+			redacted: "nebula://localhost:9669?TimeOut=7s",
+		},
+		{
+			label: "pool config configuration IdleTime",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "localhost",
+						Port: 9669,
+					},
+				},
+				PoolConfig: nebula_go.PoolConfig{
+					MaxConnPoolSize: 10,
+					IdleTime:        7 * time.Second,
+				},
+			},
+			str:      "nebula://localhost:9669?IdleTime=7s",
+			redacted: "nebula://localhost:9669?IdleTime=7s",
+		},
+		{
+			label: "many hosts same port configuration",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "host1",
+						Port: 9669,
+					},
+					{
+						Host: "host2",
+						Port: 9669,
+					},
+				},
+				PoolConfig: nebula_go.GetDefaultConf(),
+			},
+			str:      "nebula://[host1,host2]:9669",
+			redacted: "nebula://[host1,host2]:9669",
+		},
+		{
+			label: "many hosts different ports configuration",
+			cfg: nebula_go.ConnectionConfig{
+				HostAddresses: []nebula_go.HostAddress{
+					{
+						Host: "host1",
+						Port: 9669,
+					},
+					{
+						Host: "host2",
+						Port: 9665,
+					},
+				},
+				PoolConfig: nebula_go.GetDefaultConf(),
+			},
+			str:      "nebula://[host1:9669,host2:9665]",
+			redacted: "nebula://[host1:9669,host2:9665]",
+		},
+	}
+
+	for _, tc := range testcases {
+		tc := tc
+		t.Run(tc.label, func(t *testing.T) {
+			t.Parallel()
+
+			assert.Equal(t, tc.str, tc.cfg.String())
+			assert.Equal(t, tc.redacted, tc.cfg.Redacted())
+		})
+	}
+}
+
 func TestRegisterTLSConf(t *testing.T) {
 	t.Parallel()
 
