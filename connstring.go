@@ -60,6 +60,11 @@ func WithLogger(log Logger) ConnectionOption {
 	}
 }
 
+// WithLogger functional option to substitute the default logger by NoLogger.
+func WithNoLogger() ConnectionOption {
+	return WithLogger(NoLogger{})
+}
+
 // WithCredentials functional option to set a pair of username and password.
 func WithCredentials(username, password string) ConnectionOption {
 	return func(cfg *ConnectionConfig) {
