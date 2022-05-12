@@ -52,12 +52,12 @@ func NewSessionPool(connectionString string, opts ...ConnectionOption) (*Session
 
 // NewSessionPoolFromHostAddresses uses the existing []HostAddress to build a session pool
 // Instead:
-//   pool, err := NewSslConnectionPool(addresses, conf, tlsConfig, log)
+//   pool, err := NewSslConnectionPool(addresses, conf, tlsConfig /*or nil*/, log)
 //   session, err := pool.GetSession(user,pass)
 // You can:
 //   sessionPool, err := NewSessionPoolFromHostAddresses(address,
-//      WithTLSConfig(tlsConfig),
-//      WithLogger(log)
+//      WithTLSConfig(tlsConfig), // omit for no tls configuration
+//      WithLogger(log),          // or use WithDefaultLogger()
 //      WithConnectionPoolConfig(conf),
 //      WithCredentials(user,pass),
 //   )
@@ -68,6 +68,30 @@ func NewSessionPoolFromHostAddresses(addresses []HostAddress, opts ...Connection
 	}
 
 	return newSessionFromFromConnectionConfig(cfg, opts...)
+}
+
+// NewSessionPoolFromConnectionPool is an alternative way to build a session pool
+// from an existing connection pool object.
+// Usage:
+//   pool, err := NewSslConnectionPool(addresses, conf, tlsConfig, log)
+//   sessionPool, err := NewSessionPoolFromConnectionPool(pool,
+//      WithCredentials(user,pass),
+//   )
+//   session, err := sessionPool.Acquire()
+func NewSessionPoolFromConnectionPool(connPool *ConnectionPool, opts ...ConnectionOption) (*SessionPool, error) {
+	cfg := &ConnectionConfig{
+		HostAddresses: connPool.addresses,
+	}
+
+	cfg.Apply(opts)
+
+	return &SessionPool{
+		ConnectionPool: connPool,
+		Username:       cfg.Username,
+		Password:       cfg.Password,
+		Space:          cfg.Space,
+		Log:            cfg.Log,
+	}, nil
 }
 
 func newSessionFromFromConnectionConfig(cfg *ConnectionConfig, opts ...ConnectionOption) (*SessionPool, error) {
