@@ -47,7 +47,7 @@ func NewSessionPool(connectionString string, opts ...ConnectionOption) (*Session
 		return nil, fmt.Errorf("unable to parse connection string: %s", err.Error())
 	}
 
-	return newSessionFromFromConnectionConfig(cfg, opts...)
+	return newSessionFromFromConnectionConfig(cfg, nil, opts...)
 }
 
 // NewSessionPoolFromHostAddresses uses the existing []HostAddress to build a session pool
@@ -67,7 +67,7 @@ func NewSessionPoolFromHostAddresses(addresses []HostAddress, opts ...Connection
 		HostAddresses: addresses,
 	}
 
-	return newSessionFromFromConnectionConfig(cfg, opts...)
+	return newSessionFromFromConnectionConfig(cfg, nil, opts...)
 }
 
 // NewSessionPoolFromConnectionPool is an alternative way to build a session pool
@@ -83,23 +83,20 @@ func NewSessionPoolFromConnectionPool(connPool *ConnectionPool, opts ...Connecti
 		HostAddresses: connPool.addresses,
 	}
 
-	cfg.Apply(opts)
-
-	return &SessionPool{
-		ConnectionPool: connPool,
-		Username:       cfg.Username,
-		Password:       cfg.Password,
-		Space:          cfg.Space,
-		Log:            cfg.Log,
-	}, nil
+	return newSessionFromFromConnectionConfig(cfg, connPool, opts...)
 }
 
-func newSessionFromFromConnectionConfig(cfg *ConnectionConfig, opts ...ConnectionOption) (*SessionPool, error) {
+func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
+	connPool SessionGetter,
+	opts ...ConnectionOption) (*SessionPool, error) {
 	cfg.Apply(opts)
 
-	connPool, err := cfg.BuildConnectionPool()
-	if err != nil {
-		return nil, fmt.Errorf("unable to build connection pool: %s", err.Error())
+	if connPool == nil {
+		var err error
+		connPool, err = cfg.BuildConnectionPool()
+		if err != nil {
+			return nil, fmt.Errorf("unable to build connection pool: %s", err.Error())
+		}
 	}
 
 	return &SessionPool{
