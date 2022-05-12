@@ -49,9 +49,9 @@ For example:
 
 ## Usage example
 
-[Simple Code Example](https://github.com/vesoft-inc/nebula-go/tree/master/examples/basic_example/graph_client_basic_example.go)
+[Simple Code Example](https://github.com/vesoft-inc/nebula-go/tree/master/examples/basic/main.go)
 
-[Code Example with Gorountines](https://github.com/vesoft-inc/nebula-go/tree/master/examples/gorountines_example/graph_client_goroutines_example.go)
+[Code Example with Gorountines](https://github.com/vesoft-inc/nebula-go/tree/master/examples/gorountines/main.go)
 
 ## Licensing
 
