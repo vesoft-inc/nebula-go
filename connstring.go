@@ -234,7 +234,11 @@ func (cfg *ConnectionConfig) String() string {
 func (cfg *ConnectionConfig) Redacted() string {
 	uri := cfg.toURI()
 
-	return uri.Redacted()
+	if _, ok := uri.User.Password(); ok {
+		uri.User = url.UserPassword(cfg.Username, "xxxxx")
+	}
+
+	return uri.String()
 }
 
 func (cfg *ConnectionConfig) toURI() *url.URL {
