@@ -50,7 +50,7 @@ func TestSessionPool(t *testing.T) {
 					},
 					nebula_go.GetDefaultConf(),
 					(*tls.Config)(nil),
-					nebula_go.DefaultLogger{}).Return(nil, errors.New("ops"))
+					nebula_go.NoLogger{}).Return(nil, errors.New("ops"))
 			},
 			errMsg: "unable to build connection pool: ops",
 		},
@@ -67,7 +67,7 @@ func TestSessionPool(t *testing.T) {
 					},
 					nebula_go.GetDefaultConf(),
 					&tls.Config{InsecureSkipVerify: true},
-					nebula_go.DefaultLogger{}).Return(nil, errors.New("ops"))
+					nebula_go.NoLogger{}).Return(nil, errors.New("ops"))
 			},
 			errMsg: "unable to build connection pool: ops",
 		},
@@ -89,7 +89,7 @@ func TestSessionPool(t *testing.T) {
 					},
 					poolConf,
 					(*tls.Config)(nil),
-					nebula_go.DefaultLogger{}).Return(sessGetter, nil)
+					nebula_go.NoLogger{}).Return(sessGetter, nil)
 			},
 			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, _ *nebula_go.Session) {
 				sessPool.Close()
@@ -117,7 +117,7 @@ func TestSessionPool(t *testing.T) {
 						IdleTime: 5 * time.Second,
 					},
 					(*tls.Config)(nil),
-					nebula_go.DefaultLogger{}).Return(sessGetter, nil)
+					nebula_go.NoLogger{}).Return(sessGetter, nil)
 			},
 			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, _ *nebula_go.Session) {
 				got, err := sessPool.Acquire()
@@ -145,7 +145,7 @@ func TestSessionPool(t *testing.T) {
 					},
 					nebula_go.GetDefaultConf(),
 					(*tls.Config)(nil),
-					nebula_go.DefaultLogger{}).Return(sessGetter, nil)
+					nebula_go.NoLogger{}).Return(sessGetter, nil)
 			},
 			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session *nebula_go.Session) {
 				got, err := sessPool.Acquire()
@@ -158,6 +158,7 @@ func TestSessionPool(t *testing.T) {
 			connString: "nebula://user:pass@localhost",
 			opts: []nebula_go.ConnectionOption{
 				nebula_go.WithTLSConfig(&tls.Config{}),
+				nebula_go.WithDefaultLogger(),
 			},
 			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
 				sessGetter *mockSessionGetter,

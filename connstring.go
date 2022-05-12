@@ -60,9 +60,9 @@ func WithLogger(log Logger) ConnectionOption {
 	}
 }
 
-// WithLogger functional option to substitute the default logger by NoLogger.
-func WithNoLogger() ConnectionOption {
-	return WithLogger(NoLogger{})
+// WithDefaultLogger functional option to substitute the NoLogger by DefaultLogger.
+func WithDefaultLogger() ConnectionOption {
+	return WithLogger(DefaultLogger{})
 }
 
 // WithCredentials functional option to set a pair of username and password.
@@ -343,7 +343,7 @@ func (cfg *ConnectionConfig) BuildConnectionPool() (SessionGetter, error) {
 		cfg.TLSConfig = tlsConfig
 	}
 	if cfg.Log == nil {
-		cfg.Log = DefaultLogger{}
+		cfg.Log = NoLogger{}
 	}
 
 	if cfg.ConnectionPoolBuilder == nil {
