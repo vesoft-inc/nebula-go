@@ -60,8 +60,17 @@ type SessionPoolConfig struct {
 	MaxIdleSessionPoolSize int
 }
 
+func (conf *SessionPoolConfig) validateConf(log Logger) {
+	if conf.MaxIdleSessionPoolSize < 0 {
+		conf.MaxIdleSessionPoolSize = defaultMaxIdleSessionPoolSize
+		log.Warn(fmt.Sprintf("Invalid MaxIdleSessionPoolSize value, the default value of %d has been applied",
+			defaultMaxIdleSessionPoolSize))
+	}
+}
+
 const defaultMaxIdleSessionPoolSize = 0
 
+// GetDefaultSessionPoolConfig return the default session pool configuration.
 func GetDefaultSessionPoolConfig() SessionPoolConfig {
 	return SessionPoolConfig{
 		MaxIdleSessionPoolSize: defaultMaxIdleSessionPoolSize,
@@ -139,6 +148,8 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 	}
 
 	var queue *sessionQueue
+
+	cfg.SessionPoolConfig.validateConf(cfg.Log)
 
 	if max := cfg.SessionPoolConfig.MaxIdleSessionPoolSize; max > 0 {
 		queue = &sessionQueue{

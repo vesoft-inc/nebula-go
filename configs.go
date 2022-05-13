@@ -16,6 +16,13 @@ import (
 	"time"
 )
 
+const (
+	defaultConnectionPoolTimeOut  = 0 * time.Millisecond
+	defaultConnectionPoolIdleTime = 0 * time.Millisecond
+	defaultMaxConnPoolSize        = 10
+	defaultMinConnPoolSize        = 0
+)
+
 // PoolConfig is the configs of connection pool
 type PoolConfig struct {
 	// Socket timeout and Socket connection timeout, unit: seconds
@@ -33,30 +40,34 @@ type PoolConfig struct {
 // validateConf validates config
 func (conf *PoolConfig) validateConf(log Logger) {
 	if conf.TimeOut < 0 {
-		conf.TimeOut = 0 * time.Millisecond
-		log.Warn("Illegal Timeout value, the default value of 0 second has been applied")
+		conf.TimeOut = defaultConnectionPoolTimeOut
+		log.Warn(fmt.Sprintf("Illegal Timeout value, the default value of %s has been applied",
+			defaultConnectionPoolTimeOut))
 	}
 	if conf.IdleTime < 0 {
-		conf.IdleTime = 0 * time.Millisecond
-		log.Warn("Invalid IdleTime value, the default value of 0 second has been applied")
+		conf.IdleTime = defaultConnectionPoolIdleTime
+		log.Warn(fmt.Sprintf("Illegal IdleTime value, the default value of %s has been applied",
+			defaultConnectionPoolIdleTime))
 	}
 	if conf.MaxConnPoolSize < 1 {
-		conf.MaxConnPoolSize = 10
-		log.Warn("Invalid MaxConnPoolSize value, the default value of 10 has been applied")
+		conf.MaxConnPoolSize = defaultMaxConnPoolSize
+		log.Warn(fmt.Sprintf("Invalid MaxConnPoolSize value, the default value of %d has been applied",
+			defaultMaxConnPoolSize))
 	}
 	if conf.MinConnPoolSize < 0 {
-		conf.MinConnPoolSize = 0
-		log.Warn("Invalid MinConnPoolSize value, the default value of 0 has been applied")
+		conf.MinConnPoolSize = defaultMinConnPoolSize
+		log.Warn(fmt.Sprintf("Invalid MinConnPoolSize value, the default value of %d has been applied",
+			defaultMinConnPoolSize))
 	}
 }
 
-// GetDefaultConf returns the default config
+// GetDefaultConf returns the default connection pool config.
 func GetDefaultConf() PoolConfig {
 	return PoolConfig{
-		TimeOut:         0 * time.Millisecond,
-		IdleTime:        0 * time.Millisecond,
-		MaxConnPoolSize: 10,
-		MinConnPoolSize: 0,
+		TimeOut:         defaultConnectionPoolTimeOut,
+		IdleTime:        defaultConnectionPoolIdleTime,
+		MaxConnPoolSize: defaultMaxConnPoolSize,
+		MinConnPoolSize: defaultMinConnPoolSize,
 	}
 }
 
@@ -66,7 +77,7 @@ var (
 )
 
 // GetDefaultSSLConfig reads the files in the given path and returns a tls.Config object.
-// rootCAPath is mandatory
+// rootCAPath is mandatory.
 func GetDefaultSSLConfig(rootCAPath, certPath, privateKeyPath string) (*tls.Config, error) {
 	if rootCAPath != "" {
 		return ClientConfigForX509(certPath, privateKeyPath, rootCAPath)
@@ -76,7 +87,7 @@ func GetDefaultSSLConfig(rootCAPath, certPath, privateKeyPath string) (*tls.Conf
 }
 
 // ClientConfigForX509 function. return a tls.Config based on the files.
-// with no rootFile will use the system root CA
+// with no rootFile will use the system root CA.
 func ClientConfigForX509(certFile, keyFile, rootFile string) (*tls.Config, error) {
 	cert, err := ioutil.ReadFile(certFile)
 	if err != nil {
