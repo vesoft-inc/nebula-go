@@ -27,7 +27,7 @@ func main() {
 	sessPool, err := nebula.NewSessionPool(connString,
 		nebula.WithDefaultLogger(),
 		nebula.WithOnAcquireSessionStmt(
-			`CREATE SPACE IF NOT EXISTS {{.Space}}(vid_type=FIXED_STRING(20)); USE {{.Space}};`,
+			`CREATE SPACE IF NOT EXISTS %SPACE%(vid_type=FIXED_STRING(20)); USE %SPACE%;`,
 		),
 	)
 	if err != nil {
