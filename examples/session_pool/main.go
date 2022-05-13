@@ -17,14 +17,19 @@ import (
 const (
 	// The default port of Nebula Graph 2.x is 9669.
 	// 3699 is only for testing.
-	connString = "nebula://root:nebula@127.0.0.1:3699"
+	connString = "nebula://root:nebula@127.0.0.1:3699/basic_example_space"
 )
 
 // Initialize logger
 var log = nebula.DefaultLogger{}
 
 func main() {
-	sessPool, err := nebula.NewSessionPool(connString, nebula.WithDefaultLogger())
+	sessPool, err := nebula.NewSessionPool(connString,
+		nebula.WithDefaultLogger(),
+		nebula.WithOnAcquireSessionStmt(
+			`CREATE SPACE IF NOT EXISTS {{.Space}}(vid_type=FIXED_STRING(20)); USE {{.Space}};`,
+		),
+	)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Fail to initialize the session pool with string %q: %s",
 			connString, err.Error()))
@@ -45,10 +50,9 @@ func main() {
 				connString, err.Error()))
 		}
 
-		createSchema := `CREATE SPACE IF NOT EXISTS basic_example_space(vid_type=FIXED_STRING(20));
-	USE basic_example_space;
-	CREATE TAG IF NOT EXISTS person(name string, age int);
-	CREATE EDGE IF NOT EXISTS like(likeness double)`
+		createSchema := `CREATE TAG IF NOT EXISTS person(name string, age int); 
+CREATE EDGE IF NOT EXISTS like(likeness double);
+`
 
 		// Excute a query
 		resultSet, err := session.Execute(createSchema)
