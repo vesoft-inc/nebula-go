@@ -152,7 +152,86 @@ func TestSessionPool(t *testing.T) {
 				assert.Nil(t, err)
 				assert.Equal(t, session, got)
 
-				sessPool.Release(got)
+				err = sessPool.Release(got)
+				assert.Nil(t, err)
+			},
+		},
+		{
+			label: "should return error when execute default on acquire session stmt",
+			opts: []nebula_go.ConnectionOption{
+				nebula_go.WithCredentials("foo", "bar"),
+			},
+			connString: "nebula://user:pass@localhost/space",
+			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
+				sessGetter *mockSessionGetter,
+				session *mockSession,
+			) {
+				sessGetter.On("GetSession", "foo", "bar").Return(session, nil)
+
+				connPollBuilder.On("CALL",
+					[]nebula_go.HostAddress{
+						{Host: "localhost", Port: 9669},
+					},
+					nebula_go.GetDefaultConf(),
+					(*tls.Config)(nil),
+					nebula_go.NoLogger{}).Return(sessGetter, nil)
+
+				session.On("Execute", "USE space;").Return(nil, errors.New("ops"))
+				session.On("Release").Return()
+			},
+			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session nebula_go.NebulaSession) {
+				got, err := sessPool.Acquire()
+
+				assert.EqualError(t, err, "unable to execute statement \"USE space;\" on acquire session: ops")
+				assert.Nil(t, got)
+			},
+		},
+		{
+			label:      "should return error with bad space name",
+			connString: "nebula://localhost/skip-verify",
+			prepare: func(_ *mockConnectionPoolBuilder,
+				_ *mockSessionGetter,
+				_ *mockSession,
+			) {
+			},
+			errMsg: "unable to parse connection string: space name \"skip-verify\" is not valid",
+		},
+		{
+			label: "should return failure when execute default on acquire session stmt",
+			opts: []nebula_go.ConnectionOption{
+				nebula_go.WithCredentials("foo", "bar"),
+				nebula_go.WithOnAcquireSessionStmt(
+					`CREATE SPACE IF NOT EXISTS {{.Space}}(vid_type=FIXED_STRING(20)); USE {{.Space}};`,
+				),
+			},
+			connString: "nebula://user:pass@localhost/space",
+			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
+				sessGetter *mockSessionGetter,
+				session *mockSession,
+			) {
+				sessGetter.On("GetSession", "foo", "bar").Return(session, nil)
+
+				connPollBuilder.On("CALL",
+					[]nebula_go.HostAddress{
+						{Host: "localhost", Port: 9669},
+					},
+					nebula_go.GetDefaultConf(),
+					(*tls.Config)(nil),
+					nebula_go.NoLogger{}).Return(sessGetter, nil)
+
+				session.On("Execute",
+					"CREATE SPACE IF NOT EXISTS space(vid_type=FIXED_STRING(20)); USE space;",
+				).Return(&nebula_go.ResultSet{}, nil)
+				session.On("Release").Return()
+			},
+			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session nebula_go.NebulaSession) {
+				got, err := sessPool.Acquire()
+
+				assert.EqualError(t, err,
+					"execute statement "+
+						"\"CREATE SPACE IF NOT EXISTS space(vid_type=FIXED_STRING(20)); USE space;\""+
+						" on acquire session does not succeed: unknown error (error code -8000)")
+				assert.Nil(t, got)
 			},
 		},
 		{
@@ -180,7 +259,8 @@ func TestSessionPool(t *testing.T) {
 				assert.Nil(t, err)
 				assert.Equal(t, session, got)
 
-				sessPool.Release(got)
+				err = sessPool.Release(got)
+				assert.Nil(t, err)
 			},
 		},
 		{
@@ -212,7 +292,8 @@ func TestSessionPool(t *testing.T) {
 				assert.Nil(t, err)
 				assert.Equal(t, session, got)
 
-				sessPool.Release(got)
+				err = sessPool.Release(got)
+				assert.Nil(t, err)
 
 				sessPool.Close()
 			},
@@ -238,6 +319,41 @@ func TestSessionPool(t *testing.T) {
 					&tls.Config{},
 					nebula_go.DefaultLogger{}).Return(sessGetter, nil)
 
+				session.On("Release").Return()
+			},
+			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session nebula_go.NebulaSession) {
+				err := sessPool.WithSession(func(got nebula_go.NebulaSession) error {
+					assert.Equal(t, session, got)
+					return nil
+				})
+
+				assert.Nil(t, err)
+			},
+		},
+		{
+			label:      "should execute on release session stmt",
+			connString: "nebula://user:pass@localhost/test",
+			opts: []nebula_go.ConnectionOption{
+				nebula_go.WithTLSConfig(&tls.Config{}),
+				nebula_go.WithDefaultLogger(),
+				nebula_go.WithOnAcquireSessionStmt(""),
+				nebula_go.WithOnReleaseSessionStmt("DROP SPACE IF EXISTS {{.Space}};"),
+			},
+			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
+				sessGetter *mockSessionGetter,
+				session *mockSession,
+			) {
+				sessGetter.On("GetSession", "user", "pass").Return(session, nil)
+
+				connPollBuilder.On("CALL",
+					[]nebula_go.HostAddress{
+						{Host: "localhost", Port: 9669},
+					},
+					nebula_go.GetDefaultConf(),
+					&tls.Config{},
+					nebula_go.DefaultLogger{}).Return(sessGetter, nil)
+
+				session.On("Execute", "DROP SPACE IF EXISTS test;").Return(&nebula_go.ResultSet{}, nil)
 				session.On("Release").Return()
 			},
 			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session nebula_go.NebulaSession) {

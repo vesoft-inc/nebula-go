@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"net"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -25,6 +26,8 @@ const (
 
 	// NEBULA_SCHEME is the expected scheme / protocol in connection strings
 	NEBULA_SCHEME = "nebula"
+
+	defaultOnAcquireSession = `USE {{.Space}};`
 )
 
 // ConnectionConfig type.
@@ -39,6 +42,9 @@ type ConnectionConfig struct {
 	TLS       string
 	TLSConfig *tls.Config
 	Log       Logger
+
+	OnAcquireSession string
+	OnReleaseSession string
 
 	ConnectionPoolBuilder
 }
@@ -92,6 +98,28 @@ func WithConnectionPoolConfig(poolConfig PoolConfig) ConnectionOption {
 func WithSessionPoolConfig(sessionPoolConfig SessionPoolConfig) ConnectionOption {
 	return func(cfg *ConnectionConfig) {
 		cfg.SessionPoolConfig = sessionPoolConfig
+	}
+}
+
+// WithOnAcquireSessionStmt functional option to override the default on acquire session stmt.
+// This will be executed each time one session is acquired from the pool
+// The default value if no Space is defined is none.
+// Else, the default value is:
+//    USE {{.Space}};
+// where {{.Space}} is substitute by the value of Space via text/template
+func WithOnAcquireSessionStmt(stmt string) ConnectionOption {
+	return func(cfg *ConnectionConfig) {
+		cfg.OnAcquireSession = stmt
+	}
+}
+
+// WithOnReleaseSessionStmt functional option to override the default on release session stmt.
+// This will be executed each time one session is released to the pool
+// Default is none. Use the same format as OnAcquireSession with {{.Space}} being substituted
+// by the value of of Space via text/template
+func WithOnReleaseSessionStmt(stmt string) ConnectionOption {
+	return func(cfg *ConnectionConfig) {
+		cfg.OnReleaseSession = stmt
 	}
 }
 
@@ -201,7 +229,12 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 	}
 
 	if space := strings.Replace(connectionURL.Path, "/", "", 1); space != "" {
+		if !nebulaGraphSpaceNameFormat.MatchString(space) {
+			return nil, fmt.Errorf("space name %q is not valid", space)
+		}
+
 		conf.Space = space
+		conf.OnAcquireSession = defaultOnAcquireSession
 	}
 
 	for i, hostPort := range hostPorts {
@@ -210,7 +243,6 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 		}
 
 		var portOrService string
-
 		conf.HostAddresses[i].Port = defaultPort
 
 		if stripIPv6Brackets, hasPort := checkTCPPort(hostPort); !hasPort {
@@ -244,6 +276,19 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 	}
 
 	return conf, nil
+}
+
+var nebulaGraphSpaceNameFormat = regexp.MustCompile("^[a-zA-Z0-9_]*$")
+
+// Validate check the internal configuration consistency.
+func (cfg *ConnectionConfig) Validate() error {
+	cfg.SessionPoolConfig.validateConf(cfg.Log)
+
+	if !nebulaGraphSpaceNameFormat.MatchString(cfg.Space) {
+		return fmt.Errorf("space name %q is not valid", cfg.Space)
+	}
+
+	return nil
 }
 
 // String return a string representation of this configuration.

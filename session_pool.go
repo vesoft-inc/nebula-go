@@ -8,10 +8,15 @@
 package nebula_go
 
 import (
+	"bytes"
 	"container/list"
 	"fmt"
 	"strconv"
 	"sync"
+	"text/template"
+
+	"github.com/vesoft-inc/nebula-go/v3/nebula"
+	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
 
 var (
@@ -44,12 +49,14 @@ func (cpw *connectionPoolWrapper) GetSession(username, password string) (NebulaS
 
 // SessionPool type.
 type SessionPool struct {
-	ConnectionPool SessionGetter
-	Username       string
-	Password       string
-	Space          string
-	Log            Logger
-	SessionQueue   SessionQueue
+	ConnectionPool   SessionGetter
+	Username         string
+	Password         string
+	Space            string
+	OnAcquireSession string
+	OnReleaseSession string
+	Log              Logger
+	sessionQueue     *sessionQueue
 	sync.Mutex
 }
 
@@ -138,6 +145,10 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 	opts ...ConnectionOption) (*SessionPool, error) {
 	cfg.Apply(opts)
 
+	if err := cfg.Validate(); err != nil {
+		return nil, err
+	}
+
 	if connPool == nil {
 		var err error
 		connPool, err = cfg.BuildConnectionPool()
@@ -148,22 +159,59 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 
 	var queue *sessionQueue
 
-	cfg.SessionPoolConfig.validateConf(cfg.Log)
-
 	if max := cfg.SessionPoolConfig.MaxIdleSessionPoolSize; max > 0 {
 		queue = &sessionQueue{
 			max: max,
 		}
 	}
 
+	type Data struct {
+		Space string
+	}
+
+	data := Data{
+		Space: cfg.Space,
+	}
+
+	onAcquireSession, err := processTemplate("onAcquire", cfg.OnAcquireSession, data)
+	if err != nil {
+		return nil, err
+	}
+
+	onReleaseSession, err := processTemplate("onRelease", cfg.OnReleaseSession, data)
+	if err != nil {
+		return nil, err
+	}
+
 	return &SessionPool{
-		ConnectionPool: connPool,
-		Username:       cfg.Username,
-		Password:       cfg.Password,
-		Space:          cfg.Space,
-		Log:            cfg.Log,
-		SessionQueue:   queue,
+		ConnectionPool:   connPool,
+		Username:         cfg.Username,
+		Password:         cfg.Password,
+		Space:            cfg.Space,
+		OnAcquireSession: onAcquireSession,
+		OnReleaseSession: onReleaseSession,
+		Log:              cfg.Log,
+		sessionQueue:     queue,
 	}, nil
+}
+
+func processTemplate(name, raw string, data interface{}) (string, error) {
+	if raw == "" {
+		return "", nil
+	}
+
+	t, err := template.New(name).Parse(raw)
+	if err != nil {
+		return "", fmt.Errorf("unable to process template %s: %v", name, err)
+	}
+
+	var buff bytes.Buffer
+	err = t.Execute(&buff, data)
+	if err != nil {
+		return "", fmt.Errorf("unable to execute template %s: %v", name, err)
+	}
+
+	return buff.String(), nil
 }
 
 // Acquire return an authenticated session or return an error.
@@ -174,7 +222,7 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 //   sessionPool.Release(session)
 func (s *SessionPool) Acquire() (session NebulaSession, err error) {
 	var ok bool
-	session, ok = s.SessionQueue.Dequeue()
+	session, ok = s.sessionQueue.Dequeue()
 	if ok {
 		return session, nil
 	}
@@ -184,19 +232,69 @@ func (s *SessionPool) Acquire() (session NebulaSession, err error) {
 		return nil, fmt.Errorf("unable to get session: %s", err.Error())
 	}
 
+	if s.OnAcquireSession != "" {
+		rs, err := session.Execute(s.OnAcquireSession)
+		if err != nil {
+			s.release(session)
+
+			return nil, fmt.Errorf("unable to execute statement %q on acquire session: %v",
+				s.OnAcquireSession, err)
+		}
+
+		if rs.resp == nil {
+			rs.resp = &graph.ExecutionResponse{
+				ErrorCode: nebula.ErrorCode_E_UNKNOWN,
+				ErrorMsg:  []byte("unknown error"),
+			}
+		}
+
+		if !rs.IsSucceed() {
+			s.release(session)
+
+			return nil, fmt.Errorf("execute statement %q on acquire session does not succeed: %s (error code %d)",
+				s.OnAcquireSession, rs.GetErrorMsg(), rs.GetErrorCode())
+		}
+	}
+
 	return session, nil
 }
 
 // Release will handle the release of the nebula session.
 // If MaxIdleSessionPoolSize is not zero, we may keep the session in memory until Close.
-func (s *SessionPool) Release(session NebulaSession) {
+func (s *SessionPool) Release(session NebulaSession) error {
 	if session == nil {
-		return
+		return nil
 	}
 
-	oldest := s.SessionQueue.Enqueue(session)
+	if s.OnReleaseSession != "" {
+		rs, err := session.Execute(s.OnReleaseSession)
+		if err != nil {
+			s.release(session)
+
+			return fmt.Errorf("unable to execute statement %q on release session: %v",
+				s.OnReleaseSession, err)
+		}
+
+		if rs.resp == nil {
+			rs.resp = &graph.ExecutionResponse{
+				ErrorCode: nebula.ErrorCode_E_UNKNOWN,
+				ErrorMsg:  []byte("unknown error"),
+			}
+		}
+
+		if !rs.IsSucceed() {
+			s.release(session)
+
+			return fmt.Errorf("unable to execute statement %q on release session: %s (error code %d)",
+				s.OnReleaseSession, rs.GetErrorMsg(), rs.GetErrorCode())
+		}
+	}
+
+	oldest := s.sessionQueue.Enqueue(session)
 
 	s.release(oldest)
+
+	return nil
 }
 
 func (s *SessionPool) release(session NebulaSession) {
@@ -239,7 +337,12 @@ func (s *SessionPool) WithSession(callback func(session NebulaSession) error) er
 		return err
 	}
 
-	defer s.Release(session)
+	defer func() {
+		if err := s.Release(session); err != nil {
+			s.Log.Warn(fmt.Sprintf("unexpected error while release session id %d: %v",
+				session.GetSessionID(), err))
+		}
+	}()
 
 	return callback(session)
 }
@@ -256,14 +359,7 @@ func (s *SessionPool) Close() error {
 }
 
 func (s *SessionPool) releaseAllRemainingSessions(finally func()) {
-	s.SessionQueue.ForEach(s.release, finally)
-}
-
-// SessionQueue interface type.
-type SessionQueue interface {
-	Dequeue() (NebulaSession, bool)
-	Enqueue(session NebulaSession) (oldest NebulaSession)
-	ForEach(callback func(session NebulaSession), finally func())
+	s.sessionQueue.ForEach(s.release, finally)
 }
 
 type sessionQueue struct {

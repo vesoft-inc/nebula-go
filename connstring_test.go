@@ -134,10 +134,13 @@ func TestParseString(t *testing.T) {
 						Port: nebula_go.DEFAULT_PORT,
 					},
 				},
-				Username:   "user",
-				Password:   "pass",
-				Space:      "myspace",
-				TLS:        "false",
+				Username: "user",
+				Password: "pass",
+				Space:    "myspace",
+				TLS:      "false",
+
+				OnAcquireSession: "USE {{.Space}};",
+
 				PoolConfig: nebula_go.GetDefaultConf(),
 			},
 		},
@@ -474,11 +477,14 @@ func TestRegisterTLSConf(t *testing.T) {
 				Port: nebula_go.DEFAULT_PORT,
 			},
 		},
-		Username:   "user",
-		Password:   "pass",
-		Space:      "myspace",
-		TLS:        "foo",
-		TLSConfig:  tlsConfig.Clone(),
+		Username:  "user",
+		Password:  "pass",
+		Space:     "myspace",
+		TLS:       "foo",
+		TLSConfig: tlsConfig.Clone(),
+
+		OnAcquireSession: "USE {{.Space}};",
+
 		PoolConfig: nebula_go.GetDefaultConf(),
 	}
 
