@@ -24,7 +24,7 @@ const (
 var log = nebula.DefaultLogger{}
 
 func main() {
-	sessPool, err := nebula.NewSessionPool(connString)
+	sessPool, err := nebula.NewSessionPool(connString, nebula.WithDefaultLogger())
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Fail to initialize the session pool with string %q: %s",
 			connString, err.Error()))
@@ -58,7 +58,7 @@ func main() {
 		}
 		checkResultSet(createSchema, resultSet)
 
-		sessPool.Release(session)
+		defer sessPool.Release(session)
 	}
 
 	err = sessPool.WithSession(func(session nebula.NebulaSession) error {
@@ -72,6 +72,7 @@ func main() {
 
 		return nil
 	})
+
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Fail to use a new session from session pool with string %q: %s",
 			connString, err.Error()))
