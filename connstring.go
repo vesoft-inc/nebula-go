@@ -88,6 +88,13 @@ func WithConnectionPoolConfig(poolConfig PoolConfig) ConnectionOption {
 	}
 }
 
+// WithSessionPoolConfig functional option to override the session pool configuration.
+func WithSessionPoolConfig(sessionPoolConfig SessionPoolConfig) ConnectionOption {
+	return func(cfg *ConnectionConfig) {
+		cfg.SessionPoolConfig = sessionPoolConfig
+	}
+}
+
 // ConnectionPoolBuilder type.
 type ConnectionPoolBuilder func([]HostAddress, PoolConfig, *tls.Config, Logger) (SessionGetter, error)
 
@@ -104,15 +111,16 @@ var (
 //   "nebula://hostname:port"                              same but explicit use protocol nebula://
 //   "nebula://user:pass@hostname:port"                    define user and password to use in sessions
 //   "nebula://user:pass@hostname:port/space"              reserved for future use
-//   "nebula://user:pass@hostname:port?TimeOut=2s"         set the pool conf timeout as 2s
-//   "nebula://user:pass@hostname:port?IdleOut=2s"         set the pool conf idleout as 2s
-//   "nebula://user:pass@hostname:port?MaxConnPoolSize=10" set max conn poll size to 10
-//   "nebula://user:pass@hostname:port?MinConnPoolSize=0"  set min conn poll size to 0
+//   "nebula://user:pass@hostname:port?TimeOut=2s"         set the pool conf timeout as 2s (default 0s)
+//   "nebula://user:pass@hostname:port?IdleOut=2s"         set the pool conf idleout as 2s (default 0s)
+//   "nebula://user:pass@hostname:port?MaxConnPoolSize=15" set max conn poll size to 15    (default 10)
+//   "nebula://user:pass@hostname:port?MinConnPoolSize=4"  set min conn poll size to 4     (default  0)
 //   "nebula://user:pass@hostname:port?tls=false"          use no TLS
 //   "nebula://user:pass@hostname:port?tls=true"           use TLS &tls.Config{}
 //   "nebula://user:pass@hostname:port?tls=skip-verify"    use TLS with InsecureSkipVerify true
 //   "nebula://user:pass@hostname:port?tls=custom"         use config registered via RegisterTLSConfig
 //   "nebula://user:pass@[host1,host2,...hostN]"           define multiple hosts
+//   "nebula://hostname?MaxIdleSessionPoolSize=10"         set max idle session pool to 10 (default 0)
 func ParseConnectionString(connectionString string) (*ConnectionConfig, error) {
 	return parseConnectionString(connectionString, true)
 }
@@ -137,6 +145,7 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 	query := connectionURL.Query()
 
 	poolConfig := GetDefaultConf()
+
 	err = peekDurationFromQueryString(query, "TimeOut", &poolConfig.TimeOut)
 	if err != nil {
 		return nil, err
@@ -157,7 +166,7 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 		return nil, err
 	}
 
-	var sessionPoolConfig SessionPoolConfig
+	sessionPoolConfig := GetDefaultSessionPoolConfig()
 
 	err = peekIntFromQueryString(query, "MaxIdleSessionPoolSize", &sessionPoolConfig.MaxIdleSessionPoolSize)
 	if err != nil {
@@ -313,7 +322,9 @@ func (cfg *ConnectionConfig) toURI() *url.URL {
 	if cfg.PoolConfig.MinConnPoolSize != defaultConf.MinConnPoolSize {
 		query.Add("MinConnPoolSize", strconv.Itoa(cfg.PoolConfig.MinConnPoolSize))
 	}
-	if cfg.SessionPoolConfig.MaxIdleSessionPoolSize != 0 {
+
+	defaultSessConf := GetDefaultSessionPoolConfig()
+	if cfg.SessionPoolConfig.MaxIdleSessionPoolSize != defaultSessConf.MaxIdleSessionPoolSize {
 		query.Add("MaxIdleSessionPoolSize", strconv.Itoa(cfg.SessionPoolConfig.MaxIdleSessionPoolSize))
 	}
 

@@ -60,6 +60,14 @@ type SessionPoolConfig struct {
 	MaxIdleSessionPoolSize int
 }
 
+const defaultMaxIdleSessionPoolSize = 0
+
+func GetDefaultSessionPoolConfig() SessionPoolConfig {
+	return SessionPoolConfig{
+		MaxIdleSessionPoolSize: defaultMaxIdleSessionPoolSize,
+	}
+}
+
 // NewSessionPool constructs a new session pool using the given connection string and options.
 // will use DefaultLogger as logger and no ssl by default
 // Instead:
@@ -149,6 +157,7 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 }
 
 // Acquire return an authenticated session or return an error.
+// If MaxIdleSessionPoolSize is not zero, we may return an existing session.
 // Usage:
 //   session, err := sessionPool.Acquire()
 //   ... use session ...
@@ -169,6 +178,7 @@ func (s *SessionPool) Acquire() (session NebulaSession, err error) {
 }
 
 // Release will handle the release of the nebula session.
+// If MaxIdleSessionPoolSize is not zero, we may keep the session in memory until Close.
 func (s *SessionPool) Release(session NebulaSession) {
 	if session == nil {
 		return
@@ -224,7 +234,7 @@ func (s *SessionPool) WithSession(callback func(session NebulaSession) error) er
 	return callback(session)
 }
 
-// Close method.
+// Close will release all remaining sessions and close the connection pool.
 func (s *SessionPool) Close() error {
 	s.releaseAllRemainingSessions(func() {
 		s.Log.Info("closing connection pool")
