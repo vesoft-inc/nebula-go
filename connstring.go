@@ -31,13 +31,14 @@ const (
 type ConnectionConfig struct {
 	// HostAddresses defines a list of host (string) and port (number)
 	HostAddresses []HostAddress
-	PoolConfig    PoolConfig
-	Username      string
-	Password      string
-	Space         string
-	TLS           string
-	TLSConfig     *tls.Config
-	Log           Logger
+	PoolConfig
+	SessionPoolConfig
+	Username  string
+	Password  string
+	Space     string
+	TLS       string
+	TLSConfig *tls.Config
+	Log       Logger
 
 	ConnectionPoolBuilder
 }
@@ -156,6 +157,13 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 		return nil, err
 	}
 
+	var sessionPoolConfig SessionPoolConfig
+
+	err = peekIntFromQueryString(query, "MaxIdleSessionPoolSize", &sessionPoolConfig.MaxIdleSessionPoolSize)
+	if err != nil {
+		return nil, err
+	}
+
 	defaultPort := DEFAULT_PORT
 	if defaultPortOrService := connectionURL.Port(); defaultPortOrService != "" {
 		defaultPort, err = convertToTCPPort(defaultPortOrService)
@@ -173,9 +181,10 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 	}
 
 	conf := &ConnectionConfig{
-		HostAddresses: make([]HostAddress, len(hostPorts)),
-		PoolConfig:    poolConfig,
-		Username:      connectionURL.User.Username(),
+		HostAddresses:     make([]HostAddress, len(hostPorts)),
+		PoolConfig:        poolConfig,
+		SessionPoolConfig: sessionPoolConfig,
+		Username:          connectionURL.User.Username(),
 	}
 
 	if password, ok := connectionURL.User.Password(); ok {
@@ -303,6 +312,9 @@ func (cfg *ConnectionConfig) toURI() *url.URL {
 	}
 	if cfg.PoolConfig.MinConnPoolSize != defaultConf.MinConnPoolSize {
 		query.Add("MinConnPoolSize", strconv.Itoa(cfg.PoolConfig.MinConnPoolSize))
+	}
+	if cfg.SessionPoolConfig.MaxIdleSessionPoolSize != 0 {
+		query.Add("MaxIdleSessionPoolSize", strconv.Itoa(cfg.SessionPoolConfig.MaxIdleSessionPoolSize))
 	}
 
 	if cfg.TLS != "" {

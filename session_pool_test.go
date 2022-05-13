@@ -296,9 +296,7 @@ func (m *mockSession) ExecuteJsonWithParameter(stmt string, params map[string]in
 	return result, args.Error(1)
 }
 func (m *mockSession) GetSessionID() int64 {
-	args := m.Called()
-
-	return int64(args.Int(0))
+	return 1
 }
 func (m *mockSession) Release() {
 	m.Called()

@@ -8,7 +8,10 @@
 package nebula_go
 
 import (
+	"container/list"
 	"fmt"
+	"strconv"
+	"sync"
 )
 
 var (
@@ -46,6 +49,15 @@ type SessionPool struct {
 	Password       string
 	Space          string
 	Log            Logger
+
+	sessionQueue *sessionQueue
+	sync.Mutex
+}
+
+// SessionPoolConfig type.
+type SessionPoolConfig struct {
+	// The max idle sessions in pool
+	MaxIdleSessionPoolSize int
 }
 
 // NewSessionPool constructs a new session pool using the given connection string and options.
@@ -118,12 +130,21 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 		}
 	}
 
+	var queue *sessionQueue
+
+	if max := cfg.SessionPoolConfig.MaxIdleSessionPoolSize; max > 0 {
+		queue = &sessionQueue{
+			max: max,
+		}
+	}
+
 	return &SessionPool{
 		ConnectionPool: connPool,
 		Username:       cfg.Username,
 		Password:       cfg.Password,
 		Space:          cfg.Space,
 		Log:            cfg.Log,
+		sessionQueue:   queue,
 	}, nil
 }
 
@@ -132,8 +153,14 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 //   session, err := sessionPool.Acquire()
 //   ... use session ...
 //   sessionPool.Release(session)
-func (s *SessionPool) Acquire() (NebulaSession, error) {
-	session, err := s.ConnectionPool.GetSession(s.Username, s.Password)
+func (s *SessionPool) Acquire() (session NebulaSession, err error) {
+	var ok bool
+	session, ok = s.sessionQueue.Get()
+	if ok {
+		return session, nil
+	}
+
+	session, err = s.ConnectionPool.GetSession(s.Username, s.Password)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get session: %s", err.Error())
 	}
@@ -147,8 +174,23 @@ func (s *SessionPool) Release(session NebulaSession) {
 		return
 	}
 
+	oldest := s.sessionQueue.Add(session)
+
+	s.release(oldest)
+}
+
+func (s *SessionPool) release(session NebulaSession) {
+	if session == nil {
+		return
+	}
+
 	if releaser, ok := session.(interface{ Release() }); ok {
+		s.Log.Info("releasing session id: " + strconv.FormatInt(session.GetSessionID(), 16))
+
 		releaser.Release()
+	} else {
+		s.Log.Warn(fmt.Sprintf("unable to release session id %d: no method release on %T",
+			session.GetSessionID(), session))
 	}
 }
 
@@ -184,7 +226,82 @@ func (s *SessionPool) WithSession(callback func(session NebulaSession) error) er
 
 // Close method.
 func (s *SessionPool) Close() error {
-	s.ConnectionPool.Close()
+	s.releaseAllRemainingSessions(func() {
+		s.Log.Info("closing connection pool")
+
+		s.ConnectionPool.Close()
+	})
 
 	return nil
+}
+
+func (s *SessionPool) releaseAllRemainingSessions(finally func()) {
+	s.sessionQueue.ForEach(s.release, finally)
+}
+
+type sessionQueue struct {
+	sync.Mutex
+	queue list.List
+	max   int
+}
+
+func (q *sessionQueue) Get() (NebulaSession, bool) {
+	if q == nil || q.max == 0 {
+		return nil, false
+	}
+
+	q.Lock()
+	defer q.Unlock()
+
+	return q.get()
+}
+
+func (q *sessionQueue) get() (NebulaSession, bool) {
+	front := q.queue.Front()
+	if front != nil {
+		session, _ := q.queue.Remove(front).(NebulaSession)
+		return session, true
+	}
+
+	return nil, false
+}
+
+func (q *sessionQueue) Add(session NebulaSession) (oldest NebulaSession) {
+	if session == nil || q == nil || q.max == 0 {
+		return session
+	}
+
+	q.Lock()
+	defer q.Unlock()
+
+	if q.max > 0 && q.queue.Len() == q.max {
+		front := q.queue.Front()
+		oldest, _ = q.queue.Remove(front).(NebulaSession)
+	}
+
+	q.queue.PushBack(session)
+
+	return
+}
+
+func (q *sessionQueue) ForEach(callback func(session NebulaSession), finally func()) {
+	if q == nil || q.max == 0 {
+		finally()
+
+		return
+	}
+
+	q.Lock()
+	defer q.Unlock()
+
+	defer finally()
+
+	for {
+		session, ok := q.get()
+		if !ok {
+			return
+		}
+
+		callback(session)
+	}
 }
