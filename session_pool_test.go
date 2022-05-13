@@ -144,11 +144,77 @@ func TestSessionPool(t *testing.T) {
 					nebula_go.GetDefaultConf(),
 					(*tls.Config)(nil),
 					nebula_go.NoLogger{}).Return(sessGetter, nil)
+
+				session.On("Release").Return()
 			},
 			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session nebula_go.NebulaSession) {
 				got, err := sessPool.Acquire()
 				assert.Nil(t, err)
 				assert.Equal(t, session, got)
+
+				sessPool.Release(got)
+			},
+		},
+		{
+			label: "should return a session pool and return an authenticated with max session pool",
+			opts: []nebula_go.ConnectionOption{
+				nebula_go.WithCredentials("foo", "bar"),
+			},
+			connString: "nebula://user:pass@localhost?MaxIdleSessionPoolSize=10",
+			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
+				sessGetter *mockSessionGetter,
+				session *mockSession,
+			) {
+				sessGetter.On("GetSession", "foo", "bar").Return(session, nil)
+
+				connPollBuilder.On("CALL",
+					[]nebula_go.HostAddress{
+						{Host: "localhost", Port: 9669},
+					},
+					nebula_go.GetDefaultConf(),
+					(*tls.Config)(nil),
+					nebula_go.NoLogger{}).Return(sessGetter, nil)
+			},
+			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session nebula_go.NebulaSession) {
+				got, err := sessPool.Acquire()
+				assert.Nil(t, err)
+				assert.Equal(t, session, got)
+
+				sessPool.Release(got)
+			},
+		},
+		{
+			label: "should return a session pool and return an authenticated with max session pool, release on Close",
+			opts: []nebula_go.ConnectionOption{
+				nebula_go.WithCredentials("foo", "bar"),
+			},
+			connString: "nebula://user:pass@localhost?MaxIdleSessionPoolSize=10",
+			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
+				sessGetter *mockSessionGetter,
+				session *mockSession,
+			) {
+				sessGetter.On("GetSession", "foo", "bar").Return(session, nil)
+
+				connPollBuilder.On("CALL",
+					[]nebula_go.HostAddress{
+						{Host: "localhost", Port: 9669},
+					},
+					nebula_go.GetDefaultConf(),
+					(*tls.Config)(nil),
+					nebula_go.NoLogger{}).Return(sessGetter, nil)
+
+				session.On("Release").Return()
+
+				sessGetter.On("Close").Return()
+			},
+			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session nebula_go.NebulaSession) {
+				got, err := sessPool.Acquire()
+				assert.Nil(t, err)
+				assert.Equal(t, session, got)
+
+				sessPool.Release(got)
+
+				sessPool.Close()
 			},
 		},
 		{

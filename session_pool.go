@@ -49,8 +49,7 @@ type SessionPool struct {
 	Password       string
 	Space          string
 	Log            Logger
-
-	sessionQueue *sessionQueue
+	SessionQueue   SessionQueue
 	sync.Mutex
 }
 
@@ -163,7 +162,7 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 		Password:       cfg.Password,
 		Space:          cfg.Space,
 		Log:            cfg.Log,
-		sessionQueue:   queue,
+		SessionQueue:   queue,
 	}, nil
 }
 
@@ -175,7 +174,7 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 //   sessionPool.Release(session)
 func (s *SessionPool) Acquire() (session NebulaSession, err error) {
 	var ok bool
-	session, ok = s.sessionQueue.Get()
+	session, ok = s.SessionQueue.Dequeue()
 	if ok {
 		return session, nil
 	}
@@ -195,7 +194,7 @@ func (s *SessionPool) Release(session NebulaSession) {
 		return
 	}
 
-	oldest := s.sessionQueue.Add(session)
+	oldest := s.SessionQueue.Enqueue(session)
 
 	s.release(oldest)
 }
@@ -257,7 +256,14 @@ func (s *SessionPool) Close() error {
 }
 
 func (s *SessionPool) releaseAllRemainingSessions(finally func()) {
-	s.sessionQueue.ForEach(s.release, finally)
+	s.SessionQueue.ForEach(s.release, finally)
+}
+
+// SessionQueue interface type.
+type SessionQueue interface {
+	Dequeue() (NebulaSession, bool)
+	Enqueue(session NebulaSession) (oldest NebulaSession)
+	ForEach(callback func(session NebulaSession), finally func())
 }
 
 type sessionQueue struct {
@@ -266,7 +272,7 @@ type sessionQueue struct {
 	max   int
 }
 
-func (q *sessionQueue) Get() (NebulaSession, bool) {
+func (q *sessionQueue) Dequeue() (NebulaSession, bool) {
 	if q == nil || q.max == 0 {
 		return nil, false
 	}
@@ -274,10 +280,10 @@ func (q *sessionQueue) Get() (NebulaSession, bool) {
 	q.Lock()
 	defer q.Unlock()
 
-	return q.get()
+	return q.dequeue()
 }
 
-func (q *sessionQueue) get() (NebulaSession, bool) {
+func (q *sessionQueue) dequeue() (NebulaSession, bool) {
 	front := q.queue.Front()
 	if front != nil {
 		session, _ := q.queue.Remove(front).(NebulaSession)
@@ -287,7 +293,7 @@ func (q *sessionQueue) get() (NebulaSession, bool) {
 	return nil, false
 }
 
-func (q *sessionQueue) Add(session NebulaSession) (oldest NebulaSession) {
+func (q *sessionQueue) Enqueue(session NebulaSession) (oldest NebulaSession) {
 	if session == nil || q == nil || q.max == 0 {
 		return session
 	}
@@ -318,7 +324,7 @@ func (q *sessionQueue) ForEach(callback func(session NebulaSession), finally fun
 	defer finally()
 
 	for {
-		session, ok := q.get()
+		session, ok := q.dequeue()
 		if !ok {
 			return
 		}
