@@ -27,8 +27,8 @@ func TestSessionPool(t *testing.T) {
 
 		opts []nebula_go.ConnectionOption
 
-		prepare func(*mockConnectionPoolBuilder, *mockSessionGetter, *nebula_go.Session)
-		verify  func(*testing.T, *nebula_go.SessionPool, *nebula_go.Session)
+		prepare func(*mockConnectionPoolBuilder, *mockSessionGetter, *mockSession)
+		verify  func(*testing.T, *nebula_go.SessionPool, nebula_go.NebulaSession)
 
 		errMsg string
 	}{
@@ -42,7 +42,7 @@ func TestSessionPool(t *testing.T) {
 			connString: "nebula://localhost",
 			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
 				_ *mockSessionGetter,
-				_ *nebula_go.Session,
+				_ *mockSession,
 			) {
 				connPollBuilder.On("CALL",
 					[]nebula_go.HostAddress{
@@ -59,7 +59,7 @@ func TestSessionPool(t *testing.T) {
 			connString: "nebula://localhost?tls=skip-verify",
 			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
 				_ *mockSessionGetter,
-				_ *nebula_go.Session,
+				_ *mockSession,
 			) {
 				connPollBuilder.On("CALL",
 					[]nebula_go.HostAddress{
@@ -76,7 +76,7 @@ func TestSessionPool(t *testing.T) {
 			connString: "nebula://localhost?TimeOut=5s",
 			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
 				sessGetter *mockSessionGetter,
-				_ *nebula_go.Session,
+				_ *mockSession,
 			) {
 				sessGetter.On("Close").Return()
 
@@ -91,7 +91,7 @@ func TestSessionPool(t *testing.T) {
 					(*tls.Config)(nil),
 					nebula_go.NoLogger{}).Return(sessGetter, nil)
 			},
-			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, _ *nebula_go.Session) {
+			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, _ nebula_go.NebulaSession) {
 				sessPool.Close()
 			},
 		},
@@ -105,7 +105,7 @@ func TestSessionPool(t *testing.T) {
 			},
 			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
 				sessGetter *mockSessionGetter,
-				_ *nebula_go.Session,
+				_ *mockSession,
 			) {
 				sessGetter.On("GetSession", "user", "pass").Return(nil, errors.New("ops"))
 
@@ -119,12 +119,10 @@ func TestSessionPool(t *testing.T) {
 					(*tls.Config)(nil),
 					nebula_go.NoLogger{}).Return(sessGetter, nil)
 			},
-			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, _ *nebula_go.Session) {
+			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, _ nebula_go.NebulaSession) {
 				got, err := sessPool.Acquire()
 				assert.Nil(t, got)
 				assert.EqualError(t, err, "unable to get session: ops")
-
-				sessPool.Release(got)
 			},
 		},
 		{
@@ -135,7 +133,7 @@ func TestSessionPool(t *testing.T) {
 			connString: "nebula://user:pass@localhost",
 			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
 				sessGetter *mockSessionGetter,
-				session *nebula_go.Session,
+				session *mockSession,
 			) {
 				sessGetter.On("GetSession", "foo", "bar").Return(session, nil)
 
@@ -147,7 +145,7 @@ func TestSessionPool(t *testing.T) {
 					(*tls.Config)(nil),
 					nebula_go.NoLogger{}).Return(sessGetter, nil)
 			},
-			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session *nebula_go.Session) {
+			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session nebula_go.NebulaSession) {
 				got, err := sessPool.Acquire()
 				assert.Nil(t, err)
 				assert.Equal(t, session, got)
@@ -162,7 +160,7 @@ func TestSessionPool(t *testing.T) {
 			},
 			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
 				sessGetter *mockSessionGetter,
-				session *nebula_go.Session,
+				session *mockSession,
 			) {
 				sessGetter.On("GetSession", "user", "pass").Return(session, nil)
 
@@ -173,8 +171,10 @@ func TestSessionPool(t *testing.T) {
 					nebula_go.GetDefaultConf(),
 					&tls.Config{},
 					nebula_go.DefaultLogger{}).Return(sessGetter, nil)
+
+				session.On("Release").Return()
 			},
-			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session *nebula_go.Session) {
+			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session nebula_go.NebulaSession) {
 				err := sessPool.WithSession(func(got nebula_go.NebulaSession) error {
 					assert.Equal(t, session, got)
 					return nil
@@ -193,7 +193,7 @@ func TestSessionPool(t *testing.T) {
 			var (
 				connPollBuilder mockConnectionPoolBuilder
 				sessGetter      mockSessionGetter
-				session         nebula_go.Session
+				session         mockSession
 			)
 
 			if tc.prepare != nil {
@@ -218,6 +218,7 @@ func TestSessionPool(t *testing.T) {
 
 			connPollBuilder.AssertExpectations(t)
 			sessGetter.AssertExpectations(t)
+			session.AssertExpectations(t)
 		})
 	}
 }
@@ -226,6 +227,8 @@ var (
 	_ nebula_go.ConnectionPoolBuilder = (*mockConnectionPoolBuilder)(nil).CALL
 
 	_ nebula_go.SessionGetter = (*mockSessionGetter)(nil)
+
+	_ nebula_go.NebulaSession = (*mockSession)(nil)
 )
 
 type mockConnectionPoolBuilder struct {
@@ -252,10 +255,51 @@ func (m *mockSessionGetter) Close() {
 	m.Called()
 }
 
-func (m *mockSessionGetter) GetSession(user, pass string) (*nebula_go.Session, error) {
+func (m *mockSessionGetter) GetSession(user, pass string) (nebula_go.NebulaSession, error) {
 	args := m.Called(user, pass)
 
-	session, _ := args.Get(0).(*nebula_go.Session)
+	session, _ := args.Get(0).(nebula_go.NebulaSession)
 
 	return session, args.Error(1)
+}
+
+type mockSession struct {
+	mock.Mock
+}
+
+func (m *mockSession) Execute(stmt string) (*nebula_go.ResultSet, error) {
+	args := m.Called(stmt)
+
+	resultSet, _ := args.Get(0).(*nebula_go.ResultSet)
+
+	return resultSet, args.Error(1)
+}
+func (m *mockSession) ExecuteWithParameter(stmt string, params map[string]interface{}) (*nebula_go.ResultSet, error) {
+	args := m.Called(stmt, params)
+
+	resultSet, _ := args.Get(0).(*nebula_go.ResultSet)
+
+	return resultSet, args.Error(1)
+}
+func (m *mockSession) ExecuteJson(stmt string) ([]byte, error) {
+	args := m.Called(stmt)
+
+	result, _ := args.Get(0).([]byte)
+
+	return result, args.Error(1)
+}
+func (m *mockSession) ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error) {
+	args := m.Called(stmt, params)
+
+	result, _ := args.Get(0).([]byte)
+
+	return result, args.Error(1)
+}
+func (m *mockSession) GetSessionID() int64 {
+	args := m.Called()
+
+	return int64(args.Int(0))
+}
+func (m *mockSession) Release() {
+	m.Called()
 }

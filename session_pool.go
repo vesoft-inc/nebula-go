@@ -12,15 +12,31 @@ import (
 )
 
 var (
-	_ SessionGetter = (*ConnectionPool)(nil)
+	_ SessionGetter = (*connectionPoolWrapper)(nil)
 
 	_ NebulaSession = (*Session)(nil)
 )
 
 // SessionGetter interface.
 type SessionGetter interface {
-	GetSession(username, password string) (*Session, error)
+	GetSession(username, password string) (NebulaSession, error)
 	Close()
+}
+
+type connectionPoolWrapper struct {
+	*ConnectionPool
+}
+
+// GetSession method adapter.
+func (cpw *connectionPoolWrapper) GetSession(username, password string) (NebulaSession, error) {
+	session, err := cpw.ConnectionPool.GetSession(username, password)
+	if err != nil {
+		return nil, err
+	}
+
+	session.log = cpw.ConnectionPool.log
+
+	return session, nil
 }
 
 // SessionPool type.
@@ -83,7 +99,10 @@ func NewSessionPoolFromConnectionPool(connPool *ConnectionPool, opts ...Connecti
 		HostAddresses: connPool.addresses,
 	}
 
-	return newSessionFromFromConnectionConfig(cfg, connPool, opts...)
+	sessionGetter := &connectionPoolWrapper{
+		ConnectionPool: connPool,
+	}
+	return newSessionFromFromConnectionConfig(cfg, sessionGetter, opts...)
 }
 
 func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
@@ -117,10 +136,6 @@ func (s *SessionPool) Acquire() (NebulaSession, error) {
 	session, err := s.ConnectionPool.GetSession(s.Username, s.Password)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get session: %s", err.Error())
-	}
-
-	if session.log == nil {
-		session.log = s.Log // inject logger when it came from other connection pool
 	}
 
 	return session, nil

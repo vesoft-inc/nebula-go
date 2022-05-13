@@ -358,7 +358,14 @@ func defaultConnectionPoolBuilder(addresses []HostAddress,
 	sslConfig *tls.Config,
 	log Logger,
 ) (SessionGetter, error) {
-	return NewSslConnectionPool(addresses, conf, sslConfig, log)
+	connPool, err := NewSslConnectionPool(addresses, conf, sslConfig, log)
+	if err != nil {
+		return nil, err
+	}
+
+	return &connectionPoolWrapper{
+		ConnectionPool: connPool,
+	}, nil
 }
 
 func getTLSConfig(key string) (*tls.Config, error) {
