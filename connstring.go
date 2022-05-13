@@ -27,7 +27,7 @@ const (
 	// NEBULA_SCHEME is the expected scheme / protocol in connection strings
 	NEBULA_SCHEME = "nebula"
 
-	defaultOnAcquireSession = `USE {{.Space}};`
+	defaultOnAcquireSession = `USE %SPACE%;`
 )
 
 // ConnectionConfig type.
@@ -105,8 +105,8 @@ func WithSessionPoolConfig(sessionPoolConfig SessionPoolConfig) ConnectionOption
 // This will be executed each time one session is acquired from the pool
 // The default value if no Space is defined is none.
 // Else, the default value is:
-//    USE {{.Space}};
-// where {{.Space}} is substitute by the value of Space via text/template
+//    USE %SPACE%;
+// where macro %SPACE% being substituted by the value of Space
 func WithOnAcquireSessionStmt(stmt string) ConnectionOption {
 	return func(cfg *ConnectionConfig) {
 		cfg.OnAcquireSession = stmt
@@ -115,8 +115,9 @@ func WithOnAcquireSessionStmt(stmt string) ConnectionOption {
 
 // WithOnReleaseSessionStmt functional option to override the default on release session stmt.
 // This will be executed each time one session is released to the pool
-// Default is none. Use the same format as OnAcquireSession with {{.Space}} being substituted
-// by the value of of Space via text/template
+// Default is none.
+// Use the same format as OnAcquireSession with macro %SPACE% being substituted
+// by the value of of Space
 func WithOnReleaseSessionStmt(stmt string) ConnectionOption {
 	return func(cfg *ConnectionConfig) {
 		cfg.OnReleaseSession = stmt
@@ -138,7 +139,7 @@ var (
 //   "hostname:port"                                       a connection to host "hostname" using port "port"
 //   "nebula://hostname:port"                              same but explicit use protocol nebula://
 //   "nebula://user:pass@hostname:port"                    define user and password to use in sessions
-//   "nebula://user:pass@hostname:port/space"              reserved for future use
+//   "nebula://user:pass@hostname:port/space"              if defined, we run "USE <space>;" before each session acquire
 //   "nebula://user:pass@hostname:port?TimeOut=2s"         set the pool conf timeout as 2s (default 0s)
 //   "nebula://user:pass@hostname:port?IdleOut=2s"         set the pool conf idleout as 2s (default 0s)
 //   "nebula://user:pass@hostname:port?MaxConnPoolSize=15" set max conn poll size to 15    (default 10)

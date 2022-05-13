@@ -8,12 +8,11 @@
 package nebula_go
 
 import (
-	"bytes"
 	"container/list"
 	"fmt"
 	"strconv"
+	"strings"
 	"sync"
-	"text/template"
 
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
 	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
@@ -169,19 +168,12 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 		Space string
 	}
 
-	data := Data{
-		Space: cfg.Space,
+	macros := map[string]string{
+		"%SPACE%": cfg.Space,
 	}
 
-	onAcquireSession, err := processTemplate("onAcquire", cfg.OnAcquireSession, data)
-	if err != nil {
-		return nil, err
-	}
-
-	onReleaseSession, err := processTemplate("onRelease", cfg.OnReleaseSession, data)
-	if err != nil {
-		return nil, err
-	}
+	onAcquireSession := expandMacros(cfg.OnAcquireSession, macros)
+	onReleaseSession := expandMacros(cfg.OnReleaseSession, macros)
 
 	return &SessionPool{
 		ConnectionPool:   connPool,
@@ -195,23 +187,16 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 	}, nil
 }
 
-func processTemplate(name, raw string, data interface{}) (string, error) {
-	if raw == "" {
-		return "", nil
+func expandMacros(str string, macros map[string]string) string {
+	if str == "" {
+		return str
 	}
 
-	t, err := template.New(name).Parse(raw)
-	if err != nil {
-		return "", fmt.Errorf("unable to process template %s: %v", name, err)
+	for macro, value := range macros {
+		str = strings.ReplaceAll(str, macro, value)
 	}
 
-	var buff bytes.Buffer
-	err = t.Execute(&buff, data)
-	if err != nil {
-		return "", fmt.Errorf("unable to execute template %s: %v", name, err)
-	}
-
-	return buff.String(), nil
+	return str
 }
 
 // Acquire return an authenticated session or return an error.
@@ -232,62 +217,56 @@ func (s *SessionPool) Acquire() (session NebulaSession, err error) {
 		return nil, fmt.Errorf("unable to get session: %s", err.Error())
 	}
 
-	if s.OnAcquireSession != "" {
-		rs, err := session.Execute(s.OnAcquireSession)
-		if err != nil {
-			s.release(session)
-
-			return nil, fmt.Errorf("unable to execute statement %q on acquire session: %v",
-				s.OnAcquireSession, err)
-		}
-
-		if rs.resp == nil {
-			rs.resp = &graph.ExecutionResponse{
-				ErrorCode: nebula.ErrorCode_E_UNKNOWN,
-				ErrorMsg:  []byte("unknown error"),
-			}
-		}
-
-		if !rs.IsSucceed() {
-			s.release(session)
-
-			return nil, fmt.Errorf("execute statement %q on acquire session does not succeed: %s (error code %d)",
-				s.OnAcquireSession, rs.GetErrorMsg(), rs.GetErrorCode())
-		}
+	err = s.executeStatement(session, s.OnAcquireSession)
+	if err != nil {
+		return nil, fmt.Errorf("unable to execute statement %q on acquire session id=%#x: %s",
+			s.OnAcquireSession, session.GetSessionID(), err)
 	}
 
 	return session, nil
 }
 
+func (s *SessionPool) executeStatement(session NebulaSession, stmt string) error {
+	if stmt == "" {
+		return nil
+	}
+
+	rs, err := session.Execute(stmt)
+	if err != nil {
+		s.release(session)
+
+		return err
+	}
+
+	if rs.resp == nil {
+		// this prevent panic in some unit tests
+		rs.resp = &graph.ExecutionResponse{
+			ErrorCode: nebula.ErrorCode_E_UNKNOWN,
+			ErrorMsg:  []byte("unknown error"),
+		}
+	}
+
+	if !rs.IsSucceed() {
+		s.release(session)
+
+		return fmt.Errorf("not succeed: %s (error code %d)", rs.GetErrorMsg(), rs.GetErrorCode())
+	}
+
+	return nil
+}
+
 // Release will handle the release of the nebula session.
 // If MaxIdleSessionPoolSize is not zero, we may keep the session in memory until Close.
+// If OnReleaseSession is defined, will execute it before release, any error will be returned.
 func (s *SessionPool) Release(session NebulaSession) error {
 	if session == nil {
 		return nil
 	}
 
-	if s.OnReleaseSession != "" {
-		rs, err := session.Execute(s.OnReleaseSession)
-		if err != nil {
-			s.release(session)
-
-			return fmt.Errorf("unable to execute statement %q on release session: %v",
-				s.OnReleaseSession, err)
-		}
-
-		if rs.resp == nil {
-			rs.resp = &graph.ExecutionResponse{
-				ErrorCode: nebula.ErrorCode_E_UNKNOWN,
-				ErrorMsg:  []byte("unknown error"),
-			}
-		}
-
-		if !rs.IsSucceed() {
-			s.release(session)
-
-			return fmt.Errorf("unable to execute statement %q on release session: %s (error code %d)",
-				s.OnReleaseSession, rs.GetErrorMsg(), rs.GetErrorCode())
-		}
+	err := s.executeStatement(session, s.OnReleaseSession)
+	if err != nil {
+		return fmt.Errorf("unable to execute statement %q on release session id=%#x: %s",
+			s.OnReleaseSession, session.GetSessionID(), err)
 	}
 
 	oldest := s.sessionQueue.Enqueue(session)
@@ -303,11 +282,11 @@ func (s *SessionPool) release(session NebulaSession) {
 	}
 
 	if releaser, ok := session.(interface{ Release() }); ok {
-		s.Log.Info("releasing session id: " + strconv.FormatInt(session.GetSessionID(), 16))
+		s.Log.Info("releasing session id: Ox" + strconv.FormatInt(session.GetSessionID(), 16))
 
 		releaser.Release()
 	} else {
-		s.Log.Warn(fmt.Sprintf("unable to release session id %d: no method release on %T",
+		s.Log.Warn(fmt.Sprintf("unable to release session id %d: no method release available on %T",
 			session.GetSessionID(), session))
 	}
 }
@@ -337,14 +316,18 @@ func (s *SessionPool) WithSession(callback func(session NebulaSession) error) er
 		return err
 	}
 
-	defer func() {
-		if err := s.Release(session); err != nil {
-			s.Log.Warn(fmt.Sprintf("unexpected error while release session id %d: %v",
-				session.GetSessionID(), err))
-		}
-	}()
+	err = callback(session)
 
-	return callback(session)
+	rerr := s.Release(session)
+
+	if err == nil {
+		err = rerr
+	} else {
+		s.Log.Warn(fmt.Sprintf("unexpected error while release session id %d: %v",
+			session.GetSessionID(), rerr))
+	}
+
+	return err
 }
 
 // Close will release all remaining sessions and close the connection pool.

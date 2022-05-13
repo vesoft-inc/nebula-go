@@ -700,7 +700,9 @@ func TestLoadbalancer(t *testing.T) {
 		session, err := pool.GetSession(username, password)
 		if err != nil {
 			t.Errorf("fail to create a new session from connection pool, %s", err.Error())
+			return
 		}
+
 		loadPerHost[session.connection.severAddress]++
 		sessionList = append(sessionList, session)
 	}

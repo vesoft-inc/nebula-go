@@ -139,7 +139,7 @@ func TestParseString(t *testing.T) {
 				Space:    "myspace",
 				TLS:      "false",
 
-				OnAcquireSession: "USE {{.Space}};",
+				OnAcquireSession: "USE %SPACE%;",
 
 				PoolConfig: nebula_go.GetDefaultConf(),
 			},
@@ -483,7 +483,7 @@ func TestRegisterTLSConf(t *testing.T) {
 		TLS:       "foo",
 		TLSConfig: tlsConfig.Clone(),
 
-		OnAcquireSession: "USE {{.Space}};",
+		OnAcquireSession: "USE %SPACE%;",
 
 		PoolConfig: nebula_go.GetDefaultConf(),
 	}

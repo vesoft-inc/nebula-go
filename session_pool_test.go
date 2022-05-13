@@ -182,7 +182,7 @@ func TestSessionPool(t *testing.T) {
 			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session nebula_go.NebulaSession) {
 				got, err := sessPool.Acquire()
 
-				assert.EqualError(t, err, "unable to execute statement \"USE space;\" on acquire session: ops")
+				assert.EqualError(t, err, "unable to execute statement \"USE space;\" on acquire session id=0x1: ops")
 				assert.Nil(t, got)
 			},
 		},
@@ -201,7 +201,7 @@ func TestSessionPool(t *testing.T) {
 			opts: []nebula_go.ConnectionOption{
 				nebula_go.WithCredentials("foo", "bar"),
 				nebula_go.WithOnAcquireSessionStmt(
-					`CREATE SPACE IF NOT EXISTS {{.Space}}(vid_type=FIXED_STRING(20)); USE {{.Space}};`,
+					`CREATE SPACE IF NOT EXISTS %SPACE%(vid_type=FIXED_STRING(20)); USE %SPACE%;`,
 				),
 			},
 			connString: "nebula://user:pass@localhost/space",
@@ -228,9 +228,9 @@ func TestSessionPool(t *testing.T) {
 				got, err := sessPool.Acquire()
 
 				assert.EqualError(t, err,
-					"execute statement "+
+					"unable to execute statement "+
 						"\"CREATE SPACE IF NOT EXISTS space(vid_type=FIXED_STRING(20)); USE space;\""+
-						" on acquire session does not succeed: unknown error (error code -8000)")
+						" on acquire session id=0x1: not succeed: unknown error (error code -8000)")
 				assert.Nil(t, got)
 			},
 		},
@@ -337,7 +337,7 @@ func TestSessionPool(t *testing.T) {
 				nebula_go.WithTLSConfig(&tls.Config{}),
 				nebula_go.WithDefaultLogger(),
 				nebula_go.WithOnAcquireSessionStmt(""),
-				nebula_go.WithOnReleaseSessionStmt("DROP SPACE IF EXISTS {{.Space}};"),
+				nebula_go.WithOnReleaseSessionStmt("DROP SPACE IF EXISTS %SPACE%;"),
 			},
 			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
 				sessGetter *mockSessionGetter,
@@ -362,7 +362,9 @@ func TestSessionPool(t *testing.T) {
 					return nil
 				})
 
-				assert.Nil(t, err)
+				assert.EqualError(t, err, "unable to execute statement "+
+					"\"DROP SPACE IF EXISTS test;\""+
+					" on release session id=0x1: not succeed: unknown error (error code -8000)")
 			},
 		},
 	}
