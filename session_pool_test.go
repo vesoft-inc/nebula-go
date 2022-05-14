@@ -219,9 +219,10 @@ func TestSessionPool(t *testing.T) {
 					(*tls.Config)(nil),
 					nebula_go.NoLogger{}).Return(sessGetter, nil)
 
+				rs := &nebula_go.ResultSet{}
 				session.On("Execute",
-					"CREATE SPACE IF NOT EXISTS space(vid_type=FIXED_STRING(20)); USE space;",
-				).Return(&nebula_go.ResultSet{}, nil)
+					"CREATE SPACE IF NOT EXISTS space(vid_type=FIXED_STRING(20)); USE space;").Return(rs, nil)
+
 				session.On("Release").Return()
 			},
 			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session nebula_go.NebulaSession) {

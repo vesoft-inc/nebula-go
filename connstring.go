@@ -232,8 +232,8 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 	}
 
 	if space := strings.Replace(connectionURL.Path, "/", "", 1); space != "" {
-		if !nebulaGraphSpaceNameFormat.MatchString(space) {
-			return nil, fmt.Errorf("space name %q is not valid", space)
+		if err = validateSpace(space); err != nil {
+			return nil, err
 		}
 
 		conf.Space = space
@@ -281,14 +281,26 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 	return conf, nil
 }
 
-var nebulaGraphSpaceNameFormat = regexp.MustCompile("^[a-zA-Z0-9_]*$")
-
 // Validate check the internal configuration consistency.
 func (cfg *ConnectionConfig) Validate() error {
 	cfg.SessionPoolConfig.validateConf(cfg.Log)
 
-	if !nebulaGraphSpaceNameFormat.MatchString(cfg.Space) {
+	if err := validateSpace(cfg.Space); err != nil {
 		return fmt.Errorf("space name %q is not valid", cfg.Space)
+	}
+
+	return nil
+}
+
+var nebulaGraphSpaceNameFormat *regexp.Regexp = regexp.MustCompile("^[a-zA-Z0-9_]*$")
+
+func validateSpace(space string) error {
+	if space == "" {
+		return nil
+	}
+
+	if !nebulaGraphSpaceNameFormat.MatchString(space) {
+		return fmt.Errorf("space name %q is not valid", space)
 	}
 
 	return nil

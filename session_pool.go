@@ -164,10 +164,6 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 		}
 	}
 
-	type Data struct {
-		Space string
-	}
-
 	macros := map[string]string{
 		"%SPACE%": cfg.Space,
 	}
