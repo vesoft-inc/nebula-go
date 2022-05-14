@@ -230,7 +230,7 @@ func TestSessionPool(t *testing.T) {
 				assert.EqualError(t, err,
 					"unable to execute statement "+
 						"\"CREATE SPACE IF NOT EXISTS space(vid_type=FIXED_STRING(20)); USE space;\""+
-						" on acquire session id=0x1: not succeed: unknown error (error code -8000)")
+						" on acquire session id=0x1: not succeed: \"\" (error code -8000)")
 				assert.Nil(t, got)
 			},
 		},

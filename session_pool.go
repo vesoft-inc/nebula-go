@@ -13,9 +13,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-
-	"github.com/vesoft-inc/nebula-go/v3/nebula"
-	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
 
 var (
@@ -229,18 +226,10 @@ func (s *SessionPool) executeStatement(session NebulaSession, stmt string) error
 		return err
 	}
 
-	if rs.resp == nil {
-		// this prevent panic in some unit tests
-		rs.resp = &graph.ExecutionResponse{
-			ErrorCode: nebula.ErrorCode_E_UNKNOWN,
-			ErrorMsg:  []byte("unknown error"),
-		}
-	}
-
 	if !rs.IsSucceed() {
 		s.release(session)
 
-		return fmt.Errorf("not succeed: %s (error code %d)", rs.GetErrorMsg(), rs.GetErrorCode())
+		return fmt.Errorf("not succeed: %q (error code %d)", rs.GetErrorMsg(), rs.GetErrorCode())
 	}
 
 	return nil

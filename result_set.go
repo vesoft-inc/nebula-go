@@ -290,7 +290,7 @@ func (res ResultSet) GetRowValuesByIndex(index int) (*Record, error) {
 
 // Returns the number of total rows
 func (res ResultSet) GetRowSize() int {
-	if res.resp.Data == nil {
+	if res.resp == nil || res.resp.Data == nil {
 		return 0
 	}
 	return len(res.resp.Data.Rows)
@@ -298,7 +298,7 @@ func (res ResultSet) GetRowSize() int {
 
 // Returns the number of total columns
 func (res ResultSet) GetColSize() int {
-	if res.resp.Data == nil {
+	if res.resp == nil || res.resp.Data == nil {
 		return 0
 	}
 	return len(res.resp.Data.ColumnNames)
@@ -306,7 +306,7 @@ func (res ResultSet) GetColSize() int {
 
 // Returns all rows
 func (res ResultSet) GetRows() []*nebula.Row {
-	if res.resp.Data == nil {
+	if res.resp == nil || res.resp.Data == nil {
 		var empty []*nebula.Row
 		return empty
 	}
@@ -332,6 +332,11 @@ func (res ResultSet) GetColNames() []string {
 // -11  ErrorCode_E_BAD_PERMISSION
 // -12  ErrorCode_E_SEMANTIC_ERROR
 func (res ResultSet) GetErrorCode() ErrorCode {
+	if res.resp == nil {
+		return ErrorCode(nebula.ErrorCode_E_UNKNOWN)
+
+	}
+
 	return ErrorCode(res.resp.ErrorCode)
 }
 
@@ -347,7 +352,7 @@ func (res ResultSet) GetSpaceName() string {
 }
 
 func (res ResultSet) GetErrorMsg() string {
-	if res.resp.ErrorMsg == nil {
+	if res.resp == nil || res.resp.ErrorMsg == nil {
 		return ""
 	}
 	return string(res.resp.ErrorMsg)
@@ -373,7 +378,7 @@ func (res ResultSet) GetComment() string {
 }
 
 func (res ResultSet) IsSetData() bool {
-	return res.resp.Data != nil
+	return res.resp != nil && res.resp.Data != nil
 }
 
 func (res ResultSet) IsEmpty() bool {
