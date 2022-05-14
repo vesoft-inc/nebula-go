@@ -152,8 +152,7 @@ func TestSessionPool(t *testing.T) {
 				assert.Nil(t, err)
 				assert.Equal(t, session, got)
 
-				err = sessPool.Release(got)
-				assert.Nil(t, err)
+				sessPool.Release(got)
 			},
 		},
 		{
@@ -260,8 +259,7 @@ func TestSessionPool(t *testing.T) {
 				assert.Nil(t, err)
 				assert.Equal(t, session, got)
 
-				err = sessPool.Release(got)
-				assert.Nil(t, err)
+				sessPool.Release(got)
 			},
 		},
 		{
@@ -293,8 +291,7 @@ func TestSessionPool(t *testing.T) {
 				assert.Nil(t, err)
 				assert.Equal(t, session, got)
 
-				err = sessPool.Release(got)
-				assert.Nil(t, err)
+				sessPool.Release(got)
 
 				sessPool.Close()
 			},

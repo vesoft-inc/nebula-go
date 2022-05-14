@@ -53,7 +53,6 @@ type SessionPool struct {
 	Password         string
 	Space            string
 	OnAcquireSession string
-	OnReleaseSession string
 	Log              Logger
 	sessionQueue     *sessionQueue
 	sync.Mutex
@@ -249,23 +248,14 @@ func (s *SessionPool) executeStatement(session NebulaSession, stmt string) error
 
 // Release will handle the release of the nebula session.
 // If MaxIdleSessionPoolSize is not zero, we may keep the session in memory until Close.
-// If OnReleaseSession is defined, will execute it before release, any error will be returned.
-func (s *SessionPool) Release(session NebulaSession) error {
+func (s *SessionPool) Release(session NebulaSession) {
 	if session == nil {
-		return nil
-	}
-
-	err := s.executeStatement(session, s.OnReleaseSession)
-	if err != nil {
-		return fmt.Errorf("unable to execute statement %q on release session id=%#x: %s",
-			s.OnReleaseSession, session.GetSessionID(), err)
+		return
 	}
 
 	oldest := s.sessionQueue.Enqueue(session)
 
 	s.release(oldest)
-
-	return nil
 }
 
 func (s *SessionPool) release(session NebulaSession) {
@@ -308,18 +298,9 @@ func (s *SessionPool) WithSession(callback func(session NebulaSession) error) er
 		return err
 	}
 
-	err = callback(session)
+	defer s.Release(session)
 
-	rerr := s.Release(session)
-
-	if err == nil {
-		err = rerr
-	} else {
-		s.Log.Warn(fmt.Sprintf("unexpected error while release session id %d: %v",
-			session.GetSessionID(), rerr))
-	}
-
-	return err
+	return callback(session)
 }
 
 // Close will release all remaining sessions and close the connection pool.
