@@ -141,8 +141,8 @@ var (
 //   "nebula://username@hostname:port"                  define username and no password to use in sessions
 //   "nebula://user:pass@hostname:port"                 define username and password to use in sessions
 //   "nebula://hostname:port/space"                     if defined, we run "USE <space>;" before each session acquire
-//   "nebula://hostname:port?TimeOut=2s"                set the pool conf timeout as 2s (default 0s)
-//   "nebula://hostname:port?IdleOut=2s"                set the pool conf idleout as 2s (default 0s)
+//   "nebula://hostname:port?timeout=2s"                set the pool conf timeout as 2s (default 0s)
+//   "nebula://hostname:port?idle_out=2s"               set the pool conf idleout as 2s (default 0s)
 //   "nebula://hostname:port?max_conn_pool_size=15"     set max conn poll size to 15    (default 10)
 //   "nebula://hostname:port?min_conn_pool_size=4"      set min conn poll size to 4     (default  0)
 //   "nebula://hostname:port?tls=false"                 use no TLS
