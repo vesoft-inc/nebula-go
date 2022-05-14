@@ -73,7 +73,7 @@ func TestSessionPool(t *testing.T) {
 		},
 		{
 			label:      "should return a session pool and close should call connection pool close",
-			connString: "nebula://localhost?TimeOut=5s",
+			connString: "nebula://localhost?timeout=5s",
 			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
 				sessGetter *mockSessionGetter,
 				_ *mockSession,
@@ -239,7 +239,7 @@ func TestSessionPool(t *testing.T) {
 			opts: []nebula_go.ConnectionOption{
 				nebula_go.WithCredentials("foo", "bar"),
 			},
-			connString: "nebula://user:pass@localhost?MaxIdleSessionPoolSize=10",
+			connString: "nebula://user:pass@localhost?max_idle_session_pool_size=10",
 			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
 				sessGetter *mockSessionGetter,
 				session *mockSession,
@@ -268,7 +268,7 @@ func TestSessionPool(t *testing.T) {
 			opts: []nebula_go.ConnectionOption{
 				nebula_go.WithCredentials("foo", "bar"),
 			},
-			connString: "nebula://user:pass@localhost?MaxIdleSessionPoolSize=10",
+			connString: "nebula://user:pass@localhost?max_idle_session_pool_size=10",
 			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
 				sessGetter *mockSessionGetter,
 				session *mockSession,

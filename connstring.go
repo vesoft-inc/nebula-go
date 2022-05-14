@@ -135,21 +135,23 @@ var (
 // ParseConnectionString builder function.
 // This function parses a uri-like nebula graph connection string
 // Examples:
-//   "hostname"                                            represents a connection to host "hostname" using default port 9669
-//   "hostname:port"                                       a connection to host "hostname" using port "port"
-//   "nebula://hostname:port"                              same but explicit use protocol nebula://
-//   "nebula://user:pass@hostname:port"                    define user and password to use in sessions
-//   "nebula://user:pass@hostname:port/space"              if defined, we run "USE <space>;" before each session acquire
-//   "nebula://user:pass@hostname:port?TimeOut=2s"         set the pool conf timeout as 2s (default 0s)
-//   "nebula://user:pass@hostname:port?IdleOut=2s"         set the pool conf idleout as 2s (default 0s)
-//   "nebula://user:pass@hostname:port?MaxConnPoolSize=15" set max conn poll size to 15    (default 10)
-//   "nebula://user:pass@hostname:port?MinConnPoolSize=4"  set min conn poll size to 4     (default  0)
-//   "nebula://user:pass@hostname:port?tls=false"          use no TLS
-//   "nebula://user:pass@hostname:port?tls=true"           use TLS &tls.Config{}
-//   "nebula://user:pass@hostname:port?tls=skip-verify"    use TLS with InsecureSkipVerify true
-//   "nebula://user:pass@hostname:port?tls=custom"         use config registered via RegisterTLSConfig
-//   "nebula://user:pass@[host1,host2,...hostN]"           define multiple hosts
-//   "nebula://hostname?MaxIdleSessionPoolSize=10"         set max idle session pool to 10 (default 0)
+//   "hostname"                                         represents a connection to host "hostname" using default port 9669
+//   "hostname:port"                                    a connection to host "hostname" using port "port"
+//   "nebula://hostname:port"                           same but explicit use protocol nebula://
+//   "nebula://username@hostname:port"                  define username and no password to use in sessions
+//   "nebula://user:pass@hostname:port"                 define username and password to use in sessions
+//   "nebula://hostname:port/space"                     if defined, we run "USE <space>;" before each session acquire
+//   "nebula://hostname:port?TimeOut=2s"                set the pool conf timeout as 2s (default 0s)
+//   "nebula://hostname:port?IdleOut=2s"                set the pool conf idleout as 2s (default 0s)
+//   "nebula://hostname:port?max_conn_pool_size=15"     set max conn poll size to 15    (default 10)
+//   "nebula://hostname:port?min_conn_pool_size=4"      set min conn poll size to 4     (default  0)
+//   "nebula://hostname:port?tls=false"                 use no TLS
+//   "nebula://hostname:port?tls=true"                  use TLS &tls.Config{}
+//   "nebula://hostname:port?tls=skip-verify"           use TLS with InsecureSkipVerify true
+//   "nebula://hostname:port?tls=custom"                use config registered via RegisterTLSConfig
+//   "nebula://user:pass@[host1,host2,...hostN]"        define multiple hosts
+//   "nebula://user:pass@[host1:port1,host2:port2,...]" define multiple hosts and ports
+//   "nebula://hostname?max_idle_session_pool_size=10"  set max idle session pool to 10 (default 0)
 func ParseConnectionString(connectionString string) (*ConnectionConfig, error) {
 	return parseConnectionString(connectionString, true)
 }
@@ -175,29 +177,29 @@ func parseConnectionString(connectionString string, canRetry bool) (*ConnectionC
 
 	poolConfig := GetDefaultConf()
 
-	err = peekDurationFromQueryString(query, "TimeOut", &poolConfig.TimeOut)
+	err = peekDurationFromQueryString(query, "timeout", &poolConfig.TimeOut)
 	if err != nil {
 		return nil, err
 	}
 
-	err = peekDurationFromQueryString(query, "IdleTime", &poolConfig.IdleTime)
+	err = peekDurationFromQueryString(query, "idle_time", &poolConfig.IdleTime)
 	if err != nil {
 		return nil, err
 	}
 
-	err = peekIntFromQueryString(query, "MaxConnPoolSize", &poolConfig.MaxConnPoolSize)
+	err = peekIntFromQueryString(query, "max_conn_pool_size", &poolConfig.MaxConnPoolSize)
 	if err != nil {
 		return nil, err
 	}
 
-	err = peekIntFromQueryString(query, "MinConnPoolSize", &poolConfig.MinConnPoolSize)
+	err = peekIntFromQueryString(query, "min_conn_pool_size", &poolConfig.MinConnPoolSize)
 	if err != nil {
 		return nil, err
 	}
 
 	sessionPoolConfig := GetDefaultSessionPoolConfig()
 
-	err = peekIntFromQueryString(query, "MaxIdleSessionPoolSize", &sessionPoolConfig.MaxIdleSessionPoolSize)
+	err = peekIntFromQueryString(query, "max_idle_session_pool_size", &sessionPoolConfig.MaxIdleSessionPoolSize)
 	if err != nil {
 		return nil, err
 	}
@@ -357,21 +359,21 @@ func (cfg *ConnectionConfig) toURI() *url.URL {
 
 	defaultConf := GetDefaultConf()
 	if cfg.PoolConfig.TimeOut != defaultConf.TimeOut {
-		query.Add("TimeOut", cfg.PoolConfig.TimeOut.String())
+		query.Add("timeout", cfg.PoolConfig.TimeOut.String())
 	}
 	if cfg.PoolConfig.IdleTime != defaultConf.IdleTime {
-		query.Add("IdleTime", cfg.PoolConfig.IdleTime.String())
+		query.Add("idle_time", cfg.PoolConfig.IdleTime.String())
 	}
 	if cfg.PoolConfig.MaxConnPoolSize != defaultConf.MaxConnPoolSize {
-		query.Add("MaxConnPoolSize", strconv.Itoa(cfg.PoolConfig.MaxConnPoolSize))
+		query.Add("max_conn_pool_size", strconv.Itoa(cfg.PoolConfig.MaxConnPoolSize))
 	}
 	if cfg.PoolConfig.MinConnPoolSize != defaultConf.MinConnPoolSize {
-		query.Add("MinConnPoolSize", strconv.Itoa(cfg.PoolConfig.MinConnPoolSize))
+		query.Add("min_conn_pool_size", strconv.Itoa(cfg.PoolConfig.MinConnPoolSize))
 	}
 
 	defaultSessConf := GetDefaultSessionPoolConfig()
 	if cfg.SessionPoolConfig.MaxIdleSessionPoolSize != defaultSessConf.MaxIdleSessionPoolSize {
-		query.Add("MaxIdleSessionPoolSize", strconv.Itoa(cfg.SessionPoolConfig.MaxIdleSessionPoolSize))
+		query.Add("max_idle_session_pool_size", strconv.Itoa(cfg.SessionPoolConfig.MaxIdleSessionPoolSize))
 	}
 
 	if cfg.TLS != "" {
