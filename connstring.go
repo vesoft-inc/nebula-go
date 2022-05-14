@@ -44,7 +44,6 @@ type ConnectionConfig struct {
 	Log       Logger
 
 	OnAcquireSession string
-	OnReleaseSession string
 
 	ConnectionPoolBuilder
 }
@@ -110,17 +109,6 @@ func WithSessionPoolConfig(sessionPoolConfig SessionPoolConfig) ConnectionOption
 func WithOnAcquireSessionStmt(stmt string) ConnectionOption {
 	return func(cfg *ConnectionConfig) {
 		cfg.OnAcquireSession = stmt
-	}
-}
-
-// WithOnReleaseSessionStmt functional option to override the default on release session stmt.
-// This will be executed each time one session is released to the pool
-// Default is none.
-// Use the same format as OnAcquireSession with macro %SPACE% being substituted
-// by the value of of Space
-func WithOnReleaseSessionStmt(stmt string) ConnectionOption {
-	return func(cfg *ConnectionConfig) {
-		cfg.OnReleaseSession = stmt
 	}
 }
 

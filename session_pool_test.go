@@ -331,43 +331,6 @@ func TestSessionPool(t *testing.T) {
 				assert.Nil(t, err)
 			},
 		},
-		{
-			label:      "should execute on release session stmt",
-			connString: "nebula://user:pass@localhost/test",
-			opts: []nebula_go.ConnectionOption{
-				nebula_go.WithTLSConfig(&tls.Config{}),
-				nebula_go.WithDefaultLogger(),
-				nebula_go.WithOnAcquireSessionStmt(""),
-				nebula_go.WithOnReleaseSessionStmt("DROP SPACE IF EXISTS %SPACE%;"),
-			},
-			prepare: func(connPollBuilder *mockConnectionPoolBuilder,
-				sessGetter *mockSessionGetter,
-				session *mockSession,
-			) {
-				sessGetter.On("GetSession", "user", "pass").Return(session, nil)
-
-				connPollBuilder.On("CALL",
-					[]nebula_go.HostAddress{
-						{Host: "localhost", Port: 9669},
-					},
-					nebula_go.GetDefaultConf(),
-					&tls.Config{},
-					nebula_go.DefaultLogger{}).Return(sessGetter, nil)
-
-				session.On("Execute", "DROP SPACE IF EXISTS test;").Return(&nebula_go.ResultSet{}, nil)
-				session.On("Release").Return()
-			},
-			verify: func(t *testing.T, sessPool *nebula_go.SessionPool, session nebula_go.NebulaSession) {
-				err := sessPool.WithSession(func(got nebula_go.NebulaSession) error {
-					assert.Equal(t, session, got)
-					return nil
-				})
-
-				assert.EqualError(t, err, "unable to execute statement "+
-					"\"DROP SPACE IF EXISTS test;\""+
-					" on release session id=0x1: not succeed: unknown error (error code -8000)")
-			},
-		},
 	}
 
 	for _, tc := range testcases {

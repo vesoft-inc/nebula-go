@@ -164,12 +164,9 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 		}
 	}
 
-	macros := map[string]string{
+	onAcquireSession := expandMacros(cfg.OnAcquireSession, map[string]string{
 		"%SPACE%": cfg.Space,
-	}
-
-	onAcquireSession := expandMacros(cfg.OnAcquireSession, macros)
-	onReleaseSession := expandMacros(cfg.OnReleaseSession, macros)
+	})
 
 	return &SessionPool{
 		ConnectionPool:   connPool,
@@ -177,7 +174,6 @@ func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 		Password:         cfg.Password,
 		Space:            cfg.Space,
 		OnAcquireSession: onAcquireSession,
-		OnReleaseSession: onReleaseSession,
 		Log:              cfg.Log,
 		sessionQueue:     queue,
 	}, nil
