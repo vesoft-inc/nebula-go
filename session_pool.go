@@ -27,6 +27,20 @@ type SessionGetter interface {
 	Close()
 }
 
+// NebulaSession subset interface of Session.
+type NebulaSession interface {
+	Execute(stmt string) (*ResultSet, error)
+	ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error)
+	ExecuteJson(stmt string) ([]byte, error)
+	ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error)
+	GetSessionID() int64
+}
+
+// Releaser interface.
+type Releaser interface {
+	Release()
+}
+
 type connectionPoolWrapper struct {
 	*ConnectionPool
 }
@@ -252,23 +266,19 @@ func (s *SessionPool) release(session NebulaSession) {
 		return
 	}
 
-	if releaser, ok := session.(interface{ Release() }); ok {
-		s.Log.Info("releasing session id: Ox" + strconv.FormatInt(session.GetSessionID(), 16))
+	sessionID := session.GetSessionID()
+
+	if releaser, ok := session.(Releaser); ok {
+		s.Log.Info("releasing session id: Ox" + strconv.FormatInt(sessionID, 16))
 
 		releaser.Release()
-	} else {
-		s.Log.Warn(fmt.Sprintf("unable to release session id %d: no method release available on %T",
-			session.GetSessionID(), session))
-	}
-}
 
-// NebulaSession subset interface of Session.
-type NebulaSession interface {
-	Execute(stmt string) (*ResultSet, error)
-	ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error)
-	ExecuteJson(stmt string) ([]byte, error)
-	ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error)
-	GetSessionID() int64
+		return
+	}
+
+	s.Log.Warn(fmt.Sprintf("unable to release session id %d: no method release available on %T",
+		sessionID, session))
+
 }
 
 // WithSession execute a callback with an authenticated session, releasing it in the end.
