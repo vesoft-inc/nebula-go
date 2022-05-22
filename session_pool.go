@@ -19,6 +19,8 @@ var (
 	_ SessionGetter = (*connectionPoolWrapper)(nil)
 
 	_ NebulaSession = (*Session)(nil)
+
+	_ Releaser = (*Session)(nil)
 )
 
 // SessionGetter interface.
