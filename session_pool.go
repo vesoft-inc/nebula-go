@@ -27,7 +27,7 @@ var (
 
 // SessionGetter interface.
 type SessionGetter interface {
-	GetSession(username, password string) (NebulaSession, error)
+	GetSession(username, password string) (NebulaSessionReleaser, error)
 	Close()
 }
 
@@ -56,7 +56,7 @@ type connectionPoolWrapper struct {
 }
 
 // GetSession method adapter.
-func (cpw *connectionPoolWrapper) GetSession(username, password string) (NebulaSession, error) {
+func (cpw *connectionPoolWrapper) GetSession(username, password string) (NebulaSessionReleaser, error) {
 	session, err := cpw.ConnectionPool.GetSession(username, password)
 	if err != nil {
 		return nil, err

@@ -400,10 +400,10 @@ func (m *mockSessionGetter) Close() {
 	m.Called()
 }
 
-func (m *mockSessionGetter) GetSession(user, pass string) (nebula_go.NebulaSession, error) {
+func (m *mockSessionGetter) GetSession(user, pass string) (nebula_go.NebulaSessionReleaser, error) {
 	args := m.Called(user, pass)
 
-	session, _ := args.Get(0).(nebula_go.NebulaSession)
+	session, _ := args.Get(0).(nebula_go.NebulaSessionReleaser)
 
 	return session, args.Error(1)
 }
