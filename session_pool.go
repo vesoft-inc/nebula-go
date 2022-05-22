@@ -218,24 +218,33 @@ func expandMacros(str string, macros map[string]string) string {
 //   ... use session ...
 //   sessionPool.Release(session)
 func (s *SessionPool) Acquire() (session NebulaSession, err error) {
-	var ok bool
-	session, ok = s.sessionQueue.Dequeue()
+	return s.acquire()
+}
+
+func (s *SessionPool) acquire() (sessionReleaser NebulaSessionReleaser, err error) {
+	sessionReleaser, ok := s.sessionQueue.Dequeue()
 	if ok {
-		return session, nil
+		return
 	}
 
-	session, err = s.ConnectionPool.GetSession(s.Username, s.Password)
+	sessionReleaser, err = s.ConnectionPool.GetSession(s.Username, s.Password)
 	if err != nil {
-		return nil, fmt.Errorf("unable to get session: %s", err.Error())
+		err = fmt.Errorf("unable to get session: %s", err.Error())
+
+		return
 	}
 
-	err = s.executeStatement(session, s.OnAcquireSession)
+	err = s.executeStatement(sessionReleaser, s.OnAcquireSession)
 	if err != nil {
-		return nil, fmt.Errorf("unable to execute statement %q on acquire session id=%#x: %s",
-			s.OnAcquireSession, session.GetSessionID(), err)
+		err = fmt.Errorf("unable to execute statement %q on acquire session id=%#x: %s",
+			s.OnAcquireSession, sessionReleaser.GetSessionID(), err)
+
+		s.release(sessionReleaser)
+
+		sessionReleaser = nil
 	}
 
-	return session, nil
+	return
 }
 
 func (s *SessionPool) executeStatement(session NebulaSession, stmt string) error {
@@ -245,14 +254,10 @@ func (s *SessionPool) executeStatement(session NebulaSession, stmt string) error
 
 	rs, err := session.Execute(stmt)
 	if err != nil {
-		s.release(session)
-
 		return err
 	}
 
 	if !rs.IsSucceed() {
-		s.release(session)
-
 		return fmt.Errorf("not succeed: %q (error code %d)", rs.GetErrorMsg(), rs.GetErrorCode())
 	}
 
@@ -266,29 +271,30 @@ func (s *SessionPool) Release(session NebulaSession) {
 		return
 	}
 
-	oldest := s.sessionQueue.Enqueue(session)
-
-	s.release(oldest)
-}
-
-func (s *SessionPool) release(session NebulaSession) {
-	if session == nil {
-		return
-	}
-
-	sessionID := session.GetSessionID()
-
-	if releaser, ok := session.(Releaser); ok {
-		s.Log.Info("releasing session id: Ox" + strconv.FormatInt(sessionID, 16))
-
-		releaser.Release()
+	if sessionReleaser, ok := session.(NebulaSessionReleaser); ok {
+		s.enqueueAndRelease(sessionReleaser)
 
 		return
 	}
 
 	s.Log.Warn(fmt.Sprintf("unable to release session id %d: no method release available on %T",
-		sessionID, session))
+		session.GetSessionID(), session))
+}
 
+func (s *SessionPool) enqueueAndRelease(sessionReleaser NebulaSessionReleaser) {
+	s.Log.Info("releasing session id: Ox" + strconv.FormatInt(sessionReleaser.GetSessionID(), 16))
+
+	oldest := s.sessionQueue.Enqueue(sessionReleaser)
+
+	s.release(oldest)
+}
+
+func (s *SessionPool) release(releaser Releaser) {
+	if releaser == nil {
+		return
+	}
+
+	releaser.Release()
 }
 
 // WithSession execute a callback with an authenticated session, releasing it in the end.
@@ -302,14 +308,14 @@ func (s *SessionPool) release(session NebulaSession) {
 //   ... use session ...
 //   sessionPool.Release(session)
 func (s *SessionPool) WithSession(callback func(session NebulaSession) error) error {
-	session, err := s.Acquire()
+	sessionReleaser, err := s.acquire()
 	if err != nil {
 		return err
 	}
 
-	defer s.Release(session)
+	defer s.enqueueAndRelease(sessionReleaser)
 
-	return callback(session)
+	return callback(sessionReleaser)
 }
 
 // Close will release all remaining sessions and close the connection pool.
@@ -324,7 +330,12 @@ func (s *SessionPool) Close() error {
 }
 
 func (s *SessionPool) releaseAllRemainingSessions(finally func()) {
-	s.sessionQueue.ForEach(s.release, finally)
+	s.Log.Info("release all remaining sessions")
+	s.sessionQueue.ForEach(func(session NebulaSessionReleaser) {
+		s.Log.Info("release session id=0x" + strconv.FormatInt(session.GetSessionID(), 16))
+
+		s.release(session)
+	}, finally)
 }
 
 type sessionQueue struct {
@@ -333,7 +344,7 @@ type sessionQueue struct {
 	max   int
 }
 
-func (q *sessionQueue) Dequeue() (NebulaSession, bool) {
+func (q *sessionQueue) Dequeue() (NebulaSessionReleaser, bool) {
 	if q == nil || q.max == 0 {
 		return nil, false
 	}
@@ -344,17 +355,17 @@ func (q *sessionQueue) Dequeue() (NebulaSession, bool) {
 	return q.dequeue()
 }
 
-func (q *sessionQueue) dequeue() (NebulaSession, bool) {
+func (q *sessionQueue) dequeue() (NebulaSessionReleaser, bool) {
 	front := q.queue.Front()
 	if front != nil {
-		session, _ := q.queue.Remove(front).(NebulaSession)
+		session, _ := q.queue.Remove(front).(NebulaSessionReleaser)
 		return session, true
 	}
 
 	return nil, false
 }
 
-func (q *sessionQueue) Enqueue(session NebulaSession) (oldest NebulaSession) {
+func (q *sessionQueue) Enqueue(session NebulaSessionReleaser) (oldest NebulaSessionReleaser) {
 	if session == nil || q == nil || q.max == 0 {
 		return session
 	}
@@ -364,7 +375,7 @@ func (q *sessionQueue) Enqueue(session NebulaSession) (oldest NebulaSession) {
 
 	if q.max > 0 && q.queue.Len() == q.max {
 		front := q.queue.Front()
-		oldest, _ = q.queue.Remove(front).(NebulaSession)
+		oldest, _ = q.queue.Remove(front).(NebulaSessionReleaser)
 	}
 
 	q.queue.PushBack(session)
@@ -372,7 +383,7 @@ func (q *sessionQueue) Enqueue(session NebulaSession) (oldest NebulaSession) {
 	return
 }
 
-func (q *sessionQueue) ForEach(callback func(session NebulaSession), finally func()) {
+func (q *sessionQueue) ForEach(callback func(session NebulaSessionReleaser), finally func()) {
 	if q == nil || q.max == 0 {
 		finally()
 
