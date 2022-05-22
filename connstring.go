@@ -456,6 +456,7 @@ func getTLSConfig(key string) (*tls.Config, error) {
 		return tlsConfig.Clone(), nil
 	}
 }
+
 func getTLSConfigFromRegistry(key string) (*tls.Config, error) {
 	tlsConfigLock.RLock()
 	defer tlsConfigLock.RUnlock()

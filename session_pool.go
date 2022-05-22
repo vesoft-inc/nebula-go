@@ -161,7 +161,8 @@ func NewSessionPoolFromConnectionPool(connPool *ConnectionPool, opts ...Connecti
 
 func newSessionFromFromConnectionConfig(cfg *ConnectionConfig,
 	connPool SessionGetter,
-	opts ...ConnectionOption) (*SessionPool, error) {
+	opts ...ConnectionOption,
+) (*SessionPool, error) {
 	cfg.Apply(opts)
 
 	if err := cfg.Validate(); err != nil {

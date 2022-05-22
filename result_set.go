@@ -334,7 +334,6 @@ func (res ResultSet) GetColNames() []string {
 func (res ResultSet) GetErrorCode() ErrorCode {
 	if res.resp == nil {
 		return ErrorCode(nebula.ErrorCode_E_UNKNOWN)
-
 	}
 
 	return ErrorCode(res.resp.ErrorCode)

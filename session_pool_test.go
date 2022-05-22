@@ -419,6 +419,7 @@ func (m *mockSession) Execute(stmt string) (*nebula_go.ResultSet, error) {
 
 	return resultSet, args.Error(1)
 }
+
 func (m *mockSession) ExecuteWithParameter(stmt string, params map[string]interface{}) (*nebula_go.ResultSet, error) {
 	args := m.Called(stmt, params)
 
@@ -426,6 +427,7 @@ func (m *mockSession) ExecuteWithParameter(stmt string, params map[string]interf
 
 	return resultSet, args.Error(1)
 }
+
 func (m *mockSession) ExecuteJson(stmt string) ([]byte, error) {
 	args := m.Called(stmt)
 
@@ -433,6 +435,7 @@ func (m *mockSession) ExecuteJson(stmt string) ([]byte, error) {
 
 	return result, args.Error(1)
 }
+
 func (m *mockSession) ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error) {
 	args := m.Called(stmt, params)
 
@@ -440,9 +443,11 @@ func (m *mockSession) ExecuteJsonWithParameter(stmt string, params map[string]in
 
 	return result, args.Error(1)
 }
+
 func (m *mockSession) GetSessionID() int64 {
 	return 1
 }
+
 func (m *mockSession) Release() {
 	m.Called()
 }
