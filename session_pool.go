@@ -18,6 +18,8 @@ import (
 var (
 	_ SessionGetter = (*connectionPoolWrapper)(nil)
 
+	_ NebulaSessionReleaser = (*Session)(nil)
+
 	_ NebulaSession = (*Session)(nil)
 
 	_ Releaser = (*Session)(nil)
@@ -27,6 +29,12 @@ var (
 type SessionGetter interface {
 	GetSession(username, password string) (NebulaSession, error)
 	Close()
+}
+
+// NebulaSessionReleaser is a nebula session that can release
+type NebulaSessionReleaser interface {
+	NebulaSession
+	Releaser
 }
 
 // NebulaSession subset interface of Session.
