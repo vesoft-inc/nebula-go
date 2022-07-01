@@ -29,6 +29,8 @@ const (
 	port     = 3699
 	username = "root"
 	password = "nebula"
+
+	addressIPv6 = "::1"
 )
 
 var poolAddress = []HostAddress{
@@ -62,6 +64,50 @@ func logoutAndClose(conn *connection, sessionID int64) {
 
 func TestConnection(t *testing.T) {
 	hostAdress := HostAddress{Host: address, Port: port}
+	conn := newConnection(hostAdress)
+	err := conn.open(hostAdress, testPoolConfig.TimeOut, nil)
+	if err != nil {
+		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
+	}
+
+	authresp, authErr := conn.authenticate(username, password)
+	if authErr != nil {
+		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
+	}
+
+	sessionID := authresp.GetSessionID()
+
+	defer logoutAndClose(conn, sessionID)
+
+	resp, err := conn.execute(sessionID, "SHOW HOSTS;")
+	if err != nil {
+		t.Fatalf(err.Error())
+		return
+	}
+	checkConResp(t, "show hosts", resp)
+
+	resp, err = conn.execute(sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+	checkConResp(t, "create space", resp)
+	resp, err = conn.execute(sessionID, "DROP SPACE client_test;")
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+	checkConResp(t, "drop space", resp)
+
+	res := conn.ping()
+	if res != true {
+		t.Error("Connection ping failed")
+		return
+	}
+}
+
+func TestConnectionIPv6(t *testing.T) {
+	hostAdress := HostAddress{Host: addressIPv6, Port: port}
 	conn := newConnection(hostAdress)
 	err := conn.open(hostAdress, testPoolConfig.TimeOut, nil)
 	if err != nil {

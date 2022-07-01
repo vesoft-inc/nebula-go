@@ -12,6 +12,8 @@ import (
 	"crypto/tls"
 	"fmt"
 	"math"
+	"net"
+	"strconv"
 	"time"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
@@ -42,7 +44,7 @@ func newConnection(severAddress HostAddress) *connection {
 func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config) error {
 	ip := hostAddress.Host
 	port := hostAddress.Port
-	newAdd := fmt.Sprintf("%s:%d", ip, port)
+	newAdd := net.JoinHostPort(ip, strconv.Itoa(port))
 	cn.timeout = timeout
 	bufferSize := 128 << 10
 	frameMaxLength := uint32(math.MaxUint32)
