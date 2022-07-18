@@ -1,9 +1,9 @@
 name: test
 on:
   push:
-    branches: [ master ]
+    branches: [ master, 'release-**' ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, 'release-**' ]
   schedule:
     - cron: "0 6 * * *"
 
