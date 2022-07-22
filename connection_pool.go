@@ -144,12 +144,16 @@ func (pool *ConnectionPool) getIdleConn() (*connection, error) {
 	if pool.idleConnectionQueue.Len() > 0 {
 		var newConn *connection = nil
 		var newEle *list.Element = nil
-		for ele := pool.idleConnectionQueue.Front(); ele != nil; ele = ele.Next() {
+		var tmpNextEle *list.Element = nil
+		for ele := pool.idleConnectionQueue.Front(); ele != nil; ele = tmpNextEle {
 			// Check if connection is valid
 			if res := ele.Value.(*connection).ping(); res {
 				newConn = ele.Value.(*connection)
 				newEle = ele
 				break
+			}else{
+				tmpNextEle = ele.Next()
+				pool.idleConnectionQueue.Remove(ele)
 			}
 		}
 		if newConn == nil {
