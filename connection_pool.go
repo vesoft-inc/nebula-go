@@ -151,7 +151,7 @@ func (pool *ConnectionPool) getIdleConn() (*connection, error) {
 				newConn = ele.Value.(*connection)
 				newEle = ele
 				break
-			}else{
+			} else {
 				tmpNextEle = ele.Next()
 				pool.idleConnectionQueue.Remove(ele)
 			}
