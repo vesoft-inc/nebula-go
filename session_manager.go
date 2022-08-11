@@ -104,7 +104,7 @@ func (m *SessionManager) GetSession() (*SessionWrapper, error) {
 		return nil, err
 	}
 	if !result.IsSucceed() {
-		return nil, fmt.Errorf("fail to get new seesion, change space error: %s", err.Error())
+		return nil, fmt.Errorf("fail to get new seesion, change space error")
 	}
 
 	sessionWrapper := &SessionWrapper{session: session, sessionManager: m, sessionId: session.GetSessionID()}
