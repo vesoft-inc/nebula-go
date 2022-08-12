@@ -139,13 +139,13 @@ func InitData() error {
 		"CREATE TAG IF NOT EXISTS player(name string, age int);" +
 		"CREATE EDGE IF NOT EXISTS follow(degree int);"
 
-	_, err = tryToExecute(session, schema)
+	_, err = Execute(session, schema)
 	if err != nil {
 		return fmt.Errorf("test session manager, init data schema fail, %s", err.Error())
 	}
 
 	dataStatement := "INSERT VERTEX player(name, age) VALUES \"player101\":(\"Tony Parker\", 36), \"player100\":(\"Tim Duncan\", 42);"
-	_, err = tryToExecute(session, dataStatement)
+	_, err = Execute(session, dataStatement)
 	if err != nil {
 		return fmt.Errorf("test session manager, init data fail, %s", err.Error())
 	}
@@ -153,7 +153,7 @@ func InitData() error {
 	time.Sleep(2 * time.Second)
 
 	dataStatement = "INSERT EDGE follow(degree) VALUES \"player101\" -> \"player100\":(95);"
-	_, err = tryToExecute(session, dataStatement)
+	_, err = Execute(session, dataStatement)
 	if err != nil {
 		return fmt.Errorf("test session manager, init data fail, %s", err.Error())
 	}
@@ -166,7 +166,7 @@ func skipBenchmark(b *testing.B) {
 	}
 }
 
-func tryToExecute(session *Session, query string) (resp *ResultSet, err error) {
+func Execute(session *Session, query string) (resp *ResultSet, err error) {
 	for i := 3; i > 0; i-- {
 		resp, err = session.Execute(query)
 		if err == nil && resp.IsSucceed() {
