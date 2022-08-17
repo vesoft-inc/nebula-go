@@ -8,8 +8,8 @@ Please update your go.mod and imports correspondingly.**
 
 Official Nebula Go client which communicates with the server using [fbthrift](https://github.com/facebook/fbthrift/). Currently the latest stable release is **[v3.2.0](https://github.com/vesoft-inc/nebula-go/tree/release-v3.2)**
 
-The code in **master branch** will be updated to accommodate the nightly changes made in Nebula Graph.
-To Use the console with a stable release of Nebula Graph, please check the branches and use the corresponding version.
+The code in **master branch** will be updated to accommodate the nightly changes made in NebulaGraph.
+To Use the console with a stable release of NebulaGraph, please check the branches and use the corresponding version.
 
 | Client version | Nebula Service Version|
 |:--------------:|:-------------------:|
