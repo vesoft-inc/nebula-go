@@ -162,12 +162,6 @@ func (cn *connection) ping() bool {
 	return err == nil
 }
 
-// Check connection to host address
-func (cn *connection) pingWithParameter() bool {
-	_, err := cn.executeWithParameter(0, "YIELD 1", nil)
-	return err == nil
-}
-
 // Sign out and release seesin ID
 func (cn *connection) signOut(sessionID int64) error {
 	// Release session ID to graphd
