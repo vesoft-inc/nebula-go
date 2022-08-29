@@ -32,7 +32,7 @@ type Session struct {
 }
 
 func (session *Session) reconnectWithExecuteErr(err error) error {
-	// Reconnect only if the tranport is closed
+	// Reconnect only if the transport is closed
 	err2, ok := err.(thrift.TransportException)
 	if !ok {
 		return err
@@ -56,7 +56,7 @@ func (session *Session) executeWithReconnect(f func() (interface{}, error)) (int
 	if err2 := session.reconnectWithExecuteErr(err); err2 != nil {
 		return nil, err2
 	}
-	// Execute with the new connetion
+	// Execute with the new connection
 	return f()
 
 }
@@ -263,7 +263,7 @@ func (session *Session) reConnect() error {
 	return nil
 }
 
-// Release logs out and releases connetion hold by session.
+// Release logs out and releases connection hold by session.
 // The connection will be added into the activeConnectionQueue of the connection pool
 // so that it could be reused.
 func (session *Session) Release() {
@@ -375,7 +375,7 @@ func value2Nvalue(any interface{}) (value *nebula.Value, err error) {
 	} else if v, ok := any.(nebula.Geography); ok {
 		value.SetGgVal(&v)
 	} else {
-		// unsupport other Value type, use this function carefully
+		// unsupported other Value type, use this function carefully
 		err = fmt.Errorf("Only support convert boolean/float/int/string/map/list to nebula.Value but %T", any)
 	}
 	return
