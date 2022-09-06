@@ -70,7 +70,7 @@ func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *t
 
 // initPool initializes the connection pool
 func (pool *ConnectionPool) initPool() error {
-	if err := pool.checkAddresses(); err != nil {
+	if err := checkAddresses(pool.conf.TimeOut, pool.addresses, pool.sslConfig); err != nil {
 		return fmt.Errorf("failed to open connection, error: %s ", err.Error())
 	}
 
@@ -167,7 +167,7 @@ func (pool *ConnectionPool) getIdleConn() (*connection, error) {
 
 	// Create a new connection if there is no idle connection and total connection < pool max size
 	newConn, err := pool.createConnection()
-	// TODO: If no idle avaliable, wait for timeout and reconnect
+	// TODO: If no idle available, wait for timeout and reconnect
 	return newConn, err
 }
 
@@ -181,15 +181,9 @@ func (pool *ConnectionPool) release(conn *connection) {
 	pool.idleConnectionQueue.PushBack(conn)
 }
 
-// Ping checks avaliability of host
+// Ping checks availability of host
 func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error {
-	newConn := newConnection(host)
-	// Open connection to host
-	if err := newConn.open(newConn.severAddress, timeout, pool.sslConfig); err != nil {
-		return err
-	}
-	newConn.close()
-	return nil
+	return pingAddress(host, timeout, pool.sslConfig)
 }
 
 // Close closes all connection
@@ -259,7 +253,7 @@ func removeFromList(l *list.List, conn *connection) {
 // Compare total connection number with pool max size and return a connection if capable
 func (pool *ConnectionPool) createConnection() (*connection, error) {
 	totalConn := pool.idleConnectionQueue.Len() + pool.activeConnectionQueue.Len()
-	// If no idle avaliable and the number of total connection reaches the max pool size, return error/wait for timeout
+	// If no idle available and the number of total connection reaches the max pool size, return error/wait for timeout
 	if totalConn >= pool.conf.MaxConnPoolSize {
 		return nil, fmt.Errorf("failed to get connection: No valid connection" +
 			" in the idle queue and connection number has reached the pool capacity")
@@ -342,15 +336,28 @@ func (pool *ConnectionPool) timeoutConnectionList() (closing []*connection) {
 	return
 }
 
-func (pool *ConnectionPool) checkAddresses() error {
+// checkAddresses checks addresses availability
+// It opens a temporary connection to each address and closes it immediately.
+// If no error is returned, the addresses are available.
+func checkAddresses(confTimeout time.Duration, addresses []HostAddress, sslConfig *tls.Config) error {
 	var timeout = 3 * time.Second
-	if pool.conf.TimeOut != 0 && pool.conf.TimeOut < timeout {
-		timeout = pool.conf.TimeOut
+	if confTimeout != 0 && confTimeout < timeout {
+		timeout = confTimeout
 	}
-	for _, address := range pool.addresses {
-		if err := pool.Ping(address, timeout); err != nil {
+	for _, address := range addresses {
+		if err := pingAddress(address, timeout, sslConfig); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func pingAddress(address HostAddress, timeout time.Duration, sslConfig *tls.Config) error {
+	newConn := newConnection(address)
+	defer newConn.close()
+	// Open connection to host
+	if err := newConn.open(newConn.severAddress, timeout, sslConfig); err != nil {
+		return err
 	}
 	return nil
 }

@@ -165,62 +165,7 @@ func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
 
 // ExecuteJson returns the result of the given query as a json string
 // Date and Datetime will be returned in UTC
-//	JSON struct:
-// {
-//     "results":[
-//         {
-//             "columns":[
-//             ],
-//             "data":[
-//                 {
-//                     "row":[
-//                         "row-data"
-//                     ],
-//                     "meta":[
-//                         "metadata"
-//                     ]
-//                 }
-//             ],
-//             "latencyInUs":0,
-//             "spaceName":"",
-//             "planDesc ":{
-//                 "planNodeDescs":[
-//                     {
-//                         "name":"",
-//                         "id":0,
-//                         "outputVar":"",
-//                         "description":{
-//                             "key":""
-//                         },
-//                         "profiles":[
-//                             {
-//                                 "rows":1,
-//                                 "execDurationInUs":0,
-//                                 "totalDurationInUs":0,
-//                                 "otherStats":{}
-//                             }
-//                         ],
-//                         "branchInfo":{
-//                             "isDoBranch":false,
-//                             "conditionNodeId":-1
-//                         },
-//                         "dependencies":[]
-//                     }
-//                 ],
-//                 "nodeIndexMap":{},
-//                 "format":"",
-//                 "optimize_time_in_us":0
-//             },
-//             "comment ":""
-//         }
-//     ],
-//     "errors":[
-//         {
-//       		"code": 0,
-//       		"message": ""
-//         }
-//     ]
-// }
+// The result is a JSON string in the same format as ExecuteJson()
 func (session *Session) ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
@@ -286,6 +231,25 @@ func (session *Session) Release() {
 
 func (session *Session) GetSessionID() int64 {
 	return session.sessionID
+}
+
+func (session *Session) Ping() error {
+	// session.mu.Lock()
+	// defer session.mu.Unlock()
+	if session.connection == nil {
+		return fmt.Errorf("failed to ping: Session has been released")
+	}
+	// send ping request
+	resp, err := session.Execute(`RETURN "client ping"`)
+	// check connection level error
+	if err != nil {
+		return fmt.Errorf("session ping failed, %s" + err.Error())
+	}
+	// check session level error
+	if !resp.IsSucceed() {
+		return fmt.Errorf("session ping failed, %s" + resp.GetErrorMsg())
+	}
+	return nil
 }
 
 func IsError(resp *graph.ExecutionResponse) bool {

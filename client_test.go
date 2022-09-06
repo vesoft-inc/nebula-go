@@ -63,19 +63,19 @@ func logoutAndClose(conn *connection, sessionID int64) {
 }
 
 func TestConnection(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
-	conn := newConnection(hostAdress)
-	err := conn.open(hostAdress, testPoolConfig.TimeOut, nil)
+	hostAddress := HostAddress{Host: address, Port: port}
+	conn := newConnection(hostAddress)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
 
-	authresp, authErr := conn.authenticate(username, password)
+	authResp, authErr := conn.authenticate(username, password)
 	if authErr != nil {
 		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
 	}
 
-	sessionID := authresp.GetSessionID()
+	sessionID := authResp.GetSessionID()
 
 	defer logoutAndClose(conn, sessionID)
 
@@ -107,19 +107,19 @@ func TestConnection(t *testing.T) {
 }
 
 func TestConnectionIPv6(t *testing.T) {
-	hostAdress := HostAddress{Host: addressIPv6, Port: port}
-	conn := newConnection(hostAdress)
-	err := conn.open(hostAdress, testPoolConfig.TimeOut, nil)
+	hostAddress := HostAddress{Host: addressIPv6, Port: port}
+	conn := newConnection(hostAddress)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
 
-	authresp, authErr := conn.authenticate(username, password)
+	authResp, authErr := conn.authenticate(username, password)
 	if authErr != nil {
 		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
 	}
 
-	sessionID := authresp.GetSessionID()
+	sessionID := authResp.GetSessionID()
 
 	defer logoutAndClose(conn, sessionID)
 
@@ -151,9 +151,9 @@ func TestConnectionIPv6(t *testing.T) {
 }
 
 func TestConfigs(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
+	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
-	hostList = append(hostList, hostAdress)
+	hostList = append(hostList, hostAddress)
 
 	var configList = []PoolConfig{
 		// default
@@ -202,7 +202,7 @@ func TestConfigs(t *testing.T) {
 				username, password, err.Error())
 		}
 		defer session.Release()
-		// Excute a query
+		// Execute a query
 		resp, err := tryToExecute(session, "SHOW HOSTS;")
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -231,10 +231,10 @@ func TestAuthentication(t *testing.T) {
 		password = "nebula"
 	)
 
-	hostAdress := HostAddress{Host: address, Port: port}
+	hostAddress := HostAddress{Host: address, Port: port}
 
-	conn := newConnection(hostAdress)
-	err := conn.open(hostAdress, testPoolConfig.TimeOut, nil)
+	conn := newConnection(hostAddress)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -245,8 +245,8 @@ func TestAuthentication(t *testing.T) {
 }
 
 func TestInvalidHostTimeout(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
-	hostList := []HostAddress{hostAdress}
+	hostAddress := HostAddress{Host: address, Port: port}
+	hostList := []HostAddress{hostAddress}
 
 	invalidHostList := []HostAddress{
 		{Host: "192.168.100.125", Port: 3699}, // Invalid host
@@ -269,9 +269,9 @@ func TestInvalidHostTimeout(t *testing.T) {
 }
 
 func TestServiceDataIO(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
+	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
-	hostList = append(hostList, hostAdress)
+	hostList = append(hostList, hostAddress)
 
 	testPoolConfig = PoolConfig{
 		TimeOut:         0 * time.Millisecond,
@@ -558,9 +558,9 @@ func TestServiceDataIO(t *testing.T) {
 }
 
 func TestPool_SingleHost(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
+	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
-	hostList = append(hostList, hostAdress)
+	hostList = append(hostList, hostAddress)
 
 	testPoolConfig = PoolConfig{
 		TimeOut:         0 * time.Millisecond,
@@ -604,7 +604,7 @@ func TestPool_SingleHost(t *testing.T) {
 
 func TestPool_MultiHosts(t *testing.T) {
 	hostList := poolAddress
-	// Minimun pool size < hosts number
+	// Minimum pool size < hosts number
 	multiHostsConfig := PoolConfig{
 		TimeOut:         0 * time.Millisecond,
 		IdleTime:        0 * time.Millisecond,
@@ -722,7 +722,7 @@ func TestMultiThreads(t *testing.T) {
 	assert.Equal(t, 666, pool.getIdleConnCount(), "Total number of idle connections should be 666")
 }
 
-func TestLoadbalancer(t *testing.T) {
+func TestLoadBalancer(t *testing.T) {
 	hostList := poolAddress
 	var loadPerHost = make(map[HostAddress]int)
 	testPoolConfig := PoolConfig{
@@ -808,9 +808,9 @@ func TestIdleTimeoutCleaner(t *testing.T) {
 }
 
 func TestTimeout(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
+	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
-	hostList = append(hostList, hostAdress)
+	hostList = append(hostList, hostAddress)
 
 	testPoolConfig = PoolConfig{
 		TimeOut:         1000 * time.Millisecond,

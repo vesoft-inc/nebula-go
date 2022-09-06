@@ -105,3 +105,91 @@ func openAndReadFile(path string) ([]byte, error) {
 	}
 	return b, nil
 }
+
+// SessionPoolConf is the configs of a session pool
+// Note that the space name is bound to the session pool for its lifetime
+type SessionPoolConf struct {
+	Username     string        // username for authentication
+	Password     string        // password for authentication
+	ServiceAddrs []HostAddress // service addresses for session pool
+	hostIndex    int           // index of the host in ServiceAddrs that the next new session will connect to
+	SpaceName    string        // The space name that all sessions in the pool are bound to
+	sslConfig    *tls.Config   // Optional SSL config for the connection
+
+	// Basic pool configs
+	// Socket timeout and Socket connection timeout, unit: seconds
+	TimeOut time.Duration
+	// The idleTime of the connection, unit: seconds
+	// If connection's idle time is longer than idleTime, it will be delete
+	// 0 value means the connection will not expire
+	IdleTime time.Duration
+	// The max sessions in pool for all addresses
+	MaxSize int
+	// The min sessions in pool for all addresses
+	MinSize int
+}
+
+// TODO(Aiee) add more constructors
+// NewSessionPoolConf returns a new SessionPoolConf with given parameters
+func NewSessionPoolConf(username, password string, serviceAddrs []HostAddress, spaceName string) (*SessionPoolConf, error) {
+	newPoolConf := GetDefaultSessionConf()
+	newPoolConf.Username = username
+	newPoolConf.Password = password
+	newPoolConf.ServiceAddrs = serviceAddrs
+	newPoolConf.SpaceName = spaceName
+
+	if err := newPoolConf.checkMandatoryFields(); err != nil {
+		return nil, err
+	}
+
+	return &newPoolConf, nil
+}
+
+// GetDefaultSessionConf returns the default config
+func GetDefaultSessionConf() SessionPoolConf {
+	return SessionPoolConf{
+		TimeOut:  0 * time.Millisecond,
+		IdleTime: 0 * time.Millisecond,
+		MaxSize:  10,
+		MinSize:  0,
+	}
+}
+
+func (conf *SessionPoolConf) checkMandatoryFields() error {
+	// Check mandatory fields
+	if conf.Username == "" {
+		return fmt.Errorf("invalid session pool config: Username is empty")
+	}
+	if conf.Password == "" {
+		return fmt.Errorf("invalid session pool config: Password is empty")
+	}
+	if len(conf.ServiceAddrs) == 0 {
+		return fmt.Errorf("invalid session pool config: Service address is empty")
+	}
+	if conf.SpaceName == "" {
+		return fmt.Errorf("invalid session pool config: Space name is empty")
+	}
+	return nil
+}
+
+// checkBasicFields checks the basic fields of the config and
+// sets a default value if the given field value is invalid
+func (conf *SessionPoolConf) checkBasicFields(log Logger) {
+	// Check pool related fields, use default value if the given value is invalid
+	if conf.TimeOut < 0 {
+		conf.TimeOut = 0 * time.Millisecond
+		log.Warn("Illegal Timeout value, the default value of 0 second has been applied")
+	}
+	if conf.IdleTime < 0 {
+		conf.IdleTime = 0 * time.Millisecond
+		log.Warn("Invalid IdleTime value, the default value of 0 second has been applied")
+	}
+	if conf.MaxSize < 1 {
+		conf.MaxSize = 10
+		log.Warn("Invalid MaxSize value, the default value of 10 has been applied")
+	}
+	if conf.MinSize < 0 {
+		conf.MinSize = 0
+		log.Warn("Invalid MinSize value, the default value of 0 has been applied")
+	}
+}

@@ -21,9 +21,9 @@ func TestSslConnection(t *testing.T) {
 	// skip test when ssl_test is not set to true
 	skipSsl(t)
 
-	hostAdress := HostAddress{Host: address, Port: port}
+	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
-	hostList = append(hostList, hostAdress)
+	hostList = append(hostList, hostAddress)
 
 	testPoolConfig = PoolConfig{
 		TimeOut:         0 * time.Millisecond,
@@ -86,9 +86,9 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	// skip test when ssl_test is not set to true
 	skipSslSelfSigned(t)
 
-	hostAdress := HostAddress{Host: address, Port: port}
+	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
-	hostList = append(hostList, hostAdress)
+	hostList = append(hostList, hostAddress)
 
 	testPoolConfig = PoolConfig{
 		TimeOut:         0 * time.Millisecond,
