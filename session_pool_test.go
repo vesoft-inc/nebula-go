@@ -11,17 +11,19 @@
 package nebula_go
 
 import (
+	"fmt"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSessionPool_Basic(t *testing.T) {
-	err := prepareSpace(t)
-	assert.Nil(t, err)
+func TestSessionPoolBasic(t *testing.T) {
+	prepareSpace(t, "client_test")
+	defer dropSpace(t, "client_test")
 
-	hostAddress := HostAddress{Host: address, Port: 29562}
-	config, err := NewSessionPoolConf("root", "nebula", []HostAddress{hostAddress}, "nba")
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf("root", "nebula", []HostAddress{hostAddress}, "client_test")
 	if err != nil {
 		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -38,33 +40,90 @@ func TestSessionPool_Basic(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.True(t, resultSet.IsSucceed())
+	assert.True(t, resultSet.IsSucceed(), fmt.Errorf("error code: %d, error msg: %s",
+		resultSet.GetErrorCode(), resultSet.GetErrorMsg()))
+
+	assert.Equal(t, 0, sessionPool.activeSessions.Len(), "Total number of active connections should be 0")
+	assert.Equal(t, 1, sessionPool.idleSessions.Len(), "Total number of active connections should be 1")
 }
 
-func prepareSpace(t *testing.T) error {
-	hostAddress := HostAddress{Host: address, Port: 29562}
-	conn := newConnection(hostAddress)
-	testPoolConfig := GetDefaultConf()
+func TestSessionPoolMultiThread(t *testing.T) {
+	prepareSpace(t, "client_test")
+	defer dropSpace(t, "client_test")
 
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
+	hostList := poolAddress
+	config, err := NewSessionPoolConf("root", "nebula", hostList, "client_test")
 	if err != nil {
-		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
+		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
+	config.MaxSize = 666
 
-	authResp, authErr := conn.authenticate(username, password)
-	if authErr != nil {
-		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
+	// test get idle session
+	{
+		// create session pool
+		sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer sessionPool.Close()
+
+		var wg sync.WaitGroup
+		sessCh := make(chan *Session)
+		done := make(chan bool)
+		wg.Add(sessionPool.conf.MaxSize)
+
+		// producer creates sessions
+		for i := 0; i < sessionPool.conf.MaxSize; i++ {
+			go func(sessCh chan<- *Session, wg *sync.WaitGroup) {
+				defer wg.Done()
+				session, err := sessionPool.getIdleSession()
+				if err != nil {
+					t.Errorf("fail to create a new session from connection pool, %s", err.Error())
+				}
+				sessCh <- session
+			}(sessCh, &wg)
+		}
+
+		// consumer consumes the session created
+		var sessionList []*Session
+		go func(sessCh <-chan *Session) {
+			for session := range sessCh {
+				sessionList = append(sessionList, session)
+			}
+			done <- true
+		}(sessCh)
+		wg.Wait()
+		close(sessCh)
+		<-done
+
+		assert.Equal(t, 666, sessionPool.activeSessions.Len(), "Total number of active connections should be 666")
+		assert.Equal(t, 666, len(sessionList), "Total number of result returned should be 666")
 	}
+	// // test Execute()
+	// {
+	// 	// create session pool
+	// 	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	// 	if err != nil {
+	// 		t.Fatal(err)
+	// 	}
+	// 	defer sessionPool.Close()
 
-	sessionID := authResp.GetSessionID()
+	// 	var wg sync.WaitGroup
+	// 	wg.Add(sessionPool.conf.MaxSize)
 
-	defer logoutAndClose(conn, sessionID)
-
-	resp, err := conn.execute(sessionID, "CREATE SPACE IF NOT EXISTS"+
-		" client_test(partition_num=32, replica_factor=1, vid_type = FIXED_STRING(30));")
-	if err != nil {
-		return err
-	}
-	checkConResp(t, "create space", resp)
-	return nil
+	// 	wg.Add(sessionPool.conf.MaxSize)
+	// 	for i := 0; i < sessionPool.conf.MaxSize; i++ {
+	// 		go func(wg *sync.WaitGroup) {
+	// 			defer wg.Done()
+	// 			_, err := sessionPool.Execute("RETURN 1")
+	// 			if err != nil {
+	// 				t.Errorf(err.Error())
+	// 			}
+	// 		}(&wg)
+	// 	}
+	// 	wg.Wait()
+	// 	assert.Equal(t, 0, sessionPool.activeSessions.Len(), "Total number of active connections should be 0")
+	// }
 }
+
+func TestSessionPoolSpaceChange(t *testing.T) {}

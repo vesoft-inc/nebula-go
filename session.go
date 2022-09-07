@@ -68,14 +68,11 @@ func (session *Session) ExecuteWithParameter(stmt string, params map[string]inte
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
 	}
-	paramsMap := make(map[string]*nebula.Value)
-	for k, v := range params {
-		nv, er := value2Nvalue(v)
-		if er != nil {
-			return nil, er
-		}
-		paramsMap[k] = nv
+	paramsMap, err := parseParams(params)
+	if err != nil {
+		return nil, err
 	}
+
 	execFunc := func() (interface{}, error) {
 		resp, err := session.connection.executeWithParameter(session.sessionID, stmt, paramsMap)
 		if err != nil {
@@ -274,13 +271,9 @@ func slice2Nlist(list []interface{}) (*nebula.NList, error) {
 // construct map to nebula.NMap
 func map2Nmap(m map[string]interface{}) (*nebula.NMap, error) {
 	var ret nebula.NMap
-	kvs := map[string]*nebula.Value{}
-	for k, v := range m {
-		nv, err := value2Nvalue(v)
-		if err != nil {
-			return nil, err
-		}
-		kvs[k] = nv
+	kvs, err := parseParams(m)
+	if err != nil {
+		return nil, err
 	}
 	ret.Kvs = kvs
 	return &ret, nil

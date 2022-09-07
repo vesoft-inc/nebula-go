@@ -40,7 +40,7 @@ type SessionPool struct {
 	log            Logger
 	closed         bool
 	cleanerChan    chan struct{} //notify when pool is close
-	mu             sync.Mutex
+	rwLock         sync.Mutex
 	sslConfig      *tls.Config
 }
 
@@ -78,11 +78,9 @@ func (pool *SessionPool) Execute(stmt string) (*ResultSet, error) {
 	return pool.ExecuteWithParameter(stmt, map[string]interface{}{})
 }
 
+// TODO(Aiee) add reconnect
 // ExecuteWithParameter returns the result of the given query as a ResultSet
 func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
-	pool.mu.Lock()
-	defer pool.mu.Unlock()
-
 	// Get a session from the pool
 	session, err := pool.getIdleSession()
 	if err != nil {
@@ -107,6 +105,26 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 	if err != nil {
 		return nil, err
 	}
+
+	// if the space was changed in after the execution of the given query,
+	// change it back to the default space specified in the pool config
+	if resSet.GetSpaceName() != "" && resSet.GetSpaceName() != pool.conf.SpaceName {
+		stmt = fmt.Sprintf("USE SPACE %s", pool.conf.SpaceName)
+		resp, err := session.connection.execute(session.sessionID, stmt)
+		if err != nil {
+			return nil, err
+		}
+		resSet, err = genResultSet(resp, session.timezoneInfo)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Return the session to the idle list
+	pool.rwLock.Lock()
+	defer pool.rwLock.Unlock()
+	removeSessionFromList(&pool.activeSessions, session)
+	pool.idleSessions.PushBack(session)
 	return resSet, err
 }
 
@@ -176,8 +194,6 @@ func (pool *SessionPool) ExecuteJson(stmt string) ([]byte, error) {
 // Date and Datetime will be returned in UTC
 // The result is a JSON string in the same format as ExecuteJson()
 func (pool *SessionPool) ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error) {
-	pool.mu.Lock()
-	defer pool.mu.Unlock()
 	// Get a session from the pool
 	session, err := pool.getIdleSession()
 	if err != nil {
@@ -202,6 +218,13 @@ func (pool *SessionPool) ExecuteJsonWithParameter(stmt string, params map[string
 
 // Close logs out all sessions and closes bonded connection.
 func (pool *SessionPool) Close() {
+	pool.rwLock.Lock()
+	defer pool.rwLock.Unlock()
+
+	// // append 2 lists
+	// if pool.idleSessions.Len() > 0 {
+	// 	pool.activeSessions.PushBackList(&pool.idleSessions)
+	// }
 	idleLen := pool.idleSessions.Len()
 	activeLen := pool.activeSessions.Len()
 
@@ -237,7 +260,6 @@ func (pool *SessionPool) Close() {
 
 // newSession creates a new session and returns it.
 func (pool *SessionPool) newSession() (*Session, error) {
-
 	graphAddr := pool.getNextAddr()
 	cn := connection{
 		severAddress: graphAddr,
@@ -253,13 +275,13 @@ func (pool *SessionPool) newSession() (*Session, error) {
 	}
 
 	// authenticate with username and password to get a new session
-	resp, err := cn.authenticate(pool.conf.Username, pool.conf.Password)
+	authResp, err := cn.authenticate(pool.conf.Username, pool.conf.Password)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a new session: %s", err.Error())
 	}
-	sessID := resp.GetSessionID()
-	timezoneOffset := resp.GetTimeZoneOffsetSeconds()
-	timezoneName := resp.GetTimeZoneName()
+	sessID := authResp.GetSessionID()
+	timezoneOffset := authResp.GetTimeZoneOffsetSeconds()
+	timezoneName := authResp.GetTimeZoneName()
 	// Create new session
 	newSession := Session{
 		sessionID:    sessID,
@@ -273,6 +295,11 @@ func (pool *SessionPool) newSession() (*Session, error) {
 		return nil, err
 	}
 
+	stmt := fmt.Sprintf("USE SPACE %s", pool.conf.SpaceName)
+	_, err = newSession.connection.execute(newSession.sessionID, stmt)
+	if err != nil {
+		return nil, err
+	}
 	return &newSession, nil
 }
 
@@ -288,6 +315,9 @@ func (pool *SessionPool) getNextAddr() HostAddress {
 
 // getSession returns a available session.
 func (pool *SessionPool) getIdleSession() (*Session, error) {
+	pool.rwLock.Lock()
+	defer pool.rwLock.Unlock()
+
 	// Get a session from the idle queue if possible
 	if pool.idleSessions.Len() > 0 {
 		session := pool.idleSessions.Remove(pool.idleSessions.Front()).(*Session)
@@ -313,9 +343,18 @@ func parseParams(params map[string]interface{}) (map[string]*nebula.Value, error
 	for k, v := range params {
 		nv, err := value2Nvalue(v)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to parse params: %s", err.Error())
 		}
 		paramsMap[k] = nv
 	}
 	return paramsMap, nil
+}
+
+// removeSessionFromIdleList Removes a session from list
+func removeSessionFromList(l *list.List, session *Session) {
+	for ele := l.Front(); ele != nil; ele = ele.Next() {
+		if ele.Value.(*Session) == session {
+			l.Remove(ele)
+		}
+	}
 }

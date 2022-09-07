@@ -190,6 +190,8 @@ func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error 
 func (pool *ConnectionPool) Close() {
 	pool.rwLock.Lock()
 	defer pool.rwLock.Unlock()
+
+	//TODO(Aiee) merge 2 lists and close all connections
 	idleLen := pool.idleConnectionQueue.Len()
 	activeLen := pool.activeConnectionQueue.Len()
 
