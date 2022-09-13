@@ -11,6 +11,7 @@ package nebula_go
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
@@ -25,8 +26,10 @@ type timezoneInfo struct {
 type Session struct {
 	sessionID  int64
 	connection *connection
-	connPool   *ConnectionPool
+	connPool   *ConnectionPool // the connection pool which the session belongs to. could be nil if the Session is store in the SessionPool
+	sessPool   *SessionPool    // the session pool which the session belongs to. could be nil if the Session is store in the ConnectionPool
 	log        Logger
+	returnedAt time.Time // the timestamp that the session was created or returned.
 	mu         sync.Mutex
 	timezoneInfo
 }
@@ -221,8 +224,11 @@ func (session *Session) Release() {
 	if err := session.connection.signOut(session.sessionID); err != nil {
 		session.log.Warn(fmt.Sprintf("Sign out failed, %s", err.Error()))
 	}
-	// Release connection to pool
-	session.connPool.release(session.connection)
+
+	// if the session is created from the connection pool, return the connection to the pool
+	if session.connPool != nil {
+		session.connPool.release(session.connection)
+	}
 	session.connection = nil
 }
 
@@ -231,8 +237,6 @@ func (session *Session) GetSessionID() int64 {
 }
 
 func (session *Session) Ping() error {
-	// session.mu.Lock()
-	// defer session.mu.Unlock()
 	if session.connection == nil {
 		return fmt.Errorf("failed to ping: Session has been released")
 	}

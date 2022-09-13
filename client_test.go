@@ -725,9 +725,6 @@ func TestMultiThreads(t *testing.T) {
 	assert.Equal(t, 666, pool.getActiveConnCount(), "Total number of active connections should be 666")
 	assert.Equal(t, 666, len(sessionList), "Total number of sessions should be 666")
 
-	// for i := 0; i < len(hostList); i++ {
-	// 	assert.Equal(t, 222, pool.GetServerWorkload(i))
-	// }
 	for i := 0; i < testPoolConfig.MaxConnPoolSize; i++ {
 		sessionList[i].Release()
 	}

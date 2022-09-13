@@ -118,15 +118,15 @@ type SessionPoolConf struct {
 
 	// Basic pool configs
 	// Socket timeout and Socket connection timeout, unit: seconds
-	TimeOut time.Duration
+	timeOut time.Duration
 	// The idleTime of the connection, unit: seconds
 	// If connection's idle time is longer than idleTime, it will be delete
 	// 0 value means the connection will not expire
-	IdleTime time.Duration
+	idleTime time.Duration
 	// The max sessions in pool for all addresses
-	MaxSize int
+	maxSize int
 	// The min sessions in pool for all addresses
-	MinSize int
+	minSize int
 }
 
 // TODO(Aiee) add more constructors
@@ -148,11 +148,27 @@ func NewSessionPoolConf(username, password string, serviceAddrs []HostAddress, s
 // GetDefaultSessionConf returns the default config
 func GetDefaultSessionConf() SessionPoolConf {
 	return SessionPoolConf{
-		TimeOut:  0 * time.Millisecond,
-		IdleTime: 0 * time.Millisecond,
-		MaxSize:  10,
-		MinSize:  0,
+		timeOut:  0 * time.Millisecond,
+		idleTime: 0 * time.Millisecond,
+		maxSize:  10,
+		minSize:  0,
 	}
+}
+
+func (conf *SessionPoolConf) SetTimeout(timeout time.Duration) {
+	conf.timeOut = timeout
+}
+
+func (conf *SessionPoolConf) SetIdleTime(idleTime time.Duration) {
+	conf.idleTime = idleTime
+}
+
+func (conf *SessionPoolConf) SetMaxSize(maxSize int) {
+	conf.maxSize = maxSize
+}
+
+func (conf *SessionPoolConf) SetMinSize(minSize int) {
+	conf.minSize = minSize
 }
 
 func (conf *SessionPoolConf) checkMandatoryFields() error {
@@ -176,20 +192,20 @@ func (conf *SessionPoolConf) checkMandatoryFields() error {
 // sets a default value if the given field value is invalid
 func (conf *SessionPoolConf) checkBasicFields(log Logger) {
 	// Check pool related fields, use default value if the given value is invalid
-	if conf.TimeOut < 0 {
-		conf.TimeOut = 0 * time.Millisecond
+	if conf.timeOut < 0 {
+		conf.timeOut = 0 * time.Millisecond
 		log.Warn("Illegal Timeout value, the default value of 0 second has been applied")
 	}
-	if conf.IdleTime < 0 {
-		conf.IdleTime = 0 * time.Millisecond
+	if conf.idleTime < 0 {
+		conf.idleTime = 0 * time.Millisecond
 		log.Warn("Invalid IdleTime value, the default value of 0 second has been applied")
 	}
-	if conf.MaxSize < 1 {
-		conf.MaxSize = 10
+	if conf.maxSize < 1 {
+		conf.maxSize = 10
 		log.Warn("Invalid MaxSize value, the default value of 10 has been applied")
 	}
-	if conf.MinSize < 0 {
-		conf.MinSize = 0
+	if conf.minSize < 0 {
+		conf.minSize = 0
 		log.Warn("Invalid MinSize value, the default value of 0 has been applied")
 	}
 }

@@ -129,6 +129,7 @@ func (pool *ConnectionPool) GetSession(username, password string) (*Session, err
 		sessionID:    sessID,
 		connection:   conn,
 		connPool:     pool,
+		sessPool:     nil,
 		log:          pool.log,
 		timezoneInfo: timezoneInfo{timezoneOffset, timezoneName},
 	}
