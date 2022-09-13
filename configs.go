@@ -109,11 +109,11 @@ func openAndReadFile(path string) ([]byte, error) {
 // SessionPoolConf is the configs of a session pool
 // Note that the space name is bound to the session pool for its lifetime
 type SessionPoolConf struct {
-	Username     string        // username for authentication
-	Password     string        // password for authentication
-	ServiceAddrs []HostAddress // service addresses for session pool
+	username     string        // username for authentication
+	password     string        // password for authentication
+	serviceAddrs []HostAddress // service addresses for session pool
 	hostIndex    int           // index of the host in ServiceAddrs that the next new session will connect to
-	SpaceName    string        // The space name that all sessions in the pool are bound to
+	spaceName    string        // The space name that all sessions in the pool are bound to
 	sslConfig    *tls.Config   // Optional SSL config for the connection
 
 	// Basic pool configs
@@ -133,10 +133,10 @@ type SessionPoolConf struct {
 // NewSessionPoolConf returns a new SessionPoolConf with given parameters
 func NewSessionPoolConf(username, password string, serviceAddrs []HostAddress, spaceName string) (*SessionPoolConf, error) {
 	newPoolConf := GetDefaultSessionConf()
-	newPoolConf.Username = username
-	newPoolConf.Password = password
-	newPoolConf.ServiceAddrs = serviceAddrs
-	newPoolConf.SpaceName = spaceName
+	newPoolConf.username = username
+	newPoolConf.password = password
+	newPoolConf.serviceAddrs = serviceAddrs
+	newPoolConf.spaceName = spaceName
 
 	if err := newPoolConf.checkMandatoryFields(); err != nil {
 		return nil, err
@@ -157,16 +157,16 @@ func GetDefaultSessionConf() SessionPoolConf {
 
 func (conf *SessionPoolConf) checkMandatoryFields() error {
 	// Check mandatory fields
-	if conf.Username == "" {
+	if conf.username == "" {
 		return fmt.Errorf("invalid session pool config: Username is empty")
 	}
-	if conf.Password == "" {
+	if conf.password == "" {
 		return fmt.Errorf("invalid session pool config: Password is empty")
 	}
-	if len(conf.ServiceAddrs) == 0 {
+	if len(conf.serviceAddrs) == 0 {
 		return fmt.Errorf("invalid session pool config: Service address is empty")
 	}
-	if conf.SpaceName == "" {
+	if conf.spaceName == "" {
 		return fmt.Errorf("invalid session pool config: Space name is empty")
 	}
 	return nil

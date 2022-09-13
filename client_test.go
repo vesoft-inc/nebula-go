@@ -25,9 +25,8 @@ import (
 )
 
 const (
-	address = "127.0.0.1"
-	port    = 29562
-	// port     = 3699
+	address  = "127.0.0.1"
+	port     = 3699
 	username = "root"
 	password = "nebula"
 
@@ -37,20 +36,16 @@ const (
 var poolAddress = []HostAddress{
 	{
 		Host: "127.0.0.1",
-		Port: 29562,
+		Port: 3699,
 	},
-	// {
-	// 	Host: "127.0.0.1",
-	// 	Port: 3699,
-	// },
-	// {
-	// 	Host: "127.0.0.1",
-	// 	Port: 3700,
-	// },
-	// {
-	// 	Host: "127.0.0.1",
-	// 	Port: 3701,
-	// },
+	{
+		Host: "127.0.0.1",
+		Port: 3700,
+	},
+	{
+		Host: "127.0.0.1",
+		Port: 3701,
+	},
 }
 
 var nebulaLog = DefaultLogger{}
@@ -597,7 +592,7 @@ func TestPool_SingleHost(t *testing.T) {
 			username, password, err.Error())
 	}
 	defer session.Release()
-	// Excute a query
+	// Execute a query
 	resp, err := tryToExecute(session, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -1412,7 +1407,8 @@ func prepareSpace(t *testing.T, spaceName string) error {
 		t.Fatalf(err.Error())
 	}
 	checkConResp(t, query, resp)
-	time.Sleep(3 * time.Second)
+	time.Sleep(5 * time.Second)
+
 	return nil
 }
 

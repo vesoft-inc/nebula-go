@@ -58,7 +58,7 @@ func TestSslConnection(t *testing.T) {
 			username, password, err.Error())
 	}
 	defer session.Release()
-	// Excute a query
+	// Execute a query
 	resp, err := tryToExecute(session, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -123,7 +123,7 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 			username, password, err.Error())
 	}
 	defer session.Release()
-	// Excute a query
+	// Execute a query
 	resp, err := tryToExecute(session, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())

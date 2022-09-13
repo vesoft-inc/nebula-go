@@ -32,6 +32,8 @@ import (
 //
 // Release:
 // sessionPool.close()
+//
+// Notice that all queries will be executed in the default space specified in the pool config.
 type SessionPool struct {
 	idleSessions   list.List
 	activeSessions list.List
@@ -45,6 +47,7 @@ type SessionPool struct {
 }
 
 // NewSessionPool creates a new session pool with the given configs.
+// There must be an existing SPACE in the DB.
 func NewSessionPool(conf SessionPoolConf, log Logger) (*SessionPool, error) {
 	// check the config
 	conf.checkBasicFields(log)
@@ -64,7 +67,7 @@ func NewSessionPool(conf SessionPoolConf, log Logger) (*SessionPool, error) {
 // init initializes the session pool.
 func (pool *SessionPool) init() error {
 	// check the hosts status
-	if err := checkAddresses(pool.conf.TimeOut, pool.conf.ServiceAddrs, pool.sslConfig); err != nil {
+	if err := checkAddresses(pool.conf.TimeOut, pool.conf.serviceAddrs, pool.sslConfig); err != nil {
 		return fmt.Errorf("failed to initialize the session pool, %s", err.Error())
 	}
 
@@ -74,6 +77,9 @@ func (pool *SessionPool) init() error {
 }
 
 // Execute returns the result of the given query as a ResultSet
+// Notice there are some limitations:
+// 1. The query should not be a plain space switch statement, e.g. "USE test_space",
+// but queries like "use space xxx; match (v) return v" are accepted.
 func (pool *SessionPool) Execute(stmt string) (*ResultSet, error) {
 	return pool.ExecuteWithParameter(stmt, map[string]interface{}{})
 }
@@ -108,8 +114,8 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 
 	// if the space was changed in after the execution of the given query,
 	// change it back to the default space specified in the pool config
-	if resSet.GetSpaceName() != "" && resSet.GetSpaceName() != pool.conf.SpaceName {
-		stmt = fmt.Sprintf("USE SPACE %s", pool.conf.SpaceName)
+	if resSet.GetSpaceName() != "" && resSet.GetSpaceName() != pool.conf.spaceName {
+		stmt = fmt.Sprintf("USE %s", pool.conf.spaceName)
 		resp, err := session.connection.execute(session.sessionID, stmt)
 		if err != nil {
 			return nil, err
@@ -275,7 +281,7 @@ func (pool *SessionPool) newSession() (*Session, error) {
 	}
 
 	// authenticate with username and password to get a new session
-	authResp, err := cn.authenticate(pool.conf.Username, pool.conf.Password)
+	authResp, err := cn.authenticate(pool.conf.username, pool.conf.password)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a new session: %s", err.Error())
 	}
@@ -295,20 +301,24 @@ func (pool *SessionPool) newSession() (*Session, error) {
 		return nil, err
 	}
 
-	stmt := fmt.Sprintf("USE SPACE %s", pool.conf.SpaceName)
-	_, err = newSession.connection.execute(newSession.sessionID, stmt)
+	stmt := fmt.Sprintf("USE %s", pool.conf.spaceName)
+	createSpaceResp, err := newSession.connection.execute(newSession.sessionID, stmt)
 	if err != nil {
 		return nil, err
+	}
+	if createSpaceResp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+		return nil, fmt.Errorf("failed to use space %s: %s",
+			pool.conf.spaceName, createSpaceResp.GetErrorMsg())
 	}
 	return &newSession, nil
 }
 
 // getNextAddr returns the next address in the address list using simple round robin approach.
 func (pool *SessionPool) getNextAddr() HostAddress {
-	if pool.conf.hostIndex == len(pool.conf.ServiceAddrs) {
+	if pool.conf.hostIndex == len(pool.conf.serviceAddrs) {
 		pool.conf.hostIndex = 0
 	}
-	host := pool.conf.ServiceAddrs[pool.conf.hostIndex]
+	host := pool.conf.serviceAddrs[pool.conf.hostIndex]
 	pool.conf.hostIndex++
 	return host
 }
