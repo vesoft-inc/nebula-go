@@ -129,46 +129,72 @@ type SessionPoolConf struct {
 	minSize int
 }
 
-// TODO(Aiee) add more constructors
-// NewSessionPoolConf returns a new SessionPoolConf with given parameters
-func NewSessionPoolConf(username, password string, serviceAddrs []HostAddress, spaceName string) (*SessionPoolConf, error) {
-	newPoolConf := GetDefaultSessionConf()
-	newPoolConf.username = username
-	newPoolConf.password = password
-	newPoolConf.serviceAddrs = serviceAddrs
-	newPoolConf.spaceName = spaceName
+type SessionPoolConfOption func(*SessionPoolConf)
+
+// NewSessionPoolConfOpt creates a new NewSessionPoolConf with the provided options
+func NewSessionPoolConf(username, password string, opts ...SessionPoolConfOption) (*SessionPoolConf, error) {
+	// Set default values for basic pool configs
+	newPoolConf := SessionPoolConf{
+		username:  username,
+		password:  password,
+		timeOut:   0 * time.Millisecond,
+		idleTime:  0 * time.Millisecond,
+		maxSize:   30,
+		minSize:   0,
+		hostIndex: 0,
+	}
+
+	// Iterate the given options and apply them to the config.
+	for _, overwrite := range opts {
+		overwrite(&newPoolConf)
+	}
 
 	if err := newPoolConf.checkMandatoryFields(); err != nil {
 		return nil, err
 	}
-
 	return &newPoolConf, nil
 }
 
-// GetDefaultSessionConf returns the default config
-func GetDefaultSessionConf() SessionPoolConf {
-	return SessionPoolConf{
-		timeOut:  0 * time.Millisecond,
-		idleTime: 0 * time.Millisecond,
-		maxSize:  10,
-		minSize:  0,
+func WithServiceAddrs(serviceAddrs []HostAddress) SessionPoolConfOption {
+	return func(conf *SessionPoolConf) {
+		conf.serviceAddrs = serviceAddrs
 	}
 }
 
-func (conf *SessionPoolConf) SetTimeout(timeout time.Duration) {
-	conf.timeOut = timeout
+func WithSpaceName(spaceName string) SessionPoolConfOption {
+	return func(conf *SessionPoolConf) {
+		conf.spaceName = spaceName
+	}
 }
 
-func (conf *SessionPoolConf) SetIdleTime(idleTime time.Duration) {
-	conf.idleTime = idleTime
+func WithSSLConfig(sslConfig *tls.Config) SessionPoolConfOption {
+	return func(conf *SessionPoolConf) {
+		conf.sslConfig = sslConfig
+	}
 }
 
-func (conf *SessionPoolConf) SetMaxSize(maxSize int) {
-	conf.maxSize = maxSize
+func WithTimeOut(timeOut time.Duration) SessionPoolConfOption {
+	return func(conf *SessionPoolConf) {
+		conf.timeOut = timeOut
+	}
 }
 
-func (conf *SessionPoolConf) SetMinSize(minSize int) {
-	conf.minSize = minSize
+func WithIdleTime(idleTime time.Duration) SessionPoolConfOption {
+	return func(conf *SessionPoolConf) {
+		conf.idleTime = idleTime
+	}
+}
+
+func WithMaxSize(maxSize int) SessionPoolConfOption {
+	return func(conf *SessionPoolConf) {
+		conf.maxSize = maxSize
+	}
+}
+
+func WithMinSize(minSize int) SessionPoolConfOption {
+	return func(conf *SessionPoolConf) {
+		conf.minSize = minSize
+	}
 }
 
 func (conf *SessionPoolConf) checkMandatoryFields() error {

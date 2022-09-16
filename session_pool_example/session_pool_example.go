@@ -34,7 +34,12 @@ func main() {
 	hostAddress := nebula.HostAddress{Host: address, Port: port}
 
 	// Create configs for session pool
-	config, err := nebula.NewSessionPoolConf("root", "nebula", []nebula.HostAddress{hostAddress}, "example_space")
+	config, err := nebula.NewSessionPoolConf(
+		nebula.WithUsername("root"),
+		nebula.WithPassword("nebula"),
+		nebula.WithServiceAddrs([]nebula.HostAddress{hostAddress}),
+		nebula.WithSpaceName("example_space"),
+	)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("failed to create session pool config, %s", err.Error()))
 	}

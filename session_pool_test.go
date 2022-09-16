@@ -21,24 +21,44 @@ import (
 
 func TestSessionPoolInvalidConfig(t *testing.T) {
 	hostAddress := HostAddress{Host: address, Port: port}
-	_, err := NewSessionPoolConf("root", "nebula", []HostAddress{hostAddress}, "")
+
+	// No space name
+	_, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		WithServiceAddrs([]HostAddress{hostAddress}),
+	)
 	assert.Contains(t, err.Error(), "invalid session pool config: Space name is empty",
 		"error message should contain Space name is empty")
 
-	_, err = NewSessionPoolConf("", "", []HostAddress{hostAddress}, "test")
+	// No username and password
+	_, err = NewSessionPoolConf(
+		"",
+		"",
+		WithServiceAddrs([]HostAddress{hostAddress}),
+		WithSpaceName("client_test"),
+	)
 	assert.Contains(t, err.Error(), "Username is empty", "error message should contain Username is empty")
 
-	_, err = NewSessionPoolConf("root", "nebula", []HostAddress{}, "")
+	// No service address
+	_, err = NewSessionPoolConf("root",
+		"nebula",
+		WithSpaceName("client_test"),
+	)
 	assert.Contains(t, err.Error(), "invalid session pool config: Service address is empty",
 		"error message should contain Service address is empty")
 }
 
 func TestSessionPoolBasic(t *testing.T) {
-	prepareSpace(t, "client_test")
-	defer dropSpace(t, "client_test")
+	prepareSpace("client_test")
+	defer dropSpace("client_test")
 
 	hostAddress := HostAddress{Host: address, Port: port}
-	config, err := NewSessionPoolConf("root", "nebula", []HostAddress{hostAddress}, "client_test")
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		WithServiceAddrs([]HostAddress{hostAddress}),
+		WithSpaceName("client_test"))
 	if err != nil {
 		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -63,14 +83,18 @@ func TestSessionPoolBasic(t *testing.T) {
 }
 
 func TestSessionPoolMultiThreadGetSession(t *testing.T) {
-	err := prepareSpace(t, "client_test")
+	err := prepareSpace("client_test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace(t, "client_test")
+	defer dropSpace("client_test")
 
 	hostList := poolAddress
-	config, err := NewSessionPoolConf("root", "nebula", hostList, "client_test")
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		WithServiceAddrs(hostList),
+		WithSpaceName("client_test"))
 	if err != nil {
 		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -119,14 +143,18 @@ func TestSessionPoolMultiThreadGetSession(t *testing.T) {
 }
 
 func TestSessionPoolMultiThreadExecute(t *testing.T) {
-	err := prepareSpace(t, "client_test")
+	err := prepareSpace("client_test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace(t, "client_test")
+	defer dropSpace("client_test")
 
 	hostList := poolAddress
-	config, err := NewSessionPoolConf("root", "nebula", hostList, "client_test")
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		WithServiceAddrs(hostList),
+		WithSpaceName("client_test"))
 	if err != nil {
 		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -181,20 +209,24 @@ func TestSessionPoolMultiThreadExecute(t *testing.T) {
 // This test is used to test if the space bond to session is the same as the space in the session pool config after executing
 // a query contains `USE <space_name>` statement.
 func TestSessionPoolSpaceChange(t *testing.T) {
-	err := prepareSpace(t, "test_space_1")
+	err := prepareSpace("test_space_1")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace(t, "test_space_1")
+	defer dropSpace("test_space_1")
 
-	err = prepareSpace(t, "test_space_2")
+	err = prepareSpace("test_space_2")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace(t, "test_space_2")
+	defer dropSpace("test_space_2")
 
 	hostAddress := HostAddress{Host: address, Port: port}
-	config, err := NewSessionPoolConf("root", "nebula", []HostAddress{hostAddress}, "test_space_1")
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		WithServiceAddrs([]HostAddress{hostAddress}),
+		WithSpaceName("test_space_1"))
 	if err != nil {
 		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -228,14 +260,18 @@ func TestSessionPoolSpaceChange(t *testing.T) {
 }
 
 func TestIdleSessionCleaner(t *testing.T) {
-	err := prepareSpace(t, "client_test")
+	err := prepareSpace("client_test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace(t, "client_test")
+	defer dropSpace("client_test")
 
 	hostAddress := HostAddress{Host: address, Port: port}
-	idleTimeoutConfig, err := NewSessionPoolConf("root", "nebula", []HostAddress{hostAddress}, "client_test")
+	idleTimeoutConfig, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		WithServiceAddrs([]HostAddress{hostAddress}),
+		WithSpaceName("client_test"))
 	if err != nil {
 		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -250,7 +286,8 @@ func TestIdleSessionCleaner(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer sessionPool.Close()
-	assert.Equal(t, 5, sessionPool.activeSessions.Len()+sessionPool.idleSessions.Len(), "Total number of sessions should be 5")
+	assert.Equal(t, 5, sessionPool.activeSessions.Len()+sessionPool.idleSessions.Len(),
+		"Total number of sessions should be 5")
 
 	// execute multiple queries so more sessions will be created
 	var wg sync.WaitGroup
@@ -278,4 +315,38 @@ func TestIdleSessionCleaner(t *testing.T) {
 	assert.Truef(t, sessionPool.GetTotalSessionCount() == sessionPool.conf.minSize,
 		"Total number of session should be %d, but got %d",
 		sessionPool.conf.minSize, sessionPool.GetTotalSessionCount())
+}
+
+func BenchmarkConcurrency(b *testing.B) {
+	err := prepareSpace("client_test")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer dropSpace("client_test")
+
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		WithServiceAddrs([]HostAddress{hostAddress}),
+		WithSpaceName("client_test"))
+	if err != nil {
+		b.Errorf("failed to create session pool config, %s", err.Error())
+	}
+
+	// create session pool
+	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer sessionPool.Close()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, err := sessionPool.Execute("SHOW HOSTS;")
+			if err != nil {
+				b.Errorf(err.Error())
+			}
+		}
+	})
 }

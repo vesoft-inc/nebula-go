@@ -117,8 +117,6 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 	}
 
 	// Execute the query
-	pool.rwLock.Lock()
-	defer pool.rwLock.Unlock()
 	resp, err := session.connection.executeWithParameter(session.sessionID, stmt, paramsMap)
 	if err != nil {
 		return nil, err
@@ -129,8 +127,7 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 		return nil, err
 	}
 
-	// pool.rwLock.Lock()
-	// if the space was changed in after the execution of the given query,
+	// if the space was changed after the execution of the given query,
 	// change it back to the default space specified in the pool config
 	if resSet.GetSpaceName() != "" && resSet.GetSpaceName() != pool.conf.spaceName {
 		err := pool.setSessionSpaceToDefault(session)
@@ -141,9 +138,9 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 
 	// Return the session to the idle list
 	// TODO(Aiee): Use go routine to avoid blocking
-	pool.removeSessionFromList(&pool.activeSessions, session)
-	pool.addSessionToList(&pool.idleSessions, session)
-	session.returnedAt = time.Now()
+	go func() {
+		pool.returnSession(session)
+	}()
 
 	return resSet, err
 }
@@ -476,6 +473,15 @@ func (pool *SessionPool) removeSessionFromList(l *list.List, session *Session) {
 
 func (pool *SessionPool) addSessionToList(l *list.List, session *Session) {
 	l.PushBack(session)
+}
+
+// returnSession returns a session from active list to the idle list.
+func (pool *SessionPool) returnSession(session *Session) {
+	pool.rwLock.Lock()
+	defer pool.rwLock.Unlock()
+	pool.removeSessionFromList(&pool.activeSessions, session)
+	pool.addSessionToList(&pool.idleSessions, session)
+	session.returnedAt = time.Now()
 }
 
 func (pool *SessionPool) setSessionSpaceToDefault(session *Session) error {

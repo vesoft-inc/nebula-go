@@ -163,7 +163,7 @@ func (cn *connection) ping() bool {
 	return err == nil
 }
 
-// Sign out and release seesin ID
+// Sign out and release session ID
 func (cn *connection) signOut(sessionID int64) error {
 	// Release session ID to graphd
 	return cn.graph.Signout(sessionID)

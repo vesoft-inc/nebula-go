@@ -84,20 +84,35 @@ func TestConnection(t *testing.T) {
 		t.Fatalf(err.Error())
 		return
 	}
-	checkConResp(t, "show hosts", resp)
+	checkConResp("show hosts", resp)
 
 	resp, err = conn.execute(sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
-	checkConResp(t, "create space", resp)
-	resp, err = conn.execute(sessionID, "DROP SPACE client_test;")
+	checkConResp("create space", resp)
+
+	resp, err = conn.execute(sessionID, "return 1")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
-	checkConResp(t, "drop space", resp)
+	checkConResp("return 1", resp)
+
+	resp, err = conn.execute(sessionID, "return 1")
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+	checkConResp("return 1", resp)
+
+	// resp, err = conn.execute(sessionID, "DROP SPACE client_test;")
+	// if err != nil {
+	// 	t.Error(err.Error())
+	// 	return
+	// }
+	// checkConResp( "drop space", resp)
 
 	res := conn.ping()
 	if res != true {
@@ -128,20 +143,20 @@ func TestConnectionIPv6(t *testing.T) {
 		t.Fatalf(err.Error())
 		return
 	}
-	checkConResp(t, "show hosts", resp)
+	checkConResp("show hosts", resp)
 
 	resp, err = conn.execute(sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
-	checkConResp(t, "create space", resp)
+	checkConResp("create space", resp)
 	resp, err = conn.execute(sessionID, "DROP SPACE client_test;")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
-	checkConResp(t, "drop space", resp)
+	checkConResp("drop space", resp)
 
 	res := conn.ping()
 	if res != true {
@@ -219,7 +234,7 @@ func TestConfigs(t *testing.T) {
 		}
 		checkResultSet(t, "create space", resp)
 
-		err = dropSpace(t, "client_test")
+		err = dropSpace("client_test")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -558,7 +573,7 @@ func TestServiceDataIO(t *testing.T) {
 		}
 		assert.Equal(t, int8(sessionCreatedTime.Hour()), localTime.GetHour())
 	}
-	err = dropSpace(t, "client_test")
+	err = dropSpace("client_test")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -607,7 +622,7 @@ func TestPool_SingleHost(t *testing.T) {
 	}
 	checkResultSet(t, "create space", resp)
 
-	err = dropSpace(t, "client_test")
+	err = dropSpace("client_test")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -897,7 +912,7 @@ func TestTimeout(t *testing.T) {
 	assert.Contains(t, resultSet.AsStringTable(), []string{"999"})
 
 	// Drop space
-	err = dropSpace(t, "client_test")
+	err = dropSpace("client_test")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -1240,10 +1255,9 @@ func checkResultSet(t *testing.T, prefix string, err *ResultSet) {
 	}
 }
 
-func checkConResp(t *testing.T, prefix string, err *graph.ExecutionResponse) {
-	t.Helper()
+func checkConResp(prefix string, err *graph.ExecutionResponse) {
 	if IsError(err) {
-		t.Errorf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, err.ErrorCode, err.ErrorMsg)
+		log.Fatalf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, err.ErrorCode, err.ErrorMsg)
 	}
 }
 
@@ -1376,9 +1390,7 @@ func loadTestData(t *testing.T, session *Session) {
 }
 
 // prepareSpace creates a space for test
-func prepareSpace(t *testing.T, spaceName string) error {
-	t.Helper()
-
+func prepareSpace(spaceName string) error {
 	hostAddress := HostAddress{Host: address, Port: port}
 	conn := newConnection(hostAddress)
 	testPoolConfig := GetDefaultConf()
@@ -1401,16 +1413,16 @@ func prepareSpace(t *testing.T, spaceName string) error {
 		" %s(partition_num=32, replica_factor=1, vid_type = FIXED_STRING(30));", spaceName)
 	resp, err := conn.execute(sessionID, query)
 	if err != nil {
-		t.Fatalf(err.Error())
+		log.Fatalf(err.Error())
 	}
-	checkConResp(t, query, resp)
+	checkConResp(query, resp)
 	time.Sleep(5 * time.Second)
 
 	return nil
 }
 
 // dropSpace drops a space. The space name should be the same as the one created in prepareSpace
-func dropSpace(t *testing.T, spaceName string) error {
+func dropSpace(spaceName string) error {
 	hostAddress := HostAddress{Host: address, Port: port}
 	conn := newConnection(hostAddress)
 	testPoolConfig := GetDefaultConf()
@@ -1434,6 +1446,6 @@ func dropSpace(t *testing.T, spaceName string) error {
 	if err != nil {
 		return err
 	}
-	checkConResp(t, query, resp)
+	checkConResp(query, resp)
 	return nil
 }
