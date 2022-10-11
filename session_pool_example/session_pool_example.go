@@ -35,8 +35,8 @@ func main() {
 
 	// Create configs for session pool
 	config, err := nebula.NewSessionPoolConf(
-		nebula.WithUsername("root"),
-		nebula.WithPassword("nebula"),
+		"root",
+		"nebula",
 		nebula.WithServiceAddrs([]nebula.HostAddress{hostAddress}),
 		nebula.WithSpaceName("example_space"),
 	)

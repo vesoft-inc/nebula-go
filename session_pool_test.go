@@ -324,12 +324,15 @@ func BenchmarkConcurrency(b *testing.B) {
 	}
 	defer dropSpace("client_test")
 
+	// create session pool config
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
 		"root",
 		"nebula",
 		WithServiceAddrs([]HostAddress{hostAddress}),
-		WithSpaceName("client_test"))
+		WithSpaceName("client_test"),
+		WithMaxSize(1200),
+		WithMinSize(1000))
 	if err != nil {
 		b.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -341,12 +344,24 @@ func BenchmarkConcurrency(b *testing.B) {
 	}
 	defer sessionPool.Close()
 
-	b.RunParallel(func(pb *testing.PB) {
-		for pb.Next() {
-			_, err := sessionPool.Execute("SHOW HOSTS;")
-			if err != nil {
-				b.Errorf(err.Error())
+	concurrencyLevels := []int{5, 10, 100, 1000}
+	for _, clients := range concurrencyLevels {
+		start := time.Now()
+		b.Run(fmt.Sprintf("%d_clients", clients), func(b *testing.B) {
+			wg := sync.WaitGroup{}
+			for n := 0; n < clients; n++ {
+				wg.Add(1)
+				go func() {
+					_, err := sessionPool.Execute("SHOW HOSTS;")
+					if err != nil {
+						b.Errorf(err.Error())
+					}
+					wg.Done()
+				}()
 			}
-		}
-	})
+			wg.Wait()
+		})
+		end := time.Now()
+		b.Logf("Concurrency: %d, Total time cost: %v", clients, end.Sub(start))
+	}
 }

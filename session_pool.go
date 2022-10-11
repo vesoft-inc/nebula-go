@@ -137,10 +137,7 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 	}
 
 	// Return the session to the idle list
-	// TODO(Aiee): Use go routine to avoid blocking
-	go func() {
-		pool.returnSession(session)
-	}()
+	pool.returnSession(session)
 
 	return resSet, err
 }
@@ -308,6 +305,14 @@ func (pool *SessionPool) newSession() (*Session, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a new session: %s", err.Error())
 	}
+
+	// If the authentication failed, close the session pool because the pool must have a valid user to work
+	if authResp.GetErrorCode() != 0 {
+		pool.Close()
+		return nil, fmt.Errorf("failed to authenticate the user, error code: %d, error message: %s, the pool has been closed",
+			authResp.ErrorCode, authResp.ErrorMsg)
+	}
+
 	sessID := authResp.GetSessionID()
 	timezoneOffset := authResp.GetTimeZoneOffsetSeconds()
 	timezoneName := authResp.GetTimeZoneName()

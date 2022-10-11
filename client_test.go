@@ -100,19 +100,12 @@ func TestConnection(t *testing.T) {
 	}
 	checkConResp("return 1", resp)
 
-	resp, err = conn.execute(sessionID, "return 1")
+	resp, err = conn.execute(sessionID, "DROP SPACE client_test;")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
-	checkConResp("return 1", resp)
-
-	// resp, err = conn.execute(sessionID, "DROP SPACE client_test;")
-	// if err != nil {
-	// 	t.Error(err.Error())
-	// 	return
-	// }
-	// checkConResp( "drop space", resp)
+	checkConResp("drop space", resp)
 
 	res := conn.ping()
 	if res != true {
