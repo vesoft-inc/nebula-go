@@ -140,7 +140,7 @@ func NewSessionPoolConf(username, password string, opts ...SessionPoolConfOption
 		timeOut:   0 * time.Millisecond,
 		idleTime:  0 * time.Millisecond,
 		maxSize:   30,
-		minSize:   0,
+		minSize:   1,
 		hostIndex: 0,
 	}
 

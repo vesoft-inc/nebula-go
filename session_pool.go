@@ -101,6 +101,11 @@ func (pool *SessionPool) Execute(stmt string) (*ResultSet, error) {
 // TODO(Aiee) add reconnect
 // ExecuteWithParameter returns the result of the given query as a ResultSet
 func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
+	// Check if the pool is closed
+	if pool.closed {
+		return nil, fmt.Errorf("failed to execute: Session pool has been closed")
+	}
+
 	// Get a session from the pool
 	session, err := pool.getIdleSession()
 	if err != nil {
