@@ -138,13 +138,15 @@ func NewSessionPoolConf(
 	spaceName string, opts ...SessionPoolConfOption) (*SessionPoolConf, error) {
 	// Set default values for basic pool configs
 	newPoolConf := SessionPoolConf{
-		username:  username,
-		password:  password,
-		timeOut:   0 * time.Millisecond,
-		idleTime:  0 * time.Millisecond,
-		maxSize:   30,
-		minSize:   1,
-		hostIndex: 0,
+		username:     username,
+		password:     password,
+		serviceAddrs: serviceAddrs,
+		spaceName:    spaceName,
+		timeOut:      0 * time.Millisecond,
+		idleTime:     0 * time.Millisecond,
+		maxSize:      30,
+		minSize:      1,
+		hostIndex:    0,
 	}
 
 	// Iterate the given options and apply them to the config.
