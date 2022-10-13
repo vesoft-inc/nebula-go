@@ -55,6 +55,7 @@ For example:
 
 [Code Example with Gorountines](https://github.com/vesoft-inc/nebula-go/tree/master/gorountines_example/graph_client_goroutines_example.go)
 
+[Session Pool Example](https://github.com/vesoft-inc/nebula-go/blob/master/session_pool_example/session_pool_example.go)
 ## Licensing
 
 **Nebula GO** is under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) license, so you can freely download, modify, and deploy the source code to meet your needs. You can also freely deploy **Nebula GO** as a back-end service to support your SaaS deployment.
