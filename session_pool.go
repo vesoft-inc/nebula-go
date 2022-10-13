@@ -94,11 +94,11 @@ func (pool *SessionPool) init() error {
 // but queries like "use space xxx; match (v) return v" are accepted.
 // 2. If the query contains statements like "USE <space name>", the space will be set to the
 // one in the pool config after the execution of the query.
+// 3. The query should not change the user password nor drop a user.
 func (pool *SessionPool) Execute(stmt string) (*ResultSet, error) {
 	return pool.ExecuteWithParameter(stmt, map[string]interface{}{})
 }
 
-// TODO(Aiee) add reconnect
 // ExecuteWithParameter returns the result of the given query as a ResultSet
 func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
 	// Check if the pool is closed
@@ -111,11 +111,8 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 	if err != nil {
 		return nil, err
 	}
-	// check the session is valid
-	if session.connection == nil {
-		return nil, fmt.Errorf("failed to execute: Session has been released")
-	}
-	// parse params
+
+	// Parse params
 	paramsMap, err := parseParams(params)
 	if err != nil {
 		return nil, err
@@ -368,7 +365,7 @@ func (pool *SessionPool) getIdleSession() (*Session, error) {
 		pool.removeSessionFromList(&pool.idleSessions, session)
 		pool.addSessionToList(&pool.activeSessions, session)
 		return session, nil
-	} else if pool.activeSessions.Len()+pool.idleSessions.Len() < pool.conf.maxSize {
+	} else if pool.activeSessions.Len() < pool.conf.maxSize {
 		// Create a new session if the total number of sessions is less than the max size
 		session, err := pool.newSession()
 		if err != nil {
@@ -425,6 +422,8 @@ func (pool *SessionPool) sessionCleaner() {
 			if err := session.connection.signOut(session.sessionID); err != nil {
 				session.log.Warn(fmt.Sprintf("Sign out failed, %s", err.Error()))
 			}
+			// close connection
+			session.connection.close()
 		}
 		pool.rwLock.Unlock()
 

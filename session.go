@@ -236,12 +236,13 @@ func (session *Session) GetSessionID() int64 {
 	return session.sessionID
 }
 
+// Ping checks if the session is valid
 func (session *Session) Ping() error {
 	if session.connection == nil {
 		return fmt.Errorf("failed to ping: Session has been released")
 	}
 	// send ping request
-	resp, err := session.Execute(`RETURN "client ping"`)
+	resp, err := session.Execute(`RETURN "NEBULA GO PING"`)
 	// check connection level error
 	if err != nil {
 		return fmt.Errorf("session ping failed, %s" + err.Error())

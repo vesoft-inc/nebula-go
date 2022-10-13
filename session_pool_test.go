@@ -26,7 +26,8 @@ func TestSessionPoolInvalidConfig(t *testing.T) {
 	_, err := NewSessionPoolConf(
 		"root",
 		"nebula",
-		WithServiceAddrs([]HostAddress{hostAddress}),
+		[]HostAddress{hostAddress},
+		"",
 	)
 	assert.Contains(t, err.Error(), "invalid session pool config: Space name is empty",
 		"error message should contain Space name is empty")
@@ -35,15 +36,16 @@ func TestSessionPoolInvalidConfig(t *testing.T) {
 	_, err = NewSessionPoolConf(
 		"",
 		"",
-		WithServiceAddrs([]HostAddress{hostAddress}),
-		WithSpaceName("client_test"),
+		[]HostAddress{hostAddress},
+		"client_test",
 	)
 	assert.Contains(t, err.Error(), "Username is empty", "error message should contain Username is empty")
 
 	// No service address
 	_, err = NewSessionPoolConf("root",
 		"nebula",
-		WithSpaceName("client_test"),
+		[]HostAddress{},
+		"client_test",
 	)
 	assert.Contains(t, err.Error(), "invalid session pool config: Service address is empty",
 		"error message should contain Service address is empty")
@@ -57,8 +59,8 @@ func TestSessionPoolBasic(t *testing.T) {
 	config, err := NewSessionPoolConf(
 		"root",
 		"nebula",
-		WithServiceAddrs([]HostAddress{hostAddress}),
-		WithSpaceName("client_test"))
+		[]HostAddress{hostAddress},
+		"client_test")
 	if err != nil {
 		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -93,8 +95,8 @@ func TestSessionPoolMultiThreadGetSession(t *testing.T) {
 	config, err := NewSessionPoolConf(
 		"root",
 		"nebula",
-		WithServiceAddrs(hostList),
-		WithSpaceName("client_test"))
+		hostList,
+		"client_test")
 	if err != nil {
 		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -153,8 +155,8 @@ func TestSessionPoolMultiThreadExecute(t *testing.T) {
 	config, err := NewSessionPoolConf(
 		"root",
 		"nebula",
-		WithServiceAddrs(hostList),
-		WithSpaceName("client_test"))
+		hostList,
+		"client_test")
 	if err != nil {
 		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -225,8 +227,8 @@ func TestSessionPoolSpaceChange(t *testing.T) {
 	config, err := NewSessionPoolConf(
 		"root",
 		"nebula",
-		WithServiceAddrs([]HostAddress{hostAddress}),
-		WithSpaceName("test_space_1"))
+		[]HostAddress{hostAddress},
+		"test_space_1")
 	if err != nil {
 		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -270,8 +272,8 @@ func TestIdleSessionCleaner(t *testing.T) {
 	idleTimeoutConfig, err := NewSessionPoolConf(
 		"root",
 		"nebula",
-		WithServiceAddrs([]HostAddress{hostAddress}),
-		WithSpaceName("client_test"))
+		[]HostAddress{hostAddress},
+		"client_test")
 	if err != nil {
 		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -329,8 +331,8 @@ func BenchmarkConcurrency(b *testing.B) {
 	config, err := NewSessionPoolConf(
 		"root",
 		"nebula",
-		WithServiceAddrs([]HostAddress{hostAddress}),
-		WithSpaceName("client_test"),
+		[]HostAddress{hostAddress},
+		"client_test",
 		WithMaxSize(1200),
 		WithMinSize(1000))
 	if err != nil {

@@ -132,7 +132,10 @@ type SessionPoolConf struct {
 type SessionPoolConfOption func(*SessionPoolConf)
 
 // NewSessionPoolConfOpt creates a new NewSessionPoolConf with the provided options
-func NewSessionPoolConf(username, password string, opts ...SessionPoolConfOption) (*SessionPoolConf, error) {
+func NewSessionPoolConf(
+	username, password string,
+	serviceAddrs []HostAddress,
+	spaceName string, opts ...SessionPoolConfOption) (*SessionPoolConf, error) {
 	// Set default values for basic pool configs
 	newPoolConf := SessionPoolConf{
 		username:  username,
@@ -153,18 +156,6 @@ func NewSessionPoolConf(username, password string, opts ...SessionPoolConfOption
 		return nil, err
 	}
 	return &newPoolConf, nil
-}
-
-func WithServiceAddrs(serviceAddrs []HostAddress) SessionPoolConfOption {
-	return func(conf *SessionPoolConf) {
-		conf.serviceAddrs = serviceAddrs
-	}
-}
-
-func WithSpaceName(spaceName string) SessionPoolConfOption {
-	return func(conf *SessionPoolConf) {
-		conf.spaceName = spaceName
-	}
 }
 
 func WithSSLConfig(sslConfig *tls.Config) SessionPoolConfOption {
