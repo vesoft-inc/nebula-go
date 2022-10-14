@@ -35,6 +35,12 @@ func TestSession_Execute(t *testing.T) {
 		if !reps.IsSucceed() {
 			t.Fatal(reps.resp.ErrorMsg)
 		}
+
+		// test Ping()
+		err = s.Ping()
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
 	go func() {
 		for {

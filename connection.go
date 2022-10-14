@@ -116,7 +116,8 @@ func (cn *connection) execute(sessionID int64, stmt string) (*graph.ExecutionRes
 	return cn.executeWithParameter(sessionID, stmt, map[string]*nebula.Value{})
 }
 
-func (cn *connection) executeWithParameter(sessionID int64, stmt string, params map[string]*nebula.Value) (*graph.ExecutionResponse, error) {
+func (cn *connection) executeWithParameter(sessionID int64, stmt string,
+	params map[string]*nebula.Value) (*graph.ExecutionResponse, error) {
 	resp, err := cn.graph.ExecuteWithParameter(sessionID, []byte(stmt), params)
 	if err != nil {
 		// reopen the connection if timeout
@@ -162,7 +163,7 @@ func (cn *connection) ping() bool {
 	return err == nil
 }
 
-// Sign out and release seesin ID
+// Sign out and release session ID
 func (cn *connection) signOut(sessionID int64) error {
 	// Release session ID to graphd
 	return cn.graph.Signout(sessionID)

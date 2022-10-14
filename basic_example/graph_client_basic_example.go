@@ -62,7 +62,7 @@ func main() {
 			"CREATE TAG IF NOT EXISTS person(name string, age int);" +
 			"CREATE EDGE IF NOT EXISTS like(likeness double)"
 
-		// Excute a query
+		// Execute a query
 		resultSet, err := session.Execute(createSchema)
 		if err != nil {
 			fmt.Print(err.Error())
