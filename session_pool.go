@@ -327,10 +327,6 @@ func (pool *SessionPool) newSession() (*Session, error) {
 		log:          pool.log,
 		timezoneInfo: timezoneInfo{timezoneOffset, timezoneName},
 	}
-	err = newSession.Ping()
-	if err != nil {
-		return nil, err
-	}
 
 	stmt := fmt.Sprintf("USE %s", pool.conf.spaceName)
 	createSpaceResp, err := newSession.connection.execute(newSession.sessionID, stmt)
@@ -341,6 +337,12 @@ func (pool *SessionPool) newSession() (*Session, error) {
 		return nil, fmt.Errorf("failed to use space %s: %s",
 			pool.conf.spaceName, createSpaceResp.GetErrorMsg())
 	}
+
+	err = newSession.Ping()
+	if err != nil {
+		return nil, err
+	}
+
 	return &newSession, nil
 }
 
