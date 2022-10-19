@@ -106,10 +106,8 @@ func (cn *connection) authenticate(username, password string) (*graph.AuthRespon
 		}
 		return nil, err
 	}
-	if resp.ErrorCode != nebula.ErrorCode_SUCCEEDED {
-		return nil, fmt.Errorf("fail to authenticate, error: %s", resp.ErrorMsg)
-	}
-	return resp, err
+
+	return resp, nil
 }
 
 func (cn *connection) execute(sessionID int64, stmt string) (*graph.ExecutionResponse, error) {
