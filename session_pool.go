@@ -310,9 +310,14 @@ func (pool *SessionPool) newSession() (*Session, error) {
 
 	// If the authentication failed, close the session pool because the pool must have a valid user to work
 	if authResp.GetErrorCode() != 0 {
-		pool.Close()
-		return nil, fmt.Errorf("failed to authenticate the user, error code: %d, error message: %s, the pool has been closed",
-			authResp.ErrorCode, authResp.ErrorMsg)
+		if authResp.GetErrorCode() == nebula.ErrorCode_E_BAD_USERNAME_PASSWORD ||
+			authResp.GetErrorCode() == nebula.ErrorCode_E_USER_NOT_FOUND {
+			pool.Close()
+			return nil, fmt.Errorf(
+				"failed to authenticate the user, error code: %d, error message: %s, the pool has been closed",
+				authResp.ErrorCode, authResp.ErrorMsg)
+		}
+		return nil, fmt.Errorf("failed to create a new session: %s", authResp.GetErrorMsg())
 	}
 
 	sessID := authResp.GetSessionID()
@@ -327,19 +332,18 @@ func (pool *SessionPool) newSession() (*Session, error) {
 		log:          pool.log,
 		timezoneInfo: timezoneInfo{timezoneOffset, timezoneName},
 	}
-	err = newSession.Ping()
+
+	// Switch to the default space
+	stmt := fmt.Sprintf("USE %s", pool.conf.spaceName)
+	useSpaceResp, err := newSession.connection.execute(newSession.sessionID, stmt)
 	if err != nil {
 		return nil, err
 	}
 
-	stmt := fmt.Sprintf("USE %s", pool.conf.spaceName)
-	createSpaceResp, err := newSession.connection.execute(newSession.sessionID, stmt)
-	if err != nil {
-		return nil, err
-	}
-	if createSpaceResp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+	if useSpaceResp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+		newSession.connection.close()
 		return nil, fmt.Errorf("failed to use space %s: %s",
-			pool.conf.spaceName, createSpaceResp.GetErrorMsg())
+			pool.conf.spaceName, useSpaceResp.GetErrorMsg())
 	}
 	return &newSession, nil
 }

@@ -75,6 +75,11 @@ func TestConnection(t *testing.T) {
 		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
 	}
 
+	if authResp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+		t.Fatalf("failed to authenticate, error code: %d, error msg: %s",
+			authResp.GetErrorCode(), authResp.GetErrorMsg())
+	}
+
 	sessionID := authResp.GetSessionID()
 
 	defer logoutAndClose(conn, sessionID)
@@ -125,6 +130,11 @@ func TestConnectionIPv6(t *testing.T) {
 	authResp, authErr := conn.authenticate(username, password)
 	if authErr != nil {
 		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
+	}
+
+	if authResp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+		t.Fatalf("failed to authenticate, error code: %d, error msg: %s",
+			authResp.GetErrorCode(), authResp.GetErrorMsg())
 	}
 
 	sessionID := authResp.GetSessionID()
@@ -250,8 +260,12 @@ func TestAuthentication(t *testing.T) {
 	}
 	defer conn.close()
 
-	_, authErr := conn.authenticate(username, password)
-	assert.EqualError(t, authErr, "fail to authenticate, error: User not exist")
+	resp, authErr := conn.authenticate(username, password)
+	if authErr != nil {
+		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
+	}
+
+	assert.Equal(t, string(resp.GetErrorMsg()), "User not exist")
 }
 
 func TestInvalidHostTimeout(t *testing.T) {
@@ -1398,6 +1412,11 @@ func prepareSpace(spaceName string) error {
 		return fmt.Errorf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
 	}
 
+	if authResp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+		return fmt.Errorf("failed to authenticate, error code: %d, error msg: %s",
+			authResp.GetErrorCode(), authResp.GetErrorMsg())
+	}
+
 	sessionID := authResp.GetSessionID()
 
 	defer logoutAndClose(conn, sessionID)
@@ -1428,6 +1447,11 @@ func dropSpace(spaceName string) error {
 	authResp, authErr := conn.authenticate(username, password)
 	if authErr != nil {
 		return fmt.Errorf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
+	}
+
+	if authResp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+		return fmt.Errorf("failed to authenticate, error code: %d, error msg: %s",
+			authResp.GetErrorCode(), authResp.GetErrorMsg())
 	}
 
 	sessionID := authResp.GetSessionID()

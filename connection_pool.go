@@ -112,13 +112,19 @@ func (pool *ConnectionPool) GetSession(username, password string) (*Session, err
 	}
 	// Authenticate
 	resp, err := conn.authenticate(username, password)
-	if err != nil || resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+	if err != nil {
 		// if authentication failed, put connection back
 		pool.rwLock.Lock()
 		defer pool.rwLock.Unlock()
 		removeFromList(&pool.activeConnectionQueue, conn)
 		pool.idleConnectionQueue.PushBack(conn)
 		return nil, err
+	}
+
+	// Check auth response
+	if resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+		return nil, fmt.Errorf("failed to authenticate, error code: %d, error msg: %s",
+			resp.GetErrorCode(), resp.GetErrorMsg())
 	}
 
 	sessID := resp.GetSessionID()
