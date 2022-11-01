@@ -2,6 +2,7 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/vesoft-inc/nebula-go/v3.svg)](https://pkg.go.dev/github.com/vesoft-inc/nebula-go/v3)
 ![functional tests](https://github.com/vesoft-inc/nebula-go/actions/workflows/test.yaml/badge.svg)
+[![codecov](https://codecov.io/gh/vesoft-inc/nebula-go/branch/master/graph/badge.svg?token=dzUo5KdSux)](https://codecov.io/gh/vesoft-inc/nebula-go)
 
 **IMPORTANT: Code of Nebula go client has been transferred from [nebula-clients](https://github.com/vesoft-inc/nebula-clients) to this repository(nebula-go), and new releases in the future will be published in this repository.
 Please update your go.mod and imports correspondingly.**
