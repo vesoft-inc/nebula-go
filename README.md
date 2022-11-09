@@ -53,11 +53,11 @@ For example:
 
 ## Usage example
 
-[Simple Code Example](https://github.com/vesoft-inc/nebula-go/tree/master/basic_example/graph_client_basic_example.go)
+[Simple Code Example](https://github.com/vesoft-inc/nebula-go/tree/master/examples/basic_example/graph_client_basic_example.go)
 
-[Code Example with Gorountines](https://github.com/vesoft-inc/nebula-go/tree/master/gorountines_example/graph_client_goroutines_example.go)
+[Code Example with Gorountines](https://github.com/vesoft-inc/nebula-go/tree/master/examples/gorountines_example/graph_client_goroutines_example.go)
 
-[Session Pool Example](https://github.com/vesoft-inc/nebula-go/blob/master/session_pool_example/session_pool_example.go)
+[Session Pool Example](https://github.com/vesoft-inc/nebula-go/blob/master/examples/session_pool_example/session_pool_example.go)
 
 There are some limitations while using the session pool:
 1. There MUST be an existing space in the DB before initializing the session pool.
