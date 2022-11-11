@@ -161,6 +161,7 @@ func (pool *ConnectionPool) getIdleConn() (*connection, error) {
 			} else {
 				tmpNextEle = ele.Next()
 				pool.idleConnectionQueue.Remove(ele)
+				ele.Value.(*connection).close()
 			}
 		}
 		if newConn == nil {
