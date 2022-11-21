@@ -24,6 +24,8 @@ jobs:
           make up
           sleep 10
           make test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
       - name: down
         if: always()
         run: |
