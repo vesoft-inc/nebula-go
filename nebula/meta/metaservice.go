@@ -262,7 +262,7 @@ type MetaService interface {
   CreateBackup(ctx context.Context, req *CreateBackupReq) (_r *CreateBackupResp, err error)
   // Parameters:
   //  - Req
-  RestoreMeta(ctx context.Context, req *RestoreMetaReq) (_r *ExecResp, err error)
+  RestoreMeta(ctx context.Context, req *RestoreMetaReq) (_r *RestoreMetaResp, err error)
   // Parameters:
   //  - Req
   ListCluster(ctx context.Context, req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error)
@@ -521,7 +521,7 @@ type MetaServiceClientInterface interface {
   CreateBackup(req *CreateBackupReq) (_r *CreateBackupResp, err error)
   // Parameters:
   //  - Req
-  RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err error)
+  RestoreMeta(req *RestoreMetaReq) (_r *RestoreMetaResp, err error)
   // Parameters:
   //  - Req
   ListCluster(req *ListClusterInfoReq) (_r *ListClusterInfoResp, err error)
@@ -2150,7 +2150,7 @@ func (p *MetaServiceClient) recvCreateBackup() (value *CreateBackupResp, err err
 
 // Parameters:
 //  - Req
-func (p *MetaServiceClient) RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err error) {
+func (p *MetaServiceClient) RestoreMeta(req *RestoreMetaReq) (_r *RestoreMetaResp, err error) {
   args := MetaServiceRestoreMetaArgs{
     Req : req,
   }
@@ -2160,7 +2160,7 @@ func (p *MetaServiceClient) RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err 
 }
 
 
-func (p *MetaServiceClient) recvRestoreMeta() (value *ExecResp, err error) {
+func (p *MetaServiceClient) recvRestoreMeta() (value *RestoreMetaResp, err error) {
   var result MetaServiceRestoreMetaResult
   err = p.CC.RecvMsg("restoreMeta", &result)
   if err != nil { return }
@@ -4045,7 +4045,7 @@ func (p *MetaServiceThreadsafeClient) recvCreateBackup() (value *CreateBackupRes
 
 // Parameters:
 //  - Req
-func (p *MetaServiceThreadsafeClient) RestoreMeta(req *RestoreMetaReq) (_r *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) RestoreMeta(req *RestoreMetaReq) (_r *RestoreMetaResp, err error) {
   p.Mu.Lock()
   defer p.Mu.Unlock()
   args := MetaServiceRestoreMetaArgs{
@@ -4057,7 +4057,7 @@ func (p *MetaServiceThreadsafeClient) RestoreMeta(req *RestoreMetaReq) (_r *Exec
 }
 
 
-func (p *MetaServiceThreadsafeClient) recvRestoreMeta() (value *ExecResp, err error) {
+func (p *MetaServiceThreadsafeClient) recvRestoreMeta() (value *RestoreMetaResp, err error) {
   var result MetaServiceRestoreMetaResult
   err = p.CC.RecvMsg("restoreMeta", &result)
   if err != nil { return }
@@ -5225,7 +5225,7 @@ func (p *MetaServiceChannelClient) CreateBackup(ctx context.Context, req *Create
 
 // Parameters:
 //  - Req
-func (p *MetaServiceChannelClient) RestoreMeta(ctx context.Context, req *RestoreMetaReq) (_r *ExecResp, err error) {
+func (p *MetaServiceChannelClient) RestoreMeta(ctx context.Context, req *RestoreMetaReq) (_r *RestoreMetaResp, err error) {
   args := MetaServiceRestoreMetaArgs{
     Req : req,
   }
@@ -5332,178 +5332,178 @@ func (p *MetaServiceProcessor) FunctionServiceMap() map[string]string {
 }
 
 func NewMetaServiceProcessor(handler MetaService) *MetaServiceProcessor {
-  self104 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext), functionServiceMap:make(map[string]string)}
-  self104.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
-  self104.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
-  self104.processorMap["clearSpace"] = &metaServiceProcessorClearSpace{handler:handler}
-  self104.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
-  self104.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
-  self104.processorMap["alterSpace"] = &metaServiceProcessorAlterSpace{handler:handler}
-  self104.processorMap["createSpaceAs"] = &metaServiceProcessorCreateSpaceAs{handler:handler}
-  self104.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
-  self104.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
-  self104.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
-  self104.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
-  self104.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
-  self104.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
-  self104.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
-  self104.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
-  self104.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
-  self104.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
-  self104.processorMap["addHosts"] = &metaServiceProcessorAddHosts{handler:handler}
-  self104.processorMap["addHostsIntoZone"] = &metaServiceProcessorAddHostsIntoZone{handler:handler}
-  self104.processorMap["dropHosts"] = &metaServiceProcessorDropHosts{handler:handler}
-  self104.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
-  self104.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
-  self104.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
-  self104.processorMap["getWorkerId"] = &metaServiceProcessorGetWorkerId{handler:handler}
-  self104.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
-  self104.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
-  self104.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
-  self104.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
-  self104.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
-  self104.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
-  self104.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
-  self104.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
-  self104.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
-  self104.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
-  self104.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
-  self104.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
-  self104.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
-  self104.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
-  self104.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
-  self104.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
-  self104.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
-  self104.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
-  self104.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
-  self104.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
-  self104.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
-  self104.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
-  self104.processorMap["agentHeartbeat"] = &metaServiceProcessorAgentHeartbeat{handler:handler}
-  self104.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
-  self104.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
-  self104.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
-  self104.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
-  self104.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
-  self104.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
-  self104.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
-  self104.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
-  self104.processorMap["mergeZone"] = &metaServiceProcessorMergeZone{handler:handler}
-  self104.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
-  self104.processorMap["divideZone"] = &metaServiceProcessorDivideZone{handler:handler}
-  self104.processorMap["renameZone"] = &metaServiceProcessorRenameZone{handler:handler}
-  self104.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
-  self104.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
-  self104.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
-  self104.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
-  self104.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
-  self104.processorMap["getStats"] = &metaServiceProcessorGetStats{handler:handler}
-  self104.processorMap["signInService"] = &metaServiceProcessorSignInService{handler:handler}
-  self104.processorMap["signOutService"] = &metaServiceProcessorSignOutService{handler:handler}
-  self104.processorMap["listServiceClients"] = &metaServiceProcessorListServiceClients{handler:handler}
-  self104.processorMap["createFTIndex"] = &metaServiceProcessorCreateFTIndex{handler:handler}
-  self104.processorMap["dropFTIndex"] = &metaServiceProcessorDropFTIndex{handler:handler}
-  self104.processorMap["listFTIndexes"] = &metaServiceProcessorListFTIndexes{handler:handler}
-  self104.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
-  self104.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
-  self104.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
-  self104.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
-  self104.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
-  self104.processorMap["killQuery"] = &metaServiceProcessorKillQuery{handler:handler}
-  self104.processorMap["reportTaskFinish"] = &metaServiceProcessorReportTaskFinish{handler:handler}
-  self104.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
-  self104.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
-  self104.processorMap["listCluster"] = &metaServiceProcessorListCluster{handler:handler}
-  self104.processorMap["getMetaDirInfo"] = &metaServiceProcessorGetMetaDirInfo{handler:handler}
-  self104.processorMap["verifyClientVersion"] = &metaServiceProcessorVerifyClientVersion{handler:handler}
-  self104.processorMap["saveGraphVersion"] = &metaServiceProcessorSaveGraphVersion{handler:handler}
-  self104.processorMap["getSegmentId"] = &metaServiceProcessorGetSegmentId{handler:handler}
-  self104.functionServiceMap["createSpace"] = "MetaService"
-  self104.functionServiceMap["dropSpace"] = "MetaService"
-  self104.functionServiceMap["clearSpace"] = "MetaService"
-  self104.functionServiceMap["getSpace"] = "MetaService"
-  self104.functionServiceMap["listSpaces"] = "MetaService"
-  self104.functionServiceMap["alterSpace"] = "MetaService"
-  self104.functionServiceMap["createSpaceAs"] = "MetaService"
-  self104.functionServiceMap["createTag"] = "MetaService"
-  self104.functionServiceMap["alterTag"] = "MetaService"
-  self104.functionServiceMap["dropTag"] = "MetaService"
-  self104.functionServiceMap["getTag"] = "MetaService"
-  self104.functionServiceMap["listTags"] = "MetaService"
-  self104.functionServiceMap["createEdge"] = "MetaService"
-  self104.functionServiceMap["alterEdge"] = "MetaService"
-  self104.functionServiceMap["dropEdge"] = "MetaService"
-  self104.functionServiceMap["getEdge"] = "MetaService"
-  self104.functionServiceMap["listEdges"] = "MetaService"
-  self104.functionServiceMap["addHosts"] = "MetaService"
-  self104.functionServiceMap["addHostsIntoZone"] = "MetaService"
-  self104.functionServiceMap["dropHosts"] = "MetaService"
-  self104.functionServiceMap["listHosts"] = "MetaService"
-  self104.functionServiceMap["getPartsAlloc"] = "MetaService"
-  self104.functionServiceMap["listParts"] = "MetaService"
-  self104.functionServiceMap["getWorkerId"] = "MetaService"
-  self104.functionServiceMap["createTagIndex"] = "MetaService"
-  self104.functionServiceMap["dropTagIndex"] = "MetaService"
-  self104.functionServiceMap["getTagIndex"] = "MetaService"
-  self104.functionServiceMap["listTagIndexes"] = "MetaService"
-  self104.functionServiceMap["rebuildTagIndex"] = "MetaService"
-  self104.functionServiceMap["listTagIndexStatus"] = "MetaService"
-  self104.functionServiceMap["createEdgeIndex"] = "MetaService"
-  self104.functionServiceMap["dropEdgeIndex"] = "MetaService"
-  self104.functionServiceMap["getEdgeIndex"] = "MetaService"
-  self104.functionServiceMap["listEdgeIndexes"] = "MetaService"
-  self104.functionServiceMap["rebuildEdgeIndex"] = "MetaService"
-  self104.functionServiceMap["listEdgeIndexStatus"] = "MetaService"
-  self104.functionServiceMap["createUser"] = "MetaService"
-  self104.functionServiceMap["dropUser"] = "MetaService"
-  self104.functionServiceMap["alterUser"] = "MetaService"
-  self104.functionServiceMap["grantRole"] = "MetaService"
-  self104.functionServiceMap["revokeRole"] = "MetaService"
-  self104.functionServiceMap["listUsers"] = "MetaService"
-  self104.functionServiceMap["listRoles"] = "MetaService"
-  self104.functionServiceMap["getUserRoles"] = "MetaService"
-  self104.functionServiceMap["changePassword"] = "MetaService"
-  self104.functionServiceMap["heartBeat"] = "MetaService"
-  self104.functionServiceMap["agentHeartbeat"] = "MetaService"
-  self104.functionServiceMap["regConfig"] = "MetaService"
-  self104.functionServiceMap["getConfig"] = "MetaService"
-  self104.functionServiceMap["setConfig"] = "MetaService"
-  self104.functionServiceMap["listConfigs"] = "MetaService"
-  self104.functionServiceMap["createSnapshot"] = "MetaService"
-  self104.functionServiceMap["dropSnapshot"] = "MetaService"
-  self104.functionServiceMap["listSnapshots"] = "MetaService"
-  self104.functionServiceMap["runAdminJob"] = "MetaService"
-  self104.functionServiceMap["mergeZone"] = "MetaService"
-  self104.functionServiceMap["dropZone"] = "MetaService"
-  self104.functionServiceMap["divideZone"] = "MetaService"
-  self104.functionServiceMap["renameZone"] = "MetaService"
-  self104.functionServiceMap["getZone"] = "MetaService"
-  self104.functionServiceMap["listZones"] = "MetaService"
-  self104.functionServiceMap["addListener"] = "MetaService"
-  self104.functionServiceMap["removeListener"] = "MetaService"
-  self104.functionServiceMap["listListener"] = "MetaService"
-  self104.functionServiceMap["getStats"] = "MetaService"
-  self104.functionServiceMap["signInService"] = "MetaService"
-  self104.functionServiceMap["signOutService"] = "MetaService"
-  self104.functionServiceMap["listServiceClients"] = "MetaService"
-  self104.functionServiceMap["createFTIndex"] = "MetaService"
-  self104.functionServiceMap["dropFTIndex"] = "MetaService"
-  self104.functionServiceMap["listFTIndexes"] = "MetaService"
-  self104.functionServiceMap["createSession"] = "MetaService"
-  self104.functionServiceMap["updateSessions"] = "MetaService"
-  self104.functionServiceMap["listSessions"] = "MetaService"
-  self104.functionServiceMap["getSession"] = "MetaService"
-  self104.functionServiceMap["removeSession"] = "MetaService"
-  self104.functionServiceMap["killQuery"] = "MetaService"
-  self104.functionServiceMap["reportTaskFinish"] = "MetaService"
-  self104.functionServiceMap["createBackup"] = "MetaService"
-  self104.functionServiceMap["restoreMeta"] = "MetaService"
-  self104.functionServiceMap["listCluster"] = "MetaService"
-  self104.functionServiceMap["getMetaDirInfo"] = "MetaService"
-  self104.functionServiceMap["verifyClientVersion"] = "MetaService"
-  self104.functionServiceMap["saveGraphVersion"] = "MetaService"
-  self104.functionServiceMap["getSegmentId"] = "MetaService"
-  return self104
+  self110 := &MetaServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext), functionServiceMap:make(map[string]string)}
+  self110.processorMap["createSpace"] = &metaServiceProcessorCreateSpace{handler:handler}
+  self110.processorMap["dropSpace"] = &metaServiceProcessorDropSpace{handler:handler}
+  self110.processorMap["clearSpace"] = &metaServiceProcessorClearSpace{handler:handler}
+  self110.processorMap["getSpace"] = &metaServiceProcessorGetSpace{handler:handler}
+  self110.processorMap["listSpaces"] = &metaServiceProcessorListSpaces{handler:handler}
+  self110.processorMap["alterSpace"] = &metaServiceProcessorAlterSpace{handler:handler}
+  self110.processorMap["createSpaceAs"] = &metaServiceProcessorCreateSpaceAs{handler:handler}
+  self110.processorMap["createTag"] = &metaServiceProcessorCreateTag{handler:handler}
+  self110.processorMap["alterTag"] = &metaServiceProcessorAlterTag{handler:handler}
+  self110.processorMap["dropTag"] = &metaServiceProcessorDropTag{handler:handler}
+  self110.processorMap["getTag"] = &metaServiceProcessorGetTag{handler:handler}
+  self110.processorMap["listTags"] = &metaServiceProcessorListTags{handler:handler}
+  self110.processorMap["createEdge"] = &metaServiceProcessorCreateEdge{handler:handler}
+  self110.processorMap["alterEdge"] = &metaServiceProcessorAlterEdge{handler:handler}
+  self110.processorMap["dropEdge"] = &metaServiceProcessorDropEdge{handler:handler}
+  self110.processorMap["getEdge"] = &metaServiceProcessorGetEdge{handler:handler}
+  self110.processorMap["listEdges"] = &metaServiceProcessorListEdges{handler:handler}
+  self110.processorMap["addHosts"] = &metaServiceProcessorAddHosts{handler:handler}
+  self110.processorMap["addHostsIntoZone"] = &metaServiceProcessorAddHostsIntoZone{handler:handler}
+  self110.processorMap["dropHosts"] = &metaServiceProcessorDropHosts{handler:handler}
+  self110.processorMap["listHosts"] = &metaServiceProcessorListHosts{handler:handler}
+  self110.processorMap["getPartsAlloc"] = &metaServiceProcessorGetPartsAlloc{handler:handler}
+  self110.processorMap["listParts"] = &metaServiceProcessorListParts{handler:handler}
+  self110.processorMap["getWorkerId"] = &metaServiceProcessorGetWorkerId{handler:handler}
+  self110.processorMap["createTagIndex"] = &metaServiceProcessorCreateTagIndex{handler:handler}
+  self110.processorMap["dropTagIndex"] = &metaServiceProcessorDropTagIndex{handler:handler}
+  self110.processorMap["getTagIndex"] = &metaServiceProcessorGetTagIndex{handler:handler}
+  self110.processorMap["listTagIndexes"] = &metaServiceProcessorListTagIndexes{handler:handler}
+  self110.processorMap["rebuildTagIndex"] = &metaServiceProcessorRebuildTagIndex{handler:handler}
+  self110.processorMap["listTagIndexStatus"] = &metaServiceProcessorListTagIndexStatus{handler:handler}
+  self110.processorMap["createEdgeIndex"] = &metaServiceProcessorCreateEdgeIndex{handler:handler}
+  self110.processorMap["dropEdgeIndex"] = &metaServiceProcessorDropEdgeIndex{handler:handler}
+  self110.processorMap["getEdgeIndex"] = &metaServiceProcessorGetEdgeIndex{handler:handler}
+  self110.processorMap["listEdgeIndexes"] = &metaServiceProcessorListEdgeIndexes{handler:handler}
+  self110.processorMap["rebuildEdgeIndex"] = &metaServiceProcessorRebuildEdgeIndex{handler:handler}
+  self110.processorMap["listEdgeIndexStatus"] = &metaServiceProcessorListEdgeIndexStatus{handler:handler}
+  self110.processorMap["createUser"] = &metaServiceProcessorCreateUser{handler:handler}
+  self110.processorMap["dropUser"] = &metaServiceProcessorDropUser{handler:handler}
+  self110.processorMap["alterUser"] = &metaServiceProcessorAlterUser{handler:handler}
+  self110.processorMap["grantRole"] = &metaServiceProcessorGrantRole{handler:handler}
+  self110.processorMap["revokeRole"] = &metaServiceProcessorRevokeRole{handler:handler}
+  self110.processorMap["listUsers"] = &metaServiceProcessorListUsers{handler:handler}
+  self110.processorMap["listRoles"] = &metaServiceProcessorListRoles{handler:handler}
+  self110.processorMap["getUserRoles"] = &metaServiceProcessorGetUserRoles{handler:handler}
+  self110.processorMap["changePassword"] = &metaServiceProcessorChangePassword{handler:handler}
+  self110.processorMap["heartBeat"] = &metaServiceProcessorHeartBeat{handler:handler}
+  self110.processorMap["agentHeartbeat"] = &metaServiceProcessorAgentHeartbeat{handler:handler}
+  self110.processorMap["regConfig"] = &metaServiceProcessorRegConfig{handler:handler}
+  self110.processorMap["getConfig"] = &metaServiceProcessorGetConfig{handler:handler}
+  self110.processorMap["setConfig"] = &metaServiceProcessorSetConfig{handler:handler}
+  self110.processorMap["listConfigs"] = &metaServiceProcessorListConfigs{handler:handler}
+  self110.processorMap["createSnapshot"] = &metaServiceProcessorCreateSnapshot{handler:handler}
+  self110.processorMap["dropSnapshot"] = &metaServiceProcessorDropSnapshot{handler:handler}
+  self110.processorMap["listSnapshots"] = &metaServiceProcessorListSnapshots{handler:handler}
+  self110.processorMap["runAdminJob"] = &metaServiceProcessorRunAdminJob{handler:handler}
+  self110.processorMap["mergeZone"] = &metaServiceProcessorMergeZone{handler:handler}
+  self110.processorMap["dropZone"] = &metaServiceProcessorDropZone{handler:handler}
+  self110.processorMap["divideZone"] = &metaServiceProcessorDivideZone{handler:handler}
+  self110.processorMap["renameZone"] = &metaServiceProcessorRenameZone{handler:handler}
+  self110.processorMap["getZone"] = &metaServiceProcessorGetZone{handler:handler}
+  self110.processorMap["listZones"] = &metaServiceProcessorListZones{handler:handler}
+  self110.processorMap["addListener"] = &metaServiceProcessorAddListener{handler:handler}
+  self110.processorMap["removeListener"] = &metaServiceProcessorRemoveListener{handler:handler}
+  self110.processorMap["listListener"] = &metaServiceProcessorListListener{handler:handler}
+  self110.processorMap["getStats"] = &metaServiceProcessorGetStats{handler:handler}
+  self110.processorMap["signInService"] = &metaServiceProcessorSignInService{handler:handler}
+  self110.processorMap["signOutService"] = &metaServiceProcessorSignOutService{handler:handler}
+  self110.processorMap["listServiceClients"] = &metaServiceProcessorListServiceClients{handler:handler}
+  self110.processorMap["createFTIndex"] = &metaServiceProcessorCreateFTIndex{handler:handler}
+  self110.processorMap["dropFTIndex"] = &metaServiceProcessorDropFTIndex{handler:handler}
+  self110.processorMap["listFTIndexes"] = &metaServiceProcessorListFTIndexes{handler:handler}
+  self110.processorMap["createSession"] = &metaServiceProcessorCreateSession{handler:handler}
+  self110.processorMap["updateSessions"] = &metaServiceProcessorUpdateSessions{handler:handler}
+  self110.processorMap["listSessions"] = &metaServiceProcessorListSessions{handler:handler}
+  self110.processorMap["getSession"] = &metaServiceProcessorGetSession{handler:handler}
+  self110.processorMap["removeSession"] = &metaServiceProcessorRemoveSession{handler:handler}
+  self110.processorMap["killQuery"] = &metaServiceProcessorKillQuery{handler:handler}
+  self110.processorMap["reportTaskFinish"] = &metaServiceProcessorReportTaskFinish{handler:handler}
+  self110.processorMap["createBackup"] = &metaServiceProcessorCreateBackup{handler:handler}
+  self110.processorMap["restoreMeta"] = &metaServiceProcessorRestoreMeta{handler:handler}
+  self110.processorMap["listCluster"] = &metaServiceProcessorListCluster{handler:handler}
+  self110.processorMap["getMetaDirInfo"] = &metaServiceProcessorGetMetaDirInfo{handler:handler}
+  self110.processorMap["verifyClientVersion"] = &metaServiceProcessorVerifyClientVersion{handler:handler}
+  self110.processorMap["saveGraphVersion"] = &metaServiceProcessorSaveGraphVersion{handler:handler}
+  self110.processorMap["getSegmentId"] = &metaServiceProcessorGetSegmentId{handler:handler}
+  self110.functionServiceMap["createSpace"] = "MetaService"
+  self110.functionServiceMap["dropSpace"] = "MetaService"
+  self110.functionServiceMap["clearSpace"] = "MetaService"
+  self110.functionServiceMap["getSpace"] = "MetaService"
+  self110.functionServiceMap["listSpaces"] = "MetaService"
+  self110.functionServiceMap["alterSpace"] = "MetaService"
+  self110.functionServiceMap["createSpaceAs"] = "MetaService"
+  self110.functionServiceMap["createTag"] = "MetaService"
+  self110.functionServiceMap["alterTag"] = "MetaService"
+  self110.functionServiceMap["dropTag"] = "MetaService"
+  self110.functionServiceMap["getTag"] = "MetaService"
+  self110.functionServiceMap["listTags"] = "MetaService"
+  self110.functionServiceMap["createEdge"] = "MetaService"
+  self110.functionServiceMap["alterEdge"] = "MetaService"
+  self110.functionServiceMap["dropEdge"] = "MetaService"
+  self110.functionServiceMap["getEdge"] = "MetaService"
+  self110.functionServiceMap["listEdges"] = "MetaService"
+  self110.functionServiceMap["addHosts"] = "MetaService"
+  self110.functionServiceMap["addHostsIntoZone"] = "MetaService"
+  self110.functionServiceMap["dropHosts"] = "MetaService"
+  self110.functionServiceMap["listHosts"] = "MetaService"
+  self110.functionServiceMap["getPartsAlloc"] = "MetaService"
+  self110.functionServiceMap["listParts"] = "MetaService"
+  self110.functionServiceMap["getWorkerId"] = "MetaService"
+  self110.functionServiceMap["createTagIndex"] = "MetaService"
+  self110.functionServiceMap["dropTagIndex"] = "MetaService"
+  self110.functionServiceMap["getTagIndex"] = "MetaService"
+  self110.functionServiceMap["listTagIndexes"] = "MetaService"
+  self110.functionServiceMap["rebuildTagIndex"] = "MetaService"
+  self110.functionServiceMap["listTagIndexStatus"] = "MetaService"
+  self110.functionServiceMap["createEdgeIndex"] = "MetaService"
+  self110.functionServiceMap["dropEdgeIndex"] = "MetaService"
+  self110.functionServiceMap["getEdgeIndex"] = "MetaService"
+  self110.functionServiceMap["listEdgeIndexes"] = "MetaService"
+  self110.functionServiceMap["rebuildEdgeIndex"] = "MetaService"
+  self110.functionServiceMap["listEdgeIndexStatus"] = "MetaService"
+  self110.functionServiceMap["createUser"] = "MetaService"
+  self110.functionServiceMap["dropUser"] = "MetaService"
+  self110.functionServiceMap["alterUser"] = "MetaService"
+  self110.functionServiceMap["grantRole"] = "MetaService"
+  self110.functionServiceMap["revokeRole"] = "MetaService"
+  self110.functionServiceMap["listUsers"] = "MetaService"
+  self110.functionServiceMap["listRoles"] = "MetaService"
+  self110.functionServiceMap["getUserRoles"] = "MetaService"
+  self110.functionServiceMap["changePassword"] = "MetaService"
+  self110.functionServiceMap["heartBeat"] = "MetaService"
+  self110.functionServiceMap["agentHeartbeat"] = "MetaService"
+  self110.functionServiceMap["regConfig"] = "MetaService"
+  self110.functionServiceMap["getConfig"] = "MetaService"
+  self110.functionServiceMap["setConfig"] = "MetaService"
+  self110.functionServiceMap["listConfigs"] = "MetaService"
+  self110.functionServiceMap["createSnapshot"] = "MetaService"
+  self110.functionServiceMap["dropSnapshot"] = "MetaService"
+  self110.functionServiceMap["listSnapshots"] = "MetaService"
+  self110.functionServiceMap["runAdminJob"] = "MetaService"
+  self110.functionServiceMap["mergeZone"] = "MetaService"
+  self110.functionServiceMap["dropZone"] = "MetaService"
+  self110.functionServiceMap["divideZone"] = "MetaService"
+  self110.functionServiceMap["renameZone"] = "MetaService"
+  self110.functionServiceMap["getZone"] = "MetaService"
+  self110.functionServiceMap["listZones"] = "MetaService"
+  self110.functionServiceMap["addListener"] = "MetaService"
+  self110.functionServiceMap["removeListener"] = "MetaService"
+  self110.functionServiceMap["listListener"] = "MetaService"
+  self110.functionServiceMap["getStats"] = "MetaService"
+  self110.functionServiceMap["signInService"] = "MetaService"
+  self110.functionServiceMap["signOutService"] = "MetaService"
+  self110.functionServiceMap["listServiceClients"] = "MetaService"
+  self110.functionServiceMap["createFTIndex"] = "MetaService"
+  self110.functionServiceMap["dropFTIndex"] = "MetaService"
+  self110.functionServiceMap["listFTIndexes"] = "MetaService"
+  self110.functionServiceMap["createSession"] = "MetaService"
+  self110.functionServiceMap["updateSessions"] = "MetaService"
+  self110.functionServiceMap["listSessions"] = "MetaService"
+  self110.functionServiceMap["getSession"] = "MetaService"
+  self110.functionServiceMap["removeSession"] = "MetaService"
+  self110.functionServiceMap["killQuery"] = "MetaService"
+  self110.functionServiceMap["reportTaskFinish"] = "MetaService"
+  self110.functionServiceMap["createBackup"] = "MetaService"
+  self110.functionServiceMap["restoreMeta"] = "MetaService"
+  self110.functionServiceMap["listCluster"] = "MetaService"
+  self110.functionServiceMap["getMetaDirInfo"] = "MetaService"
+  self110.functionServiceMap["verifyClientVersion"] = "MetaService"
+  self110.functionServiceMap["saveGraphVersion"] = "MetaService"
+  self110.functionServiceMap["getSegmentId"] = "MetaService"
+  return self110
 }
 
 type metaServiceProcessorCreateSpace struct {
@@ -30222,15 +30222,15 @@ func (p *MetaServiceRestoreMetaArgs) String() string {
 //  - Success
 type MetaServiceRestoreMetaResult struct {
   thrift.IResponse
-  Success *ExecResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
+  Success *RestoreMetaResp `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
 }
 
 func NewMetaServiceRestoreMetaResult() *MetaServiceRestoreMetaResult {
   return &MetaServiceRestoreMetaResult{}
 }
 
-var MetaServiceRestoreMetaResult_Success_DEFAULT *ExecResp
-func (p *MetaServiceRestoreMetaResult) GetSuccess() *ExecResp {
+var MetaServiceRestoreMetaResult_Success_DEFAULT *RestoreMetaResp
+func (p *MetaServiceRestoreMetaResult) GetSuccess() *RestoreMetaResp {
   if !p.IsSetSuccess() {
     return MetaServiceRestoreMetaResult_Success_DEFAULT
   }
@@ -30256,12 +30256,12 @@ func (p MetaServiceRestoreMetaResultBuilder) Emit() *MetaServiceRestoreMetaResul
   }
 }
 
-func (m *MetaServiceRestoreMetaResultBuilder) Success(success *ExecResp) *MetaServiceRestoreMetaResultBuilder {
+func (m *MetaServiceRestoreMetaResultBuilder) Success(success *RestoreMetaResp) *MetaServiceRestoreMetaResultBuilder {
   m.obj.Success = success
   return m
 }
 
-func (m *MetaServiceRestoreMetaResult) SetSuccess(success *ExecResp) *MetaServiceRestoreMetaResult {
+func (m *MetaServiceRestoreMetaResult) SetSuccess(success *RestoreMetaResp) *MetaServiceRestoreMetaResult {
   m.Success = success
   return m
 }
@@ -30299,7 +30299,7 @@ func (p *MetaServiceRestoreMetaResult) Read(iprot thrift.Protocol) error {
 }
 
 func (p *MetaServiceRestoreMetaResult)  ReadField0(iprot thrift.Protocol) error {
-  p.Success = NewExecResp()
+  p.Success = NewRestoreMetaResp()
   if err := p.Success.Read(iprot); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
   }
