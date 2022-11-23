@@ -30,8 +30,8 @@ ssl-test-self-signed:
 	self_signed=true go test -v --tags=integration -run TestSslConnection;
 
 run-examples:
-	go run basic_example/graph_client_basic_example.go && \
-	go run basic_example/parameter_example.go && \
-	go run gorountines_example/graph_client_goroutines_example.go && \
-	go run json_example/parse_json_example.go && \
-	go run session_pool_example/session_pool_example.go
+	go run examples/basic_example/graph_client_basic_example.go && \
+	go run examples/parameter_example/parameter_example.go && \
+	go run examples/gorountines_example/graph_client_goroutines_example.go && \
+	go run examples/json_example/parse_json_example.go && \
+	go run examples/session_pool_example/session_pool_example.go
