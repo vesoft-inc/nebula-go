@@ -19,7 +19,7 @@ import (
 
 const (
 	address = "127.0.0.1"
-	// The default port of Nebula Graph 2.x is 9669.
+	// The default port of NebulaGraph 2.x is 9669.
 	// 3699 is only for testing.
 	port     = 3699
 	username = "root"
@@ -67,7 +67,7 @@ func main() {
 				"CREATE TAG IF NOT EXISTS person(name string, age int);" +
 				"CREATE EDGE IF NOT EXISTS like(likeness double)"
 
-			// Excute a query
+			// Execute a query
 			resultSet, err := session.Execute(createSchema)
 			if err != nil {
 				fmt.Print(err.Error())

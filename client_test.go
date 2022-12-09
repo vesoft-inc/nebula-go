@@ -29,6 +29,8 @@ const (
 	port     = 3699
 	username = "root"
 	password = "nebula"
+
+	addressIPv6 = "::1"
 )
 
 var poolAddress = []HostAddress{
@@ -61,19 +63,24 @@ func logoutAndClose(conn *connection, sessionID int64) {
 }
 
 func TestConnection(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
-	conn := newConnection(hostAdress)
-	err := conn.open(hostAdress, testPoolConfig.TimeOut, nil)
+	hostAddress := HostAddress{Host: address, Port: port}
+	conn := newConnection(hostAddress)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
 
-	authresp, authErr := conn.authenticate(username, password)
+	authResp, authErr := conn.authenticate(username, password)
 	if authErr != nil {
 		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
 	}
 
-	sessionID := authresp.GetSessionID()
+	if authResp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+		t.Fatalf("failed to authenticate, error code: %d, error msg: %s",
+			authResp.GetErrorCode(), authResp.GetErrorMsg())
+	}
+
+	sessionID := authResp.GetSessionID()
 
 	defer logoutAndClose(conn, sessionID)
 
@@ -82,20 +89,77 @@ func TestConnection(t *testing.T) {
 		t.Fatalf(err.Error())
 		return
 	}
-	checkConResp(t, "show hosts", resp)
+	checkConResp("show hosts", resp)
 
 	resp, err = conn.execute(sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
-	checkConResp(t, "create space", resp)
+	checkConResp("create space", resp)
+
+	resp, err = conn.execute(sessionID, "return 1")
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+	checkConResp("return 1", resp)
+
 	resp, err = conn.execute(sessionID, "DROP SPACE client_test;")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
-	checkConResp(t, "drop space", resp)
+	checkConResp("drop space", resp)
+
+	res := conn.ping()
+	if res != true {
+		t.Error("Connection ping failed")
+		return
+	}
+}
+
+func TestConnectionIPv6(t *testing.T) {
+	hostAddress := HostAddress{Host: addressIPv6, Port: port}
+	conn := newConnection(hostAddress)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
+	if err != nil {
+		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
+	}
+
+	authResp, authErr := conn.authenticate(username, password)
+	if authErr != nil {
+		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
+	}
+
+	if authResp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+		t.Fatalf("failed to authenticate, error code: %d, error msg: %s",
+			authResp.GetErrorCode(), authResp.GetErrorMsg())
+	}
+
+	sessionID := authResp.GetSessionID()
+
+	defer logoutAndClose(conn, sessionID)
+
+	resp, err := conn.execute(sessionID, "SHOW HOSTS;")
+	if err != nil {
+		t.Fatalf(err.Error())
+		return
+	}
+	checkConResp("show hosts", resp)
+
+	resp, err = conn.execute(sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+	checkConResp("create space", resp)
+	resp, err = conn.execute(sessionID, "DROP SPACE client_test;")
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+	checkConResp("drop space", resp)
 
 	res := conn.ping()
 	if res != true {
@@ -105,9 +169,9 @@ func TestConnection(t *testing.T) {
 }
 
 func TestConfigs(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
+	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
-	hostList = append(hostList, hostAdress)
+	hostList = append(hostList, hostAddress)
 
 	var configList = []PoolConfig{
 		// default
@@ -156,7 +220,7 @@ func TestConfigs(t *testing.T) {
 				username, password, err.Error())
 		}
 		defer session.Release()
-		// Excute a query
+		// Execute a query
 		resp, err := tryToExecute(session, "SHOW HOSTS;")
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -173,38 +237,46 @@ func TestConfigs(t *testing.T) {
 		}
 		checkResultSet(t, "create space", resp)
 
-		dropSpace(t, session, "client_test")
+		err = dropSpace("client_test")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
 	}
 }
 
 func TestAuthentication(t *testing.T) {
 	const (
-		address  = "127.0.0.1"
-		port     = 3699
 		username = "dummy"
 		password = "nebula"
 	)
 
-	hostAdress := HostAddress{Host: address, Port: port}
+	hostAddress := HostAddress{Host: address, Port: port}
 
-	conn := newConnection(hostAdress)
-	err := conn.open(hostAdress, testPoolConfig.TimeOut, nil)
+	conn := newConnection(hostAddress)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
 	defer conn.close()
 
-	_, authErr := conn.authenticate(username, password)
-	assert.EqualError(t, authErr, "fail to authenticate, error: User not exist")
+	resp, authErr := conn.authenticate(username, password)
+	if authErr != nil {
+		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
+	}
+
+	assert.Equal(t, string(resp.GetErrorMsg()), "User not exist")
 }
 
 func TestInvalidHostTimeout(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
-	hostList := []HostAddress{hostAdress}
+	hostAddress := HostAddress{Host: address, Port: port}
+	// invalid host
+	invalidHostAddress := HostAddress{Host: "192.168.100.125", Port: 3699}
+	hostList := []HostAddress{hostAddress}
 
 	invalidHostList := []HostAddress{
-		{Host: "192.168.100.125", Port: 3699}, // Invalid host
-		{Host: "127.0.0.1", Port: 3699},
+		invalidHostAddress, // Invalid host
+		hostAddress,
 	}
 
 	// Initialize connection pool
@@ -223,9 +295,9 @@ func TestInvalidHostTimeout(t *testing.T) {
 }
 
 func TestServiceDataIO(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
+	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
-	hostList = append(hostList, hostAdress)
+	hostList = append(hostList, hostAddress)
 
 	testPoolConfig = PoolConfig{
 		TimeOut:         0 * time.Millisecond,
@@ -508,13 +580,17 @@ func TestServiceDataIO(t *testing.T) {
 		}
 		assert.Equal(t, int8(sessionCreatedTime.Hour()), localTime.GetHour())
 	}
-	dropSpace(t, session, "client_test")
+	err = dropSpace("client_test")
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
 }
 
 func TestPool_SingleHost(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
+	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
-	hostList = append(hostList, hostAdress)
+	hostList = append(hostList, hostAddress)
 
 	testPoolConfig = PoolConfig{
 		TimeOut:         0 * time.Millisecond,
@@ -538,7 +614,7 @@ func TestPool_SingleHost(t *testing.T) {
 			username, password, err.Error())
 	}
 	defer session.Release()
-	// Excute a query
+	// Execute a query
 	resp, err := tryToExecute(session, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -553,12 +629,15 @@ func TestPool_SingleHost(t *testing.T) {
 	}
 	checkResultSet(t, "create space", resp)
 
-	dropSpace(t, session, "client_test")
+	err = dropSpace("client_test")
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
 }
 
 func TestPool_MultiHosts(t *testing.T) {
 	hostList := poolAddress
-	// Minimun pool size < hosts number
+	// Minimum pool size < hosts number
 	multiHostsConfig := PoolConfig{
 		TimeOut:         0 * time.Millisecond,
 		IdleTime:        0 * time.Millisecond,
@@ -632,7 +711,8 @@ func TestMultiThreads(t *testing.T) {
 	// Initialize connection pool
 	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
+		log.Fatal(fmt.Sprintf("fail to initialize the connection pool, host: %s, port: %d, %s",
+			address, port, err.Error()))
 	}
 	defer pool.Close()
 
@@ -667,16 +747,13 @@ func TestMultiThreads(t *testing.T) {
 	assert.Equal(t, 666, pool.getActiveConnCount(), "Total number of active connections should be 666")
 	assert.Equal(t, 666, len(sessionList), "Total number of sessions should be 666")
 
-	// for i := 0; i < len(hostList); i++ {
-	// 	assert.Equal(t, 222, pool.GetServerWorkload(i))
-	// }
 	for i := 0; i < testPoolConfig.MaxConnPoolSize; i++ {
 		sessionList[i].Release()
 	}
 	assert.Equal(t, 666, pool.getIdleConnCount(), "Total number of idle connections should be 666")
 }
 
-func TestLoadbalancer(t *testing.T) {
+func TestLoadBalancer(t *testing.T) {
 	hostList := poolAddress
 	var loadPerHost = make(map[HostAddress]int)
 	testPoolConfig := PoolConfig{
@@ -762,9 +839,9 @@ func TestIdleTimeoutCleaner(t *testing.T) {
 }
 
 func TestTimeout(t *testing.T) {
-	hostAdress := HostAddress{Host: address, Port: port}
+	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
-	hostList = append(hostList, hostAdress)
+	hostList = append(hostList, hostAddress)
 
 	testPoolConfig = PoolConfig{
 		TimeOut:         1000 * time.Millisecond,
@@ -842,7 +919,10 @@ func TestTimeout(t *testing.T) {
 	assert.Contains(t, resultSet.AsStringTable(), []string{"999"})
 
 	// Drop space
-	dropSpace(t, session, "client_test")
+	err = dropSpace("client_test")
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
 }
 
 func TestExecuteJson(t *testing.T) {
@@ -1067,38 +1147,42 @@ func TestExecuteWithParameter(t *testing.T) {
 			col3)
 	}
 	// Complex result
-	{
-		resp, err := tryToExecuteWithParameter(session, "MATCH (v:person {name: $p4.b}) WHERE v.person.age>$p2-3 and $p1==true RETURN v ORDER BY $p3[0] LIMIT $p2", params)
-		if err != nil {
-			t.Fatalf(err.Error())
-			return
-		}
-		assert.Equal(t, 1, resp.GetRowSize())
-		record, err := resp.GetRowValuesByIndex(0)
-		if err != nil {
-			t.Fatalf(err.Error())
-			return
-		}
-		valWrap, err := record.GetValueByIndex(0)
-		if err != nil {
-			t.Fatalf(err.Error())
-			return
-		}
-		node, err := valWrap.AsNode()
-		if err != nil {
-			t.Fatalf(err.Error())
-			return
-		}
-		assert.Equal(t,
-			"(\"Bob\" :student{interval: P1MT100.000020000S, name: \"Bob\"} "+
-				":person{age: 10, birthday: 2010-09-10T10:08:02.000000, book_num: 100, "+
-				"child_name: \"Hello Worl\", expend: 100.0, "+
-				"first_out_city: 1111, friends: 10, grade: 3, "+
-				"hobby: __NULL__, is_girl: false, "+
-				"morning: 07:10:00.000000, name: \"Bob\", "+
-				"property: 1000.0, start_school: 2017-09-10})",
-			node.String())
-	}
+	// FIXME(Aiee) uncomment this after https://github.com/vesoft-inc/nebula/issues/4877 is fixed
+	// {
+	// 	query := "MATCH (v:person {name: $p4.b}) WHERE v.person.age>$p2-3 and $p1==true RETURN v ORDER BY $p3[0] LIMIT $p2"
+	// 	resp, err := tryToExecuteWithParameter(session, query, params)
+	// 	if err != nil {
+	// 		t.Fatalf(err.Error())
+	// 		return
+	// 	}
+	// 	checkResultSet(t, query, resp)
+
+	// 	assert.Equal(t, 1, resp.GetRowSize())
+	// 	record, err := resp.GetRowValuesByIndex(0)
+	// 	if err != nil {
+	// 		t.Fatalf(err.Error())
+	// 		return
+	// 	}
+	// 	valWrap, err := record.GetValueByIndex(0)
+	// 	if err != nil {
+	// 		t.Fatalf(err.Error())
+	// 		return
+	// 	}
+	// 	node, err := valWrap.AsNode()
+	// 	if err != nil {
+	// 		t.Fatalf(err.Error())
+	// 		return
+	// 	}
+	// 	assert.Equal(t,
+	// 		"(\"Bob\" :student{interval: P1MT100.000020000S, name: \"Bob\"} "+
+	// 			":person{age: 10, birthday: 2010-09-10T10:08:02.000000, book_num: 100, "+
+	// 			"child_name: \"Hello Worl\", expend: 100.0, "+
+	// 			"first_out_city: 1111, friends: 10, grade: 3, "+
+	// 			"hobby: __NULL__, is_girl: false, "+
+	// 			"morning: 07:10:00.000000, name: \"Bob\", "+
+	// 			"property: 1000.0, start_school: 2017-09-10})",
+	// 		node.String())
+	// }
 }
 
 func TestReconnect(t *testing.T) {
@@ -1176,14 +1260,15 @@ func TestIpLookup(t *testing.T) {
 
 // Method used to check execution response
 func checkResultSet(t *testing.T, prefix string, err *ResultSet) {
+	t.Helper()
 	if !err.IsSucceed() {
 		t.Errorf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, err.GetErrorCode(), err.GetErrorMsg())
 	}
 }
 
-func checkConResp(t *testing.T, prefix string, err *graph.ExecutionResponse) {
+func checkConResp(prefix string, err *graph.ExecutionResponse) {
 	if IsError(err) {
-		t.Errorf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, err.ErrorCode, err.ErrorMsg)
+		log.Fatalf("%s, ErrorCode: %v, ErrorMsg: %s", prefix, err.ErrorCode, err.ErrorMsg)
 	}
 }
 
@@ -1315,12 +1400,73 @@ func loadTestData(t *testing.T, session *Session) {
 	checkResultSet(t, query, resultSet)
 }
 
-func dropSpace(t *testing.T, session *Session, spaceName string) {
-	query := fmt.Sprintf("DROP SPACE IF EXISTS %s;", spaceName)
-	resultSet, err := tryToExecute(session, query)
+// prepareSpace creates a space for test
+func prepareSpace(spaceName string) error {
+	hostAddress := HostAddress{Host: address, Port: port}
+	conn := newConnection(hostAddress)
+	testPoolConfig := GetDefaultConf()
+
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
 	if err != nil {
-		t.Fatalf(err.Error())
-		return
+		return fmt.Errorf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
-	checkResultSet(t, query, resultSet)
+
+	authResp, authErr := conn.authenticate(username, password)
+	if authErr != nil {
+		return fmt.Errorf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
+	}
+
+	if authResp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+		return fmt.Errorf("failed to authenticate, error code: %d, error msg: %s",
+			authResp.GetErrorCode(), authResp.GetErrorMsg())
+	}
+
+	sessionID := authResp.GetSessionID()
+
+	defer logoutAndClose(conn, sessionID)
+
+	query := fmt.Sprintf("CREATE SPACE IF NOT EXISTS"+
+		" %s(partition_num=32, replica_factor=1, vid_type = FIXED_STRING(30));", spaceName)
+	resp, err := conn.execute(sessionID, query)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	checkConResp(query, resp)
+	time.Sleep(5 * time.Second)
+
+	return nil
+}
+
+// dropSpace drops a space. The space name should be the same as the one created in prepareSpace
+func dropSpace(spaceName string) error {
+	hostAddress := HostAddress{Host: address, Port: port}
+	conn := newConnection(hostAddress)
+	testPoolConfig := GetDefaultConf()
+
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
+	if err != nil {
+		return fmt.Errorf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
+	}
+
+	authResp, authErr := conn.authenticate(username, password)
+	if authErr != nil {
+		return fmt.Errorf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
+	}
+
+	if authResp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
+		return fmt.Errorf("failed to authenticate, error code: %d, error msg: %s",
+			authResp.GetErrorCode(), authResp.GetErrorMsg())
+	}
+
+	sessionID := authResp.GetSessionID()
+
+	defer logoutAndClose(conn, sessionID)
+
+	query := fmt.Sprintf("DROP SPACE IF EXISTS %s;", spaceName)
+	resp, err := conn.execute(sessionID, query)
+	if err != nil {
+		return err
+	}
+	checkConResp(query, resp)
+	return nil
 }

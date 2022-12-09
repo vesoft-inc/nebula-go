@@ -30,6 +30,9 @@ type GraphStorageService interface {
   GetNeighbors(ctx context.Context, req *GetNeighborsRequest) (_r *GetNeighborsResponse, err error)
   // Parameters:
   //  - Req
+  GetDstBySrc(ctx context.Context, req *GetDstBySrcRequest) (_r *GetDstBySrcResponse, err error)
+  // Parameters:
+  //  - Req
   GetProps(ctx context.Context, req *GetPropRequest) (_r *GetPropResponse, err error)
   // Parameters:
   //  - Req
@@ -92,6 +95,9 @@ type GraphStorageServiceClientInterface interface {
   // Parameters:
   //  - Req
   GetNeighbors(req *GetNeighborsRequest) (_r *GetNeighborsResponse, err error)
+  // Parameters:
+  //  - Req
+  GetDstBySrc(req *GetDstBySrcRequest) (_r *GetDstBySrcResponse, err error)
   // Parameters:
   //  - Req
   GetProps(req *GetPropRequest) (_r *GetPropResponse, err error)
@@ -195,6 +201,26 @@ func (p *GraphStorageServiceClient) GetNeighbors(req *GetNeighborsRequest) (_r *
 func (p *GraphStorageServiceClient) recvGetNeighbors() (value *GetNeighborsResponse, err error) {
   var result GraphStorageServiceGetNeighborsResult
   err = p.CC.RecvMsg("getNeighbors", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceClient) GetDstBySrc(req *GetDstBySrcRequest) (_r *GetDstBySrcResponse, err error) {
+  args := GraphStorageServiceGetDstBySrcArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("getDstBySrc", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetDstBySrc()
+}
+
+
+func (p *GraphStorageServiceClient) recvGetDstBySrc() (value *GetDstBySrcResponse, err error) {
+  var result GraphStorageServiceGetDstBySrcResult
+  err = p.CC.RecvMsg("getDstBySrc", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -634,6 +660,28 @@ func (p *GraphStorageServiceThreadsafeClient) GetNeighbors(req *GetNeighborsRequ
 func (p *GraphStorageServiceThreadsafeClient) recvGetNeighbors() (value *GetNeighborsResponse, err error) {
   var result GraphStorageServiceGetNeighborsResult
   err = p.CC.RecvMsg("getNeighbors", &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
+func (p *GraphStorageServiceThreadsafeClient) GetDstBySrc(req *GetDstBySrcRequest) (_r *GetDstBySrcResponse, err error) {
+  p.Mu.Lock()
+  defer p.Mu.Unlock()
+  args := GraphStorageServiceGetDstBySrcArgs{
+    Req : req,
+  }
+  err = p.CC.SendMsg("getDstBySrc", &args, thrift.CALL)
+  if err != nil { return }
+  return p.recvGetDstBySrc()
+}
+
+
+func (p *GraphStorageServiceThreadsafeClient) recvGetDstBySrc() (value *GetDstBySrcResponse, err error) {
+  var result GraphStorageServiceGetDstBySrcResult
+  err = p.CC.RecvMsg("getDstBySrc", &result)
   if err != nil { return }
 
   return result.GetSuccess(), nil
@@ -1093,6 +1141,19 @@ func (p *GraphStorageServiceChannelClient) GetNeighbors(ctx context.Context, req
 
 // Parameters:
 //  - Req
+func (p *GraphStorageServiceChannelClient) GetDstBySrc(ctx context.Context, req *GetDstBySrcRequest) (_r *GetDstBySrcResponse, err error) {
+  args := GraphStorageServiceGetDstBySrcArgs{
+    Req : req,
+  }
+  var result GraphStorageServiceGetDstBySrcResult
+  err = p.RequestChannel.Call(ctx, "getDstBySrc", &args, &result)
+  if err != nil { return }
+
+  return result.GetSuccess(), nil
+}
+
+// Parameters:
+//  - Req
 func (p *GraphStorageServiceChannelClient) GetProps(ctx context.Context, req *GetPropRequest) (_r *GetPropResponse, err error) {
   args := GraphStorageServiceGetPropsArgs{
     Req : req,
@@ -1369,48 +1430,50 @@ func (p *GraphStorageServiceProcessor) FunctionServiceMap() map[string]string {
 }
 
 func NewGraphStorageServiceProcessor(handler GraphStorageService) *GraphStorageServiceProcessor {
-  self97 := &GraphStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext), functionServiceMap:make(map[string]string)}
-  self97.processorMap["getNeighbors"] = &graphStorageServiceProcessorGetNeighbors{handler:handler}
-  self97.processorMap["getProps"] = &graphStorageServiceProcessorGetProps{handler:handler}
-  self97.processorMap["addVertices"] = &graphStorageServiceProcessorAddVertices{handler:handler}
-  self97.processorMap["addEdges"] = &graphStorageServiceProcessorAddEdges{handler:handler}
-  self97.processorMap["deleteEdges"] = &graphStorageServiceProcessorDeleteEdges{handler:handler}
-  self97.processorMap["deleteVertices"] = &graphStorageServiceProcessorDeleteVertices{handler:handler}
-  self97.processorMap["deleteTags"] = &graphStorageServiceProcessorDeleteTags{handler:handler}
-  self97.processorMap["updateVertex"] = &graphStorageServiceProcessorUpdateVertex{handler:handler}
-  self97.processorMap["updateEdge"] = &graphStorageServiceProcessorUpdateEdge{handler:handler}
-  self97.processorMap["scanVertex"] = &graphStorageServiceProcessorScanVertex{handler:handler}
-  self97.processorMap["scanEdge"] = &graphStorageServiceProcessorScanEdge{handler:handler}
-  self97.processorMap["getUUID"] = &graphStorageServiceProcessorGetUUID{handler:handler}
-  self97.processorMap["lookupIndex"] = &graphStorageServiceProcessorLookupIndex{handler:handler}
-  self97.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
-  self97.processorMap["chainUpdateEdge"] = &graphStorageServiceProcessorChainUpdateEdge{handler:handler}
-  self97.processorMap["chainAddEdges"] = &graphStorageServiceProcessorChainAddEdges{handler:handler}
-  self97.processorMap["chainDeleteEdges"] = &graphStorageServiceProcessorChainDeleteEdges{handler:handler}
-  self97.processorMap["get"] = &graphStorageServiceProcessorGet{handler:handler}
-  self97.processorMap["put"] = &graphStorageServiceProcessorPut{handler:handler}
-  self97.processorMap["remove"] = &graphStorageServiceProcessorRemove{handler:handler}
-  self97.functionServiceMap["getNeighbors"] = "GraphStorageService"
-  self97.functionServiceMap["getProps"] = "GraphStorageService"
-  self97.functionServiceMap["addVertices"] = "GraphStorageService"
-  self97.functionServiceMap["addEdges"] = "GraphStorageService"
-  self97.functionServiceMap["deleteEdges"] = "GraphStorageService"
-  self97.functionServiceMap["deleteVertices"] = "GraphStorageService"
-  self97.functionServiceMap["deleteTags"] = "GraphStorageService"
-  self97.functionServiceMap["updateVertex"] = "GraphStorageService"
-  self97.functionServiceMap["updateEdge"] = "GraphStorageService"
-  self97.functionServiceMap["scanVertex"] = "GraphStorageService"
-  self97.functionServiceMap["scanEdge"] = "GraphStorageService"
-  self97.functionServiceMap["getUUID"] = "GraphStorageService"
-  self97.functionServiceMap["lookupIndex"] = "GraphStorageService"
-  self97.functionServiceMap["lookupAndTraverse"] = "GraphStorageService"
-  self97.functionServiceMap["chainUpdateEdge"] = "GraphStorageService"
-  self97.functionServiceMap["chainAddEdges"] = "GraphStorageService"
-  self97.functionServiceMap["chainDeleteEdges"] = "GraphStorageService"
-  self97.functionServiceMap["get"] = "GraphStorageService"
-  self97.functionServiceMap["put"] = "GraphStorageService"
-  self97.functionServiceMap["remove"] = "GraphStorageService"
-  return self97
+  self101 := &GraphStorageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.ProcessorFunctionContext), functionServiceMap:make(map[string]string)}
+  self101.processorMap["getNeighbors"] = &graphStorageServiceProcessorGetNeighbors{handler:handler}
+  self101.processorMap["getDstBySrc"] = &graphStorageServiceProcessorGetDstBySrc{handler:handler}
+  self101.processorMap["getProps"] = &graphStorageServiceProcessorGetProps{handler:handler}
+  self101.processorMap["addVertices"] = &graphStorageServiceProcessorAddVertices{handler:handler}
+  self101.processorMap["addEdges"] = &graphStorageServiceProcessorAddEdges{handler:handler}
+  self101.processorMap["deleteEdges"] = &graphStorageServiceProcessorDeleteEdges{handler:handler}
+  self101.processorMap["deleteVertices"] = &graphStorageServiceProcessorDeleteVertices{handler:handler}
+  self101.processorMap["deleteTags"] = &graphStorageServiceProcessorDeleteTags{handler:handler}
+  self101.processorMap["updateVertex"] = &graphStorageServiceProcessorUpdateVertex{handler:handler}
+  self101.processorMap["updateEdge"] = &graphStorageServiceProcessorUpdateEdge{handler:handler}
+  self101.processorMap["scanVertex"] = &graphStorageServiceProcessorScanVertex{handler:handler}
+  self101.processorMap["scanEdge"] = &graphStorageServiceProcessorScanEdge{handler:handler}
+  self101.processorMap["getUUID"] = &graphStorageServiceProcessorGetUUID{handler:handler}
+  self101.processorMap["lookupIndex"] = &graphStorageServiceProcessorLookupIndex{handler:handler}
+  self101.processorMap["lookupAndTraverse"] = &graphStorageServiceProcessorLookupAndTraverse{handler:handler}
+  self101.processorMap["chainUpdateEdge"] = &graphStorageServiceProcessorChainUpdateEdge{handler:handler}
+  self101.processorMap["chainAddEdges"] = &graphStorageServiceProcessorChainAddEdges{handler:handler}
+  self101.processorMap["chainDeleteEdges"] = &graphStorageServiceProcessorChainDeleteEdges{handler:handler}
+  self101.processorMap["get"] = &graphStorageServiceProcessorGet{handler:handler}
+  self101.processorMap["put"] = &graphStorageServiceProcessorPut{handler:handler}
+  self101.processorMap["remove"] = &graphStorageServiceProcessorRemove{handler:handler}
+  self101.functionServiceMap["getNeighbors"] = "GraphStorageService"
+  self101.functionServiceMap["getDstBySrc"] = "GraphStorageService"
+  self101.functionServiceMap["getProps"] = "GraphStorageService"
+  self101.functionServiceMap["addVertices"] = "GraphStorageService"
+  self101.functionServiceMap["addEdges"] = "GraphStorageService"
+  self101.functionServiceMap["deleteEdges"] = "GraphStorageService"
+  self101.functionServiceMap["deleteVertices"] = "GraphStorageService"
+  self101.functionServiceMap["deleteTags"] = "GraphStorageService"
+  self101.functionServiceMap["updateVertex"] = "GraphStorageService"
+  self101.functionServiceMap["updateEdge"] = "GraphStorageService"
+  self101.functionServiceMap["scanVertex"] = "GraphStorageService"
+  self101.functionServiceMap["scanEdge"] = "GraphStorageService"
+  self101.functionServiceMap["getUUID"] = "GraphStorageService"
+  self101.functionServiceMap["lookupIndex"] = "GraphStorageService"
+  self101.functionServiceMap["lookupAndTraverse"] = "GraphStorageService"
+  self101.functionServiceMap["chainUpdateEdge"] = "GraphStorageService"
+  self101.functionServiceMap["chainAddEdges"] = "GraphStorageService"
+  self101.functionServiceMap["chainDeleteEdges"] = "GraphStorageService"
+  self101.functionServiceMap["get"] = "GraphStorageService"
+  self101.functionServiceMap["put"] = "GraphStorageService"
+  self101.functionServiceMap["remove"] = "GraphStorageService"
+  return self101
 }
 
 type graphStorageServiceProcessorGetNeighbors struct {
@@ -1460,6 +1523,61 @@ func (p *graphStorageServiceProcessorGetNeighbors) RunContext(ctx context.Contex
     switch err.(type) {
     default:
       x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getNeighbors: " + err.Error())
+      return x, x
+    }
+  } else {
+    result.Success = retval
+  }
+  return &result, nil
+}
+
+type graphStorageServiceProcessorGetDstBySrc struct {
+  handler GraphStorageService
+}
+
+func (p *GraphStorageServiceGetDstBySrcResult) Exception() thrift.WritableException {
+  if p == nil { return nil }
+  return nil
+}
+
+func (p *graphStorageServiceProcessorGetDstBySrc) Read(iprot thrift.Protocol) (thrift.Struct, thrift.Exception) {
+  args := GraphStorageServiceGetDstBySrcArgs{}
+  if err := args.Read(iprot); err != nil {
+    return nil, err
+  }
+  iprot.ReadMessageEnd()
+  return &args, nil
+}
+
+func (p *graphStorageServiceProcessorGetDstBySrc) Write(seqId int32, result thrift.WritableStruct, oprot thrift.Protocol) (err thrift.Exception) {
+  var err2 error
+  messageType := thrift.REPLY
+  switch result.(type) {
+  case thrift.ApplicationException:
+    messageType = thrift.EXCEPTION
+  }
+  if err2 = oprot.WriteMessageBegin("getDstBySrc", messageType, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  return err
+}
+
+func (p *graphStorageServiceProcessorGetDstBySrc) RunContext(ctx context.Context, argStruct thrift.Struct) (thrift.WritableStruct, thrift.ApplicationException) {
+  args := argStruct.(*GraphStorageServiceGetDstBySrcArgs)
+  var result GraphStorageServiceGetDstBySrcResult
+  if retval, err := p.handler.GetDstBySrc(ctx, args.Req); err != nil {
+    switch err.(type) {
+    default:
+      x := thrift.NewApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getDstBySrc: " + err.Error())
       return x, x
     }
   } else {
@@ -2766,6 +2884,258 @@ func (p *GraphStorageServiceGetNeighborsResult) String() string {
     successVal = fmt.Sprintf("%v", p.Success)
   }
   return fmt.Sprintf("GraphStorageServiceGetNeighborsResult({Success:%s})", successVal)
+}
+
+// Attributes:
+//  - Req
+type GraphStorageServiceGetDstBySrcArgs struct {
+  thrift.IRequest
+  Req *GetDstBySrcRequest `thrift:"req,1" db:"req" json:"req"`
+}
+
+func NewGraphStorageServiceGetDstBySrcArgs() *GraphStorageServiceGetDstBySrcArgs {
+  return &GraphStorageServiceGetDstBySrcArgs{
+    Req: NewGetDstBySrcRequest(),
+  }
+}
+
+var GraphStorageServiceGetDstBySrcArgs_Req_DEFAULT *GetDstBySrcRequest
+func (p *GraphStorageServiceGetDstBySrcArgs) GetReq() *GetDstBySrcRequest {
+  if !p.IsSetReq() {
+    return GraphStorageServiceGetDstBySrcArgs_Req_DEFAULT
+  }
+return p.Req
+}
+func (p *GraphStorageServiceGetDstBySrcArgs) IsSetReq() bool {
+  return p != nil && p.Req != nil
+}
+
+type GraphStorageServiceGetDstBySrcArgsBuilder struct {
+  obj *GraphStorageServiceGetDstBySrcArgs
+}
+
+func NewGraphStorageServiceGetDstBySrcArgsBuilder() *GraphStorageServiceGetDstBySrcArgsBuilder{
+  return &GraphStorageServiceGetDstBySrcArgsBuilder{
+    obj: NewGraphStorageServiceGetDstBySrcArgs(),
+  }
+}
+
+func (p GraphStorageServiceGetDstBySrcArgsBuilder) Emit() *GraphStorageServiceGetDstBySrcArgs{
+  return &GraphStorageServiceGetDstBySrcArgs{
+    Req: p.obj.Req,
+  }
+}
+
+func (g *GraphStorageServiceGetDstBySrcArgsBuilder) Req(req *GetDstBySrcRequest) *GraphStorageServiceGetDstBySrcArgsBuilder {
+  g.obj.Req = req
+  return g
+}
+
+func (g *GraphStorageServiceGetDstBySrcArgs) SetReq(req *GetDstBySrcRequest) *GraphStorageServiceGetDstBySrcArgs {
+  g.Req = req
+  return g
+}
+
+func (p *GraphStorageServiceGetDstBySrcArgs) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceGetDstBySrcArgs)  ReadField1(iprot thrift.Protocol) error {
+  p.Req = NewGetDstBySrcRequest()
+  if err := p.Req.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Req), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceGetDstBySrcArgs) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("getDstBySrc_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServiceGetDstBySrcArgs) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:req: ", p), err) }
+  if err := p.Req.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Req), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:req: ", p), err) }
+  return err
+}
+
+func (p *GraphStorageServiceGetDstBySrcArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var reqVal string
+  if p.Req == nil {
+    reqVal = "<nil>"
+  } else {
+    reqVal = fmt.Sprintf("%v", p.Req)
+  }
+  return fmt.Sprintf("GraphStorageServiceGetDstBySrcArgs({Req:%s})", reqVal)
+}
+
+// Attributes:
+//  - Success
+type GraphStorageServiceGetDstBySrcResult struct {
+  thrift.IResponse
+  Success *GetDstBySrcResponse `thrift:"success,0,optional" db:"success" json:"success,omitempty"`
+}
+
+func NewGraphStorageServiceGetDstBySrcResult() *GraphStorageServiceGetDstBySrcResult {
+  return &GraphStorageServiceGetDstBySrcResult{}
+}
+
+var GraphStorageServiceGetDstBySrcResult_Success_DEFAULT *GetDstBySrcResponse
+func (p *GraphStorageServiceGetDstBySrcResult) GetSuccess() *GetDstBySrcResponse {
+  if !p.IsSetSuccess() {
+    return GraphStorageServiceGetDstBySrcResult_Success_DEFAULT
+  }
+return p.Success
+}
+func (p *GraphStorageServiceGetDstBySrcResult) IsSetSuccess() bool {
+  return p != nil && p.Success != nil
+}
+
+type GraphStorageServiceGetDstBySrcResultBuilder struct {
+  obj *GraphStorageServiceGetDstBySrcResult
+}
+
+func NewGraphStorageServiceGetDstBySrcResultBuilder() *GraphStorageServiceGetDstBySrcResultBuilder{
+  return &GraphStorageServiceGetDstBySrcResultBuilder{
+    obj: NewGraphStorageServiceGetDstBySrcResult(),
+  }
+}
+
+func (p GraphStorageServiceGetDstBySrcResultBuilder) Emit() *GraphStorageServiceGetDstBySrcResult{
+  return &GraphStorageServiceGetDstBySrcResult{
+    Success: p.obj.Success,
+  }
+}
+
+func (g *GraphStorageServiceGetDstBySrcResultBuilder) Success(success *GetDstBySrcResponse) *GraphStorageServiceGetDstBySrcResultBuilder {
+  g.obj.Success = success
+  return g
+}
+
+func (g *GraphStorageServiceGetDstBySrcResult) SetSuccess(success *GetDstBySrcResponse) *GraphStorageServiceGetDstBySrcResult {
+  g.Success = success
+  return g
+}
+
+func (p *GraphStorageServiceGetDstBySrcResult) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceGetDstBySrcResult)  ReadField0(iprot thrift.Protocol) error {
+  p.Success = NewGetDstBySrcResponse()
+  if err := p.Success.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Success), err)
+  }
+  return nil
+}
+
+func (p *GraphStorageServiceGetDstBySrcResult) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("getDstBySrc_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField0(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GraphStorageServiceGetDstBySrcResult) writeField0(oprot thrift.Protocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := p.Success.Write(oprot); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Success), err)
+    }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *GraphStorageServiceGetDstBySrcResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  var successVal string
+  if p.Success == nil {
+    successVal = "<nil>"
+  } else {
+    successVal = fmt.Sprintf("%v", p.Success)
+  }
+  return fmt.Sprintf("GraphStorageServiceGetDstBySrcResult({Success:%s})", successVal)
 }
 
 // Attributes:
