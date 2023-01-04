@@ -1147,7 +1147,6 @@ func TestExecuteWithParameter(t *testing.T) {
 			col3)
 	}
 	// Complex result
-	// FIXME(Aiee) uncomment this after https://github.com/vesoft-inc/nebula/issues/4877 is fixed
 	{
 		query := "MATCH (v:person {name: $p4.b}) WHERE v.person.age>$p2-3 and $p1==true RETURN v ORDER BY $p3[0] LIMIT $p2"
 		resp, err := tryToExecuteWithParameter(session, query, params)
