@@ -1148,41 +1148,41 @@ func TestExecuteWithParameter(t *testing.T) {
 	}
 	// Complex result
 	// FIXME(Aiee) uncomment this after https://github.com/vesoft-inc/nebula/issues/4877 is fixed
-	// {
-	// 	query := "MATCH (v:person {name: $p4.b}) WHERE v.person.age>$p2-3 and $p1==true RETURN v ORDER BY $p3[0] LIMIT $p2"
-	// 	resp, err := tryToExecuteWithParameter(session, query, params)
-	// 	if err != nil {
-	// 		t.Fatalf(err.Error())
-	// 		return
-	// 	}
-	// 	checkResultSet(t, query, resp)
+	{
+		query := "MATCH (v:person {name: $p4.b}) WHERE v.person.age>$p2-3 and $p1==true RETURN v ORDER BY $p3[0] LIMIT $p2"
+		resp, err := tryToExecuteWithParameter(session, query, params)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		checkResultSet(t, query, resp)
 
-	// 	assert.Equal(t, 1, resp.GetRowSize())
-	// 	record, err := resp.GetRowValuesByIndex(0)
-	// 	if err != nil {
-	// 		t.Fatalf(err.Error())
-	// 		return
-	// 	}
-	// 	valWrap, err := record.GetValueByIndex(0)
-	// 	if err != nil {
-	// 		t.Fatalf(err.Error())
-	// 		return
-	// 	}
-	// 	node, err := valWrap.AsNode()
-	// 	if err != nil {
-	// 		t.Fatalf(err.Error())
-	// 		return
-	// 	}
-	// 	assert.Equal(t,
-	// 		"(\"Bob\" :student{interval: P1MT100.000020000S, name: \"Bob\"} "+
-	// 			":person{age: 10, birthday: 2010-09-10T10:08:02.000000, book_num: 100, "+
-	// 			"child_name: \"Hello Worl\", expend: 100.0, "+
-	// 			"first_out_city: 1111, friends: 10, grade: 3, "+
-	// 			"hobby: __NULL__, is_girl: false, "+
-	// 			"morning: 07:10:00.000000, name: \"Bob\", "+
-	// 			"property: 1000.0, start_school: 2017-09-10})",
-	// 		node.String())
-	// }
+		assert.Equal(t, 1, resp.GetRowSize())
+		record, err := resp.GetRowValuesByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		valWrap, err := record.GetValueByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		node, err := valWrap.AsNode()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t,
+			"(\"Bob\" :student{interval: P1MT100.000020000S, name: \"Bob\"} "+
+				":person{age: 10, birthday: 2010-09-10T10:08:02.000000, book_num: 100, "+
+				"child_name: \"Hello Worl\", expend: 100.0, "+
+				"first_out_city: 1111, friends: 10, grade: 3, "+
+				"hobby: __NULL__, is_girl: false, "+
+				"morning: 07:10:00.000000, name: \"Bob\", "+
+				"property: 1000.0, start_school: 2017-09-10})",
+			node.String())
+	}
 }
 
 func TestReconnect(t *testing.T) {
