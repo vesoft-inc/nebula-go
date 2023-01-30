@@ -9,16 +9,19 @@
 package nebula_go
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"math"
 	"net"
+	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
 	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
+	"golang.org/x/net/http2"
 )
 
 type connection struct {
@@ -26,6 +29,7 @@ type connection struct {
 	timeout      time.Duration
 	returnedAt   time.Time // the connection was created or returned.
 	sslConfig    *tls.Config
+	useHTTP2     bool
 	graph        *graph.GraphServiceClient
 }
 
@@ -41,28 +45,63 @@ func newConnection(severAddress HostAddress) *connection {
 
 // open opens a transport for the connection
 // if sslConfig is not nil, an SSL transport will be created
-func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config) error {
+func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config, useHTTP2 bool) error {
 	ip := hostAddress.Host
 	port := hostAddress.Port
 	newAdd := net.JoinHostPort(ip, strconv.Itoa(port))
 	cn.timeout = timeout
-	bufferSize := 128 << 10
-	frameMaxLength := uint32(math.MaxUint32)
+	cn.useHTTP2 = useHTTP2
 
-	var err error
-	var sock thrift.Transport
-	if sslConfig != nil {
-		sock, err = thrift.NewSSLSocketTimeout(newAdd, sslConfig, timeout)
+	var (
+		err       error
+		transport thrift.Transport
+	)
+	if useHTTP2 {
+		if sslConfig != nil {
+			transport, err = thrift.NewHTTPPostClientWithOptions("https://"+newAdd, thrift.HTTPClientOptions{
+				Client: &http.Client{
+					Transport: &http2.Transport{
+						TLSClientConfig: sslConfig,
+					},
+				},
+			})
+		} else {
+			transport, err = thrift.NewHTTPPostClientWithOptions("http://"+newAdd, thrift.HTTPClientOptions{
+				Client: &http.Client{
+					Transport: &http2.Transport{
+						// So http2.Transport doesn't complain the URL scheme isn't 'https'
+						AllowHTTP: true,
+						// Pretend we are dialing a TLS endpoint. (Note, we ignore the passed tls.Config)
+						DialTLSContext: func(ctx context.Context, network, addr string, cfg *tls.Config) (net.Conn, error) {
+							_ = cfg
+							var d net.Dialer
+							return d.DialContext(ctx, network, addr)
+						},
+					},
+				},
+			})
+		}
+		if err != nil {
+			return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
+		}
 	} else {
-		sock, err = thrift.NewSocket(thrift.SocketAddr(newAdd), thrift.SocketTimeout(timeout))
-	}
-	if err != nil {
-		return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
+		bufferSize := 128 << 10
+		frameMaxLength := uint32(math.MaxUint32)
+
+		var sock thrift.Transport
+		if sslConfig != nil {
+			sock, err = thrift.NewSSLSocketTimeout(newAdd, sslConfig, timeout)
+		} else {
+			sock, err = thrift.NewSocket(thrift.SocketAddr(newAdd), thrift.SocketTimeout(timeout))
+		}
+		if err != nil {
+			return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
+		}
+		// Set transport buffer
+		bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
+		transport = thrift.NewFramedTransportMaxLength(bufferedTranFactory.GetTransport(sock), frameMaxLength)
 	}
 
-	// Set transport buffer
-	bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
-	transport := thrift.NewFramedTransportMaxLength(bufferedTranFactory.GetTransport(sock), frameMaxLength)
 	pf := thrift.NewBinaryProtocolFactoryDefault()
 	cn.graph = graph.NewGraphServiceClientFactory(transport, pf)
 	if err = cn.graph.Open(); err != nil {
@@ -93,7 +132,7 @@ func (cn *connection) verifyClientVersion() error {
 // When the timeout occurs, the connection will be reopened to avoid the impact of the message.
 func (cn *connection) reopen() error {
 	cn.close()
-	return cn.open(cn.severAddress, cn.timeout, cn.sslConfig)
+	return cn.open(cn.severAddress, cn.timeout, cn.sslConfig, cn.useHTTP2)
 }
 
 // Authenticate
