@@ -10,7 +10,6 @@ package nebula_go
 
 import (
 	"container/list"
-	"crypto/tls"
 	"fmt"
 	"sync"
 	"time"
@@ -43,7 +42,6 @@ type SessionPool struct {
 	closed         bool
 	cleanerChan    chan struct{} //notify when pool is close
 	rwLock         sync.RWMutex
-	sslConfig      *tls.Config
 }
 
 // NewSessionPool creates a new session pool with the given configs.
@@ -70,7 +68,7 @@ func (pool *SessionPool) init() error {
 	pool.rwLock.Lock()
 	defer pool.rwLock.Unlock()
 	// check the hosts status
-	if err := checkAddresses(pool.conf.timeOut, pool.conf.serviceAddrs, pool.sslConfig); err != nil {
+	if err := checkAddresses(pool.conf.timeOut, pool.conf.serviceAddrs, pool.conf.sslConfig, pool.conf.useHTTP2); err != nil {
 		return fmt.Errorf("failed to initialize the session pool, %s", err.Error())
 	}
 
@@ -146,62 +144,64 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 
 // ExecuteJson returns the result of the given query as a json string
 // Date and Datetime will be returned in UTC
+//
 //	JSON struct:
-// {
-//     "results":[
-//         {
-//             "columns":[
-//             ],
-//             "data":[
-//                 {
-//                     "row":[
-//                         "row-data"
-//                     ],
-//                     "meta":[
-//                         "metadata"
-//                     ]
-//                 }
-//             ],
-//             "latencyInUs":0,
-//             "spaceName":"",
-//             "planDesc ":{
-//                 "planNodeDescs":[
-//                     {
-//                         "name":"",
-//                         "id":0,
-//                         "outputVar":"",
-//                         "description":{
-//                             "key":""
-//                         },
-//                         "profiles":[
-//                             {
-//                                 "rows":1,
-//                                 "execDurationInUs":0,
-//                                 "totalDurationInUs":0,
-//                                 "otherStats":{}
-//                             }
-//                         ],
-//                         "branchInfo":{
-//                             "isDoBranch":false,
-//                             "conditionNodeId":-1
-//                         },
-//                         "dependencies":[]
-//                     }
-//                 ],
-//                 "nodeIndexMap":{},
-//                 "format":"",
-//                 "optimize_time_in_us":0
-//             },
-//             "comment ":""
-//         }
-//     ],
-//     "errors":[
-//         {
-//       		"code": 0,
-//       		"message": ""
-//         }
-//     ]
-// }
+//
+//	{
+//	    "results":[
+//	        {
+//	            "columns":[
+//	            ],
+//	            "data":[
+//	                {
+//	                    "row":[
+//	                        "row-data"
+//	                    ],
+//	                    "meta":[
+//	                        "metadata"
+//	                    ]
+//	                }
+//	            ],
+//	            "latencyInUs":0,
+//	            "spaceName":"",
+//	            "planDesc ":{
+//	                "planNodeDescs":[
+//	                    {
+//	                        "name":"",
+//	                        "id":0,
+//	                        "outputVar":"",
+//	                        "description":{
+//	                            "key":""
+//	                        },
+//	                        "profiles":[
+//	                            {
+//	                                "rows":1,
+//	                                "execDurationInUs":0,
+//	                                "totalDurationInUs":0,
+//	                                "otherStats":{}
+//	                            }
+//	                        ],
+//	                        "branchInfo":{
+//	                            "isDoBranch":false,
+//	                            "conditionNodeId":-1
+//	                        },
+//	                        "dependencies":[]
+//	                    }
+//	                ],
+//	                "nodeIndexMap":{},
+//	                "format":"",
+//	                "optimize_time_in_us":0
+//	            },
+//	            "comment ":""
+//	        }
+//	    ],
+//	    "errors":[
+//	        {
+//	      		"code": 0,
+//	      		"message": ""
+//	        }
+//	    ]
+//	}
 func (pool *SessionPool) ExecuteJson(stmt string) ([]byte, error) {
 	return pool.ExecuteJsonWithParameter(stmt, map[string]interface{}{})
 }
@@ -209,7 +209,7 @@ func (pool *SessionPool) ExecuteJson(stmt string) ([]byte, error) {
 // ExecuteJson returns the result of the given query as a json string
 // Date and Datetime will be returned in UTC
 // The result is a JSON string in the same format as ExecuteJson()
-//TODO(Aiee) check the space name
+// TODO(Aiee) check the space name
 func (pool *SessionPool) ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error) {
 	return nil, fmt.Errorf("not implemented")
 
@@ -293,12 +293,13 @@ func (pool *SessionPool) newSession() (*Session, error) {
 		severAddress: graphAddr,
 		timeout:      0 * time.Millisecond,
 		returnedAt:   time.Now(),
-		sslConfig:    nil,
+		sslConfig:    pool.conf.sslConfig,
+		useHTTP2:     pool.conf.useHTTP2,
 		graph:        nil,
 	}
 
 	// open a new connection
-	if err := cn.open(cn.severAddress, pool.conf.timeOut, nil); err != nil {
+	if err := cn.open(cn.severAddress, pool.conf.timeOut, pool.conf.sslConfig, pool.conf.useHTTP2); err != nil {
 		return nil, fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
 	}
 

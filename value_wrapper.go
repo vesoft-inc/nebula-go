@@ -301,10 +301,10 @@ func (valWrap ValueWrapper) GetType() string {
 //
 // Maps in the output will be sorted by key value in alphabetical order.
 //
-//  For vetex, the output is in form (vid: tagName{propKey: propVal, propKey2, propVal2}),
-//  For edge, the output is in form (SrcVid)-[name]->(DstVid)@Ranking{prop1: val1, prop2: val2}
-//  where arrow direction depends on edgeType.
-//  For path, the output is in form (v1)-[name@edgeRanking]->(v2)-[name@edgeRanking]->(v3)
+//	For vetex, the output is in form (vid: tagName{propKey: propVal, propKey2, propVal2}),
+//	For edge, the output is in form (SrcVid)-[name]->(DstVid)@Ranking{prop1: val1, prop2: val2}
+//	where arrow direction depends on edgeType.
+//	For path, the output is in form (v1)-[name@edgeRanking]->(v2)-[name@edgeRanking]->(v3)
 //
 // For time, and dateTime, String returns the value calculated using the timezone offset
 // from graph service by default.
