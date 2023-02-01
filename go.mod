@@ -8,5 +8,4 @@ require (
 	golang.org/x/net v0.5.0
 )
 
-// TODO: When confirmed, fork it to vesoft-inc.
-replace github.com/facebook/fbthrift => github.com/veezhang/fbthrift v0.0.0-20230130031010-dc2d376142c6
+replace github.com/facebook/fbthrift => github.com/vesoft-inc/fbthrift v0.0.0-20230201034936-5c5dd72a96c2
