@@ -9,6 +9,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 
 	nebula "github.com/vesoft-inc/nebula-go/v3"
@@ -21,6 +22,8 @@ const (
 	port     = 3699
 	username = "root"
 	password = "nebula"
+	useSSL   = false
+	useHTTP2 = false
 )
 
 // Initialize logger
@@ -31,9 +34,24 @@ func main() {
 	hostList := []nebula.HostAddress{hostAddress}
 	// Create configs for connection pool using default values
 	testPoolConfig := nebula.GetDefaultConf()
+	testPoolConfig.UseHTTP2 = useHTTP2
+
+	var sslConfig *tls.Config
+	if useSSL {
+		var err error
+		sslConfig, err = nebula.GetDefaultSSLConfig(
+			"./nebula-docker-compose/secrets/test.ca.pem",
+			"./nebula-docker-compose/secrets/test.client.crt",
+			"./nebula-docker-compose/secrets/test.client.key",
+		)
+		if err != nil {
+			log.Fatal("Fail to create ssl config")
+		}
+		sslConfig.InsecureSkipVerify = true
+	}
 
 	// Initialize connection pool
-	pool, err := nebula.NewConnectionPool(hostList, testPoolConfig, log)
+	pool, err := nebula.NewSslConnectionPool(hostList, testPoolConfig, sslConfig, log)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
 	}
