@@ -11,7 +11,6 @@ package nebula_go
 import (
 	"crypto/tls"
 	"fmt"
-	"math"
 	"net"
 	"strconv"
 	"time"
@@ -47,7 +46,6 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslCo
 	newAdd := net.JoinHostPort(ip, strconv.Itoa(port))
 	cn.timeout = timeout
 	bufferSize := 128 << 10
-	frameMaxLength := uint32(math.MaxUint32)
 
 	var err error
 	var sock thrift.Transport
@@ -60,10 +58,11 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslCo
 		return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
 	}
 
-	// Set transport buffer
+	// Set transport
 	bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
-	transport := thrift.NewFramedTransportMaxLength(bufferedTranFactory.GetTransport(sock), frameMaxLength)
-	pf := thrift.NewBinaryProtocolFactoryDefault()
+	transport := thrift.NewHeaderTransport(bufferedTranFactory.GetTransport(sock))
+	pf := thrift.NewHeaderProtocolFactory()
+
 	cn.graph = graph.NewGraphServiceClientFactory(transport, pf)
 	if err = cn.graph.Open(); err != nil {
 		return fmt.Errorf("failed to open transport, error: %s", err.Error())
