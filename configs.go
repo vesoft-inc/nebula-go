@@ -118,7 +118,7 @@ type SessionPoolConf struct {
 	hostIndex            int           // index of the host in ServiceAddrs that the next new session will connect to
 	spaceName            string        // The space name that all sessions in the pool are bound to
 	sslConfig            *tls.Config   // Optional SSL config for the connection
-	retryGetSessionTimes int           // The max times to retry get session from pool executing a single query
+	retryGetSessionTimes int           // The max times to retry get new session when executing a query
 
 	// Basic pool configs
 	// Socket timeout and Socket connection timeout, unit: seconds
@@ -148,7 +148,7 @@ func NewSessionPoolConf(
 		password:             password,
 		serviceAddrs:         serviceAddrs,
 		spaceName:            spaceName,
-		retryGetSessionTimes: 0,
+		retryGetSessionTimes: 1,
 		timeOut:              0 * time.Millisecond,
 		idleTime:             0 * time.Millisecond,
 		maxSize:              30,
