@@ -11,10 +11,12 @@ package nebula_go
 import (
 	"container/list"
 	"fmt"
+	"strconv"
 	"sync"
 	"time"
 
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
+	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
 
 // SessionPool is a pool that manages sessions internally.
@@ -117,7 +119,15 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 	}
 
 	// Execute the query
-	resp, err := session.connection.executeWithParameter(session.sessionID, stmt, paramsMap)
+	execFunc := func(s *Session) (*graph.ExecutionResponse, error) {
+		resp, err := s.connection.executeWithParameter(s.sessionID, stmt, paramsMap)
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	}
+
+	resp, err := pool.executeWithRetry(session, execFunc, pool.conf.retryGetSessionTimes)
 	if err != nil {
 		return nil, err
 	}
@@ -382,6 +392,42 @@ func (pool *SessionPool) getIdleSession() (*Session, error) {
 	// There is no available session in the pool and the total session count has reached the limit
 	return nil, fmt.Errorf("failed to get session: no session available in the" +
 		" session pool and the total session count has reached the limit")
+}
+
+// retryGetSession tries to get a session from the pool for retry times.
+func (pool *SessionPool) executeWithRetry(session *Session, f func(*Session) (*graph.ExecutionResponse, error),
+	retry int) (*graph.ExecutionResponse, error) {
+	resp, err := f(session)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.ErrorCode == nebula.ErrorCode_SUCCEEDED {
+		return resp, nil
+	} else if ErrorCode(resp.ErrorCode) != ErrorCode_E_SESSION_INVALID { // only retry when the session is invalid
+		return resp, err
+	}
+
+	// If the session is invalid, close it and get a new session
+	for i := 0; i < retry; i++ {
+		pool.log.Info("retry to get sessions")
+		newSession, err := pool.newSession()
+		if err != nil {
+			return nil, err
+		}
+
+		pingErr := newSession.Ping()
+		if pingErr != nil {
+			pool.log.Error("failed to ping the session, error: " + pingErr.Error())
+			continue
+		}
+		pool.log.Info("retry to get sessions successfully")
+		pool.addSessionToList(&pool.activeSessions, newSession)
+		pool.removeSessionFromList(&pool.activeSessions, session)
+		return f(newSession)
+	}
+	pool.log.Error(fmt.Sprintf("failed to get session after " + strconv.Itoa(retry) + " retries"))
+	return nil, err
 }
 
 // startCleaner starts sessionCleaner if idleTime > 0.

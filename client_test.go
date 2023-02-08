@@ -26,7 +26,7 @@ import (
 
 const (
 	address  = "127.0.0.1"
-	port     = 3699
+	port     = 29562
 	username = "root"
 	password = "nebula"
 
