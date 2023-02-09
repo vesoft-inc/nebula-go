@@ -394,11 +394,17 @@ func (pool *SessionPool) getIdleSession() (*Session, error) {
 		" session pool and the total session count has reached the limit")
 }
 
-// retryGetSession tries to get a session from the pool for retry times.
-func (pool *SessionPool) executeWithRetry(session *Session, f func(*Session) (*graph.ExecutionResponse, error),
+// retryGetSession tries to create a new session when the current session is invalid.
+func (pool *SessionPool) executeWithRetry(
+	session *Session,
+	f func(*Session) (*graph.ExecutionResponse, error),
 	retry int) (*graph.ExecutionResponse, error) {
+	pool.rwLock.Lock()
+	defer pool.rwLock.Unlock()
+
 	resp, err := f(session)
 	if err != nil {
+		pool.removeSessionFromList(&pool.activeSessions, session)
 		return nil, err
 	}
 
@@ -408,6 +414,8 @@ func (pool *SessionPool) executeWithRetry(session *Session, f func(*Session) (*g
 		return resp, err
 	}
 
+	// remove invalid session regardless of the retry is successful or not
+	defer pool.removeSessionFromList(&pool.activeSessions, session)
 	// If the session is invalid, close it and get a new session
 	for i := 0; i < retry; i++ {
 		pool.log.Info("retry to get sessions")
@@ -423,11 +431,11 @@ func (pool *SessionPool) executeWithRetry(session *Session, f func(*Session) (*g
 		}
 		pool.log.Info("retry to get sessions successfully")
 		pool.addSessionToList(&pool.activeSessions, newSession)
-		pool.removeSessionFromList(&pool.activeSessions, session)
+
 		return f(newSession)
 	}
 	pool.log.Error(fmt.Sprintf("failed to get session after " + strconv.Itoa(retry) + " retries"))
-	return nil, err
+	return nil, fmt.Errorf("failed to get session after %d retries", retry)
 }
 
 // startCleaner starts sessionCleaner if idleTime > 0.
