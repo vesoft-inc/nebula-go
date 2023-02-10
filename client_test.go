@@ -1202,15 +1202,11 @@ func TestReconnect(t *testing.T) {
 	defer pool.Close()
 
 	// Create session
-	var sessionList []*Session
-
-	for i := 0; i < 3; i++ {
-		session, err := pool.GetSession(username, password)
-		if err != nil {
-			t.Errorf("fail to create a new session from connection pool, %s", err.Error())
-		}
-		sessionList = append(sessionList, session)
+	session, err := pool.GetSession(username, password)
+	if err != nil {
+		t.Errorf("fail to create a new session from connection pool, %s", err.Error())
 	}
+	defer session.Release()
 
 	// Send query to server periodically
 	for i := 0; i < timeoutConfig.MaxConnPoolSize; i++ {
@@ -1221,7 +1217,7 @@ func TestReconnect(t *testing.T) {
 		if i == 7 {
 			stopContainer(t, "nebula-docker-compose_graphd1_1")
 		}
-		_, err := sessionList[0].Execute("SHOW HOSTS;")
+		_, err := session.Execute("SHOW HOSTS;")
 		fmt.Println("Sending query...")
 
 		if err != nil {
@@ -1230,7 +1226,7 @@ func TestReconnect(t *testing.T) {
 		}
 	}
 
-	resp, err := sessionList[0].Execute("SHOW HOSTS;")
+	resp, err := session.Execute("SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -1239,10 +1235,6 @@ func TestReconnect(t *testing.T) {
 
 	startContainer(t, "nebula-docker-compose_graphd_1")
 	startContainer(t, "nebula-docker-compose_graphd1_1")
-
-	for i := 0; i < len(sessionList); i++ {
-		sessionList[i].Release()
-	}
 
 	// Wait for graphd to be up
 	time.Sleep(5 * time.Second)

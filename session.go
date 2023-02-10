@@ -198,7 +198,7 @@ func (session *Session) ExecuteJsonWithParameter(stmt string, params map[string]
 }
 
 func (session *Session) reConnect() error {
-	newconnection, err := session.connPool.getIdleConn()
+	newConnection, err := session.connPool.getIdleConn()
 	if err != nil {
 		err = fmt.Errorf(err.Error())
 		return err
@@ -206,7 +206,7 @@ func (session *Session) reConnect() error {
 
 	// Release connection to pool
 	session.connPool.release(session.connection)
-	session.connection = newconnection
+	session.connection = newConnection
 	return nil
 }
 
