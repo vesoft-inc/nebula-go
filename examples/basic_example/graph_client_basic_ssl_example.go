@@ -34,9 +34,9 @@ func main() {
 
 	// Initialize connection pool
 	sslConfig, err := nebula.GetDefaultSSLConfig(
-		"./certs/test.domain.CA.crt",
-		"./certs/test.domain.crt",
-		"./certs/test.domain.key",
+		"./certs/test.3.CA.crt",
+		"./certs/test.3.derive.crt",
+		"./certs/test.3.derive.key",
 	)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("%s.", err.Error()))
