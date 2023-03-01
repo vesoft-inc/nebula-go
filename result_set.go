@@ -238,6 +238,7 @@ func genPathWrapper(path *nebula.Path, timezoneInfo timezoneInfo) (*PathWrapper,
 		nodeList:         nodeList,
 		relationshipList: relationshipList,
 		segments:         segList,
+		timezoneInfo:     timezoneInfo,
 	}, nil
 }
 
