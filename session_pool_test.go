@@ -319,6 +319,50 @@ func TestIdleSessionCleaner(t *testing.T) {
 		sessionPool.conf.minSize, sessionPool.GetTotalSessionCount())
 }
 
+func TestRetryGetSession(t *testing.T) {
+	err := prepareSpace("client_test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dropSpace("client_test")
+
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		"client_test")
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+	config.minSize = 2
+	config.maxSize = 2
+	config.retryGetSessionTimes = 1
+
+	// create session pool
+	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sessionPool.Close()
+
+	// kill all sessions in the cluster
+	resultSet, err := sessionPool.Execute("SHOW SESSIONS | KILL SESSIONS $-.SessionId")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.True(t, resultSet.IsSucceed(), fmt.Errorf("error code: %d, error msg: %s",
+		resultSet.GetErrorCode(), resultSet.GetErrorMsg()))
+
+	// execute query, it should retry to get session
+	resultSet, err = sessionPool.Execute("SHOW HOSTS;")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.True(t, resultSet.IsSucceed(), fmt.Errorf("error code: %d, error msg: %s",
+		resultSet.GetErrorCode(), resultSet.GetErrorMsg()))
+}
+
 func BenchmarkConcurrency(b *testing.B) {
 	err := prepareSpace("client_test")
 	if err != nil {

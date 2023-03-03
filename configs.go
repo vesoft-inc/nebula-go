@@ -109,12 +109,13 @@ func openAndReadFile(path string) ([]byte, error) {
 // SessionPoolConf is the configs of a session pool
 // Note that the space name is bound to the session pool for its lifetime
 type SessionPoolConf struct {
-	username     string        // username for authentication
-	password     string        // password for authentication
-	serviceAddrs []HostAddress // service addresses for session pool
-	hostIndex    int           // index of the host in ServiceAddrs that the next new session will connect to
-	spaceName    string        // The space name that all sessions in the pool are bound to
-	sslConfig    *tls.Config   // Optional SSL config for the connection
+	username             string        // username for authentication
+	password             string        // password for authentication
+	serviceAddrs         []HostAddress // service addresses for session pool
+	hostIndex            int           // index of the host in ServiceAddrs that the next new session will connect to
+	spaceName            string        // The space name that all sessions in the pool are bound to
+	sslConfig            *tls.Config   // Optional SSL config for the connection
+	retryGetSessionTimes int           // The max times to retry get new session when executing a query
 
 	// Basic pool configs
 	// Socket timeout and Socket connection timeout, unit: seconds
@@ -138,15 +139,16 @@ func NewSessionPoolConf(
 	spaceName string, opts ...SessionPoolConfOption) (*SessionPoolConf, error) {
 	// Set default values for basic pool configs
 	newPoolConf := SessionPoolConf{
-		username:     username,
-		password:     password,
-		serviceAddrs: serviceAddrs,
-		spaceName:    spaceName,
-		timeOut:      0 * time.Millisecond,
-		idleTime:     0 * time.Millisecond,
-		maxSize:      30,
-		minSize:      1,
-		hostIndex:    0,
+		username:             username,
+		password:             password,
+		serviceAddrs:         serviceAddrs,
+		spaceName:            spaceName,
+		retryGetSessionTimes: 1,
+		timeOut:              0 * time.Millisecond,
+		idleTime:             0 * time.Millisecond,
+		maxSize:              30,
+		minSize:              1,
+		hostIndex:            0,
 	}
 
 	// Iterate the given options and apply them to the config.
