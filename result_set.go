@@ -238,6 +238,7 @@ func genPathWrapper(path *nebula.Path, timezoneInfo timezoneInfo) (*PathWrapper,
 		nodeList:         nodeList,
 		relationshipList: relationshipList,
 		segments:         segList,
+		timezoneInfo:     timezoneInfo,
 	}, nil
 }
 
@@ -460,7 +461,7 @@ func (node Node) Properties(tagName string) (map[string]*ValueWrapper, error) {
 	kvMap := make(map[string]*ValueWrapper)
 	// Check if label exists
 	if !node.HasTag(tagName) {
-		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exsist in the Node", tagName)
+		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exist in the Node", tagName)
 	}
 	index := node.tagNameIndexMap[tagName]
 	for k, v := range node.vertex.Tags[index].Props {
@@ -472,7 +473,7 @@ func (node Node) Properties(tagName string) (map[string]*ValueWrapper, error) {
 // Keys returns all prop names of the given tag name
 func (node Node) Keys(tagName string) ([]string, error) {
 	if !node.HasTag(tagName) {
-		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exsist in the Node", tagName)
+		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exist in the Node", tagName)
 	}
 	var propNameList []string
 	index := node.tagNameIndexMap[tagName]
@@ -485,7 +486,7 @@ func (node Node) Keys(tagName string) ([]string, error) {
 // Values returns all prop values of the given tag name
 func (node Node) Values(tagName string) ([]*ValueWrapper, error) {
 	if !node.HasTag(tagName) {
-		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exsist in the Node", tagName)
+		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exist in the Node", tagName)
 	}
 	var propValList []*ValueWrapper
 	index := node.tagNameIndexMap[tagName]
