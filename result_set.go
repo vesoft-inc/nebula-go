@@ -1252,8 +1252,7 @@ func (res ResultSet) MakeDotGraphByStruct() string {
 	return builder.String()
 }
 
-// explain/profile format="row"
-func (res ResultSet) MakePlanByRow() [][]interface{} {
+func (res ResultSet) MakePlan(isTckFmt bool) [][]interface{} {
 	p := res.GetPlanDesc()
 	planNodeDescs := p.GetPlanNodeDescs()
 	var rows [][]interface{}
@@ -1292,7 +1291,12 @@ func (res ResultSet) MakePlanByRow() [][]interface{} {
 					statArr = append(statArr, fmt.Sprintf("\"%s\": %s", k, s))
 				}
 				sort.Strings(statArr)
-				statStr := fmt.Sprintf("{%s}", strings.Join(statArr, ",\n"))
+				var statStr string
+				if isTckFmt {
+					statStr = fmt.Sprintf("{%s}", statArr)
+				} else {
+					statStr = fmt.Sprintf("{%s}", strings.Join(statArr, ",\n"))
+				}
 				profileArr = append(profileArr, statStr)
 			}
 			allProfiles := strings.Join(profileArr, ",\n")
@@ -1327,4 +1331,14 @@ func (res ResultSet) MakePlanByRow() [][]interface{} {
 		rows = append(rows, row)
 	}
 	return rows
+}
+
+// explain/profile format="row"
+func (res ResultSet) MakePlanByRow() [][]interface{} {
+	return res.MakePlan(false)
+}
+
+// explain/profile format="tck"
+func (res ResultSet) MakePlanByTck() [][]interface{} {
+	return res.MakePlan(true)
 }
