@@ -1252,7 +1252,7 @@ func (res ResultSet) MakeDotGraphByStruct() string {
 	return builder.String()
 }
 
-func (res ResultSet) MakePlan(isTckFmt bool) [][]interface{} {
+func (res ResultSet) MakePlan(needNextLine bool) [][]interface{} {
 	p := res.GetPlanDesc()
 	planNodeDescs := p.GetPlanNodeDescs()
 	var rows [][]interface{}
@@ -1292,14 +1292,23 @@ func (res ResultSet) MakePlan(isTckFmt bool) [][]interface{} {
 				}
 				sort.Strings(statArr)
 				var statStr string
-				if isTckFmt {
-					statStr = fmt.Sprintf("{%s}", statArr)
-				} else {
+				if needNextLine {
+					// for row format
 					statStr = fmt.Sprintf("{%s}", strings.Join(statArr, ",\n"))
+				} else {
+					// for tck format
+					statStr = fmt.Sprintf("{%s}", statArr)
 				}
 				profileArr = append(profileArr, statStr)
 			}
-			allProfiles := strings.Join(profileArr, ",\n")
+			var allProfiles string
+			if needNextLine {
+				// for row format
+				allProfiles = strings.Join(profileArr, ",\n")
+			} else {
+				// for tck format
+				allProfiles = profileArr
+			}
 			if len(profileArr) > 1 {
 				allProfiles = fmt.Sprintf("[%s]", allProfiles)
 			}
@@ -1313,8 +1322,16 @@ func (res ResultSet) MakePlan(isTckFmt bool) [][]interface{} {
 		var columnInfo []string
 		if planNodeDesc.IsSetBranchInfo() {
 			branchInfo := planNodeDesc.GetBranchInfo()
-			columnInfo = append(columnInfo, fmt.Sprintf("branch: %t, nodeId: %d\n",
-				branchInfo.GetIsDoBranch(), branchInfo.GetConditionNodeID()))
+			if needNextLine {
+				// for row format
+				columnInfo = append(columnInfo, fmt.Sprintf("branch: %t, nodeId: %d\n",
+					branchInfo.GetIsDoBranch(), branchInfo.GetConditionNodeID()))
+			} else {
+				// for tck format
+				columnInfo = append(columnInfo, fmt.Sprintf("branch: %t, nodeId: %d",
+					branchInfo.GetIsDoBranch(), branchInfo.GetConditionNodeID()))
+
+			}
 		}
 
 		outputVar := fmt.Sprintf("outputVar: %s", prettyFormatJsonString(planNodeDesc.GetOutputVar()))
@@ -1327,7 +1344,14 @@ func (res ResultSet) MakePlan(isTckFmt bool) [][]interface{} {
 				columnInfo = append(columnInfo, fmt.Sprintf("%s: %s", string(pair.GetKey()), value))
 			}
 		}
-		row = append(row, strings.Join(columnInfo, "\n"))
+		if needNextLine {
+			// for row format
+			row = append(row, strings.Join(columnInfo, "\n"))
+		} else {
+			// for tck format
+			row = append(row, columnInfo)
+		}
+
 		rows = append(rows, row)
 	}
 	return rows
