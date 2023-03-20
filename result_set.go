@@ -1297,7 +1297,7 @@ func (res ResultSet) MakePlan(needNextLine bool) [][]interface{} {
 					statStr = fmt.Sprintf("{%s}", strings.Join(statArr, ",\n"))
 				} else {
 					// for tck format
-					statStr = fmt.Sprintf("{%s}", statArr)
+					statStr = fmt.Sprintf("{%s}", strings.Join(statArr, ","))
 				}
 				profileArr = append(profileArr, statStr)
 			}
@@ -1307,7 +1307,7 @@ func (res ResultSet) MakePlan(needNextLine bool) [][]interface{} {
 				allProfiles = strings.Join(profileArr, ",\n")
 			} else {
 				// for tck format
-				allProfiles = profileArr
+				allProfiles = strings.Join(profileArr, ",")
 			}
 			if len(profileArr) > 1 {
 				allProfiles = fmt.Sprintf("[%s]", allProfiles)
@@ -1349,7 +1349,7 @@ func (res ResultSet) MakePlan(needNextLine bool) [][]interface{} {
 			row = append(row, strings.Join(columnInfo, "\n"))
 		} else {
 			// for tck format
-			row = append(row, columnInfo)
+			row = append(row, strings.Join(columnInfo, ""))
 		}
 
 		rows = append(rows, row)
