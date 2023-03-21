@@ -1357,12 +1357,17 @@ func (res ResultSet) MakePlanByTck() [][]interface{} {
 		}
 
 		if planNodeDesc.IsSetProfiles() {
-			row = append(row, MakeProfilingData(planNodeDesc))
+			var compactProfilingData bytes.Buffer
+			// 压缩 JSON 数据并去除空白字符
+			json.Compact(&compactProfilingData, []byte(MakeProfilingData(planNodeDesc)))
+			row = append(row, compactProfilingData.String())
 		} else {
 			row = append(row, "")
 		}
-
-		row = append(row, MakeOperatorInfo(planNodeDesc))
+		var compactOperatorInfo bytes.Buffer
+		// 压缩 JSON 数据并去除空白字符
+		json.Compact(&compactOperatorInfo, []byte(MakeOperatorInfo(planNodeDesc)))
+		row = append(row, compactOperatorInfo.String())
 		rows = append(rows, row)
 	}
 	return rows
