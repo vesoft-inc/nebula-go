@@ -1252,11 +1252,8 @@ func (res ResultSet) MakeDotGraphByStruct() string {
 	return builder.String()
 }
 
-// explain/profile format="row" or "tck"
-// needNextLine is used to determine whether to add a newline at the end of the result
-// when format="row", needNextLine is true
-// when format="tck", needNextLine is false
-func (res ResultSet) MakePlanForRowAndTck(needNextLine bool) [][]interface{} {
+// explain/profile format="row"
+func (res ResultSet) MakePlanByRow() [][]interface{} {
 	p := res.GetPlanDesc()
 	planNodeDescs := p.GetPlanNodeDescs()
 	var rows [][]interface{}
@@ -1304,12 +1301,7 @@ func (res ResultSet) MakePlanForRowAndTck(needNextLine bool) [][]interface{} {
 			}
 			var buffer bytes.Buffer
 			json.Indent(&buffer, []byte(allProfiles), "", "  ")
-			if needNextLine {
-				row = append(row, string(buffer.Bytes()))
-			} else {
-				profileDataColumnInfoWithoutEOF := strings.ReplaceAll(string(buffer.Bytes()), "\n", "")
-				row = append(row, string(profileDataColumnInfoWithoutEOF))
-			}
+			row = append(row, string(buffer.Bytes()))
 		} else {
 			row = append(row, "")
 		}
@@ -1331,24 +1323,90 @@ func (res ResultSet) MakePlanForRowAndTck(needNextLine bool) [][]interface{} {
 				columnInfo = append(columnInfo, fmt.Sprintf("%s: %s", string(pair.GetKey()), value))
 			}
 		}
-
-		if needNextLine {
-			row = append(row, strings.Join(columnInfo, "\n"))
-		} else {
-			operatorInfoColumnInfoWithoutEOF := strings.ReplaceAll(strings.Join(columnInfo, "\n"), "\n", "")
-			row = append(row, string(operatorInfoColumnInfoWithoutEOF))
-		}
+		row = append(row, strings.Join(columnInfo, "\n"))
 		rows = append(rows, row)
 	}
 	return rows
 }
 
-// explain/profile format="row"
-func (res ResultSet) MakePlanByRow() [][]interface{} {
-	return res.MakePlanForRowAndTck(true)
-}
-
 // explain/profile format="tck"
 func (res ResultSet) MakePlanByTck() [][]interface{} {
-	return res.MakePlanForRowAndTck(false)
+	p := res.GetPlanDesc()
+	planNodeDescs := p.GetPlanNodeDescs()
+	var rows [][]interface{}
+	for _, planNodeDesc := range planNodeDescs {
+		var row []interface{}
+		row = append(row, planNodeDesc.GetId(), string(planNodeDesc.GetName()))
+
+		if planNodeDesc.IsSetDependencies() {
+			var deps []string
+			for _, dep := range planNodeDesc.GetDependencies() {
+				deps = append(deps, fmt.Sprintf("%d", dep))
+			}
+			row = append(row, strings.Join(deps, ","))
+		} else {
+			row = append(row, "")
+		}
+
+		// set profiling data
+		row = append(row, "")
+		if planNodeDesc.IsSetProfiles() {
+			var profileArr []string
+			for i, profile := range planNodeDesc.GetProfiles() {
+				var statArr []string
+				statArr = append(statArr, fmt.Sprintf("\"version\":%d", i))
+				statArr = append(statArr, fmt.Sprintf("\"rows\":%d", profile.GetRows()))
+				statArr = append(statArr, fmt.Sprintf("\"execTime\":\"%d(us)\"", profile.GetExecDurationInUs()))
+				statArr = append(statArr, fmt.Sprintf("\"totalTime\":\"%d(us)\"", profile.GetTotalDurationInUs()))
+				for k, v := range profile.GetOtherStats() {
+					s := string(v)
+					if matched, err := regexp.Match(`^[^{(\[]\w+`, v); err == nil && matched {
+						if !strings.HasPrefix(s, "\"") {
+							s = fmt.Sprintf("\"%s", s)
+						}
+						if !strings.HasSuffix(s, "\"") {
+							s = fmt.Sprintf("%s\"", s)
+						}
+					}
+					statArr = append(statArr, fmt.Sprintf("\"%s\": %s", k, s))
+				}
+				sort.Strings(statArr)
+				statStr := fmt.Sprintf("{%s}", strings.Join(statArr, ",\n"))
+				profileArr = append(profileArr, statStr)
+			}
+			allProfiles := strings.Join(profileArr, ",\n")
+			if len(profileArr) > 1 {
+				allProfiles = fmt.Sprintf("[%s]", allProfiles)
+			}
+			var buffer bytes.Buffer
+			json.Indent(&buffer, []byte(allProfiles), "", "  ")
+			allProfilesWithoutEOF := strings.ReplaceAll(string(buffer.Bytes()), "\n", "")
+			row = append(row, allProfilesWithoutEOF)
+		} else {
+			row = append(row, "")
+		}
+
+		var columnInfo []string
+		if planNodeDesc.IsSetBranchInfo() {
+			branchInfo := planNodeDesc.GetBranchInfo()
+			columnInfo = append(columnInfo, fmt.Sprintf("branch: %t, nodeId: %d\n",
+				branchInfo.GetIsDoBranch(), branchInfo.GetConditionNodeID()))
+		}
+
+		outputVar := fmt.Sprintf("outputVar: %s", prettyFormatJsonString(planNodeDesc.GetOutputVar()))
+		columnInfo = append(columnInfo, outputVar)
+
+		if planNodeDesc.IsSetDescription() {
+			desc := planNodeDesc.GetDescription()
+			for _, pair := range desc {
+				value := prettyFormatJsonString(pair.GetValue())
+				columnInfo = append(columnInfo, fmt.Sprintf("%s: %s", string(pair.GetKey()), value))
+			}
+		}
+		operatorInfo := strings.Join(columnInfo, "\n")
+		operatorInfoWithoutEOF := strings.ReplaceAll(operatorInfo, "\n", "")
+		row = append(row, operatorInfoWithoutEOF)
+		rows = append(rows, row)
+	}
+	return rows
 }
