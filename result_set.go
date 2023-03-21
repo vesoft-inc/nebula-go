@@ -1252,7 +1252,11 @@ func (res ResultSet) MakeDotGraphByStruct() string {
 	return builder.String()
 }
 
-func (res ResultSet) MakePlan(needNextLine bool) [][]interface{} {
+// explain/profile format="row" or "tck"
+// needNextLine is used to determine whether to add a newline at the end of the result
+// when format="row", needNextLine is true
+// when format="tck", needNextLine is false
+func (res ResultSet) MakePlanForRowAndTck(needNextLine bool) [][]interface{} {
 	p := res.GetPlanDesc()
 	planNodeDescs := p.GetPlanNodeDescs()
 	var rows [][]interface{}
@@ -1291,30 +1295,21 @@ func (res ResultSet) MakePlan(needNextLine bool) [][]interface{} {
 					statArr = append(statArr, fmt.Sprintf("\"%s\": %s", k, s))
 				}
 				sort.Strings(statArr)
-				var statStr string
-				if needNextLine {
-					// for row format
-					statStr = fmt.Sprintf("{%s}", strings.Join(statArr, ",\n"))
-				} else {
-					// for tck format
-					statStr = fmt.Sprintf("{%s}", strings.Join(statArr, ","))
-				}
+				statStr := fmt.Sprintf("{%s}", strings.Join(statArr, ",\n"))
 				profileArr = append(profileArr, statStr)
 			}
-			var allProfiles string
-			if needNextLine {
-				// for row format
-				allProfiles = strings.Join(profileArr, ",\n")
-			} else {
-				// for tck format
-				allProfiles = strings.Join(profileArr, ",")
-			}
+			allProfiles := strings.Join(profileArr, ",\n")
 			if len(profileArr) > 1 {
 				allProfiles = fmt.Sprintf("[%s]", allProfiles)
 			}
 			var buffer bytes.Buffer
 			json.Indent(&buffer, []byte(allProfiles), "", "  ")
-			row = append(row, string(buffer.Bytes()))
+			if needNextLine {
+				row = append(row, string(buffer.Bytes()))
+			} else {
+				profileDataColumnInfoWithoutEOF := strings.ReplaceAll(string(buffer.Bytes()), "\n", "")
+				row = append(row, string(profileDataColumnInfoWithoutEOF))
+			}
 		} else {
 			row = append(row, "")
 		}
@@ -1322,16 +1317,8 @@ func (res ResultSet) MakePlan(needNextLine bool) [][]interface{} {
 		var columnInfo []string
 		if planNodeDesc.IsSetBranchInfo() {
 			branchInfo := planNodeDesc.GetBranchInfo()
-			if needNextLine {
-				// for row format
-				columnInfo = append(columnInfo, fmt.Sprintf("branch: %t, nodeId: %d\n",
-					branchInfo.GetIsDoBranch(), branchInfo.GetConditionNodeID()))
-			} else {
-				// for tck format
-				columnInfo = append(columnInfo, fmt.Sprintf("branch: %t, nodeId: %d",
-					branchInfo.GetIsDoBranch(), branchInfo.GetConditionNodeID()))
-
-			}
+			columnInfo = append(columnInfo, fmt.Sprintf("branch: %t, nodeId: %d\n",
+				branchInfo.GetIsDoBranch(), branchInfo.GetConditionNodeID()))
 		}
 
 		outputVar := fmt.Sprintf("outputVar: %s", prettyFormatJsonString(planNodeDesc.GetOutputVar()))
@@ -1344,14 +1331,13 @@ func (res ResultSet) MakePlan(needNextLine bool) [][]interface{} {
 				columnInfo = append(columnInfo, fmt.Sprintf("%s: %s", string(pair.GetKey()), value))
 			}
 		}
+
 		if needNextLine {
-			// for row format
 			row = append(row, strings.Join(columnInfo, "\n"))
 		} else {
-			// for tck format
-			row = append(row, strings.Join(columnInfo, ""))
+			operatorInfoColumnInfoWithoutEOF := strings.ReplaceAll(strings.Join(columnInfo, "\n"), "\n", "")
+			row = append(row, string(operatorInfoColumnInfoWithoutEOF))
 		}
-
 		rows = append(rows, row)
 	}
 	return rows
@@ -1359,10 +1345,10 @@ func (res ResultSet) MakePlan(needNextLine bool) [][]interface{} {
 
 // explain/profile format="row"
 func (res ResultSet) MakePlanByRow() [][]interface{} {
-	return res.MakePlan(false)
+	return res.MakePlanForRowAndTck(true)
 }
 
 // explain/profile format="tck"
 func (res ResultSet) MakePlanByTck() [][]interface{} {
-	return res.MakePlan(true)
+	return res.MakePlanForRowAndTck(false)
 }
