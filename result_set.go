@@ -1349,7 +1349,6 @@ func (res ResultSet) MakePlanByTck() [][]interface{} {
 		}
 
 		// set profiling data
-		row = append(row, "")
 		if planNodeDesc.IsSetProfiles() {
 			var profileArr []string
 			for i, profile := range planNodeDesc.GetProfiles() {
@@ -1380,8 +1379,8 @@ func (res ResultSet) MakePlanByTck() [][]interface{} {
 			}
 			var buffer bytes.Buffer
 			json.Indent(&buffer, []byte(allProfiles), "", "  ")
-			allProfilesWithoutEOF := strings.ReplaceAll(string(buffer.Bytes()), "\n", "")
-			row = append(row, allProfilesWithoutEOF)
+			allProfilesCompacted := json.Compact(nil, string(buffer.Bytes()))
+			row = append(row, allProfilesCompacted)
 		} else {
 			row = append(row, "")
 		}
@@ -1404,8 +1403,8 @@ func (res ResultSet) MakePlanByTck() [][]interface{} {
 			}
 		}
 		operatorInfo := strings.Join(columnInfo, "\n")
-		operatorInfoWithoutEOF := strings.ReplaceAll(operatorInfo, "\n", "")
-		row = append(row, operatorInfoWithoutEOF)
+		operatorInfoCompacted := json.Compact(nil, operatorInfo)
+		row = append(row, operatorInfoCompacted)
 		rows = append(rows, row)
 	}
 	return rows
