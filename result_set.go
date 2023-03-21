@@ -1379,7 +1379,7 @@ func (res ResultSet) MakePlanByTck() [][]interface{} {
 			}
 			var buffer bytes.Buffer
 			json.Indent(&buffer, []byte(allProfiles), "", "  ")
-			allProfilesCompacted := json.Compact(nil, string(buffer.Bytes()))
+			allProfilesCompacted := json.Compact(nil, buffer.Bytes())
 			row = append(row, allProfilesCompacted)
 		} else {
 			row = append(row, "")
@@ -1403,7 +1403,7 @@ func (res ResultSet) MakePlanByTck() [][]interface{} {
 			}
 		}
 		operatorInfo := strings.Join(columnInfo, "\n")
-		operatorInfoCompacted := json.Compact(nil, operatorInfo)
+		operatorInfoCompacted := json.Compact(nil, []byte(operatorInfo))
 		row = append(row, operatorInfoCompacted)
 		rows = append(rows, row)
 	}
