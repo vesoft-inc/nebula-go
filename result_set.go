@@ -1252,7 +1252,7 @@ func (res ResultSet) MakeDotGraphByStruct() string {
 	return builder.String()
 }
 
-func MakeProfilingData(planNodeDesc PlanNodeDescription) string {
+func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription) string {
 	var profileArr []string
 	for i, profile := range planNodeDesc.GetProfiles() {
 		var statArr []string
@@ -1285,7 +1285,7 @@ func MakeProfilingData(planNodeDesc PlanNodeDescription) string {
 	return string(buffer.Bytes())
 }
 
-func MakeOperatorInfo(planNodeDesc PlanNodeDescription) string {
+func MakeOperatorInfo(planNodeDesc *graph.PlanNodeDescription) string {
 	var columnInfo []string
 	if planNodeDesc.IsSetBranchInfo() {
 		branchInfo := planNodeDesc.GetBranchInfo()
