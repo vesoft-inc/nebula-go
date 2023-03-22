@@ -1329,7 +1329,7 @@ func (res ResultSet) MakePlanByRow() [][]interface{} {
 		}
 
 		if planNodeDesc.IsSetProfiles() {
-			row = append(row, MakeProfilingData(planNodeDesc))
+			row = append(row, MakeProfilingData(planNodeDesc, false))
 		} else {
 			row = append(row, "")
 		}
