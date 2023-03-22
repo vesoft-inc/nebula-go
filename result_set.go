@@ -1366,9 +1366,11 @@ func (res ResultSet) MakePlanByTck() [][]interface{} {
 		} else {
 			row = append(row, "")
 		}
+		aaa := MakeOperatorInfo(planNodeDesc)
+		fmt.Println(aaa)
 		var compactOperatorInfo bytes.Buffer
 		// Compress JSON data and remove whitespace characters.
-		json.Compact(&compactOperatorInfo, []byte(MakeOperatorInfo(planNodeDesc)))
+		json.Compact(&compactOperatorInfo, []byte(aaa))
 		fmt.Println(compactOperatorInfo.String())
 		row = append(row, compactOperatorInfo.String())
 		fmt.Println(row)
