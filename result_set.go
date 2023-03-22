@@ -1370,7 +1370,11 @@ func (res ResultSet) MakePlanByTck() [][]interface{} {
 		fmt.Println(aaa)
 		var compactOperatorInfo bytes.Buffer
 		// Compress JSON data and remove whitespace characters.
-		json.Compact(&compactOperatorInfo, []byte(aaa))
+		err := json.Compact(&compactOperatorInfo, []byte(aaa))
+		if err != nil {
+			fmt.Printf("JSON 压缩错误：%v", err)
+			panic(err)
+		}
 		fmt.Println(compactOperatorInfo.String())
 		row = append(row, compactOperatorInfo.String())
 		fmt.Println(row)
