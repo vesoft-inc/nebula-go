@@ -1331,8 +1331,9 @@ func (res ResultSet) MakePlanByRow() [][]interface{} {
 		} else {
 			row = append(row, "")
 		}
-
-		row = append(row, MakeOperatorInfo(planNodeDesc))
+		aaa := MakeOperatorInfo(planNodeDesc)
+		fmt.Println(aaa)
+		row = append(row, aaa)
 		rows = append(rows, row)
 	}
 	return rows
