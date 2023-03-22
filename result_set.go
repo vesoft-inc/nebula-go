@@ -1252,7 +1252,7 @@ func (res ResultSet) MakeDotGraphByStruct() string {
 	return builder.String()
 }
 
-func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription) string {
+func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription, isTckFmt bool) string {
 	var profileArr []string
 	for i, profile := range planNodeDesc.GetProfiles() {
 		var statArr []string
