@@ -1263,6 +1263,9 @@ func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription, isTckFmt bool) s
 			statArr = append(statArr, fmt.Sprintf("\"totalTime\":\"%d(us)\"", profile.GetTotalDurationInUs()))
 		}
 		for k, v := range profile.GetOtherStats() {
+			if matched, err := regexp.Match(`\(us\)`, v); err == nil && matched && !isTckFmt {
+				continue
+			}
 			s := string(v)
 			if matched, err := regexp.Match(`^[^{(\[]\w+`, v); err == nil && matched {
 				if !strings.HasPrefix(s, "\"") {
