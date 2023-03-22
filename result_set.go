@@ -1252,14 +1252,16 @@ func (res ResultSet) MakeDotGraphByStruct() string {
 	return builder.String()
 }
 
-func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription) string {
+func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription, isTckFmt bool) string {
 	var profileArr []string
 	for i, profile := range planNodeDesc.GetProfiles() {
 		var statArr []string
 		statArr = append(statArr, fmt.Sprintf("\"version\":%d", i))
 		statArr = append(statArr, fmt.Sprintf("\"rows\":%d", profile.GetRows()))
-		statArr = append(statArr, fmt.Sprintf("\"execTime\":\"%d(us)\"", profile.GetExecDurationInUs()))
-		statArr = append(statArr, fmt.Sprintf("\"totalTime\":\"%d(us)\"", profile.GetTotalDurationInUs()))
+		if !isTckFmt {
+			statArr = append(statArr, fmt.Sprintf("\"execTime\":\"%d(us)\"", profile.GetExecDurationInUs()))
+			statArr = append(statArr, fmt.Sprintf("\"totalTime\":\"%d(us)\"", profile.GetTotalDurationInUs()))
+		}
 		for k, v := range profile.GetOtherStats() {
 			s := string(v)
 			if matched, err := regexp.Match(`^[^{(\[]\w+`, v); err == nil && matched {
@@ -1285,7 +1287,7 @@ func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription) string {
 	return string(buffer.Bytes())
 }
 
-func MakeOperatorInfo(planNodeDesc *graph.PlanNodeDescription) string {
+func MakeOperatorInfo(planNodeDesc *graph.PlanNodeDescription, isTckFmt bool) string {
 	var columnInfo []string
 	if planNodeDesc.IsSetBranchInfo() {
 		branchInfo := planNodeDesc.GetBranchInfo()
@@ -1326,12 +1328,12 @@ func (res ResultSet) MakePlanByRow() [][]interface{} {
 		}
 
 		if planNodeDesc.IsSetProfiles() {
-			row = append(row, MakeProfilingData(planNodeDesc))
+			row = append(row, MakeProfilingData(planNodeDesc, false))
 		} else {
 			row = append(row, "")
 		}
 
-		row = append(row, MakeOperatorInfo(planNodeDesc))
+		row = append(row, MakeOperatorInfo(planNodeDesc, false))
 		rows = append(rows, row)
 	}
 	return rows
@@ -1359,14 +1361,14 @@ func (res ResultSet) MakePlanByTck() [][]interface{} {
 		if planNodeDesc.IsSetProfiles() {
 			var compactProfilingData bytes.Buffer
 			// 压缩 JSON 数据并去除空白字符
-			json.Compact(&compactProfilingData, []byte(MakeProfilingData(planNodeDesc)))
+			json.Compact(&compactProfilingData, []byte(MakeProfilingData(planNodeDesc, true)))
 			row = append(row, compactProfilingData.String())
 		} else {
 			row = append(row, "")
 		}
 		var compactOperatorInfo bytes.Buffer
 		// 压缩 JSON 数据并去除空白字符
-		json.Compact(&compactOperatorInfo, []byte(MakeOperatorInfo(planNodeDesc)))
+		json.Compact(&compactOperatorInfo, []byte(MakeOperatorInfo(planNodeDesc, true)))
 		row = append(row, compactOperatorInfo.String())
 		rows = append(rows, row)
 	}
