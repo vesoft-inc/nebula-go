@@ -1252,6 +1252,7 @@ func (res ResultSet) MakeDotGraphByStruct() string {
 	return builder.String()
 }
 
+// generate profiling data for both Row and TCK formats.
 func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription, isTckFmt bool) string {
 	var profileArr []string
 	for i, profile := range planNodeDesc.GetProfiles() {
@@ -1288,6 +1289,7 @@ func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription, isTckFmt bool) s
 	return string(buffer.Bytes())
 }
 
+// generate operator info for Row format.
 func MakeOperatorInfo(planNodeDesc *graph.PlanNodeDescription) string {
 	var columnInfo []string
 	if planNodeDesc.IsSetBranchInfo() {
