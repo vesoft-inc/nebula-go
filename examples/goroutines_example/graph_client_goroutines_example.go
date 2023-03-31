@@ -164,5 +164,5 @@ func main() {
 	wg.Wait()
 
 	fmt.Print("\n")
-	log.Info("Nebula Go Client Gorountines Example Finished")
+	log.Info("Nebula Go Client Goroutines Example Finished")
 }
