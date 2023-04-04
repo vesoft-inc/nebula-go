@@ -126,6 +126,7 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 		if err != nil {
 			return nil, err
 		}
+		session = s
 		return resp, nil
 	}
 
