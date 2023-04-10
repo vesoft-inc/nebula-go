@@ -9,6 +9,7 @@
 package nebula_go
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -44,17 +45,30 @@ func TestSession_Execute(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	go func() {
+	ctx, cancel := context.WithCancel(context.TODO())
+	defer cancel()
+	go func(ctx context.Context) {
 		for {
-			f(sess)
+			select {
+			case <-ctx.Done():
+				break
+			default:
+				f(sess)
+			}
 		}
-	}()
-	go func() {
+	}(ctx)
+	go func(ctx context.Context) {
 		for {
-			f(sess)
+			select {
+			case <-ctx.Done():
+				break
+			default:
+				f(sess)
+			}
 		}
-	}()
-	time.Sleep(3 * time.Second)
+	}(ctx)
+	time.Sleep(300 * time.Millisecond)
+
 }
 
 func TestSession_Recover(t *testing.T) {
