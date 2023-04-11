@@ -13,7 +13,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
 	graph "github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
@@ -35,14 +34,6 @@ type Session struct {
 }
 
 func (session *Session) reconnectWithExecuteErr(err error) error {
-	// Reconnect only if the transport is closed
-	err2, ok := err.(thrift.TransportException)
-	if !ok {
-		return err
-	}
-	if err2.TypeID() != thrift.END_OF_FILE {
-		return err
-	}
 	if _err := session.reConnect(); _err != nil {
 		return fmt.Errorf("failed to reconnect, %s", _err.Error())
 	}
@@ -204,8 +195,7 @@ func (session *Session) reConnect() error {
 		return err
 	}
 
-	// Release connection to pool
-	session.connPool.release(session.connection)
+	session.connPool.releaseAndBack(session.connection, false)
 	session.connection = newConnection
 	return nil
 }
