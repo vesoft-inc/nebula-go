@@ -181,10 +181,17 @@ func (pool *ConnectionPool) getIdleConn() (*connection, error) {
 
 // Release connection to pool
 func (pool *ConnectionPool) release(conn *connection) {
+	pool.releaseAndBack(conn, true)
+}
+
+func (pool *ConnectionPool) releaseAndBack(conn *connection, pushBack bool) {
 	pool.rwLock.Lock()
 	defer pool.rwLock.Unlock()
 	// Remove connection from active queue and add into idle queue
 	removeFromList(&pool.activeConnectionQueue, conn)
+	if !pushBack {
+		return
+	}
 	conn.release()
 	pool.idleConnectionQueue.PushBack(conn)
 }

@@ -9,8 +9,11 @@
 package nebula_go
 
 import (
+	"context"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSession_Execute(t *testing.T) {
@@ -42,15 +45,64 @@ func TestSession_Execute(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	go func() {
+	ctx, cancel := context.WithCancel(context.TODO())
+	defer cancel()
+	go func(ctx context.Context) {
 		for {
-			f(sess)
+			select {
+			case <-ctx.Done():
+				break
+			default:
+				f(sess)
+			}
 		}
-	}()
-	go func() {
+	}(ctx)
+	go func(ctx context.Context) {
 		for {
-			f(sess)
+			select {
+			case <-ctx.Done():
+				break
+			default:
+				f(sess)
+			}
 		}
-	}()
+	}(ctx)
 	time.Sleep(300 * time.Millisecond)
+
+}
+
+func TestSession_Recover(t *testing.T) {
+	query := "show hosts"
+	config := GetDefaultConf()
+	host := HostAddress{address, port}
+	pool, err := NewConnectionPool([]HostAddress{host}, config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	sess, err := pool.GetSession("root", "nebula")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, pool.getActiveConnCount()+pool.getIdleConnCount())
+	go func() {
+		for {
+			_, _ = sess.Execute(query)
+		}
+	}()
+	stopContainer(t, "nebula-docker-compose_graphd_1")
+	stopContainer(t, "nebula-docker-compose_graphd1_1")
+	stopContainer(t, "nebula-docker-compose_graphd2_1")
+	defer func() {
+		startContainer(t, "nebula-docker-compose_graphd1_1")
+		startContainer(t, "nebula-docker-compose_graphd2_1")
+	}()
+	<-time.After(3 * time.Second)
+	startContainer(t, "nebula-docker-compose_graphd_1")
+	<-time.After(3 * time.Second)
+	_, err = sess.Execute(query)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, pool.getActiveConnCount()+pool.getIdleConnCount())
 }
