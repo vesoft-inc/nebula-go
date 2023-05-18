@@ -17,21 +17,25 @@ import (
 
 var ip = "127.0.0.1"
 var metaPort = 9559
-var graphPort = 9669
+var graphPort = 3699
 var metaAddress = HostAddress{ip, metaPort}
 var client = NewMetaClient(metaAddress, 2*time.Second)
+var isOpen = false
 
 var spaceName = "test_meta"
 
-func init() {
-	openClient()
+func setup() {
 	mockSchema()
+	openClient()
 }
 
 func openClient() {
-	err := client.Open()
-	if err != nil {
-		log.Fatal(fmt.Sprintf("open meta client failed, host:%s, port:%d, %s", ip, metaPort, err.Error()))
+	if !isOpen {
+		err := client.Open()
+		if err != nil {
+			log.Fatal(fmt.Sprintf("open meta client failed, host:%s, port:%d, %s", ip, metaPort, err.Error()))
+		}
+		isOpen = true
 	}
 }
 
@@ -74,12 +78,14 @@ func mockSchema() {
 }
 
 func teardown() {
-	if client != nil {
+	if client != nil && isOpen {
 		client.Close()
 	}
 }
 
 func TestMetaClientOpen(t *testing.T) {
+	skipSslForMeta(t)
+
 	address := HostAddress{Host: ip, Port: metaPort}
 	localMetaClient := NewMetaClient(address, 2*time.Second)
 	err := localMetaClient.Open()
@@ -108,6 +114,11 @@ func TestMetaClientOpen(t *testing.T) {
 }
 
 func TestGetSpaces(t *testing.T) {
+	skipSslForMeta(t)
+
+	if !isOpen {
+		openClient()
+	}
 	names, err := client.GetSpaces()
 	if err != nil {
 		t.Fatal(err)
@@ -116,6 +127,11 @@ func TestGetSpaces(t *testing.T) {
 }
 
 func TestGetSpace(t *testing.T) {
+	skipSslForMeta(t)
+
+	if !isOpen {
+		setup()
+	}
 	spaceItem, err := client.GetSpace(spaceName)
 	if err != nil {
 		t.Fatal(err)
@@ -124,6 +140,11 @@ func TestGetSpace(t *testing.T) {
 }
 
 func TestGetTags(t *testing.T) {
+	skipSslForMeta(t)
+
+	if !isOpen {
+		setup()
+	}
 	tags, err := client.GetTags(spaceName)
 	if err != nil {
 		t.Fatal(err)
@@ -132,6 +153,11 @@ func TestGetTags(t *testing.T) {
 }
 
 func TestGetTag(t *testing.T) {
+	skipSslForMeta(t)
+
+	if !isOpen {
+		setup()
+	}
 	tagName := "person"
 	schema, err := client.GetTag(spaceName, tagName)
 	if err != nil {
@@ -141,6 +167,11 @@ func TestGetTag(t *testing.T) {
 }
 
 func TestGetEdges(t *testing.T) {
+	skipSslForMeta(t)
+
+	if !isOpen {
+		setup()
+	}
 	edges, err := client.GetEdges(spaceName)
 	if err != nil {
 		t.Fatal(err)
@@ -149,6 +180,11 @@ func TestGetEdges(t *testing.T) {
 }
 
 func TestGetEdge(t *testing.T) {
+	skipSslForMeta(t)
+
+	if !isOpen {
+		setup()
+	}
 	edgeName := "friend"
 	schema, err := client.GetEdge(spaceName, edgeName)
 	if err != nil {
@@ -158,6 +194,11 @@ func TestGetEdge(t *testing.T) {
 }
 
 func TestGetPartsAlloc(t *testing.T) {
+	skipSslForMeta(t)
+
+	if !isOpen {
+		setup()
+	}
 	partsAllocMap, err := client.GetPartsAlloc(spaceName)
 	if err != nil {
 		t.Fatal(err)
@@ -166,6 +207,11 @@ func TestGetPartsAlloc(t *testing.T) {
 }
 
 func TestGetPartLeaders(t *testing.T) {
+	skipSslForMeta(t)
+
+	if !isOpen {
+		setup()
+	}
 	partToHostMap, err := client.GetPartsLeader(spaceName)
 	if err != nil {
 		t.Fatal(err)
@@ -174,6 +220,11 @@ func TestGetPartLeaders(t *testing.T) {
 }
 
 func TestGetHosts(t *testing.T) {
+	skipSslForMeta(t)
+
+	if !isOpen {
+		setup()
+	}
 	hostList, err := client.ListStorageHosts()
 	if err != nil {
 		t.Fatal(err)
@@ -182,6 +233,8 @@ func TestGetHosts(t *testing.T) {
 }
 
 func TestMetaClientExecuteAfterClose(t *testing.T) {
+	skipSslForMeta(t)
+
 	address := HostAddress{Host: ip, Port: metaPort}
 	localMetaClient := NewMetaClient(address, 2*time.Second)
 	err := localMetaClient.Open()
@@ -196,6 +249,13 @@ func TestMetaClientExecuteAfterClose(t *testing.T) {
 	} else {
 		fmt.Printf(names[0])
 		t.Errorf("expect error when getSpaces after client has been closed.")
+	}
+}
+
+func skipSslForMeta(t *testing.T) {
+	if os.Getenv("ssl_test") == "true" || os.Getenv("self_signed") == "true" {
+		fmt.Printf("Skipping meta test with SSL in CI environment.")
+		t.SkipNow()
 	}
 }
 
