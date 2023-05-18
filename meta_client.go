@@ -37,8 +37,21 @@ func NewMetaClient(address HostAddress, timeout time.Duration) *metaClient {
 
 // open the metaClient socket connection
 func (client *metaClient) Open() error {
-	ip := client.address.Host
-	port := client.address.Port
+	// Process domain to IP
+	var addresses []HostAddress
+	addresses = append(addresses, client.address)
+	convAddress, err := DomainToIP(addresses)
+	if err != nil {
+		return fmt.Errorf("failed to find IP, error: %s ", err.Error())
+	}
+
+	// Check input
+	if len(convAddress) == 0 {
+		return fmt.Errorf("failed to initialize connection pool: illegal address input %s:%d", client.address.Host, client.address.Port)
+	}
+
+	ip := convAddress[0].Host
+	port := convAddress[0].Port
 	return client.doOpen(ip, port)
 }
 
@@ -72,10 +85,11 @@ func (client *metaClient) verifyClientVersion() error {
 	req := meta.NewVerifyClientVersionReq()
 	resp, err := client.meta.VerifyClientVersion(req)
 	if err != nil {
-		client.close()
+		client.Close()
 		return fmt.Errorf("failed to verify client version: %s", err.Error())
 	}
 	if resp.GetCode() != nebula.ErrorCode_SUCCEEDED {
+		client.Close()
 		return fmt.Errorf("incompatible version between client and server: %s", string(resp.GetErrorMsg()))
 	}
 	return nil
@@ -98,11 +112,15 @@ func (client *metaClient) GetSpaces() ([]string, error) {
 			return nil, err
 		}
 	}
-	var spaces []string
-	for _, name := range resp.GetSpaces() {
-		spaces = append(spaces, string(name.GetName()))
+	if resp.GetCode() == nebula.ErrorCode_SUCCEEDED {
+		var spaces []string
+		for _, name := range resp.GetSpaces() {
+			spaces = append(spaces, string(name.GetName()))
+		}
+		return spaces, nil
+	} else {
+		return nil, fmt.Errorf("GetSpaces failed, code:%s", resp.GetCode())
 	}
-	return spaces, nil
 }
 
 // get one specific space info
@@ -122,7 +140,11 @@ func (client *metaClient) GetSpace(spaceName string) (*meta.SpaceItem, error) {
 			return nil, err
 		}
 	}
-	return resp.GetItem(), nil
+	if resp.GetCode() == nebula.ErrorCode_SUCCEEDED {
+		return resp.GetItem(), nil
+	} else {
+		return nil, fmt.Errorf("GetSpace failed, code:%s", resp.GetCode())
+	}
 }
 
 // get all tag names of specific space name
@@ -147,11 +169,15 @@ func (client *metaClient) GetTags(spaceName string) ([]string, error) {
 			return nil, err
 		}
 	}
-	var tags []string
-	for _, name := range resp.GetTags() {
-		tags = append(tags, string(name.GetTagName()))
+	if resp.GetCode() == nebula.ErrorCode_SUCCEEDED {
+		var tags []string
+		for _, name := range resp.GetTags() {
+			tags = append(tags, string(name.GetTagName()))
+		}
+		return tags, nil
+	} else {
+		return nil, fmt.Errorf("GetTags failed, code:%s", resp.GetCode())
 	}
-	return tags, nil
 }
 
 // get schema of specifc tag
@@ -178,7 +204,11 @@ func (client *metaClient) GetTag(spaceName string, tag string) (*meta.Schema, er
 			return nil, err
 		}
 	}
-	return resp.GetSchema(), nil
+	if resp.GetCode() == nebula.ErrorCode_SUCCEEDED {
+		return resp.GetSchema(), nil
+	} else {
+		return nil, fmt.Errorf("GetTag failed, code:%s", resp.GetCode())
+	}
 }
 
 // get all edge names of specific space name
@@ -239,7 +269,7 @@ func (client *metaClient) GetEdge(spaceName string, edge string) (*meta.Schema, 
 }
 
 // get the allocation of all parts.
-func (client *metaClient) GetPartsAlloc(spaceName string) (map[nebula.PartitionID][]*nebula.HostAddr, error) {
+func (client *metaClient) GetPartsAlloc(spaceName string) (map[nebula.PartitionID][]HostAddress, error) {
 	req := meta.NewGetPartsAllocReq()
 	spaceItem, err := client.GetSpace(spaceName)
 	if err != nil {
@@ -259,15 +289,25 @@ func (client *metaClient) GetPartsAlloc(spaceName string) (map[nebula.PartitionI
 			return nil, err
 		}
 	}
+	partsAlloc := make(map[nebula.PartitionID][]HostAddress)
 	if resp.GetCode() == nebula.ErrorCode_SUCCEEDED {
-		return resp.GetParts(), nil
+		partsAllocMap := resp.GetParts()
+		for part, hosts := range partsAllocMap {
+			var allocHosts []HostAddress
+			for _, host := range hosts {
+				allocHosts = append(allocHosts, HostAddress{host.GetHost(), int(host.GetPort())})
+			}
+			partsAlloc[part] = allocHosts
+		}
+		return partsAlloc, nil
+
 	} else {
 		return nil, fmt.Errorf("GetPartsAlloc failed, code:%s", resp.GetCode())
 	}
 }
 
 // get the leader host of all parts
-func (client *metaClient) GetPartsLeader(spaceName string) (map[nebula.PartitionID]*nebula.HostAddr, error) {
+func (client *metaClient) GetPartsLeader(spaceName string) (map[nebula.PartitionID]HostAddress, error) {
 	req := meta.NewListHostsReq()
 	req.SetType(meta.ListHostType_ALLOC)
 
@@ -287,11 +327,11 @@ func (client *metaClient) GetPartsLeader(spaceName string) (map[nebula.Partition
 
 	if resp.GetCode() == nebula.ErrorCode_SUCCEEDED {
 		hostItems := resp.GetHosts()
-		var partLeaders map[nebula.PartitionID]*nebula.HostAddr
+		partLeaders := make(map[nebula.PartitionID]HostAddress)
 		for _, hostItem := range hostItems {
 			parts := hostItem.GetLeaderParts()[spaceName]
 			for _, part := range parts {
-				partLeaders[part] = hostItem.GetHostAddr()
+				partLeaders[part] = HostAddress{Host: hostItem.GetHostAddr().GetHost(), Port: int(hostItem.GetHostAddr().GetPort())}
 			}
 		}
 		return partLeaders, nil
@@ -301,7 +341,7 @@ func (client *metaClient) GetPartsLeader(spaceName string) (map[nebula.Partition
 }
 
 // list all storaged hosts
-func (client *metaClient) ListStorageHosts() ([]*nebula.HostAddr, error) {
+func (client *metaClient) ListStorageHosts() ([]HostAddress, error) {
 	req := meta.NewListHostsReq()
 	req.SetType(meta.ListHostType_STORAGE)
 
@@ -319,9 +359,9 @@ func (client *metaClient) ListStorageHosts() ([]*nebula.HostAddr, error) {
 	}
 
 	if resp.GetCode() == nebula.ErrorCode_SUCCEEDED {
-		var hosts []*nebula.HostAddr
+		var hosts []HostAddress
 		for _, host := range resp.GetHosts() {
-			hosts = append(hosts, host.GetHostAddr())
+			hosts = append(hosts, HostAddress{Host: host.GetHostAddr().GetHost(), Port: int(host.GetHostAddr().GetPort())})
 		}
 		return hosts, nil
 	} else {
@@ -332,13 +372,15 @@ func (client *metaClient) ListStorageHosts() ([]*nebula.HostAddr, error) {
 
 // fresh the metaClient with meta leader host
 func (client *metaClient) freshClient(leader *nebula.HostAddr) {
-	client.close()
+	client.Close()
 	ip := leader.Host
 	port := leader.Port
 	client.doOpen(ip, int(port))
 }
 
 // close the metaClient
-func (client *metaClient) close() {
-	client.meta.Close()
+func (client *metaClient) Close() {
+	if client.meta != nil && client.meta.IsOpen() {
+		client.meta.Close()
+	}
 }
