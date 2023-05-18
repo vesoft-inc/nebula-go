@@ -261,7 +261,9 @@ func skipSslForMeta(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
-	setup()
+	if os.Getenv("ssl_test") != "true" && os.Getenv("self_signed") != "true" {
+		setup()
+	}
 	retCode := m.Run()
 	teardown()
 	os.Exit(retCode)
