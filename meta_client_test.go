@@ -26,6 +26,7 @@ var spaceName = "test_meta"
 
 func setup() {
 	mockSchema()
+	time.Sleep(10 * time.Second)
 	openClient()
 }
 

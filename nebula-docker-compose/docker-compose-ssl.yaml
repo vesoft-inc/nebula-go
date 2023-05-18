@@ -223,7 +223,7 @@ services:
       - ./logs/storage1:/logs
     networks:
       nebula-net:
-        ipve4_address: 172.28.2.2
+        ipv4_address: 172.28.2.2
     restart: on-failure
     cap_add:
       - SYS_PTRACE
