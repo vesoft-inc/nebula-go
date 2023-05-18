@@ -71,7 +71,6 @@ func mockSchema() {
 		"CREATE EDGE IF NOT EXISTS friend(degree int64)")
 	if err != nil {
 		log.Fatal("create schema error.", err.Error())
-
 	}
 	if !resultSet.IsSucceed() {
 		log.Fatal(fmt.Sprintf("create schema failed, message:%s", resultSet.GetErrorMsg()))
@@ -150,7 +149,7 @@ func TestGetTags(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, len(tags), 2)
+	assert.Equal(t, 2, len(tags))
 }
 
 func TestGetTag(t *testing.T) {
@@ -164,7 +163,7 @@ func TestGetTag(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, len(schema.GetColumns()), 2)
+	assert.Equal(t, 2, len(schema.GetColumns()))
 }
 
 func TestGetEdges(t *testing.T) {
@@ -177,7 +176,7 @@ func TestGetEdges(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, len(edges), 1)
+	assert.Equal(t, 1, len(edges))
 }
 
 func TestGetEdge(t *testing.T) {
@@ -191,7 +190,7 @@ func TestGetEdge(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, len(schema.GetColumns()), 1)
+	assert.Equal(t, 1, len(schema.GetColumns()))
 }
 
 func TestGetPartsAlloc(t *testing.T) {
@@ -204,7 +203,7 @@ func TestGetPartsAlloc(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, len(partsAllocMap), 10, fmt.Sprintf("space test_meta has 10 parts, but got %d.", len(partsAllocMap)))
+	assert.Equal(t, 10, len(partsAllocMap), fmt.Sprintf("space test_meta has 10 parts, but got %d.", len(partsAllocMap)))
 }
 
 func TestGetPartLeaders(t *testing.T) {
@@ -213,11 +212,12 @@ func TestGetPartLeaders(t *testing.T) {
 	if !isOpen {
 		setup()
 	}
+	time.Sleep(10 * time.Second)
 	partToHostMap, err := client.GetPartsLeader(spaceName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, len(partToHostMap), 10, fmt.Sprintf("space test_meta has 10 parts, but got %d.", len(partToHostMap)))
+	assert.Equal(t, 10, len(partToHostMap), fmt.Sprintf("space test_meta has 10 parts, but got %d.", len(partToHostMap)))
 }
 
 func TestGetHosts(t *testing.T) {
@@ -230,7 +230,7 @@ func TestGetHosts(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, len(hostList), 3, fmt.Sprintf("storaged hosts num expect 3, but got %d", len(hostList)))
+	assert.Equal(t, 3, len(hostList), fmt.Sprintf("storaged hosts num expect 3, but got %d", len(hostList)))
 }
 
 func TestMetaClientExecuteAfterClose(t *testing.T) {
@@ -261,6 +261,7 @@ func skipSslForMeta(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
+	setup()
 	retCode := m.Run()
 	teardown()
 	os.Exit(retCode)
