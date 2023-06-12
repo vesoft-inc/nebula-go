@@ -49,15 +49,12 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslCo
 	port := hostAddress.Port
 	newAdd := net.JoinHostPort(ip, strconv.Itoa(port))
 	cn.timeout = timeout
-<<<<<<< HEAD
-	bufferSize := 128 << 10
-=======
 	cn.useHTTP2 = useHTTP2
->>>>>>> c284022 (feat: support http2 (#246))
 
 	var (
 		err       error
 		transport thrift.Transport
+		pf        thrift.ProtocolFactory
 	)
 	if useHTTP2 {
 		if sslConfig != nil {
@@ -87,9 +84,9 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslCo
 		if err != nil {
 			return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
 		}
+		pf = thrift.NewBinaryProtocolFactoryDefault()
 	} else {
 		bufferSize := 128 << 10
-		frameMaxLength := uint32(math.MaxUint32)
 
 		var sock thrift.Transport
 		if sslConfig != nil {
@@ -100,20 +97,12 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslCo
 		if err != nil {
 			return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
 		}
-		// Set transport buffer
+		// Set transport
 		bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
-		transport = thrift.NewFramedTransportMaxLength(bufferedTranFactory.GetTransport(sock), frameMaxLength)
+		transport = thrift.NewHeaderTransport(bufferedTranFactory.GetTransport(sock))
+		pf = thrift.NewHeaderProtocolFactory()
 	}
 
-<<<<<<< HEAD
-	// Set transport
-	bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
-	transport := thrift.NewHeaderTransport(bufferedTranFactory.GetTransport(sock))
-	pf := thrift.NewHeaderProtocolFactory()
-
-=======
-	pf := thrift.NewBinaryProtocolFactoryDefault()
->>>>>>> c284022 (feat: support http2 (#246))
 	cn.graph = graph.NewGraphServiceClientFactory(transport, pf)
 	if err = cn.graph.Open(); err != nil {
 		return fmt.Errorf("failed to open transport, error: %s", err.Error())
