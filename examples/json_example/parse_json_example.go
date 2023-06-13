@@ -23,6 +23,7 @@ const (
 	port     = 3699
 	username = "root"
 	password = "nebula"
+	useHTTP2 = false
 )
 
 // Initialize logger
@@ -77,6 +78,7 @@ func main() {
 	hostList := []nebula.HostAddress{hostAddress}
 	// Create configs for connection pool using default values
 	testPoolConfig := nebula.GetDefaultConf()
+	testPoolConfig.UseHTTP2 = useHTTP2
 
 	// Initialize connection pool
 	pool, err := nebula.NewConnectionPool(hostList, testPoolConfig, log)
