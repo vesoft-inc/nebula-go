@@ -29,6 +29,8 @@ type PoolConfig struct {
 	MaxConnPoolSize int
 	// The min connections in pool for all addresses
 	MinConnPoolSize int
+	// UseHTTP2 indicates whether to use HTTP2
+	UseHTTP2 bool
 }
 
 // validateConf validates config
@@ -58,6 +60,7 @@ func GetDefaultConf() PoolConfig {
 		IdleTime:        0 * time.Millisecond,
 		MaxConnPoolSize: 10,
 		MinConnPoolSize: 0,
+		UseHTTP2:        false,
 	}
 }
 
@@ -128,6 +131,8 @@ type SessionPoolConf struct {
 	maxSize int
 	// The min sessions in pool for all addresses
 	minSize int
+	// useHTTP2 indicates whether to use HTTP2
+	useHTTP2 bool
 }
 
 type SessionPoolConfOption func(*SessionPoolConf)
@@ -189,6 +194,12 @@ func WithMaxSize(maxSize int) SessionPoolConfOption {
 func WithMinSize(minSize int) SessionPoolConfOption {
 	return func(conf *SessionPoolConf) {
 		conf.minSize = minSize
+	}
+}
+
+func WithHTTP2(useHTTP2 bool) SessionPoolConfOption {
+	return func(conf *SessionPoolConf) {
+		conf.useHTTP2 = useHTTP2
 	}
 }
 
