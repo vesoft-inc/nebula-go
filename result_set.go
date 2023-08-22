@@ -95,8 +95,8 @@ const (
 )
 
 func GenResultSet(resp *graph.ExecutionResponse) (*ResultSet, error) {
-	var testTimezone timezoneInfo = timezoneInfo{0, []byte("UTC")}
-	return genResultSet(resp, testTimezone)
+	var defaultTimezone timezoneInfo = timezoneInfo{0, []byte("UTC")}
+	return genResultSet(resp, defaultTimezone)
 }
 
 func genResultSet(resp *graph.ExecutionResponse, timezoneInfo timezoneInfo) (*ResultSet, error) {
