@@ -94,6 +94,11 @@ const (
 	ErrorCode_E_PARTIAL_SUCCEEDED     ErrorCode = ErrorCode(nebula.ErrorCode_E_PARTIAL_SUCCEEDED)
 )
 
+func GenResultSet(resp *graph.ExecutionResponse) (*ResultSet, error) {
+	var testTimezone timezoneInfo = timezoneInfo{0, []byte("UTC")}
+	return genResultSet(resp, testTimezone)
+}
+
 func genResultSet(resp *graph.ExecutionResponse, timezoneInfo timezoneInfo) (*ResultSet, error) {
 	var colNames []string
 	var colNameIndexMap = make(map[string]int)
