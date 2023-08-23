@@ -38,14 +38,8 @@ func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*C
 
 // NewConnectionPool constructs a new SSL connection pool using the given addresses and configs
 func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *tls.Config, log Logger) (*ConnectionPool, error) {
-	// Process domain to IP
-	convAddress, err := DomainToIP(addresses)
-	if err != nil {
-		return nil, fmt.Errorf("failed to find IP, error: %s ", err.Error())
-	}
-
 	// Check input
-	if len(convAddress) == 0 {
+	if len(addresses) == 0 {
 		return nil, fmt.Errorf("failed to initialize connection pool: illegal address input")
 	}
 
@@ -55,13 +49,13 @@ func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *t
 	newPool := &ConnectionPool{
 		conf:      conf,
 		log:       log,
-		addresses: convAddress,
+		addresses: addresses,
 		hostIndex: 0,
 		sslConfig: sslConfig,
 	}
 
 	// Init pool with SSL socket
-	if err = newPool.initPool(); err != nil {
+	if err := newPool.initPool(); err != nil {
 		return nil, err
 	}
 	newPool.startCleaner()
