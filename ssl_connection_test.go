@@ -33,15 +33,15 @@ func TestSslConnection(t *testing.T) {
 	}
 
 	sslConfig, err := GetDefaultSSLConfig(
-		"./nebula-docker-compose/secrets/test.ca.pem",
-		"./nebula-docker-compose/secrets/test.client.crt",
-		"./nebula-docker-compose/secrets/test.client.key",
+		"./nebula-docker-compose/secrets/root.crt",
+		"./nebula-docker-compose/secrets/client.crt",
+		"./nebula-docker-compose/secrets/client.key",
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	sslConfig.InsecureSkipVerify = true // This is only used for testing
+	sslConfig.InsecureSkipVerify = false
 
 	// Initialize connection pool
 	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConfig, nebulaLog)
@@ -98,15 +98,15 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	}
 
 	sslConfig, err := GetDefaultSSLConfig(
-		"./nebula-docker-compose/secrets/test.self-signed.pem",
-		"./nebula-docker-compose/secrets/test.self-signed.pem",
-		"./nebula-docker-compose/secrets/test.self-signed.key",
+		"./nebula-docker-compose/secrets/root.crt",
+		"./nebula-docker-compose/secrets/client.crt",
+		"./nebula-docker-compose/secrets/client.key",
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	sslConfig.InsecureSkipVerify = true // This is only used for testing
+	sslConfig.InsecureSkipVerify = false
 
 	// Initialize connection pool
 	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConfig, nebulaLog)

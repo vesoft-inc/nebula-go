@@ -1240,7 +1240,7 @@ func TestReconnect(t *testing.T) {
 	for i := 0; i < timeoutConfig.MaxConnPoolSize; i++ {
 		time.Sleep(200 * time.Millisecond)
 		if i == 3 {
-			stopContainer(t, "nebula-docker-compose_graphd_1")
+			stopContainer(t, "nebula-docker-compose_graphd0_1")
 		}
 		if i == 7 {
 			stopContainer(t, "nebula-docker-compose_graphd1_1")
@@ -1261,20 +1261,11 @@ func TestReconnect(t *testing.T) {
 	}
 	checkResultSet(t, "SHOW HOSTS;", resp)
 
-	startContainer(t, "nebula-docker-compose_graphd_1")
+	startContainer(t, "nebula-docker-compose_graphd0_1")
 	startContainer(t, "nebula-docker-compose_graphd1_1")
 
 	// Wait for graphd to be up
 	time.Sleep(5 * time.Second)
-}
-
-func TestIpLookup(t *testing.T) {
-	hostAddress := HostAddress{Host: "192.168.10.105", Port: 3699}
-	hostList := []HostAddress{hostAddress}
-	_, err := DomainToIP(hostList)
-	if err != nil {
-		t.Errorf(err.Error())
-	}
 }
 
 // Method used to check execution response

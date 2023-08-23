@@ -270,7 +270,7 @@ services:
     cap_add:
       - SYS_PTRACE
 
-  graphd:
+  graphd0:
     image: vesoft/nebula-graphd:nightly
     environment:
       USER: root
@@ -278,7 +278,7 @@ services:
     command:
       - --meta_server_addrs=metad0:45500,metad1:45500,metad2:45500
       - --port=3699
-      - --ws_ip=graphd
+      - --ws_ip=graphd0
       - --ws_http_port=13000
       - --log_dir=/logs
       - --v=0
@@ -299,7 +299,7 @@ services:
       - metad1
       - metad2
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://graphd:13000/status"]
+      test: ["CMD", "curl", "-sf", "http://graphd0:13000/status"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -310,7 +310,7 @@ services:
       - 13002
     volumes:
       - ./secrets:/secrets
-      - ./logs/graph:/logs
+      - ./logs/graph0:/logs
     networks:
       - nebula-net
     restart: on-failure
@@ -421,7 +421,7 @@ services:
       - -c
       - |
         for i in `seq 1 60`;do
-          var=`nebula-console -addr graphd -port 3699 -u root -p nebula -e 'ADD HOSTS "storaged0":44500,"storaged1":44500,"storaged2":44500'`;
+          var=`nebula-console -addr graphd -port 3699 -u root -p nebula0 -e 'ADD HOSTS "storaged0":44500,"storaged1":44500,"storaged2":44500'`;
           if [[ $$? == 0 ]];then
             break;
           fi;
@@ -429,7 +429,7 @@ services:
           echo "retry to add hosts.";
         done && tail -f /dev/null;
     depends_on:
-      - graphd
+      - graphd0
     networks:
       - nebula-net
 
