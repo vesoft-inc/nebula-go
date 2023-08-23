@@ -6,9 +6,9 @@ services:
       USER: root
       TZ:   "${TZ}"
     command:
-      - --meta_server_addrs=metad0:45500,metad1:45500,metad2:45500
-      - --local_ip=metad0
-      - --ws_ip=metad0
+      - --meta_server_addrs=172.28.1.1:45500,172.28.1.2:45500,172.28.1.3:45500
+      - --local_ip=172.28.1.1
+      - --ws_ip=172.28.1.1
       - --port=45500
       - --ws_http_port=11000
       - --data_path=/data/meta
@@ -24,13 +24,13 @@ services:
       - --enable_ssl=${enable_ssl}
       - --password_path=${password_path}
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://metad0:11000/status"]
+      test: ["CMD", "curl", "-sf", "http://172.28.1.1:11000/status"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 20s
     ports:
-      - 45500
+      - "9559:45500"
       - 11000
       - 11002
     volumes:
@@ -38,7 +38,8 @@ services:
       - ./data/meta0:/data/meta
       - ./logs/meta0:/logs
     networks:
-      - nebula-net
+      nebula-net:
+        ipv4_address: 172.28.1.1
     restart: on-failure
     cap_add:
       - SYS_PTRACE
@@ -49,9 +50,9 @@ services:
       USER: root
       TZ:   "${TZ}"
     command:
-      - --meta_server_addrs=metad0:45500,metad1:45500,metad2:45500
-      - --local_ip=metad1
-      - --ws_ip=metad1
+      - --meta_server_addrs=172.28.1.1:45500,172.28.1.2:45500,172.28.1.3:45500
+      - --local_ip=172.28.1.2
+      - --ws_ip=172.28.1.2
       - --port=45500
       - --ws_http_port=11000
       - --data_path=/data/meta
@@ -67,13 +68,13 @@ services:
       - --enable_ssl=${enable_ssl}
       - --password_path=${password_path}
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://metad1:11000/status"]
+      test: ["CMD", "curl", "-sf", "http://172.28.1.2:11000/status"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 20s
     ports:
-      - 45500
+      - "9560:45500"
       - 11000
       - 11002
     volumes:
@@ -81,7 +82,8 @@ services:
       - ./data/meta1:/data/meta
       - ./logs/meta1:/logs
     networks:
-      - nebula-net
+      nebula-net:
+        ipv4_address: 172.28.1.2
     restart: on-failure
     cap_add:
       - SYS_PTRACE
@@ -92,9 +94,9 @@ services:
       USER: root
       TZ:   "${TZ}"
     command:
-      - --meta_server_addrs=metad0:45500,metad1:45500,metad2:45500
-      - --local_ip=metad2
-      - --ws_ip=metad2
+      - --meta_server_addrs=172.28.1.1:45500,172.28.1.2:45500,172.28.1.3:45500
+      - --local_ip=172.28.1.3
+      - --ws_ip=172.28.1.3
       - --port=45500
       - --ws_http_port=11000
       - --data_path=/data/meta
@@ -110,13 +112,13 @@ services:
       - --enable_ssl=${enable_ssl}
       - --password_path=${password_path}
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://metad2:11000/status"]
+      test: ["CMD", "curl", "-sf", "http://172.28.1.3:11000/status"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 20s
     ports:
-      - 45500
+      - "9561:45500"
       - 11000
       - 11002
     volumes:
@@ -124,7 +126,8 @@ services:
       - ./data/meta2:/data/meta
       - ./logs/meta2:/logs
     networks:
-      - nebula-net
+      nebula-net:
+        ipv4_address: 172.28.1.3
     restart: on-failure
     cap_add:
       - SYS_PTRACE
@@ -135,9 +138,9 @@ services:
       USER: root
       TZ:   "${TZ}"
     command:
-      - --meta_server_addrs=metad0:45500,metad1:45500,metad2:45500
-      - --local_ip=storaged0
-      - --ws_ip=storaged0
+      - --meta_server_addrs=172.28.1.1:45500,172.28.1.2:45500,172.28.1.3:45500
+      - --local_ip=172.28.2.1
+      - --ws_ip=172.28.2.1
       - --port=44500
       - --ws_http_port=12000
       - --data_path=/data/storage
@@ -157,13 +160,13 @@ services:
       - metad1
       - metad2
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://storaged0:12000/status"]
+      test: ["CMD", "curl", "-sf", "http://172.28.2.1:12000/status"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 20s
     ports:
-      - 44500
+      - "44500:44500"
       - 12000
       - 12002
     volumes:
@@ -171,7 +174,8 @@ services:
       - ./data/storage0:/data/storage
       - ./logs/storage0:/logs
     networks:
-      - nebula-net
+      nebula-net:
+        ipv4_address: 172.28.2.1
     restart: on-failure
     cap_add:
       - SYS_PTRACE
@@ -182,9 +186,9 @@ services:
       USER: root
       TZ:   "${TZ}"
     command:
-      - --meta_server_addrs=metad0:45500,metad1:45500,metad2:45500
-      - --local_ip=storaged1
-      - --ws_ip=storaged1
+      - --meta_server_addrs=172.28.1.1:45500,172.28.1.2:45500,172.28.1.3:45500
+      - --local_ip=172.28.2.2
+      - --ws_ip=172.28.2.2
       - --port=44500
       - --ws_http_port=12000
       - --data_path=/data/storage
@@ -204,13 +208,13 @@ services:
       - metad1
       - metad2
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://storaged1:12000/status"]
+      test: ["CMD", "curl", "-sf", "http://172.28.2.2:12000/status"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 20s
     ports:
-      - 44500
+      - "44501:44500"
       - 12000
       - 12002
     volumes:
@@ -218,7 +222,8 @@ services:
       - ./data/storage1:/data/storage
       - ./logs/storage1:/logs
     networks:
-      - nebula-net
+      nebula-net:
+        ipv4_address: 172.28.2.2
     restart: on-failure
     cap_add:
       - SYS_PTRACE
@@ -229,9 +234,9 @@ services:
       USER: root
       TZ:   "${TZ}"
     command:
-      - --meta_server_addrs=metad0:45500,metad1:45500,metad2:45500
-      - --local_ip=storaged2
-      - --ws_ip=storaged2
+      - --meta_server_addrs=172.28.1.1:45500,172.28.1.2:45500,172.28.1.3:45500
+      - --local_ip=172.28.2.3
+      - --ws_ip=172.28.2.3
       - --port=44500
       - --ws_http_port=12000
       - --data_path=/data/storage
@@ -251,13 +256,13 @@ services:
       - metad1
       - metad2
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://storaged2:12000/status"]
+      test: ["CMD", "curl", "-sf", "http://172.28.2.3:12000/status"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 20s
     ports:
-      - 44500
+      - "44502:44500"
       - 12000
       - 12002
     volumes:
@@ -265,7 +270,8 @@ services:
       - ./data/storage2:/data/storage
       - ./logs/storage2:/logs
     networks:
-      - nebula-net
+      nebula-net:
+        ipv4_address: 172.28.2.3
     restart: on-failure
     cap_add:
       - SYS_PTRACE
@@ -276,9 +282,9 @@ services:
       USER: root
       TZ:   "${TZ}"
     command:
-      - --meta_server_addrs=metad0:45500,metad1:45500,metad2:45500
+      - --meta_server_addrs=172.28.1.1:45500,172.28.1.2:45500,172.28.1.3:45500
       - --port=3699
-      - --ws_ip=graphd
+      - --ws_ip=172.28.3.1
       - --ws_http_port=13000
       - --log_dir=/logs
       - --v=0
@@ -299,7 +305,7 @@ services:
       - metad1
       - metad2
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://graphd:13000/status"]
+      test: ["CMD", "curl", "-sf", "http://172.28.3.1:13000/status"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -312,7 +318,8 @@ services:
       - ./secrets:/secrets
       - ./logs/graph:/logs
     networks:
-      - nebula-net
+      nebula-net:
+        ipv4_address: 172.28.3.1
     restart: on-failure
     cap_add:
       - SYS_PTRACE
@@ -323,9 +330,9 @@ services:
       USER: root
       TZ:   "${TZ}"
     command:
-      - --meta_server_addrs=metad0:45500,metad1:45500,metad2:45500
+      - --meta_server_addrs=172.28.1.1:45500,172.28.1.2:45500,172.28.1.3:45500
       - --port=3699
-      - --ws_ip=graphd1
+      - --ws_ip=172.28.3.2
       - --ws_http_port=13000
       - --log_dir=/logs
       - --v=0
@@ -346,7 +353,7 @@ services:
       - metad1
       - metad2
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://graphd1:13000/status"]
+      test: ["CMD", "curl", "-sf", "http://172.28.3.2:13000/status"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -359,7 +366,8 @@ services:
       - ./secrets:/secrets
       - ./logs/graph1:/logs
     networks:
-      - nebula-net
+      nebula-net:
+        ipv4_address: 172.28.3.2
     restart: on-failure
     cap_add:
       - SYS_PTRACE
@@ -370,9 +378,9 @@ services:
       USER: root
       TZ:   "${TZ}"
     command:
-      - --meta_server_addrs=metad0:45500,metad1:45500,metad2:45500
+      - --meta_server_addrs=172.28.1.1:45500,172.28.1.2:45500,172.28.1.3:45500
       - --port=3699
-      - --ws_ip=graphd2
+      - --ws_ip=172.28.3.3
       - --ws_http_port=13000
       - --log_dir=/logs
       - --v=0
@@ -388,14 +396,12 @@ services:
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
       - --password_path=${password_path}
-
-
     depends_on:
       - metad0
       - metad1
       - metad2
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://graphd2:13000/status"]
+      test: ["CMD", "curl", "-sf", "http://172.28.3.3:13000/status"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -408,7 +414,8 @@ services:
       - ./secrets:/secrets
       - ./logs/graph2:/logs
     networks:
-      - nebula-net
+      nebula-net:
+        ipv4_address: 172.28.3.3
     restart: on-failure
     cap_add:
       - SYS_PTRACE
@@ -421,7 +428,7 @@ services:
       - -c
       - |
         for i in `seq 1 60`;do
-          var=`nebula-console -addr graphd -port 3699 -u root -p nebula -e 'ADD HOSTS "storaged0":44500,"storaged1":44500,"storaged2":44500'`;
+          var=`nebula-console -addr graphd -port 3699 -u root -p nebula -e 'ADD HOSTS "172.28.2.1":44500,"172.28.2.2":44500,"172.28.2.3":44500'`;
           if [[ $$? == 0 ]];then
             break;
           fi;
@@ -435,3 +442,7 @@ services:
 
 networks:
   nebula-net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
