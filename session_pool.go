@@ -10,7 +10,6 @@ package nebula_go
 
 import (
 	"container/list"
-	"crypto/tls"
 	"fmt"
 	"strconv"
 	"sync"
@@ -45,7 +44,6 @@ type SessionPool struct {
 	closed         bool
 	cleanerChan    chan struct{} //notify when pool is close
 	rwLock         sync.RWMutex
-	sslConfig      *tls.Config
 }
 
 // NewSessionPool creates a new session pool with the given configs.
@@ -72,7 +70,7 @@ func (pool *SessionPool) init() error {
 	pool.rwLock.Lock()
 	defer pool.rwLock.Unlock()
 	// check the hosts status
-	if err := checkAddresses(pool.conf.timeOut, pool.conf.serviceAddrs, pool.sslConfig); err != nil {
+	if err := checkAddresses(pool.conf.timeOut, pool.conf.serviceAddrs, pool.conf.sslConfig, pool.conf.useHTTP2); err != nil {
 		return fmt.Errorf("failed to initialize the session pool, %s", err.Error())
 	}
 
@@ -306,12 +304,13 @@ func (pool *SessionPool) newSession() (*Session, error) {
 		severAddress: graphAddr,
 		timeout:      0 * time.Millisecond,
 		returnedAt:   time.Now(),
-		sslConfig:    nil,
+		sslConfig:    pool.conf.sslConfig,
+		useHTTP2:     pool.conf.useHTTP2,
 		graph:        nil,
 	}
 
 	// open a new connection
-	if err := cn.open(cn.severAddress, pool.conf.timeOut, nil); err != nil {
+	if err := cn.open(cn.severAddress, pool.conf.timeOut, pool.conf.sslConfig, pool.conf.useHTTP2); err != nil {
 		return nil, fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
 	}
 

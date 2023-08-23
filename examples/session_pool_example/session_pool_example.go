@@ -24,6 +24,7 @@ const (
 	port     = 3699
 	username = "root"
 	password = "nebula"
+	useHTTP2 = false
 )
 
 // Initialize logger
@@ -39,6 +40,7 @@ func main() {
 		"nebula",
 		[]nebula.HostAddress{hostAddress},
 		"example_space",
+		nebula.WithHTTP2(useHTTP2),
 	)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("failed to create session pool config, %s", err.Error()))
@@ -160,6 +162,7 @@ func prepareSpace() {
 	hostList := []nebula.HostAddress{hostAddress}
 	// Create configs for connection pool using default values
 	testPoolConfig := nebula.GetDefaultConf()
+	testPoolConfig.UseHTTP2 = useHTTP2
 
 	// Initialize connection pool
 	pool, err := nebula.NewConnectionPool(hostList, testPoolConfig, log)

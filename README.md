@@ -7,7 +7,7 @@
 **IMPORTANT: Code of Nebula go client has been transferred from [nebula-clients](https://github.com/vesoft-inc/nebula-clients) to this repository(nebula-go), and new releases in the future will be published in this repository.
 Please update your `go.mod` and imports correspondingly.**
 
-Official Nebula Go client which communicates with the server using [fbthrift](https://github.com/facebook/fbthrift/). Currently the latest stable release is **[v3.4.0](https://github.com/vesoft-inc/nebula-go/tree/release-v3.4)**
+Official Nebula Go client which communicates with the server using [fbthrift](https://github.com/vesoft-inc/fbthrift/). Currently the latest stable release is **[v3.4.0](https://github.com/vesoft-inc/nebula-go/tree/release-v3.4)**
 
 The code in **master branch** will be updated to accommodate the nightly changes made in NebulaGraph.
 To Use the console with a stable release of NebulaGraph, please check the branches and use the corresponding version.
