@@ -157,19 +157,10 @@ func (cn *connection) executeWithParameter(sessionID int64, stmt string,
 	params map[string]*nebula.Value) (*graph.ExecutionResponse, error) {
 	resp, err := cn.graph.ExecuteWithParameter(sessionID, []byte(stmt), params)
 	if err != nil {
-		// reopen the connection if timeout
-		if _, ok := err.(thrift.TransportException); ok {
-			if err.(thrift.TransportException).TypeID() == thrift.TIMED_OUT {
-				reopenErr := cn.reopen()
-				if reopenErr != nil {
-					return nil, reopenErr
-				}
-				return cn.graph.ExecuteWithParameter(sessionID, []byte(stmt), params)
-			}
-		}
+		return nil, err
 	}
 
-	return resp, err
+	return resp, nil
 }
 
 func (cn *connection) executeJson(sessionID int64, stmt string) ([]byte, error) {

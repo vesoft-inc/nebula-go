@@ -25,6 +25,7 @@ down:
 
 ssl-test:
 	ssl_test=true go test -v --tags=integration -run TestSslConnection;
+	ssl_test=true go test -v --tags=integration -run TestSslSessionPool;
 
 ssl-test-self-signed:
 	self_signed=true go test -v --tags=integration -run TestSslConnection;
