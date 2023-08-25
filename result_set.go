@@ -11,6 +11,7 @@ package nebula_go
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"regexp"
 	"sort"
@@ -358,6 +359,13 @@ func (res ResultSet) GetErrorMsg() string {
 		return ""
 	}
 	return string(res.resp.ErrorMsg)
+}
+
+func (res ResultSet) GetError() error {
+	if res.resp.ErrorMsg == nil {
+		return nil
+	}
+	return errors.New(string(res.resp.ErrorMsg))
 }
 
 func (res ResultSet) IsSetPlanDesc() bool {
