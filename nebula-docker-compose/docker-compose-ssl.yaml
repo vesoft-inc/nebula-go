@@ -22,7 +22,6 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
-      - --password_path=${password_path}
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad0:11000/status"]
       interval: 30s
@@ -65,7 +64,6 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
-      - --password_path=${password_path}
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad1:11000/status"]
       interval: 30s
@@ -108,7 +106,6 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
-      - --password_path=${password_path}
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://metad2:11000/status"]
       interval: 30s
@@ -151,7 +148,6 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
-      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -198,7 +194,6 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
-      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -245,7 +240,6 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
-      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -270,7 +264,7 @@ services:
     cap_add:
       - SYS_PTRACE
 
-  graphd:
+  graphd0:
     image: vesoft/nebula-graphd:v3
     environment:
       USER: root
@@ -278,7 +272,7 @@ services:
     command:
       - --meta_server_addrs=metad0:45500,metad1:45500,metad2:45500
       - --port=3699
-      - --ws_ip=graphd
+      - --ws_ip=graphd0
       - --ws_http_port=13000
       - --log_dir=/logs
       - --v=0
@@ -292,13 +286,12 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
-      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
       - metad2
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://graphd:13000/status"]
+      test: ["CMD", "curl", "-sf", "http://graphd0:13000/status"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -309,7 +302,7 @@ services:
       - 13002
     volumes:
       - ./secrets:/secrets
-      - ./logs/graph:/logs
+      - ./logs/graph0:/logs
     networks:
       - nebula-net
     restart: on-failure
@@ -338,7 +331,6 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
-      - --password_path=${password_path}
     depends_on:
       - metad0
       - metad1
@@ -384,7 +376,6 @@ services:
       - --cert_path=${cert_path}
       - --key_path=${key_path}
       - --enable_ssl=${enable_ssl}
-      - --password_path=${password_path}
 
 
     depends_on:
@@ -419,9 +410,22 @@ services:
       - |
         for i in `seq 1 60`;do
           echo "Adding hosts..."
-          var=`nebula-console -addr graphd -port 3699 -u root -p nebula -enable_ssl=true -ssl_root_ca_path /secrets/test.ca.pem -ssl_cert_path /secrets/test.client.crt -ssl_private_key_path /secrets/test.client.key --ssl_insecure_skip_verify=true -e 'ADD HOSTS "storaged0":44500,"storaged1":44500,"storaged2":44500'`;
+          var=`nebula-console -addr graphd0 -port 3699 -u root -p nebula -enable_ssl=true \
+            -ssl_root_ca_path /secrets/root.crt \
+            -ssl_cert_path /secrets/client.crt \
+            -ssl_private_key_path /secrets/client.key \
+            --ssl_insecure_skip_verify=true \
+            -e 'ADD HOSTS "storaged0":44500,"storaged1":44500,"storaged2":44500'`;
           if [[ $$? == 0 ]];then
             echo "Hosts added successfully"
+            sleep 2;
+            nebula-console -addr graphd0 -port 3699 -u root -p nebula \
+              -enable_ssl=true \
+              -ssl_root_ca_path /secrets/root.crt \
+              -ssl_cert_path /secrets/client.crt \
+              -ssl_private_key_path /secrets/client.key \
+              --ssl_insecure_skip_verify=true \
+              -e 'CREATE SPACE session_pool(partition_num=4, replica_factor=1, vid_type = FIXED_STRING(30))'
             break;
           fi;
           sleep 1;
@@ -430,7 +434,7 @@ services:
     volumes:
       - ./secrets:/secrets
     depends_on:
-      - graphd
+      - graphd0
     networks:
       - nebula-net
 

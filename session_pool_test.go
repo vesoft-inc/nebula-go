@@ -17,6 +17,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/vesoft-inc/nebula-go/v3/nebula"
+	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
 
 func TestSessionPoolInvalidConfig(t *testing.T) {
@@ -110,37 +112,38 @@ func TestSessionPoolMultiThreadGetSession(t *testing.T) {
 	defer sessionPool.Close()
 
 	var wg sync.WaitGroup
-	sessCh := make(chan *Session)
+	rsCh := make(chan *ResultSet, sessionPool.conf.maxSize)
 	done := make(chan bool)
 	wg.Add(sessionPool.conf.maxSize)
 
 	// producer create sessions
 	for i := 0; i < sessionPool.conf.maxSize; i++ {
-		go func(sessCh chan<- *Session, wg *sync.WaitGroup) {
+		go func(sessCh chan<- *ResultSet, wg *sync.WaitGroup) {
 			defer wg.Done()
-			session, err := sessionPool.getIdleSession()
+			rs, err := sessionPool.Execute("yield 1")
 			if err != nil {
-				t.Errorf("fail to create a new session from connection pool, %s", err.Error())
+				t.Errorf("fail to execute query, %s", err.Error())
 			}
-			sessCh <- session
-		}(sessCh, &wg)
+
+			rsCh <- rs
+		}(rsCh, &wg)
 	}
 
 	// consumer consumes the session created
-	var sessionList []*Session
-	go func(sessCh <-chan *Session) {
-		for session := range sessCh {
-			sessionList = append(sessionList, session)
+	var rsList []*ResultSet
+	go func(rsCh <-chan *ResultSet) {
+		for session := range rsCh {
+			rsList = append(rsList, session)
 		}
 		done <- true
-	}(sessCh)
+	}(rsCh)
 	wg.Wait()
-	close(sessCh)
+	close(rsCh)
 	<-done
 
-	assert.Equalf(t, config.maxSize, sessionPool.activeSessions.Len(),
+	assert.Equalf(t, 0, sessionPool.activeSessions.Len(),
 		"Total number of active connections should be %d", config.maxSize)
-	assert.Equalf(t, config.maxSize, len(sessionList),
+	assert.Equalf(t, config.maxSize, len(rsList),
 		"Total number of result returned should be %d", config.maxSize)
 }
 
@@ -319,6 +322,50 @@ func TestIdleSessionCleaner(t *testing.T) {
 		sessionPool.conf.minSize, sessionPool.GetTotalSessionCount())
 }
 
+func TestRetryGetSession(t *testing.T) {
+	err := prepareSpace("client_test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dropSpace("client_test")
+
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		"client_test")
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+	config.minSize = 2
+	config.maxSize = 2
+	config.retryGetSessionTimes = 1
+
+	// create session pool
+	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sessionPool.Close()
+
+	// kill all sessions in the cluster
+	resultSet, err := sessionPool.Execute("SHOW SESSIONS | KILL SESSIONS $-.SessionId")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.True(t, resultSet.IsSucceed(), fmt.Errorf("error code: %d, error msg: %s",
+		resultSet.GetErrorCode(), resultSet.GetErrorMsg()))
+
+	// execute query, it should retry to get session
+	resultSet, err = sessionPool.Execute("SHOW HOSTS;")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.True(t, resultSet.IsSucceed(), fmt.Errorf("error code: %d, error msg: %s",
+		resultSet.GetErrorCode(), resultSet.GetErrorMsg()))
+}
+
 func BenchmarkConcurrency(b *testing.B) {
 	err := prepareSpace("client_test")
 	if err != nil {
@@ -366,4 +413,126 @@ func BenchmarkConcurrency(b *testing.B) {
 		end := time.Now()
 		b.Logf("Concurrency: %d, Total time cost: %v", clients, end.Sub(start))
 	}
+}
+
+// retry when return the error code *ErrorCode_E_SESSION_INVALID*
+func TestSessionPoolRetry(t *testing.T) {
+	err := prepareSpace("client_test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dropSpace("client_test")
+
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		"client_test")
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+	config.minSize = 2
+	config.maxSize = 2
+	config.retryGetSessionTimes = 1
+
+	// create session pool
+	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sessionPool.Close()
+	testcaes := []struct {
+		name    string
+		retryFn func(*pureSession) (*ResultSet, error)
+		retry   bool
+	}{
+		{
+			name: "success",
+			retryFn: func(s *pureSession) (*ResultSet, error) {
+				return &ResultSet{
+					resp: &graph.ExecutionResponse{
+						ErrorCode: nebula.ErrorCode_SUCCEEDED,
+					},
+				}, nil
+			},
+			retry: false,
+		},
+		{
+			name: "error",
+			retryFn: func(s *pureSession) (*ResultSet, error) {
+				return nil, fmt.Errorf("error")
+			},
+			retry: true,
+		},
+		{
+			name: "invalid session error code",
+			retryFn: func(s *pureSession) (*ResultSet, error) {
+				return &ResultSet{
+					resp: &graph.ExecutionResponse{
+						ErrorCode: nebula.ErrorCode_E_SESSION_INVALID,
+					},
+				}, nil
+			},
+			retry: true,
+		},
+		{
+			name: "execution error code",
+			retryFn: func(s *pureSession) (*ResultSet, error) {
+				return &ResultSet{
+					resp: &graph.ExecutionResponse{
+						ErrorCode: nebula.ErrorCode_E_EXECUTION_ERROR,
+					},
+				}, nil
+			},
+			retry: false,
+		},
+	}
+	for _, tc := range testcaes {
+		session, err := sessionPool.newSession()
+		if err != nil {
+			t.Fatal(err)
+		}
+		original := *session
+		_, _ = sessionPool.executeWithRetry(session, tc.retryFn, 2)
+		if tc.retry {
+			assert.NotEqual(t, original, *session, fmt.Sprintf("test case: %s", tc.name))
+			assert.NotEqual(t, original.connection, nil, fmt.Sprintf("test case: %s", tc.name))
+		} else {
+			assert.Equal(t, original, *session, fmt.Sprintf("test case: %s", tc.name))
+		}
+	}
+}
+
+func TestSessionPoolClose(t *testing.T) {
+	err := prepareSpace("client_test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dropSpace("client_test")
+
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		"client_test")
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+	config.minSize = 2
+	config.maxSize = 2
+	config.retryGetSessionTimes = 1
+
+	// create session pool
+	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	sessionPool.Close()
+
+	assert.Equal(t, 0, sessionPool.activeSessions.Len(), "Total number of active connections should be 0")
+	assert.Equal(t, 0, sessionPool.idleSessions.Len(), "Total number of active connections should be 0")
+	_, err = sessionPool.Execute("SHOW HOSTS;")
+	assert.Equal(t, err.Error(), "failed to execute: Session pool has been closed", "session pool should be closed")
 }

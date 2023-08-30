@@ -65,7 +65,7 @@ func logoutAndClose(conn *connection, sessionID int64) {
 func TestConnection(t *testing.T) {
 	hostAddress := HostAddress{Host: address, Port: port}
 	conn := newConnection(hostAddress)
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -122,7 +122,7 @@ func TestConnection(t *testing.T) {
 func TestConnectionIPv6(t *testing.T) {
 	hostAddress := HostAddress{Host: addressIPv6, Port: port}
 	conn := newConnection(hostAddress)
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -254,7 +254,7 @@ func TestAuthentication(t *testing.T) {
 	hostAddress := HostAddress{Host: address, Port: port}
 
 	conn := newConnection(hostAddress)
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -507,6 +507,34 @@ func TestServiceDataIO(t *testing.T) {
 		localTime, _ := dtWrapper.getLocalDateTime()
 		expected = nebula.DateTime{2010, 9, 10, 10, 8, 2, 0}
 		assert.Equal(t, expected, *localTime)
+	}
+
+	// Test path
+	{
+		resp, err := tryToExecute(session, "MATCH p = (:person{name: \"Bob\"}) -[e:friend]-> (:person{name: \"Lily\"}) RETURN p")
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, 1, resp.GetRowSize())
+		record, err := resp.GetRowValuesByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		valWrap, err := record.GetValueByIndex(0)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		path, err := valWrap.AsPath()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t,
+			"<(\"Bob\" :student{interval: P1MT100.000020000S, name: \"Bob\"} :person{age: 10, birthday: 2010-09-10T10:08:02.000000, book_num: 100, child_name: \"Hello Worl\", expend: 100.0, first_out_city: 1111, friends: 10, grade: 3, hobby: __NULL__, is_girl: false, morning: 07:10:00.000000, name: \"Bob\", property: 1000.0, start_school: 2017-09-10})-[:friend@0 {end_Datetime: 2010-09-10T10:08:02.000000, start_Datetime: 2008-09-10T10:08:02.000000}]->(\"Lily\" :student{interval: P12MT0.000000000S, name: \"Lily\"} :person{age: 9, birthday: 2010-09-10T10:08:02.000000, book_num: 100, child_name: \"Hello Worl\", expend: 100.0, first_out_city: 1111, friends: 10, grade: 3, hobby: __NULL__, is_girl: false, morning: 07:10:00.000000, name: \"Lily\", property: 1000.0, start_school: 2017-09-10})>",
+			path.String())
 	}
 
 	// Check timestamp
@@ -1202,26 +1230,22 @@ func TestReconnect(t *testing.T) {
 	defer pool.Close()
 
 	// Create session
-	var sessionList []*Session
-
-	for i := 0; i < 3; i++ {
-		session, err := pool.GetSession(username, password)
-		if err != nil {
-			t.Errorf("fail to create a new session from connection pool, %s", err.Error())
-		}
-		sessionList = append(sessionList, session)
+	session, err := pool.GetSession(username, password)
+	if err != nil {
+		t.Errorf("fail to create a new session from connection pool, %s", err.Error())
 	}
+	defer session.Release()
 
 	// Send query to server periodically
 	for i := 0; i < timeoutConfig.MaxConnPoolSize; i++ {
 		time.Sleep(200 * time.Millisecond)
 		if i == 3 {
-			stopContainer(t, "nebula-docker-compose_graphd_1")
+			stopContainer(t, "nebula-docker-compose_graphd0_1")
 		}
 		if i == 7 {
 			stopContainer(t, "nebula-docker-compose_graphd1_1")
 		}
-		_, err := sessionList[0].Execute("SHOW HOSTS;")
+		_, err := session.Execute("SHOW HOSTS;")
 		fmt.Println("Sending query...")
 
 		if err != nil {
@@ -1230,31 +1254,18 @@ func TestReconnect(t *testing.T) {
 		}
 	}
 
-	resp, err := sessionList[0].Execute("SHOW HOSTS;")
+	resp, err := session.Execute("SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkResultSet(t, "SHOW HOSTS;", resp)
 
-	startContainer(t, "nebula-docker-compose_graphd_1")
+	startContainer(t, "nebula-docker-compose_graphd0_1")
 	startContainer(t, "nebula-docker-compose_graphd1_1")
-
-	for i := 0; i < len(sessionList); i++ {
-		sessionList[i].Release()
-	}
 
 	// Wait for graphd to be up
 	time.Sleep(5 * time.Second)
-}
-
-func TestIpLookup(t *testing.T) {
-	hostAddress := HostAddress{Host: "192.168.10.105", Port: 3699}
-	hostList := []HostAddress{hostAddress}
-	_, err := DomainToIP(hostList)
-	if err != nil {
-		t.Errorf(err.Error())
-	}
 }
 
 // Method used to check execution response
@@ -1405,7 +1416,7 @@ func prepareSpace(spaceName string) error {
 	conn := newConnection(hostAddress)
 	testPoolConfig := GetDefaultConf()
 
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false)
 	if err != nil {
 		return fmt.Errorf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -1442,7 +1453,7 @@ func dropSpace(spaceName string) error {
 	conn := newConnection(hostAddress)
 	testPoolConfig := GetDefaultConf()
 
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false)
 	if err != nil {
 		return fmt.Errorf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}

@@ -18,3 +18,8 @@ nebula-docker-compose/logs/
 .DS_Store
 
 .idea/
+
+# ssl 
+*.cnf
+*.csr
+*.srl

@@ -94,6 +94,11 @@ const (
 	ErrorCode_E_PARTIAL_SUCCEEDED     ErrorCode = ErrorCode(nebula.ErrorCode_E_PARTIAL_SUCCEEDED)
 )
 
+func GenResultSet(resp *graph.ExecutionResponse) (*ResultSet, error) {
+	var defaultTimezone timezoneInfo = timezoneInfo{0, []byte("UTC")}
+	return genResultSet(resp, defaultTimezone)
+}
+
 func genResultSet(resp *graph.ExecutionResponse, timezoneInfo timezoneInfo) (*ResultSet, error) {
 	var colNames []string
 	var colNameIndexMap = make(map[string]int)
@@ -238,6 +243,7 @@ func genPathWrapper(path *nebula.Path, timezoneInfo timezoneInfo) (*PathWrapper,
 		nodeList:         nodeList,
 		relationshipList: relationshipList,
 		segments:         segList,
+		timezoneInfo:     timezoneInfo,
 	}, nil
 }
 
@@ -460,7 +466,7 @@ func (node Node) Properties(tagName string) (map[string]*ValueWrapper, error) {
 	kvMap := make(map[string]*ValueWrapper)
 	// Check if label exists
 	if !node.HasTag(tagName) {
-		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exsist in the Node", tagName)
+		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exist in the Node", tagName)
 	}
 	index := node.tagNameIndexMap[tagName]
 	for k, v := range node.vertex.Tags[index].Props {
@@ -472,7 +478,7 @@ func (node Node) Properties(tagName string) (map[string]*ValueWrapper, error) {
 // Keys returns all prop names of the given tag name
 func (node Node) Keys(tagName string) ([]string, error) {
 	if !node.HasTag(tagName) {
-		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exsist in the Node", tagName)
+		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exist in the Node", tagName)
 	}
 	var propNameList []string
 	index := node.tagNameIndexMap[tagName]
@@ -485,7 +491,7 @@ func (node Node) Keys(tagName string) ([]string, error) {
 // Values returns all prop values of the given tag name
 func (node Node) Values(tagName string) ([]*ValueWrapper, error) {
 	if !node.HasTag(tagName) {
-		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exsist in the Node", tagName)
+		return nil, fmt.Errorf("failed to get properties: Tag name %s does not exist in the Node", tagName)
 	}
 	var propValList []*ValueWrapper
 	index := node.tagNameIndexMap[tagName]
@@ -1251,6 +1257,65 @@ func (res ResultSet) MakeDotGraphByStruct() string {
 	return builder.String()
 }
 
+// generate profiling data for both Row and TCK formats.
+func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription, isTckFmt bool) string {
+	var profileArr []string
+	for i, profile := range planNodeDesc.GetProfiles() {
+		var statArr []string
+		statArr = append(statArr, fmt.Sprintf("\"version\":%d", i))
+		statArr = append(statArr, fmt.Sprintf("\"rows\":%d", profile.GetRows()))
+		if !isTckFmt {
+			// tck format doesn't need these fields
+			statArr = append(statArr, fmt.Sprintf("\"execTime\":\"%d(us)\"", profile.GetExecDurationInUs()))
+			statArr = append(statArr, fmt.Sprintf("\"totalTime\":\"%d(us)\"", profile.GetTotalDurationInUs()))
+		}
+		for k, v := range profile.GetOtherStats() {
+			s := string(v)
+			if matched, err := regexp.Match(`^[^{(\[]\w+`, v); err == nil && matched {
+				if !strings.HasPrefix(s, "\"") {
+					s = fmt.Sprintf("\"%s", s)
+				}
+				if !strings.HasSuffix(s, "\"") {
+					s = fmt.Sprintf("%s\"", s)
+				}
+			}
+			statArr = append(statArr, fmt.Sprintf("\"%s\": %s", k, s))
+		}
+		sort.Strings(statArr)
+		statStr := fmt.Sprintf("{%s}", strings.Join(statArr, ",\n"))
+		profileArr = append(profileArr, statStr)
+	}
+	allProfiles := strings.Join(profileArr, ",\n")
+	if len(profileArr) > 1 {
+		allProfiles = fmt.Sprintf("[%s]", allProfiles)
+	}
+	var buffer bytes.Buffer
+	json.Indent(&buffer, []byte(allProfiles), "", "  ")
+	return string(buffer.Bytes())
+}
+
+// generate operator info for Row format.
+func MakeOperatorInfo(planNodeDesc *graph.PlanNodeDescription) string {
+	var columnInfo []string
+	if planNodeDesc.IsSetBranchInfo() {
+		branchInfo := planNodeDesc.GetBranchInfo()
+		columnInfo = append(columnInfo, fmt.Sprintf("branch: %t, nodeId: %d\n",
+			branchInfo.GetIsDoBranch(), branchInfo.GetConditionNodeID()))
+	}
+
+	outputVar := fmt.Sprintf("outputVar: %s", prettyFormatJsonString(planNodeDesc.GetOutputVar()))
+	columnInfo = append(columnInfo, outputVar)
+
+	if planNodeDesc.IsSetDescription() {
+		desc := planNodeDesc.GetDescription()
+		for _, pair := range desc {
+			value := prettyFormatJsonString(pair.GetValue())
+			columnInfo = append(columnInfo, fmt.Sprintf("%s: %s", string(pair.GetKey()), value))
+		}
+	}
+	return strings.Join(columnInfo, "\n")
+}
+
 // explain/profile format="row"
 func (res ResultSet) MakePlanByRow() [][]interface{} {
 	p := res.GetPlanDesc()
@@ -1271,58 +1336,47 @@ func (res ResultSet) MakePlanByRow() [][]interface{} {
 		}
 
 		if planNodeDesc.IsSetProfiles() {
-			var profileArr []string
-			for i, profile := range planNodeDesc.GetProfiles() {
-				var statArr []string
-				statArr = append(statArr, fmt.Sprintf("\"version\":%d", i))
-				statArr = append(statArr, fmt.Sprintf("\"rows\":%d", profile.GetRows()))
-				statArr = append(statArr, fmt.Sprintf("\"execTime\":\"%d(us)\"", profile.GetExecDurationInUs()))
-				statArr = append(statArr, fmt.Sprintf("\"totalTime\":\"%d(us)\"", profile.GetTotalDurationInUs()))
-				for k, v := range profile.GetOtherStats() {
-					s := string(v)
-					if matched, err := regexp.Match(`^[^{(\[]\w+`, v); err == nil && matched {
-						if !strings.HasPrefix(s, "\"") {
-							s = fmt.Sprintf("\"%s", s)
-						}
-						if !strings.HasSuffix(s, "\"") {
-							s = fmt.Sprintf("%s\"", s)
-						}
-					}
-					statArr = append(statArr, fmt.Sprintf("\"%s\": %s", k, s))
-				}
-				sort.Strings(statArr)
-				statStr := fmt.Sprintf("{%s}", strings.Join(statArr, ",\n"))
-				profileArr = append(profileArr, statStr)
+			row = append(row, MakeProfilingData(planNodeDesc, false))
+		} else {
+			row = append(row, "")
+		}
+		opInfo := MakeOperatorInfo(planNodeDesc)
+		row = append(row, opInfo)
+		rows = append(rows, row)
+	}
+	return rows
+}
+
+// explain/profile format="tck"
+func (res ResultSet) MakePlanByTck() [][]interface{} {
+	p := res.GetPlanDesc()
+	planNodeDescs := p.GetPlanNodeDescs()
+	var rows [][]interface{}
+	for _, planNodeDesc := range planNodeDescs {
+		var row []interface{}
+		row = append(row, planNodeDesc.GetId(), string(planNodeDesc.GetName()))
+
+		if planNodeDesc.IsSetDependencies() {
+			var deps []string
+			for _, dep := range planNodeDesc.GetDependencies() {
+				deps = append(deps, fmt.Sprintf("%d", dep))
 			}
-			allProfiles := strings.Join(profileArr, ",\n")
-			if len(profileArr) > 1 {
-				allProfiles = fmt.Sprintf("[%s]", allProfiles)
-			}
-			var buffer bytes.Buffer
-			json.Indent(&buffer, []byte(allProfiles), "", "  ")
-			row = append(row, string(buffer.Bytes()))
+			row = append(row, strings.Join(deps, ","))
 		} else {
 			row = append(row, "")
 		}
 
-		var columnInfo []string
-		if planNodeDesc.IsSetBranchInfo() {
-			branchInfo := planNodeDesc.GetBranchInfo()
-			columnInfo = append(columnInfo, fmt.Sprintf("branch: %t, nodeId: %d\n",
-				branchInfo.GetIsDoBranch(), branchInfo.GetConditionNodeID()))
+		if planNodeDesc.IsSetProfiles() {
+			var compactProfilingData bytes.Buffer
+			// compress JSON data and remove whitespace characters
+			json.Compact(&compactProfilingData, []byte(MakeProfilingData(planNodeDesc, true)))
+			row = append(row, compactProfilingData.String())
+		} else {
+			row = append(row, "")
 		}
+		// append operator info
+		row = append(row, "")
 
-		outputVar := fmt.Sprintf("outputVar: %s", prettyFormatJsonString(planNodeDesc.GetOutputVar()))
-		columnInfo = append(columnInfo, outputVar)
-
-		if planNodeDesc.IsSetDescription() {
-			desc := planNodeDesc.GetDescription()
-			for _, pair := range desc {
-				value := prettyFormatJsonString(pair.GetValue())
-				columnInfo = append(columnInfo, fmt.Sprintf("%s: %s", string(pair.GetKey()), value))
-			}
-		}
-		row = append(row, strings.Join(columnInfo, "\n"))
 		rows = append(rows, row)
 	}
 	return rows

@@ -11,9 +11,7 @@ package nebula_go
 import (
 	"fmt"
 	"sync"
-	"time"
 
-	"github.com/facebook/fbthrift/thrift/lib/go/thrift"
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
 	graph "github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
@@ -27,22 +25,12 @@ type Session struct {
 	sessionID  int64
 	connection *connection
 	connPool   *ConnectionPool // the connection pool which the session belongs to. could be nil if the Session is store in the SessionPool
-	sessPool   *SessionPool    // the session pool which the session belongs to. could be nil if the Session is store in the ConnectionPool
 	log        Logger
-	returnedAt time.Time // the timestamp that the session was created or returned.
 	mu         sync.Mutex
 	timezoneInfo
 }
 
 func (session *Session) reconnectWithExecuteErr(err error) error {
-	// Reconnect only if the transport is closed
-	err2, ok := err.(thrift.TransportException)
-	if !ok {
-		return err
-	}
-	if err2.TypeID() != thrift.END_OF_FILE {
-		return err
-	}
 	if _err := session.reConnect(); _err != nil {
 		return fmt.Errorf("failed to reconnect, %s", _err.Error())
 	}
@@ -198,15 +186,14 @@ func (session *Session) ExecuteJsonWithParameter(stmt string, params map[string]
 }
 
 func (session *Session) reConnect() error {
-	newconnection, err := session.connPool.getIdleConn()
+	newConnection, err := session.connPool.getIdleConn()
 	if err != nil {
 		err = fmt.Errorf(err.Error())
 		return err
 	}
 
-	// Release connection to pool
-	session.connPool.release(session.connection)
-	session.connection = newconnection
+	session.connPool.releaseAndBack(session.connection, false)
+	session.connection = newConnection
 	return nil
 }
 
@@ -238,6 +225,10 @@ func (session *Session) GetSessionID() int64 {
 	return session.sessionID
 }
 
+func IsError(resp *graph.ExecutionResponse) bool {
+	return resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED
+}
+
 // Ping checks if the session is valid
 func (session *Session) Ping() error {
 	if session.connection == nil {
@@ -254,10 +245,6 @@ func (session *Session) Ping() error {
 		return fmt.Errorf("session ping failed, %s" + resp.GetErrorMsg())
 	}
 	return nil
-}
-
-func IsError(resp *graph.ExecutionResponse) bool {
-	return resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED
 }
 
 // construct Slice to nebula.NList
