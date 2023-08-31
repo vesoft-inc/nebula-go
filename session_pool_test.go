@@ -637,8 +637,11 @@ func TestQueryTimeout(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	errCh := make(chan error, 1)
 	defer cancel()
+	var wg sync.WaitGroup
 	for i := 0; i < config.maxSize; i++ {
+		wg.Add(1)
 		go func() {
+			defer wg.Done()
 			for j := 0; j < 10; j++ {
 				select {
 				case <-ctx.Done():
@@ -656,15 +659,12 @@ func TestQueryTimeout(t *testing.T) {
 					}
 				}
 			}
-			errCh <- nil
 		}()
 	}
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case err := <-errCh:
-			t.Fatal(err)
-		}
+	wg.Wait()
+	select {
+	case err := <-errCh:
+		t.Fatal(err)
+	default:
 	}
 }

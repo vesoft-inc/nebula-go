@@ -593,7 +593,6 @@ func (session *pureSession) executeWithParameter(stmt string, params map[string]
 func (session *pureSession) close() {
 	defer func() {
 		if err := recover(); err != nil {
-			session.connection = nil
 			return
 		}
 	}()
@@ -601,8 +600,8 @@ func (session *pureSession) close() {
 		// ignore signout error
 		_ = session.connection.signOut(session.sessionID)
 		session.connection.close()
+		session.connection = nil
 	}
-	session.connection = nil
 }
 
 // Ping checks if the session is valid
