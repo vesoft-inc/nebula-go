@@ -1298,9 +1298,13 @@ func startContainer(t *testing.T, containerName string) {
 	}
 }
 
-func tryToExecute(session *Session, query string) (resp *ResultSet, err error) {
+type executer interface {
+	Execute(query string) (*ResultSet, error)
+}
+
+func tryToExecute(e executer, query string) (resp *ResultSet, err error) {
 	for i := 3; i > 0; i-- {
-		resp, err = session.Execute(query)
+		resp, err = e.Execute(query)
 		if err == nil && resp.IsSucceed() {
 			return
 		}
@@ -1321,7 +1325,7 @@ func tryToExecuteWithParameter(session *Session, query string, params map[string
 }
 
 // creates schema
-func createTestDataSchema(t *testing.T, session *Session) {
+func createTestDataSchema(t *testing.T, executor executer) {
 	createSchema := "CREATE SPACE IF NOT EXISTS test_data(vid_type = FIXED_STRING(30));" +
 		"USE test_data; " +
 		"CREATE TAG IF NOT EXISTS person(name string, age int8, grade int16, " +
@@ -1333,7 +1337,7 @@ func createTestDataSchema(t *testing.T, session *Session) {
 		"CREATE EDGE IF NOT EXISTS like(likeness double); " +
 		"CREATE EDGE IF NOT EXISTS friend(start_Datetime datetime, end_Datetime datetime); " +
 		"CREATE TAG INDEX IF NOT EXISTS person_name_index ON person(name(8));"
-	resultSet, err := tryToExecute(session, createSchema)
+	resultSet, err := tryToExecute(executor, createSchema)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -1344,7 +1348,7 @@ func createTestDataSchema(t *testing.T, session *Session) {
 }
 
 // inserts data that used in tests
-func loadTestData(t *testing.T, session *Session) {
+func loadTestData(t *testing.T, e executer) {
 	query := "INSERT VERTEX person(name, age, grade, friends, book_num," +
 		"birthday, start_school, morning, property," +
 		"is_girl, child_name, expend, first_out_city) VALUES" +
@@ -1363,7 +1367,7 @@ func loadTestData(t *testing.T, session *Session) {
 		"'John':('John', 10, 3, 10, 100, datetime('2010-09-10T10:08:02'), " +
 		"date('2017-09-10'), time('07:10:00'), " +
 		"1000.0, false, \"Hello World!\", 100.0, 1111)"
-	resultSet, err := tryToExecute(session, query)
+	resultSet, err := tryToExecute(e, query)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -1374,7 +1378,7 @@ func loadTestData(t *testing.T, session *Session) {
 		"INSERT VERTEX student(name, interval) VALUES " +
 			"'Bob':('Bob', duration({months:1, seconds:100, microseconds:20})), 'Lily':('Lily', duration({years: 1, seconds: 0})), " +
 			"'Tom':('Tom', duration({years: 1, seconds: 0})), 'Jerry':('Jerry', duration({years: 1, seconds: 0})), 'John':('John', duration({years: 1, seconds: 0}))"
-	resultSet, err = tryToExecute(session, query)
+	resultSet, err = tryToExecute(e, query)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -1387,8 +1391,9 @@ func loadTestData(t *testing.T, session *Session) {
 			"'Bob'->'Tom':(70.0), " +
 			"'Jerry'->'Lily':(84.0)," +
 			"'Tom'->'Jerry':(68.3), " +
-			"'Bob'->'John':(97.2)"
-	resultSet, err = tryToExecute(session, query)
+			"'Bob'->'John':(97.2), " +
+			"'Lily'->'Tom':(80.0)"
+	resultSet, err = tryToExecute(e, query)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -1402,7 +1407,7 @@ func loadTestData(t *testing.T, session *Session) {
 			"'Jerry'->'Lily':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
 			"'Tom'->'Jerry':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
 			"'Bob'->'John':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02'))"
-	resultSet, err = tryToExecute(session, query)
+	resultSet, err = tryToExecute(e, query)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return

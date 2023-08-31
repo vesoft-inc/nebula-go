@@ -23,17 +23,13 @@ func TestSession_Execute(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	sess, err := pool.GetSession("root", "nebula")
-	if err != nil {
-		t.Fatal(err)
-	}
+	errCh := make(chan error, 1)
 
 	f := func(s *Session) {
 		time.Sleep(10 * time.Microsecond)
 		reps, err := s.Execute("yield 1")
 		if err != nil {
-			t.Fatal(err)
+			errCh <- err
 		}
 		if !reps.IsSucceed() {
 			t.Fatal(reps.resp.ErrorMsg)
@@ -42,12 +38,16 @@ func TestSession_Execute(t *testing.T) {
 		// test Ping()
 		err = s.Ping()
 		if err != nil {
-			t.Fatal(err)
+			errCh <- err
 		}
 	}
-	ctx, cancel := context.WithCancel(context.TODO())
+	ctx, cancel := context.WithTimeout(context.TODO(), 300*time.Millisecond)
 	defer cancel()
 	go func(ctx context.Context) {
+		sess, err := pool.GetSession("root", "nebula")
+		if err != nil {
+			errCh <- err
+		}
 		for {
 			select {
 			case <-ctx.Done():
@@ -58,16 +58,27 @@ func TestSession_Execute(t *testing.T) {
 		}
 	}(ctx)
 	go func(ctx context.Context) {
+		sess, err := pool.GetSession("root", "nebula")
+		if err != nil {
+			errCh <- err
+		}
 		for {
 			select {
 			case <-ctx.Done():
-				break
 			default:
 				f(sess)
 			}
 		}
 	}(ctx)
-	time.Sleep(300 * time.Millisecond)
+
+	for {
+		select {
+		case err := <-errCh:
+			t.Fatal(err)
+		case <-ctx.Done():
+			return
+		}
+	}
 
 }
 

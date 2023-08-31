@@ -12,6 +12,7 @@ package nebula_go
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -19,6 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
 	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
+	"golang.org/x/net/context"
 )
 
 func TestSessionPoolInvalidConfig(t *testing.T) {
@@ -51,6 +53,76 @@ func TestSessionPoolInvalidConfig(t *testing.T) {
 	)
 	assert.Contains(t, err.Error(), "invalid session pool config: Service address is empty",
 		"error message should contain Service address is empty")
+}
+
+func TestSessionPoolServerCheck(t *testing.T) {
+	prepareSpace("client_test")
+	defer dropSpace("client_test")
+	hostAddress := HostAddress{Host: address, Port: port}
+	testcases := []struct {
+		conf   *SessionPoolConf
+		errMsg string
+	}{
+		{
+			conf: &SessionPoolConf{
+				username:     "root",
+				password:     "nebula",
+				serviceAddrs: []HostAddress{hostAddress},
+				spaceName:    "invalid_space",
+				minSize:      1,
+			},
+			errMsg: "failed to create a new session pool, " +
+				"failed to initialize the session pool, " +
+				"failed to use space invalid_space: SpaceNotFound: SpaceName `invalid_space`",
+		},
+		{
+			conf: &SessionPoolConf{
+				username:     "root1",
+				password:     "nebula",
+				serviceAddrs: []HostAddress{hostAddress},
+				spaceName:    "client_test",
+				minSize:      1,
+			},
+			errMsg: "failed to create a new session pool, " +
+				"failed to initialize the session pool, " +
+				"failed to authenticate the user, error code: -1001, " +
+				"error message: User not exist, the pool has been closed",
+		},
+		{
+			conf: &SessionPoolConf{
+				username:     "root",
+				password:     "nebula1",
+				serviceAddrs: []HostAddress{hostAddress},
+				spaceName:    "client_test",
+				minSize:      1,
+			},
+			errMsg: "failed to create a new session pool, " +
+				"failed to initialize the session pool, " +
+				"failed to authenticate the user, error code: -1001, " +
+				"error message: Invalid password, the pool has been closed",
+		},
+		{
+			conf: &SessionPoolConf{
+				username:     "root",
+				password:     "nebula1",
+				serviceAddrs: []HostAddress{{"127.0.0.1", 1234}},
+				spaceName:    "client_test",
+				minSize:      1,
+			},
+			errMsg: "failed to create a new session pool, " +
+				"failed to initialize the session pool, " +
+				"failed to open transport, " +
+				"error: dial tcp 127.0.0.1:1234: connect: connection refused",
+		},
+	}
+	for _, tc := range testcases {
+		_, err := NewSessionPool(*tc.conf, DefaultLogger{})
+		if err == nil {
+			t.Fatal("should return error")
+		}
+		assert.Equal(t, err.Error(), tc.errMsg,
+			fmt.Sprintf("expected error: %s, but actual error: %s", tc.errMsg, err.Error()))
+	}
 }
 
 func TestSessionPoolBasic(t *testing.T) {
@@ -493,13 +565,14 @@ func TestSessionPoolRetry(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		original := *session
+		original := session.sessionID
+		conn := session.connection
 		_, _ = sessionPool.executeWithRetry(session, tc.retryFn, 2)
 		if tc.retry {
-			assert.NotEqual(t, original, *session, fmt.Sprintf("test case: %s", tc.name))
-			assert.NotEqual(t, original.connection, nil, fmt.Sprintf("test case: %s", tc.name))
+			assert.NotEqual(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
+			assert.NotEqual(t, conn, nil, fmt.Sprintf("test case: %s", tc.name))
 		} else {
-			assert.Equal(t, original, *session, fmt.Sprintf("test case: %s", tc.name))
+			assert.Equal(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
 		}
 	}
 }
@@ -535,4 +608,63 @@ func TestSessionPoolClose(t *testing.T) {
 	assert.Equal(t, 0, sessionPool.idleSessions.Len(), "Total number of active connections should be 0")
 	_, err = sessionPool.Execute("SHOW HOSTS;")
 	assert.Equal(t, err.Error(), "failed to execute: Session pool has been closed", "session pool should be closed")
+}
+
+// TestSessionPoolGetSessionTimeout tests the scenario that if all requests are timeout,
+// the session pool should return timeout error, not reach the pool size limit.
+func TestQueryTimeout(t *testing.T) {
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		"test_data")
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+	config.minSize = 0
+	config.maxSize = 10
+	config.retryGetSessionTimes = 1
+	config.timeOut = 100 * time.Millisecond
+	// create session pool
+	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sessionPool.Close()
+	createTestDataSchema(t, sessionPool)
+	loadTestData(t, sessionPool)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	errCh := make(chan error, 1)
+	defer cancel()
+	for i := 0; i < config.maxSize; i++ {
+		go func() {
+			for j := 0; j < 10; j++ {
+				select {
+				case <-ctx.Done():
+					return
+				default:
+					_, err := sessionPool.Execute(`go 2000 step from "Bob" over like yield tags($$)`)
+					if err == nil {
+						errCh <- fmt.Errorf("should return error")
+						return
+					}
+					errMsg := "i/o timeout"
+					if !strings.Contains(err.Error(), errMsg) {
+						errCh <- fmt.Errorf("expect error contains: %s, but actual: %s", errMsg, err.Error())
+						return
+					}
+				}
+			}
+			errCh <- nil
+		}()
+	}
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case err := <-errCh:
+			t.Fatal(err)
+		}
+	}
 }
