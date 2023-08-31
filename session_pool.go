@@ -249,31 +249,12 @@ func (pool *SessionPool) Close() {
 	// iterate all sessions
 	for i := 0; i < idleLen; i++ {
 		session := pool.idleSessions.Front().Value.(*pureSession)
-		if session.connection == nil {
-			pool.log.Warn("Session has been released")
-			pool.idleSessions.Remove(pool.idleSessions.Front())
-			continue
-		}
-
-		if err := session.connection.signOut(session.sessionID); err != nil {
-			pool.log.Warn(fmt.Sprintf("Sign out failed, %s", err.Error()))
-		}
-		// close connection
-		session.connection.close()
+		session.close()
 		pool.idleSessions.Remove(pool.idleSessions.Front())
 	}
 	for i := 0; i < activeLen; i++ {
 		session := pool.activeSessions.Front().Value.(*pureSession)
-		if session.connection == nil {
-			pool.log.Warn("Session has been released")
-			pool.activeSessions.Remove(pool.activeSessions.Front())
-			continue
-		}
-		if err := session.connection.signOut(session.sessionID); err != nil {
-			pool.log.Warn(fmt.Sprintf("Sign out failed, %s", err.Error()))
-		}
-		// close connection
-		session.connection.close()
+		session.close()
 		pool.activeSessions.Remove(pool.activeSessions.Front())
 	}
 
@@ -448,57 +429,46 @@ func (pool *SessionPool) sessionCleaner() {
 		case <-pool.cleanerChan: // pool was closed.
 		}
 
-		pool.rwLock.Lock()
-
 		if pool.closed {
 			pool.cleanerChan = nil
-			pool.rwLock.Unlock()
 			return
 		}
 
 		closing := pool.timeoutSessionList()
-
 		//release expired session from the pool
 		for _, session := range closing {
-			if session.connection == nil {
-				pool.log.Warn("Session has been released")
-				pool.rwLock.Unlock()
-				return
-			}
-			if err := session.connection.signOut(session.sessionID); err != nil {
-				pool.log.Warn(fmt.Sprintf("Sign out failed, %s", err.Error()))
-			}
-			// close connection
-			session.connection.close()
+			session.close()
 		}
-		pool.rwLock.Unlock()
 		t.Reset(d)
 	}
 }
 
 // timeoutSessionList returns a list of sessions that have been idle for longer than the idle time.
 func (pool *SessionPool) timeoutSessionList() (closing []*pureSession) {
-	if pool.conf.idleTime > 0 {
-		expiredSince := time.Now().Add(-pool.conf.idleTime)
-		var newEle *list.Element = nil
+	if pool.conf.idleTime == 0 {
+		return
+	}
+	pool.rwLock.Lock()
+	defer pool.rwLock.Unlock()
+	expiredSince := time.Now().Add(-pool.conf.idleTime)
+	var newEle *list.Element = nil
 
-		maxCleanSize := pool.idleSessions.Len() + pool.activeSessions.Len() - pool.conf.minSize
+	maxCleanSize := pool.idleSessions.Len() + pool.activeSessions.Len() - pool.conf.minSize
 
-		for ele := pool.idleSessions.Front(); ele != nil; {
-			if maxCleanSize == 0 {
-				return
-			}
-
-			newEle = ele.Next()
-			// Check Session is expired
-			if !ele.Value.(*pureSession).returnedAt.Before(expiredSince) {
-				return
-			}
-			closing = append(closing, ele.Value.(*pureSession))
-			pool.idleSessions.Remove(ele)
-			ele = newEle
-			maxCleanSize--
+	for ele := pool.idleSessions.Front(); ele != nil; {
+		if maxCleanSize == 0 {
+			return
 		}
+
+		newEle = ele.Next()
+		// Check Session is expired
+		if !ele.Value.(*pureSession).returnedAt.Before(expiredSince) {
+			return
+		}
+		closing = append(closing, ele.Value.(*pureSession))
+		pool.idleSessions.Remove(ele)
+		ele = newEle
+		maxCleanSize--
 	}
 	return
 }
@@ -612,12 +582,17 @@ func (session *pureSession) executeWithParameter(stmt string, params map[string]
 }
 
 func (session *pureSession) close() {
+	defer func() {
+		if err := recover(); err != nil {
+			return
+		}
+	}()
 	if session.connection != nil {
 		// ignore signout error
 		_ = session.connection.signOut(session.sessionID)
 		session.connection.close()
+		session.connection = nil
 	}
-	session.connection = nil
 }
 
 // Ping checks if the session is valid
