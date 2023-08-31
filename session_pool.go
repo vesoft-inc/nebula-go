@@ -437,16 +437,7 @@ func (pool *SessionPool) sessionCleaner() {
 		closing := pool.timeoutSessionList()
 		//release expired session from the pool
 		for _, session := range closing {
-			if session.connection == nil {
-				pool.log.Warn("Session has been released")
-				continue
-			}
-			if err := session.connection.signOut(session.sessionID); err != nil {
-				pool.log.Warn(fmt.Sprintf("Sign out failed, %s", err.Error()))
-			}
-			// close connection
-			session.connection.close()
-			session.connection = nil
+			session.close()
 		}
 		t.Reset(d)
 	}
