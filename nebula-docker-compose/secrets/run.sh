@@ -81,7 +81,7 @@ EOF
 	if [ ${cert_type} == "root" ]; then
 		openssl x509 -req -in ${cert_type}.csr -out ${cert_type}.crt -extfile ${cert_type}.cnf -extensions v3_ca -signkey ${cert_type}.key -CAcreateserial -days 3650
 	else
-		openssl x509 -req -in ${cert_type}.csr -out ${cert_type}.crt -CA root.crt -CAkey root.key -CAcreateserial -days 10 -extfile ${cert_type}.cnf -extensions req_ext
+		openssl x509 -req -in ${cert_type}.csr -out ${cert_type}.crt -CA root.crt -CAkey root.key -CAcreateserial -days 3650 -extfile ${cert_type}.cnf -extensions req_ext
 	fi
 
 }

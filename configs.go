@@ -13,6 +13,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"time"
 )
@@ -31,6 +32,8 @@ type PoolConfig struct {
 	MinConnPoolSize int
 	// UseHTTP2 indicates whether to use HTTP2
 	UseHTTP2 bool
+	// HttpHeader is the http headers for the connection when using HTTP2
+	HttpHeader http.Header
 }
 
 // validateConf validates config
@@ -133,6 +136,8 @@ type SessionPoolConf struct {
 	minSize int
 	// useHTTP2 indicates whether to use HTTP2
 	useHTTP2 bool
+	// httpHeader is the http headers for the connection
+	httpHeader http.Header
 }
 
 type SessionPoolConfOption func(*SessionPoolConf)
@@ -200,6 +205,12 @@ func WithMinSize(minSize int) SessionPoolConfOption {
 func WithHTTP2(useHTTP2 bool) SessionPoolConfOption {
 	return func(conf *SessionPoolConf) {
 		conf.useHTTP2 = useHTTP2
+	}
+}
+
+func WithHttpHeader(header http.Header) SessionPoolConfOption {
+	return func(conf *SessionPoolConf) {
+		conf.httpHeader = header
 	}
 }
 
