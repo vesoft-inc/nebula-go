@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goVer: ['1.16', '1.17', '1.18']
+        goVer: ['1.16', '1.17', '1.18', '1.19', '1.20', '1.21']
     steps:
       - uses: actions/checkout@v2
       - name: Setup go ${{ matrix.goVer }}
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goVer: ['1.16', '1.17', '1.18']
+        goVer: ['1.16', '1.17', '1.18', '1.19', '1.20', '1.21']
     steps:
       - uses: actions/checkout@v2
       - name: Setup go ${{ matrix.goVer }}
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goVer: ['1.16', '1.17', '1.18']
+        goVer: ['1.16', '1.17', '1.18', '1.19', '1.20', '1.21']
     steps:
       - uses: actions/checkout@v2
       - name: Setup go ${{ matrix.goVer }}
