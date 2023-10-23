@@ -29,6 +29,7 @@ type connection struct {
 	returnedAt   time.Time // the connection was created or returned.
 	sslConfig    *tls.Config
 	useHTTP2     bool
+	httpHeader   http.Header
 	graph        *graph.GraphServiceClient
 }
 
@@ -44,7 +45,8 @@ func newConnection(severAddress HostAddress) *connection {
 
 // open opens a transport for the connection
 // if sslConfig is not nil, an SSL transport will be created
-func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config, useHTTP2 bool) error {
+func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config,
+	useHTTP2 bool, httpHeader http.Header) error {
 	ip := hostAddress.Host
 	port := hostAddress.Port
 	newAdd := net.JoinHostPort(ip, strconv.Itoa(port))
@@ -85,6 +87,22 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslCo
 			return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
 		}
 		pf = thrift.NewBinaryProtocolFactoryDefault()
+		if httpHeader != nil {
+			client, ok := transport.(*thrift.HTTPClient)
+			if !ok {
+				return fmt.Errorf("failed to get thrift http client")
+			}
+			for k, vv := range httpHeader {
+				if k == "Content-Type" {
+					// fbthrift will add "Content-Type" header, so we need to skip it
+					continue
+				}
+				for _, v := range vv {
+					// fbthrift set header with http.Header.Add, so we need to set header one by one
+					client.SetHeader(k, v)
+				}
+			}
+		}
 	} else {
 		bufferSize := 128 << 10
 
@@ -132,7 +150,7 @@ func (cn *connection) verifyClientVersion() error {
 // When the timeout occurs, the connection will be reopened to avoid the impact of the message.
 func (cn *connection) reopen() error {
 	cn.close()
-	return cn.open(cn.severAddress, cn.timeout, cn.sslConfig, cn.useHTTP2)
+	return cn.open(cn.severAddress, cn.timeout, cn.sslConfig, cn.useHTTP2, cn.httpHeader)
 }
 
 // Authenticate

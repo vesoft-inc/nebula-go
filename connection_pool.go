@@ -12,6 +12,7 @@ import (
 	"container/list"
 	"crypto/tls"
 	"fmt"
+	"net/http"
 	"sync"
 	"time"
 
@@ -64,7 +65,8 @@ func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *t
 
 // initPool initializes the connection pool
 func (pool *ConnectionPool) initPool() error {
-	if err := checkAddresses(pool.conf.TimeOut, pool.addresses, pool.sslConfig, pool.conf.UseHTTP2); err != nil {
+	if err := checkAddresses(pool.conf.TimeOut, pool.addresses, pool.sslConfig,
+		pool.conf.UseHTTP2, pool.conf.HttpHeader); err != nil {
 		return fmt.Errorf("failed to open connection, error: %s ", err.Error())
 	}
 
@@ -73,7 +75,8 @@ func (pool *ConnectionPool) initPool() error {
 		newConn := newConnection(pool.addresses[i%len(pool.addresses)])
 
 		// Open connection to host
-		if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig, pool.conf.UseHTTP2); err != nil {
+		if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig,
+			pool.conf.UseHTTP2, pool.conf.HttpHeader); err != nil {
 			// If initialization failed, clean idle queue
 			idleLen := pool.idleConnectionQueue.Len()
 			for i := 0; i < idleLen; i++ {
@@ -191,7 +194,7 @@ func (pool *ConnectionPool) releaseAndBack(conn *connection, pushBack bool) {
 
 // Ping checks availability of host
 func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error {
-	return pingAddress(host, timeout, pool.sslConfig, pool.conf.UseHTTP2)
+	return pingAddress(host, timeout, pool.sslConfig, pool.conf.UseHTTP2, pool.conf.HttpHeader)
 }
 
 // Close closes all connection
@@ -242,7 +245,8 @@ func (pool *ConnectionPool) newConnToHost() (*connection, error) {
 	host := pool.getHost()
 	newConn := newConnection(host)
 	// Open connection to host
-	if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig, pool.conf.UseHTTP2); err != nil {
+	if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig,
+		pool.conf.UseHTTP2, pool.conf.HttpHeader); err != nil {
 		return nil, err
 	}
 	// Add connection to active queue
@@ -349,23 +353,25 @@ func (pool *ConnectionPool) timeoutConnectionList() (closing []*connection) {
 // checkAddresses checks addresses availability
 // It opens a temporary connection to each address and closes it immediately.
 // If no error is returned, the addresses are available.
-func checkAddresses(confTimeout time.Duration, addresses []HostAddress, sslConfig *tls.Config, useHTTP2 bool) error {
+func checkAddresses(confTimeout time.Duration, addresses []HostAddress, sslConfig *tls.Config,
+	useHTTP2 bool, httpHeader http.Header) error {
 	var timeout = 3 * time.Second
 	if confTimeout != 0 && confTimeout < timeout {
 		timeout = confTimeout
 	}
 	for _, address := range addresses {
-		if err := pingAddress(address, timeout, sslConfig, useHTTP2); err != nil {
+		if err := pingAddress(address, timeout, sslConfig, useHTTP2, httpHeader); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func pingAddress(address HostAddress, timeout time.Duration, sslConfig *tls.Config, useHTTP2 bool) error {
+func pingAddress(address HostAddress, timeout time.Duration, sslConfig *tls.Config,
+	useHTTP2 bool, httpHeader http.Header) error {
 	newConn := newConnection(address)
 	// Open connection to host
-	if err := newConn.open(newConn.severAddress, timeout, sslConfig, useHTTP2); err != nil {
+	if err := newConn.open(newConn.severAddress, timeout, sslConfig, useHTTP2, httpHeader); err != nil {
 		return err
 	}
 	defer newConn.close()
