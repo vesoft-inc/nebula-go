@@ -576,7 +576,8 @@ func (session *pureSession) executeWithParameter(stmt string, params map[string]
 	if err != nil {
 		return nil, err
 	}
-	rs, err := genResultSet(resp, session.timezoneInfo)
+	pf := session.connection.getProtocolFactory()
+	rs, err := genResultSet(resp, session.timezoneInfo, pf)
 	if err != nil {
 		return nil, err
 	}

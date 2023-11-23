@@ -17,6 +17,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/vesoft-inc/fbthrift/thrift/lib/go/thrift"
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
 	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
@@ -26,6 +27,7 @@ type ResultSet struct {
 	columnNames     []string
 	colNameIndexMap map[string]int
 	timezoneInfo    timezoneInfo
+	factory         thrift.ProtocolFactory
 }
 
 type Record struct {
@@ -96,18 +98,22 @@ const (
 
 func GenResultSet(resp *graph.ExecutionResponse) (*ResultSet, error) {
 	var defaultTimezone timezoneInfo = timezoneInfo{0, []byte("UTC")}
-	return genResultSet(resp, defaultTimezone)
+	return genResultSet(resp, defaultTimezone, nil)
 }
 
-func genResultSet(resp *graph.ExecutionResponse, timezoneInfo timezoneInfo) (*ResultSet, error) {
+func genResultSet(resp *graph.ExecutionResponse, timezoneInfo timezoneInfo, factory thrift.ProtocolFactory) (*ResultSet, error) {
 	var colNames []string
 	var colNameIndexMap = make(map[string]int)
+	if factory == nil {
+		factory = thrift.NewHeaderProtocolFactory()
+	}
 
 	if resp.Data == nil { // if resp.Data != nil then resp.Data.row and resp.Data.colNames wont be nil
 		return &ResultSet{
 			resp:            resp,
 			columnNames:     colNames,
 			colNameIndexMap: colNameIndexMap,
+			factory:         factory,
 		}, nil
 	}
 	for i, name := range resp.Data.ColumnNames {
@@ -120,6 +126,7 @@ func genResultSet(resp *graph.ExecutionResponse, timezoneInfo timezoneInfo) (*Re
 		columnNames:     colNames,
 		colNameIndexMap: colNameIndexMap,
 		timezoneInfo:    timezoneInfo,
+		factory:         factory,
 	}, nil
 }
 
@@ -1380,4 +1387,28 @@ func (res ResultSet) MakePlanByTck() [][]interface{} {
 		rows = append(rows, row)
 	}
 	return rows
+}
+
+func (res *ResultSet) GetByteSize() int {
+	if res.resp == nil {
+		return 0
+	}
+	if res.factory == nil {
+		return 0
+	}
+	var pf thrift.ProtocolFactory
+	buf := thrift.NewMemoryBuffer()
+	switch res.factory.(type) {
+	case *thrift.BinaryProtocolFactory:
+		pf = res.factory
+	case *thrift.HeaderProtocolFactory:
+		pf = thrift.NewCompactProtocolFactory()
+	}
+	protocal := pf.GetProtocol(buf)
+	if err := res.resp.Write(protocal); err != nil {
+		return 0
+	}
+	bs := make([]byte, buf.Len())
+	copy(bs, buf.Bytes())
+	return len(bs)
 }

@@ -14,6 +14,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/vesoft-inc/fbthrift/thrift/lib/go/thrift"
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
 	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
@@ -550,7 +551,7 @@ func TestResultSet(t *testing.T) {
 		nil,
 		nil,
 		nil}
-	resultSetWithNil, err := genResultSet(respWithNil, testTimezone)
+	resultSetWithNil, err := genResultSet(respWithNil, testTimezone, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -595,7 +596,7 @@ func TestResultSet(t *testing.T) {
 		&planDesc,
 		[]byte("test_comment")}
 
-	resultSet, err := genResultSet(resp, testTimezone)
+	resultSet, err := genResultSet(resp, testTimezone, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -673,7 +674,7 @@ func TestAsStringTable(t *testing.T) {
 		[]byte("test"),
 		graph.NewPlanDescription(),
 		[]byte("test_comment")}
-	resultSet, err := genResultSet(resp, testTimezone)
+	resultSet, err := genResultSet(resp, testTimezone, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -877,4 +878,25 @@ func setIVal(ival int) *nebula.Value {
 	*newNum = int64(ival)
 	value.IVal = newNum
 	return value
+}
+
+func TestGetByteSize(t *testing.T) {
+	resp := &graph.ExecutionResponse{
+		nebula.ErrorCode_SUCCEEDED,
+		1000,
+		getDateset(),
+		[]byte("test_space"),
+		[]byte("test"),
+		graph.NewPlanDescription(),
+		[]byte("test_comment")}
+	resultSet, err := genResultSet(resp, testTimezone, thrift.NewBinaryProtocolFactoryDefault())
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, 2899, resultSet.GetByteSize())
+	resultSet, err = genResultSet(resp, testTimezone, thrift.NewHeaderProtocolFactory())
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, 1297, resultSet.GetByteSize())
 }

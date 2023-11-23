@@ -58,6 +58,8 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslCo
 		transport thrift.Transport
 		pf        thrift.ProtocolFactory
 	)
+	pf = cn.getProtocolFactory()
+
 	if useHTTP2 {
 		if sslConfig != nil {
 			transport, err = thrift.NewHTTPPostClientWithOptions("https://"+newAdd, thrift.HTTPClientOptions{
@@ -86,7 +88,6 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslCo
 		if err != nil {
 			return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
 		}
-		pf = thrift.NewBinaryProtocolFactoryDefault()
 		if httpHeader != nil {
 			client, ok := transport.(*thrift.HTTPClient)
 			if !ok {
@@ -118,7 +119,6 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslCo
 		// Set transport
 		bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
 		transport = thrift.NewHeaderTransport(bufferedTranFactory.GetTransport(sock))
-		pf = thrift.NewHeaderProtocolFactory()
 	}
 
 	cn.graph = graph.NewGraphServiceClientFactory(transport, pf)
@@ -223,4 +223,12 @@ func (cn *connection) release() {
 // Close transport
 func (cn *connection) close() {
 	cn.graph.Close()
+}
+
+func (cn *connection) getProtocolFactory() thrift.ProtocolFactory {
+	if cn.useHTTP2 {
+		return thrift.NewBinaryProtocolFactoryDefault()
+	} else {
+		return thrift.NewHeaderProtocolFactory()
+	}
 }

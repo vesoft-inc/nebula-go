@@ -69,7 +69,8 @@ func (session *Session) ExecuteWithParameter(stmt string, params map[string]inte
 		if err != nil {
 			return nil, err
 		}
-		resSet, err := genResultSet(resp, session.timezoneInfo)
+		pf := session.connection.getProtocolFactory()
+		resSet, err := genResultSet(resp, session.timezoneInfo, pf)
 		if err != nil {
 			return nil, err
 		}
