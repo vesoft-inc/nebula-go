@@ -34,6 +34,9 @@ type PoolConfig struct {
 	UseHTTP2 bool
 	// HttpHeader is the http headers for the connection when using HTTP2
 	HttpHeader http.Header
+	// HttpResponseBufLimit is the response buffer limit.
+	// If the response is larger than this, the buffer will be renewed.
+	HttpResponseBufLimit int
 }
 
 // validateConf validates config
@@ -53,6 +56,10 @@ func (conf *PoolConfig) validateConf(log Logger) {
 	if conf.MinConnPoolSize < 0 {
 		conf.MinConnPoolSize = 0
 		log.Warn("Invalid MinConnPoolSize value, the default value of 0 has been applied")
+	}
+	if conf.HttpResponseBufLimit < 0 {
+		conf.HttpResponseBufLimit = 0
+		log.Warn("Invalid HttpResponseBufLimit value, the default value of 0 has been applied")
 	}
 }
 
@@ -138,6 +145,9 @@ type SessionPoolConf struct {
 	useHTTP2 bool
 	// httpHeader is the http headers for the connection
 	httpHeader http.Header
+	// HttpResponseBufLimit is the response buffer limit.
+	// If the response is larger than this, the buffer will be renewed.
+	HttpResponseBufLimit int
 }
 
 type SessionPoolConfOption func(*SessionPoolConf)
@@ -211,6 +221,12 @@ func WithHTTP2(useHTTP2 bool) SessionPoolConfOption {
 func WithHttpHeader(header http.Header) SessionPoolConfOption {
 	return func(conf *SessionPoolConf) {
 		conf.httpHeader = header
+	}
+}
+
+func WithHttpResponseBufLimit(limit int) SessionPoolConfOption {
+	return func(conf *SessionPoolConf) {
+		conf.HttpResponseBufLimit = limit
 	}
 }
 

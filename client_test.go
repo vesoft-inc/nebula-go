@@ -65,7 +65,7 @@ func logoutAndClose(conn *connection, sessionID int64) {
 func TestConnection(t *testing.T) {
 	hostAddress := HostAddress{Host: address, Port: port}
 	conn := newConnection(hostAddress)
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil, 0)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -122,7 +122,7 @@ func TestConnection(t *testing.T) {
 func TestConnectionIPv6(t *testing.T) {
 	hostAddress := HostAddress{Host: addressIPv6, Port: port}
 	conn := newConnection(hostAddress)
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil, 0)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -254,7 +254,7 @@ func TestAuthentication(t *testing.T) {
 	hostAddress := HostAddress{Host: address, Port: port}
 
 	conn := newConnection(hostAddress)
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil, 0)
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -1421,7 +1421,7 @@ func prepareSpace(spaceName string) error {
 	conn := newConnection(hostAddress)
 	testPoolConfig := GetDefaultConf()
 
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil, 0)
 	if err != nil {
 		return fmt.Errorf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -1458,7 +1458,7 @@ func dropSpace(spaceName string) error {
 	conn := newConnection(hostAddress)
 	testPoolConfig := GetDefaultConf()
 
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil)
+	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil, 0)
 	if err != nil {
 		return fmt.Errorf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
