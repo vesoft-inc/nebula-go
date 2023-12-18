@@ -11,12 +11,15 @@ package nebula_go
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"reflect"
 	"regexp"
 	"sort"
 	"strings"
 	"time"
 
+	"github.com/samber/lo"
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
 	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
@@ -293,6 +296,78 @@ func (res ResultSet) GetRowValuesByIndex(index int) (*Record, error) {
 		colNameIndexMap: &res.colNameIndexMap,
 		timezoneInfo:    res.timezoneInfo,
 	}, nil
+}
+
+// Scan scans the rows into the given value.
+func (res ResultSet) Scan(v any) error {
+	size := res.GetRowSize()
+	if size == 0 {
+		return nil
+	}
+
+	rv := reflect.ValueOf(v)
+	switch {
+	case rv.Kind() != reflect.Ptr:
+		if t := reflect.TypeOf(v); t != nil {
+			return fmt.Errorf("scan: Scan(non-pointer %s)", t)
+		}
+		fallthrough
+	case rv.IsNil():
+		return fmt.Errorf("scan: Scan(nil)")
+	}
+	rv = reflect.Indirect(rv)
+	if k := rv.Kind(); k != reflect.Slice {
+		return fmt.Errorf("scan: invalid type %s. expected slice as an argument", k)
+	}
+
+	colNames := res.GetColNames()
+	rows := res.GetRows()
+
+	t := reflect.TypeOf(v).Elem().Elem()
+	for _, row := range rows {
+		vv, err := res.scanRow(row, colNames, t)
+		if err != nil {
+			return err
+		}
+		rv.Set(reflect.Append(rv, vv))
+	}
+
+	return nil
+}
+
+// Scan scans the rows into the given value.
+func (res ResultSet) scanRow(row *nebula.Row, colNames []string, t reflect.Type) (reflect.Value, error) {
+	rowValues := row.GetValues()
+
+	val := reflect.New(t).Elem()
+
+	for i := 0; i < t.NumField(); i++ {
+		f := t.Field(i)
+		tag := f.Tag.Get("nebula")
+
+		if tag == "" {
+			continue
+		}
+
+		i := lo.IndexOf(colNames, tag)
+		if i == -1 {
+			// It is possible that the tag is not in the result set
+			continue
+		}
+
+		rowVal := rowValues[i]
+
+		switch f.Type.Kind() {
+		case reflect.Int64:
+			val.Field(i).SetInt(rowVal.GetIVal())
+		case reflect.String:
+			val.Field(i).SetString(string(rowVal.GetSVal()))
+		default:
+			return val, errors.New("scan: not support type")
+		}
+	}
+
+	return val, nil
 }
 
 // Returns the number of total rows
