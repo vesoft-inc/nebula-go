@@ -76,7 +76,7 @@ func (pool *ConnectionPool) initPool() error {
 
 		// Open connection to host
 		if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig,
-			pool.conf.UseHTTP2, pool.conf.HttpHeader); err != nil {
+			pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.HttpResponseBufLimit); err != nil {
 			// If initialization failed, clean idle queue
 			idleLen := pool.idleConnectionQueue.Len()
 			for i := 0; i < idleLen; i++ {
@@ -246,7 +246,7 @@ func (pool *ConnectionPool) newConnToHost() (*connection, error) {
 	newConn := newConnection(host)
 	// Open connection to host
 	if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig,
-		pool.conf.UseHTTP2, pool.conf.HttpHeader); err != nil {
+		pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.HttpResponseBufLimit); err != nil {
 		return nil, err
 	}
 	// Add connection to active queue
@@ -371,7 +371,7 @@ func pingAddress(address HostAddress, timeout time.Duration, sslConfig *tls.Conf
 	useHTTP2 bool, httpHeader http.Header) error {
 	newConn := newConnection(address)
 	// Open connection to host
-	if err := newConn.open(newConn.severAddress, timeout, sslConfig, useHTTP2, httpHeader); err != nil {
+	if err := newConn.open(newConn.severAddress, timeout, sslConfig, useHTTP2, httpHeader, 0); err != nil {
 		return err
 	}
 	defer newConn.close()

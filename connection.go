@@ -24,13 +24,14 @@ import (
 )
 
 type connection struct {
-	severAddress HostAddress
-	timeout      time.Duration
-	returnedAt   time.Time // the connection was created or returned.
-	sslConfig    *tls.Config
-	useHTTP2     bool
-	httpHeader   http.Header
-	graph        *graph.GraphServiceClient
+	severAddress         HostAddress
+	timeout              time.Duration
+	returnedAt           time.Time // the connection was created or returned.
+	sslConfig            *tls.Config
+	useHTTP2             bool
+	httpHeader           http.Header
+	httpResponseBufLimit int
+	graph                *graph.GraphServiceClient
 }
 
 func newConnection(severAddress HostAddress) *connection {
@@ -46,12 +47,14 @@ func newConnection(severAddress HostAddress) *connection {
 // open opens a transport for the connection
 // if sslConfig is not nil, an SSL transport will be created
 func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config,
-	useHTTP2 bool, httpHeader http.Header) error {
+	useHTTP2 bool, httpHeader http.Header, httpRespBufferLimit int) error {
 	ip := hostAddress.Host
 	port := hostAddress.Port
 	newAdd := net.JoinHostPort(ip, strconv.Itoa(port))
 	cn.timeout = timeout
 	cn.useHTTP2 = useHTTP2
+	cn.httpHeader = httpHeader
+	cn.httpResponseBufLimit = cn.httpResponseBufLimit
 
 	var (
 		err       error
@@ -103,6 +106,13 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslCo
 				}
 			}
 		}
+		if httpRespBufferLimit != 0 {
+			client, ok := transport.(*thrift.HTTPClient)
+			if !ok {
+				return fmt.Errorf("failed to get thrift http client")
+			}
+			client.SetResponseBufferLimit(int64(httpRespBufferLimit))
+		}
 	} else {
 		bufferSize := 128 << 10
 
@@ -150,7 +160,7 @@ func (cn *connection) verifyClientVersion() error {
 // When the timeout occurs, the connection will be reopened to avoid the impact of the message.
 func (cn *connection) reopen() error {
 	cn.close()
-	return cn.open(cn.severAddress, cn.timeout, cn.sslConfig, cn.useHTTP2, cn.httpHeader)
+	return cn.open(cn.severAddress, cn.timeout, cn.sslConfig, cn.useHTTP2, cn.httpHeader, cn.httpResponseBufLimit)
 }
 
 // Authenticate
