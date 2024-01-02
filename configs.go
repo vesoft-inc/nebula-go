@@ -35,7 +35,7 @@ type PoolConfig struct {
 	// HttpHeader is the http headers for the connection when using HTTP2
 	HttpHeader http.Header
 	// client version, make sure the client version is in the white list of NebulaGraph server
-	version string
+	Version string
 }
 
 // validateConf validates config
@@ -66,7 +66,7 @@ func GetDefaultConf() PoolConfig {
 		MaxConnPoolSize: 10,
 		MinConnPoolSize: 0,
 		UseHTTP2:        false,
-		version:		 "",
+		Version:		 "",
 	}
 }
 

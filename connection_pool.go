@@ -66,7 +66,7 @@ func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *t
 // initPool initializes the connection pool
 func (pool *ConnectionPool) initPool() error {
 	if err := checkAddresses(pool.conf.TimeOut, pool.addresses, pool.sslConfig,
-		pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.version); err != nil {
+		pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.Version); err != nil {
 		return fmt.Errorf("failed to open connection, error: %s ", err.Error())
 	}
 
@@ -76,7 +76,7 @@ func (pool *ConnectionPool) initPool() error {
 
 		// Open connection to host
 		if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig,
-			pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.version); err != nil {
+			pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.Version); err != nil {
 			// If initialization failed, clean idle queue
 			idleLen := pool.idleConnectionQueue.Len()
 			for i := 0; i < idleLen; i++ {
@@ -194,7 +194,7 @@ func (pool *ConnectionPool) releaseAndBack(conn *connection, pushBack bool) {
 
 // Ping checks availability of host
 func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error {
-	return pingAddress(host, timeout, pool.sslConfig, pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.version)
+	return pingAddress(host, timeout, pool.sslConfig, pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.Version)
 }
 
 // Close closes all connection
@@ -246,7 +246,7 @@ func (pool *ConnectionPool) newConnToHost() (*connection, error) {
 	newConn := newConnection(host)
 	// Open connection to host
 	if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig,
-		pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.version); err != nil {
+		pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.Version); err != nil {
 		return nil, err
 	}
 	// Add connection to active queue
