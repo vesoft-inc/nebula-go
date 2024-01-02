@@ -33,6 +33,7 @@ func main() {
 	// Create configs for connection pool using default values
 	testPoolConfig := nebula.GetDefaultConf()
 	testPoolConfig.UseHTTP2 = useHTTP2
+	testPoolConfig.version = "3.0.0"
 
 	// Initialize connection pool
 	pool, err := nebula.NewConnectionPool(hostList, testPoolConfig, log)

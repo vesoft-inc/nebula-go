@@ -282,6 +282,8 @@ services:
       - --system_memory_high_watermark_ratio=0.99
       - --heartbeat_interval_secs=1
       - --max_sessions_per_ip_per_user=1200
+      - --enable_client_white_list=true
+      - --client_white_list=3.0.0:test
       # ssl
       - --ca_path=${ca_path}
       - --cert_path=${cert_path}
@@ -328,6 +330,8 @@ services:
       - --system_memory_high_watermark_ratio=0.99
       - --heartbeat_interval_secs=1
       - --max_sessions_per_ip_per_user=1200
+      - --enable_client_white_list=true
+      - --client_white_list=3.0.0:test
       # ssl
       - --ca_path=${ca_path}
       - --cert_path=${cert_path}
@@ -374,6 +378,8 @@ services:
       - --system_memory_high_watermark_ratio=0.99
       - --heartbeat_interval_secs=1
       - --max_sessions_per_ip_per_user=1200
+      - --enable_client_white_list=true
+      - --client_white_list=3.0.0:test
       # ssl
       - --ca_path=${ca_path}
       - --cert_path=${cert_path}
