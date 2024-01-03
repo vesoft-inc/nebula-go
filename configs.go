@@ -66,7 +66,7 @@ func GetDefaultConf() PoolConfig {
 		MaxConnPoolSize: 10,
 		MinConnPoolSize: 0,
 		UseHTTP2:        false,
-		Version:		 "",
+		Version:         "",
 	}
 }
 

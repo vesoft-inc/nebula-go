@@ -30,7 +30,7 @@ type connection struct {
 	sslConfig    *tls.Config
 	useHTTP2     bool
 	httpHeader   http.Header
-	version 	 string
+	version      string
 	graph        *graph.GraphServiceClient
 }
 
@@ -40,7 +40,7 @@ func newConnection(severAddress HostAddress) *connection {
 		timeout:      0 * time.Millisecond,
 		returnedAt:   time.Now(),
 		sslConfig:    nil,
-		version:	  "",
+		version:      "",
 		graph:        nil,
 	}
 }
