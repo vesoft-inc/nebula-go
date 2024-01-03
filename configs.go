@@ -34,7 +34,7 @@ type PoolConfig struct {
 	UseHTTP2 bool
 	// HttpHeader is the http headers for the connection when using HTTP2
 	HttpHeader http.Header
-	// client version, make sure the client version is in the white list of NebulaGraph server
+	// client version, make sure the client version is in the white list of NebulaGraph server 'client_white_list'
 	Version string
 }
 
@@ -141,7 +141,7 @@ type SessionPoolConf struct {
 	useHTTP2 bool
 	// httpHeader is the http headers for the connection
 	httpHeader http.Header
-	// client version, make sure the client version is in the white list of NebulaGraph server
+	// client version, make sure the client version is in the white list of NebulaGraph server 'client_white_list'
 	version string
 }
 
