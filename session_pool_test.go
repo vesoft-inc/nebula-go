@@ -125,12 +125,12 @@ func TestSessionPoolServerCheck(t *testing.T) {
 	}
 }
 
-func TestSessionPoolInvalidVersion(t *testing.T) {
+func TestSessionPoolInvalidHandshakeKey(t *testing.T) {
 	prepareSpace("client_test")
 	defer dropSpace("client_test")
 	hostAddress := HostAddress{Host: address, Port: port}
 
-	// wrong version info
+	// wrong handshakeKey info
 	versionConfig, err := NewSessionPoolConf(
 		"root",
 		"nebula",
