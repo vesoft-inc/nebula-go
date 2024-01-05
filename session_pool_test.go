@@ -125,6 +125,28 @@ func TestSessionPoolServerCheck(t *testing.T) {
 	}
 }
 
+func TestSessionPoolInvalidVersion(t *testing.T) {
+	prepareSpace("client_test")
+	defer dropSpace("client_test")
+	hostAddress := HostAddress{Host: address, Port: port}
+
+	// wrong version info
+	versionConfig, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		"client_test",
+	)
+	versionConfig.version = "INVALID_VERSION"
+	versionConfig.minSize = 1
+
+	// create session pool
+	_, err = NewSessionPool(*versionConfig, DefaultLogger{})
+	if err != nil {
+		assert.Contains(t, err.Error(), "incompatible version between client and server")
+	}
+}
+
 func TestSessionPoolBasic(t *testing.T) {
 	prepareSpace("client_test")
 	defer dropSpace("client_test")

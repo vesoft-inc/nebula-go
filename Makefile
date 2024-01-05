@@ -14,6 +14,10 @@ test:
 
 fmt:
 	go fmt
+
+lint:
+	@test -z `gofmt -l *.go` || (echo "Please run 'make fmt' to format Go code" && exit 1)
+
 up:
 	cd ./nebula-docker-compose && docker-compose up -d
 
