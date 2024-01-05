@@ -79,7 +79,7 @@ func NewSessionPool(conf SessionPoolConf, log Logger) (*SessionPool, error) {
 func (pool *SessionPool) init() error {
 	// check the hosts status
 	if err := checkAddresses(pool.conf.timeOut, pool.conf.serviceAddrs, pool.conf.sslConfig,
-		pool.conf.useHTTP2, pool.conf.httpHeader, pool.conf.version); err != nil {
+		pool.conf.useHTTP2, pool.conf.httpHeader, pool.conf.handshakeKey); err != nil {
 		return fmt.Errorf("failed to initialize the session pool, %s", err.Error())
 	}
 
@@ -287,7 +287,7 @@ func (pool *SessionPool) newSession() (*pureSession, error) {
 
 	// open a new connection
 	if err := cn.open(cn.severAddress, pool.conf.timeOut, pool.conf.sslConfig,
-		pool.conf.useHTTP2, pool.conf.httpHeader, pool.conf.version); err != nil {
+		pool.conf.useHTTP2, pool.conf.httpHeader, pool.conf.HandshakeKey); err != nil {
 		return nil, fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
 	}
 

@@ -30,7 +30,7 @@ type connection struct {
 	sslConfig    *tls.Config
 	useHTTP2     bool
 	httpHeader   http.Header
-	version      string
+	handshakeKey string
 	graph        *graph.GraphServiceClient
 }
 
@@ -40,7 +40,7 @@ func newConnection(severAddress HostAddress) *connection {
 		timeout:      0 * time.Millisecond,
 		returnedAt:   time.Now(),
 		sslConfig:    nil,
-		version:      "",
+		handshakeKey: "",
 		graph:        nil,
 	}
 }
@@ -48,13 +48,13 @@ func newConnection(severAddress HostAddress) *connection {
 // open opens a transport for the connection
 // if sslConfig is not nil, an SSL transport will be created
 func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config,
-	useHTTP2 bool, httpHeader http.Header, version string) error {
+	useHTTP2 bool, httpHeader http.Header, handshakeKey string) error {
 	ip := hostAddress.Host
 	port := hostAddress.Port
 	newAdd := net.JoinHostPort(ip, strconv.Itoa(port))
 	cn.timeout = timeout
 	cn.useHTTP2 = useHTTP2
-	cn.version = version
+	cn.handshakeKey = handshakeKey
 
 	var (
 		err       error
@@ -136,16 +136,16 @@ func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslCo
 
 func (cn *connection) verifyClientVersion() error {
 	req := graph.NewVerifyClientVersionReq()
-	if cn.version != "" {
-		req.SetVersion([]byte(cn.version))
+	if cn.handshakeKey != "" {
+		req.SetVersion([]byte(cn.handshakeKey))
 	}
 	resp, err := cn.graph.VerifyClientVersion(req)
 	if err != nil {
 		cn.close()
-		return fmt.Errorf("failed to verify client version: %s", err.Error())
+		return fmt.Errorf("failed to verify client handshakeKey: %s", err.Error())
 	}
 	if resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
-		return fmt.Errorf("incompatible version between client and server: %s", string(resp.GetErrorMsg()))
+		return fmt.Errorf("incompatible handshakeKey between client and server: %s", string(resp.GetErrorMsg()))
 	}
 	return nil
 }
@@ -156,7 +156,7 @@ func (cn *connection) verifyClientVersion() error {
 // When the timeout occurs, the connection will be reopened to avoid the impact of the message.
 func (cn *connection) reopen() error {
 	cn.close()
-	return cn.open(cn.severAddress, cn.timeout, cn.sslConfig, cn.useHTTP2, cn.httpHeader, cn.version)
+	return cn.open(cn.severAddress, cn.timeout, cn.sslConfig, cn.useHTTP2, cn.httpHeader, cn.handshakeKey)
 }
 
 // Authenticate

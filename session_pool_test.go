@@ -137,13 +137,13 @@ func TestSessionPoolInvalidVersion(t *testing.T) {
 		[]HostAddress{hostAddress},
 		"client_test",
 	)
-	versionConfig.version = "INVALID_VERSION"
+	versionConfig.handshakeKey = "INVALID_VERSION"
 	versionConfig.minSize = 1
 
 	// create session pool
 	_, err = NewSessionPool(*versionConfig, DefaultLogger{})
 	if err != nil {
-		assert.Contains(t, err.Error(), "incompatible version between client and server")
+		assert.Contains(t, err.Error(), "incompatible handshakeKey between client and server")
 	}
 }
 
