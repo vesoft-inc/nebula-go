@@ -256,7 +256,7 @@ func TestVersionVerify(t *testing.T) {
 	conn := newConnection(hostAddress)
 	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil, "INVALID_VERSION")
 	if err != nil {
-		assert.Contains(t, err.Error(), "incompatible version between client and server")
+		assert.Contains(t, err.Error(), "incompatible handshakeKey between client and server")
 	}
 	defer conn.close()
 }

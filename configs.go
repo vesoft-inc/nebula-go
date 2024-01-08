@@ -34,8 +34,8 @@ type PoolConfig struct {
 	UseHTTP2 bool
 	// HttpHeader is the http headers for the connection when using HTTP2
 	HttpHeader http.Header
-	// client version, make sure the client version is in the white list of NebulaGraph server 'client_white_list'
-	Version string
+	// client handshakeKey, make sure the client handshakeKey is in the white list of NebulaGraph server 'client_white_list'
+	HandshakeKey string
 }
 
 // validateConf validates config
@@ -66,7 +66,7 @@ func GetDefaultConf() PoolConfig {
 		MaxConnPoolSize: 10,
 		MinConnPoolSize: 0,
 		UseHTTP2:        false,
-		Version:         "",
+		HandshakeKey:    "",
 	}
 }
 
@@ -141,8 +141,8 @@ type SessionPoolConf struct {
 	useHTTP2 bool
 	// httpHeader is the http headers for the connection
 	httpHeader http.Header
-	// client version, make sure the client version is in the white list of NebulaGraph server 'client_white_list'
-	version string
+	// client handshakeKey, make sure the client handshakeKey is in the white list of NebulaGraph server 'client_white_list'
+	handshakeKey string
 }
 
 type SessionPoolConfOption func(*SessionPoolConf)
@@ -219,9 +219,9 @@ func WithHttpHeader(header http.Header) SessionPoolConfOption {
 	}
 }
 
-func WithVersion(version string) SessionPoolConfOption {
+func WithHandshakeKey(handshakeKey string) SessionPoolConfOption {
 	return func(conf *SessionPoolConf) {
-		conf.version = version
+		conf.handshakeKey = handshakeKey
 	}
 }
 
