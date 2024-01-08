@@ -19,7 +19,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/samber/lo"
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
 	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
@@ -299,7 +298,7 @@ func (res ResultSet) GetRowValuesByIndex(index int) (*Record, error) {
 }
 
 // Scan scans the rows into the given value.
-func (res ResultSet) Scan(v any) error {
+func (res ResultSet) Scan(v interface{}) error {
 	size := res.GetRowSize()
 	if size == 0 {
 		return nil
@@ -349,7 +348,7 @@ func (res ResultSet) scanRow(row *nebula.Row, colNames []string, t reflect.Type)
 			continue
 		}
 
-		i := lo.IndexOf(colNames, tag)
+		i := IndexOf(colNames, tag)
 		if i == -1 {
 			// It is possible that the tag is not in the result set
 			continue
