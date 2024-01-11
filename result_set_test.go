@@ -711,6 +711,38 @@ func TestAsStringTable(t *testing.T) {
 	}
 }
 
+func TestScan(t *testing.T) {
+	resp := &graph.ExecutionResponse{
+		nebula.ErrorCode_SUCCEEDED,
+		1000,
+		getDateset(),
+		[]byte("test_space"),
+		[]byte("test"),
+		graph.NewPlanDescription(),
+		[]byte("test_comment")}
+	resultSet, err := genResultSet(resp, testTimezone)
+	if err != nil {
+		t.Error(err)
+	}
+
+	type testStruct struct {
+		Col0 int64  `nebula:"col0_int"`
+		Col1 string `nebula:"col1_string"`
+		// Col2 Node `nebula:"col2_vertex"`
+		// Col3 Relationship `nebula:"col3_edge"`
+		// Col4 PathWrapper `nebula:"col4_path"`
+	}
+
+	var testStructList []testStruct
+	err = resultSet.Scan(&testStructList)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, 1, len(testStructList))
+	assert.Equal(t, int64(1), testStructList[0].Col0)
+	assert.Equal(t, "value1", testStructList[0].Col1)
+}
+
 func TestIntVid(t *testing.T) {
 	vertex := getVertexInt(101, 3, 5)
 	node, err := genNode(vertex, testTimezone)

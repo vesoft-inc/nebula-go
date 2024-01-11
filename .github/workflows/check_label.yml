@@ -8,7 +8,7 @@ on:
       - labeled
       - unlabeled
       - closed
-    
+
 env:
   GH_PAT: ${{ secrets.GITHUB_TOKEN }}
   EVENT: ${{ toJSON(github.event)}}
