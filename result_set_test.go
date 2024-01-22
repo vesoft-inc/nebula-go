@@ -741,6 +741,17 @@ func TestScan(t *testing.T) {
 	assert.Equal(t, 1, len(testStructList))
 	assert.Equal(t, int64(1), testStructList[0].Col0)
 	assert.Equal(t, "value1", testStructList[0].Col1)
+
+	// Scan again should work
+	err = resultSet.Scan(&testStructList)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, 2, len(testStructList))
+	assert.Equal(t, int64(1), testStructList[0].Col0)
+	assert.Equal(t, "value1", testStructList[0].Col1)
+	assert.Equal(t, int64(1), testStructList[1].Col0)
+	assert.Equal(t, "value1", testStructList[1].Col1)
 }
 
 func TestIntVid(t *testing.T) {
