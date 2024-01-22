@@ -336,31 +336,31 @@ func (res ResultSet) Scan(v interface{}) error {
 
 // Scan scans the rows into the given value.
 func (res ResultSet) scanRow(row *nebula.Row, colNames []string, t reflect.Type) (reflect.Value, error) {
-	rowValues := row.GetValues()
+	rowVals := row.GetValues()
 
 	val := reflect.New(t).Elem()
 
-	for i := 0; i < t.NumField(); i++ {
-		f := t.Field(i)
+	for fIdx := 0; fIdx < t.NumField(); fIdx++ {
+		f := t.Field(fIdx)
 		tag := f.Tag.Get("nebula")
 
 		if tag == "" {
 			continue
 		}
 
-		i := IndexOf(colNames, tag)
-		if i == -1 {
+		cIdx := IndexOf(colNames, tag)
+		if cIdx == -1 {
 			// It is possible that the tag is not in the result set
 			continue
 		}
 
-		rowVal := rowValues[i]
+		rowVal := rowVals[cIdx]
 
 		switch f.Type.Kind() {
 		case reflect.Int64:
-			val.Field(i).SetInt(rowVal.GetIVal())
+			val.Field(fIdx).SetInt(rowVal.GetIVal())
 		case reflect.String:
-			val.Field(i).SetString(string(rowVal.GetSVal()))
+			val.Field(fIdx).SetString(string(rowVal.GetSVal()))
 		default:
 			return val, errors.New("scan: not support type")
 		}
