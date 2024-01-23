@@ -58,8 +58,8 @@ For example:
 ### Mininal example
 
 Suppose you already initialized your space and defined the schema as:
-1. Vertex person with properties `name: string`, `age: int`
-2. Edge like with properties `likeness: double`
+1. Vertex `person` with properties `name: string`, `age: int`
+2. Edge `like` with properties `likeness: double`
 
 You can query the Nebula by the minimal example:
 
