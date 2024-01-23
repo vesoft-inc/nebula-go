@@ -89,10 +89,10 @@ func main() {
   sessionPool, err := nebula.NewSessionPool(*config, nebula.DefaultLogger{})
 
   query := `GO FROM 'Bob' OVER like YIELD
-  $^.person.name AS name,
-  $^.person.age AS age,
-  like.likeness AS likeness
-`
+    $^.person.name AS name,
+    $^.person.age AS age,
+    like.likeness AS likeness`
+
   resultSet, err := sessionPool.Execute(query)
   if err != nil {
     panic(err)
