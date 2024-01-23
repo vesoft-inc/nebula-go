@@ -30,6 +30,12 @@ const (
 // Initialize logger
 var log = nebula.DefaultLogger{}
 
+type Person struct {
+	Name     string  `nebula:"name"`
+	Age      int     `nebula:"age"`
+	Likeness float64 `nebula:"likeness"`
+}
+
 func main() {
 	prepareSpace()
 	hostAddress := nebula.HostAddress{Host: address, Port: port}
@@ -94,7 +100,7 @@ func main() {
 	}
 	// Extract data from the resultSet
 	{
-		query := "GO FROM 'Bob' OVER like YIELD $^.person.name, $^.person.age, like.likeness"
+		query := "GO FROM 'Bob' OVER like YIELD $^.person.name AS name, $^.person.age AS age, like.likeness AS likeness"
 		// Send query in goroutine
 		wg := sync.WaitGroup{}
 		wg.Add(1)
@@ -108,6 +114,10 @@ func main() {
 				return
 			}
 			checkResultSet(query, resultSet)
+			var personList []Person
+			resultSet.Scan(&personList)
+			fmt.Printf("personList: %v\n", personList)
+			// personList: [{Bob 10 97.2} {Bob 10 80} {Bob 10 70}]
 		}(&wg)
 		wg.Wait()
 
