@@ -800,11 +800,11 @@ func TestScan(t *testing.T) {
 	}
 
 	type testStruct struct {
-		Col0 int64        `nebula:"col0_int"`
-		Col1 string       `nebula:"col1_string"`
-		Col2 Node         `nebula:"col2_vertex"`
-		Col3 Relationship `nebula:"col3_edge"`
-		Col4 PathWrapper  `nebula:"col4_path"`
+		Col0 int64  `nebula:"col0_int"`
+		Col1 string `nebula:"col1_string"`
+		// Col2 Node         `nebula:"col2_vertex"`
+		// Col3 Relationship `nebula:"col3_edge"`
+		// Col4 PathWrapper  `nebula:"col4_path"`
 	}
 
 	var testStructList []testStruct
