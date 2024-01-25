@@ -155,14 +155,23 @@ func TestAsMap(t *testing.T) {
 }
 
 func TestAsDate(t *testing.T) {
-	value := nebula.Value{DVal: &nebula.Date{2020, 12, 25}}
+	value := nebula.Value{DVal: &nebula.Date{
+		Year:  2020,
+		Month: 12,
+		Day:   25,
+	}}
 	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsDate())
 	assert.Equal(t, "2020-12-25", valWrap.String())
 }
 
 func TestAsTime(t *testing.T) {
-	value := nebula.Value{TVal: &nebula.Time{13, 12, 25, 29}}
+	value := nebula.Value{TVal: &nebula.Time{
+		Hour:     13,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29,
+	}}
 	timezoneInfo := timezoneInfo{8 * 3600, []byte("+08:00")}
 	valWrap := ValueWrapper{&value, timezoneInfo}
 	assert.Equal(t, true, valWrap.IsTime())
@@ -179,7 +188,10 @@ func TestAsTime(t *testing.T) {
 		t.Error(err.Error())
 	}
 	expected := nebula.Time{
-		21, 12, 25, 29,
+		Hour:     21,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29,
 	}
 	assert.Equal(t, expected, *localTime)
 
@@ -188,7 +200,10 @@ func TestAsTime(t *testing.T) {
 		t.Error(err.Error())
 	}
 	expected = nebula.Time{
-		05, 12, 25, 29,
+		Hour:     05,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29,
 	}
 	assert.Equal(t, expected, *localTime)
 
@@ -197,7 +212,10 @@ func TestAsTime(t *testing.T) {
 		t.Error(err.Error())
 	}
 	expected = nebula.Time{
-		14, 12, 25, 29,
+		Hour:     14,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29,
 	}
 	assert.Equal(t, expected, *localTime)
 
@@ -206,7 +224,10 @@ func TestAsTime(t *testing.T) {
 		t.Error(err.Error())
 	}
 	expected = nebula.Time{
-		11, 12, 25, 29,
+		Hour:     11,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29,
 	}
 	assert.Equal(t, expected, *localTime)
 
@@ -215,13 +236,23 @@ func TestAsTime(t *testing.T) {
 		t.Error(err.Error())
 	}
 	expected = nebula.Time{
-		01, 12, 25, 29,
+		Hour:     01,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29,
 	}
 	assert.Equal(t, expected, *localTime)
 }
 
 func TestAsDateTime(t *testing.T) {
-	value := nebula.Value{DtVal: &nebula.DateTime{2020, 12, 25, 22, 12, 25, 29}}
+	value := nebula.Value{DtVal: &nebula.DateTime{
+		Year:     2020,
+		Month:    12,
+		Day:      25,
+		Hour:     22,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29}}
 	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsDateTime())
 	assert.Equal(t, "2020-12-25T22:12:25.000029", valWrap.String())
@@ -237,8 +268,13 @@ func TestAsDateTime(t *testing.T) {
 		t.Error(err.Error())
 	}
 	expected := nebula.DateTime{
-		2020, 12, 26,
-		06, 12, 25, 29,
+		Year:     2020,
+		Month:    12,
+		Day:      26,
+		Hour:     06,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29,
 	}
 	assert.Equal(t, expected, *localTime)
 
@@ -247,8 +283,13 @@ func TestAsDateTime(t *testing.T) {
 		t.Error(err.Error())
 	}
 	expected = nebula.DateTime{
-		2020, 12, 25,
-		14, 12, 25, 29,
+		Year:     2020,
+		Month:    12,
+		Day:      25,
+		Hour:     14,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29,
 	}
 	assert.Equal(t, expected, *localTime)
 
@@ -257,8 +298,13 @@ func TestAsDateTime(t *testing.T) {
 		t.Error(err.Error())
 	}
 	expected = nebula.DateTime{
-		2020, 12, 25,
-		23, 12, 25, 29,
+		Year:     2020,
+		Month:    12,
+		Day:      25,
+		Hour:     23,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29,
 	}
 	assert.Equal(t, expected, *localTime)
 
@@ -267,8 +313,13 @@ func TestAsDateTime(t *testing.T) {
 		t.Error(err.Error())
 	}
 	expected = nebula.DateTime{
-		2020, 12, 25,
-		20, 12, 25, 29,
+		Year:     2020,
+		Month:    12,
+		Day:      25,
+		Hour:     20,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29,
 	}
 	assert.Equal(t, expected, *localTime)
 }
@@ -302,13 +353,23 @@ func TestAsNode(t *testing.T) {
 	var vidVal = nebula.NewValue()
 	vidVal.SVal = []byte("Bob")
 	props := make(map[string]*nebula.Value)
-	props["datetimeProp"] = &nebula.Value{DtVal: &nebula.DateTime{2020, 12, 25, 22, 12, 25, 29}}
+	props["datetimeProp"] = &nebula.Value{DtVal: &nebula.DateTime{
+		Year:     2020,
+		Month:    12,
+		Day:      25,
+		Hour:     22,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29,
+	}}
 	tag := nebula.Tag{
 		Name:  []byte("tag0"),
 		Props: props,
 	}
 	tags = append(tags, &tag)
-	vertex := &nebula.Vertex{vidVal, tags}
+	vertex := &nebula.Vertex{
+		Vid:  vidVal,
+		Tags: tags}
 	value = nebula.Value{VVal: vertex}
 	valWrap = ValueWrapper{&value, testTimezone}
 
@@ -348,7 +409,15 @@ func TestAsRelationship(t *testing.T) {
 	srcVidVal.SVal = []byte("Alice")
 	dstVidVal.SVal = []byte("Bob")
 	props := make(map[string]*nebula.Value)
-	props["datetimeProp"] = &nebula.Value{DtVal: &nebula.DateTime{2020, 12, 25, 22, 12, 25, 29}}
+	props["datetimeProp"] = &nebula.Value{DtVal: &nebula.DateTime{
+		Year:     2020,
+		Month:    12,
+		Day:      25,
+		Hour:     22,
+		Minute:   12,
+		Sec:      25,
+		Microsec: 29,
+	}}
 	edge := &nebula.Edge{
 		Src:     srcVidVal,
 		Dst:     dstVidVal,
@@ -420,7 +489,11 @@ func TestAsGeography(t *testing.T) {
 }
 
 func TestAsDuration(t *testing.T) {
-	value := nebula.Value{DuVal: &nebula.Duration{86400, 3000, 12}}
+	value := nebula.Value{DuVal: &nebula.Duration{
+		Seconds:      86400,
+		Microseconds: 3000,
+		Months:       12,
+	}}
 	valWrap := ValueWrapper{&value, testTimezone}
 	assert.Equal(t, true, valWrap.IsDuration())
 	assert.Equal(t, "P12MT86400.003000000S", valWrap.String())
@@ -543,13 +616,14 @@ func TestPathWrapper(t *testing.T) {
 
 func TestResultSet(t *testing.T) {
 	respWithNil := &graph.ExecutionResponse{
-		nebula.ErrorCode_E_STATEMENT_EMPTY,
-		1000,
-		nil,
-		nil,
-		nil,
-		nil,
-		nil}
+		ErrorCode:   nebula.ErrorCode_E_STATEMENT_EMPTY,
+		LatencyInUs: 1000,
+		Data:        nil,
+		SpaceName:   nil,
+		ErrorMsg:    nil,
+		PlanDesc:    nil,
+		Comment:     nil,
+	}
 	resultSetWithNil, err := genResultSet(respWithNil, testTimezone)
 	if err != nil {
 		t.Error(err)
@@ -563,37 +637,37 @@ func TestResultSet(t *testing.T) {
 	assert.Equal(t, false, resultSetWithNil.IsSucceed())
 
 	planDesc := graph.PlanDescription{
-		[]*graph.PlanNodeDescription{
+		PlanNodeDescs: []*graph.PlanNodeDescription{
 			{
-				[]byte("Project"),
-				0,
-				[]byte("__Project_0"),
-				[]*graph.Pair{},
-				[]*graph.ProfilingStats{},
-				nil,
-				[]int64{2}},
+				Name:         []byte("Project"),
+				Id:           0,
+				OutputVar:    []byte("__Project_0"),
+				Description:  []*graph.Pair{},
+				Profiles:     []*graph.ProfilingStats{},
+				BranchInfo:   nil,
+				Dependencies: []int64{2}},
 			{
-				[]byte("Start"),
-				2,
-				[]byte("__Start_2"),
-				[]*graph.Pair{},
-				[]*graph.ProfilingStats{},
-				nil,
-				[]int64{}},
+				Name:         []byte("Start"),
+				Id:           2,
+				OutputVar:    []byte("__Start_2"),
+				Description:  []*graph.Pair{},
+				Profiles:     []*graph.ProfilingStats{},
+				BranchInfo:   nil,
+				Dependencies: []int64{}},
 		},
-		map[int64]int64{0: 0, 2: 1},
-		[]byte("dot"),
-		0,
+		NodeIndexMap:     map[int64]int64{0: 0, 2: 1},
+		Format:           []byte("dot"),
+		OptimizeTimeInUs: 0,
 	}
 
 	resp := &graph.ExecutionResponse{
-		nebula.ErrorCode_SUCCEEDED,
-		1000,
-		getDateset(),
-		[]byte("test_space"),
-		[]byte("test_err_msg"),
-		&planDesc,
-		[]byte("test_comment")}
+		ErrorCode:   nebula.ErrorCode_SUCCEEDED,
+		LatencyInUs: 1000,
+		Data:        getDateset(),
+		SpaceName:   []byte("test_space"),
+		ErrorMsg:    []byte("test_err_msg"),
+		PlanDesc:    &planDesc,
+		Comment:     []byte("test_comment")}
 
 	resultSet, err := genResultSet(resp, testTimezone)
 	if err != nil {
@@ -666,13 +740,13 @@ func TestResultSet(t *testing.T) {
 
 func TestAsStringTable(t *testing.T) {
 	resp := &graph.ExecutionResponse{
-		nebula.ErrorCode_SUCCEEDED,
-		1000,
-		getDateset(),
-		[]byte("test_space"),
-		[]byte("test"),
-		graph.NewPlanDescription(),
-		[]byte("test_comment")}
+		ErrorCode:   nebula.ErrorCode_SUCCEEDED,
+		LatencyInUs: 1000,
+		Data:        getDateset(),
+		SpaceName:   []byte("test_space"),
+		ErrorMsg:    []byte("test"),
+		PlanDesc:    graph.NewPlanDescription(),
+		Comment:     []byte("test_comment")}
 	resultSet, err := genResultSet(resp, testTimezone)
 	if err != nil {
 		t.Error(err)
@@ -713,24 +787,24 @@ func TestAsStringTable(t *testing.T) {
 
 func TestScan(t *testing.T) {
 	resp := &graph.ExecutionResponse{
-		nebula.ErrorCode_SUCCEEDED,
-		1000,
-		getDateset(),
-		[]byte("test_space"),
-		[]byte("test"),
-		graph.NewPlanDescription(),
-		[]byte("test_comment")}
+		ErrorCode:   nebula.ErrorCode_SUCCEEDED,
+		LatencyInUs: 1000,
+		Data:        getDateset(),
+		SpaceName:   []byte("test_space"),
+		ErrorMsg:    []byte("test"),
+		PlanDesc:    graph.NewPlanDescription(),
+		Comment:     []byte("test_comment")}
 	resultSet, err := genResultSet(resp, testTimezone)
 	if err != nil {
 		t.Error(err)
 	}
 
 	type testStruct struct {
-		Col0 int64  `nebula:"col0_int"`
-		Col1 string `nebula:"col1_string"`
-		// Col2 Node `nebula:"col2_vertex"`
-		// Col3 Relationship `nebula:"col3_edge"`
-		// Col4 PathWrapper `nebula:"col4_path"`
+		Col0 int64        `nebula:"col0_int"`
+		Col1 string       `nebula:"col1_string"`
+		Col2 Node         `nebula:"col2_vertex"`
+		Col3 Relationship `nebula:"col3_edge"`
+		Col4 PathWrapper  `nebula:"col4_path"`
 	}
 
 	var testStructList []testStruct
@@ -905,7 +979,7 @@ func getDateset() *nebula.DataSet {
 	valueList := []*nebula.Value{v1, v2, v3, v4, v5}
 	var rows []*nebula.Row
 	row := &nebula.Row{
-		valueList,
+		Values: valueList,
 	}
 	rows = append(rows, row)
 	return &nebula.DataSet{
