@@ -55,6 +55,56 @@ For example:
 
 ## Usage example
 
+### Mininal example
+
+Suppose you already initialized your space and defined the schema as:
+1. Vertex `person` with properties `name: string`, `age: int`
+2. Edge `like` with properties `likeness: double`
+
+You can query the Nebula by the minimal example:
+
+```go
+package main
+
+import (
+  nebula "github.com/vesoft-inc/nebula-go/v3"
+)
+
+type Person struct {
+  Name     string  `nebula:"name"`
+  Age      int     `nebula:"age"`
+  Likeness float64 `nebula:"likeness"`
+}
+
+func main() {
+  hostAddress := nebula.HostAddress{Host: "127.0.0.1", Port: 3699}
+
+  config, err := nebula.NewSessionPoolConf(
+    "user",
+    "password",
+    []nebula.HostAddress{hostAddress},
+    "space_name",
+  )
+
+  sessionPool, err := nebula.NewSessionPool(*config, nebula.DefaultLogger{})
+
+  query := `GO FROM 'Bob' OVER like YIELD
+    $^.person.name AS name,
+    $^.person.age AS age,
+    like.likeness AS likeness`
+
+  resultSet, err := sessionPool.Execute(query)
+  if err != nil {
+    panic(err)
+  }
+
+  var personList []Person
+  resultSet.Scan(&personList)
+}
+```
+
+### More examples
+
 [Simple Code Example](https://github.com/vesoft-inc/nebula-go/tree/master/examples/basic_example/graph_client_basic_example.go)
 
 [Code Example with Goroutines](https://github.com/vesoft-inc/nebula-go/tree/master/examples/goroutines_example/graph_client_goroutines_example.go)
