@@ -814,7 +814,7 @@ func TestScan(t *testing.T) {
 	assert.Equal(t, 1, len(testStructList))
 	assert.Equal(t, int64(1), testStructList[0].Col0)
 	assert.Equal(t, float64(2.0), testStructList[0].Col1)
-	assert.Equal(t, "string", testStructList[0].Col1)
+	assert.Equal(t, "string", testStructList[0].Col2)
 	assert.Equal(t, true, testStructList[0].Col3)
 
 	// Scan again should work
@@ -825,11 +825,11 @@ func TestScan(t *testing.T) {
 	assert.Equal(t, 2, len(testStructList))
 	assert.Equal(t, int64(1), testStructList[0].Col0)
 	assert.Equal(t, float64(2.0), testStructList[0].Col1)
-	assert.Equal(t, "string", testStructList[0].Col1)
+	assert.Equal(t, "string", testStructList[0].Col2)
 	assert.Equal(t, true, testStructList[0].Col3)
 	assert.Equal(t, int64(1), testStructList[1].Col0)
 	assert.Equal(t, float64(2.0), testStructList[1].Col1)
-	assert.Equal(t, "string", testStructList[1].Col1)
+	assert.Equal(t, "string", testStructList[1].Col2)
 	assert.Equal(t, true, testStructList[1].Col3)
 }
 
@@ -1015,8 +1015,8 @@ func getDateset2() *nebula.DataSet {
 
 	var v4 = nebula.NewValue()
 	b4 := new(bool)
-	*b4 = bool(true)
-	v2.BVal = b4
+	*b4 = true
+	v4.BVal = b4
 
 	valueList := []*nebula.Value{v1, v2, v3, v4}
 	var rows []*nebula.Row
