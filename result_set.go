@@ -357,10 +357,20 @@ func (res ResultSet) scanRow(row *nebula.Row, colNames []string, t reflect.Type)
 		rowVal := rowVals[cIdx]
 
 		switch f.Type.Kind() {
+		case reflect.Bool:
+			val.Field(fIdx).SetBool(rowVal.GetBVal())
 		case reflect.Int:
+			val.Field(fIdx).SetInt(rowVal.GetIVal())
+		case reflect.Int8:
+			val.Field(fIdx).SetInt(rowVal.GetIVal())
+		case reflect.Int16:
+			val.Field(fIdx).SetInt(rowVal.GetIVal())
+		case reflect.Int32:
 			val.Field(fIdx).SetInt(rowVal.GetIVal())
 		case reflect.Int64:
 			val.Field(fIdx).SetInt(rowVal.GetIVal())
+		case reflect.Float32:
+			val.Field(fIdx).SetFloat(rowVal.GetFVal())
 		case reflect.Float64:
 			val.Field(fIdx).SetFloat(rowVal.GetFVal())
 		case reflect.String:
