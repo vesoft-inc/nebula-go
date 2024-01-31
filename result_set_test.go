@@ -789,7 +789,7 @@ func TestScan(t *testing.T) {
 	resp := &graph.ExecutionResponse{
 		ErrorCode:   nebula.ErrorCode_SUCCEEDED,
 		LatencyInUs: 1000,
-		Data:        getDateset(),
+		Data:        getDateset2(),
 		SpaceName:   []byte("test_space"),
 		ErrorMsg:    []byte("test"),
 		PlanDesc:    graph.NewPlanDescription(),
@@ -800,11 +800,10 @@ func TestScan(t *testing.T) {
 	}
 
 	type testStruct struct {
-		Col0 int64  `nebula:"col0_int"`
-		Col1 string `nebula:"col1_string"`
-		// Col2 Node         `nebula:"col2_vertex"`
-		// Col3 Relationship `nebula:"col3_edge"`
-		// Col4 PathWrapper  `nebula:"col4_path"`
+		Col0 int64   `nebula:"col0_int64"`
+		Col1 float64 `nebula:"col1_float64"`
+		Col2 string  `nebula:"col2_string"`
+		Col3 bool    `nebula:"col3_bool"`
 	}
 
 	var testStructList []testStruct
@@ -814,7 +813,9 @@ func TestScan(t *testing.T) {
 	}
 	assert.Equal(t, 1, len(testStructList))
 	assert.Equal(t, int64(1), testStructList[0].Col0)
-	assert.Equal(t, "value1", testStructList[0].Col1)
+	assert.Equal(t, float64(2.0), testStructList[0].Col1)
+	assert.Equal(t, "string", testStructList[0].Col1)
+	assert.Equal(t, true, testStructList[0].Col3)
 
 	// Scan again should work
 	err = resultSet.Scan(&testStructList)
@@ -823,9 +824,13 @@ func TestScan(t *testing.T) {
 	}
 	assert.Equal(t, 2, len(testStructList))
 	assert.Equal(t, int64(1), testStructList[0].Col0)
-	assert.Equal(t, "value1", testStructList[0].Col1)
+	assert.Equal(t, float64(2.0), testStructList[0].Col1)
+	assert.Equal(t, "string", testStructList[0].Col1)
+	assert.Equal(t, true, testStructList[0].Col3)
 	assert.Equal(t, int64(1), testStructList[1].Col0)
-	assert.Equal(t, "value1", testStructList[1].Col1)
+	assert.Equal(t, float64(2.0), testStructList[1].Col1)
+	assert.Equal(t, "string", testStructList[1].Col1)
+	assert.Equal(t, true, testStructList[1].Col3)
 }
 
 func TestIntVid(t *testing.T) {
@@ -977,6 +982,43 @@ func getDateset() *nebula.DataSet {
 	v5.PVal = getPath("Tom", 3)
 
 	valueList := []*nebula.Value{v1, v2, v3, v4, v5}
+	var rows []*nebula.Row
+	row := &nebula.Row{
+		Values: valueList,
+	}
+	rows = append(rows, row)
+	return &nebula.DataSet{
+		ColumnNames: colNames,
+		Rows:        rows,
+	}
+}
+
+func getDateset2() *nebula.DataSet {
+	colNames := [][]byte{
+		[]byte("col0_int64"),
+		[]byte("col1_float64"),
+		[]byte("col2_string"),
+		[]byte("col3_bool"),
+	}
+	var v1 = nebula.NewValue()
+	n1 := new(int64)
+	*n1 = int64(1)
+	v1.IVal = n1
+
+	var v2 = nebula.NewValue()
+	f2 := new(float64)
+	*f2 = float64(2.0)
+	v2.FVal = f2
+
+	var v3 = nebula.NewValue()
+	v3.SVal = []byte("string")
+
+	var v4 = nebula.NewValue()
+	b4 := new(bool)
+	*b4 = bool(true)
+	v2.BVal = b4
+
+	valueList := []*nebula.Value{v1, v2, v3, v4}
 	var rows []*nebula.Row
 	row := &nebula.Row{
 		Values: valueList,

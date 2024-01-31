@@ -357,6 +357,8 @@ func (res ResultSet) scanRow(row *nebula.Row, colNames []string, t reflect.Type)
 		rowVal := rowVals[cIdx]
 
 		switch f.Type.Kind() {
+		case reflect.Bool:
+			val.Field(fIdx).SetBool(rowVal.GetBVal())
 		case reflect.Int:
 			val.Field(fIdx).SetInt(rowVal.GetIVal())
 		case reflect.Int64:
