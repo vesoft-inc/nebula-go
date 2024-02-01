@@ -334,7 +334,7 @@ type _Edge struct {
 	Name string `nebula:"Name"`
 }
 
-func (pool *SessionPool) GetEdges() ([]string, error) {
+func (pool *SessionPool) ShowEdges() ([]string, error) {
 	rs, err := pool.ExecuteAndCheck("SHOW EDGES;")
 	if err != nil {
 		return nil, err

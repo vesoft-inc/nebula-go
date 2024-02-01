@@ -403,7 +403,7 @@ func TestSessionPoolApplySchema(t *testing.T) {
 			},
 		},
 	}
-	_, err := sessionPool.CreateTag(tagSchema)
+	_, err = sessionPool.CreateTag(tagSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -411,19 +411,19 @@ func TestSessionPoolApplySchema(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, 1, len(tags), "should have 1 tag")
-	assert.Equal(t, "account", tags[0].Name, "tag name should be account")
-	tag, err := sessionPool.DescribeTag("account")
+	assert.Equal(t, 1, len(tags), "should have 1 tags")
+	assert.Equal(t, "account", tags[0], "tag name should be account")
+	labels, err := sessionPool.DescTag("account")
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, 3, len(tag.Fields), "should have 3 fields")
-	assert.Equal(t, "name", tag.Fields[0].Name, "field name should be name")
-	assert.Equal(t, "string", tag.Fields[0].Type, "field type should be string")
-	assert.Equal(t, "email", tag.Fields[1].Name, "field name should be email")
-	assert.Equal(t, "string", tag.Fields[1].Type, "field type should be string")
-	assert.Equal(t, "phone", tag.Fields[2].Name, "field name should be phone")
-	assert.Equal(t, "int64", tag.Fields[2].Type, "field type should be string")
+	assert.Equal(t, 3, len(labels), "should have 3 labels")
+	assert.Equal(t, "name", labels[0].Field, "field name should be name")
+	assert.Equal(t, "string", labels[0].Type, "field type should be string")
+	assert.Equal(t, "email", labels[1].Field, "field name should be email")
+	assert.Equal(t, "string", labels[1].Type, "field type should be string")
+	assert.Equal(t, "phone", labels[2].Field, "field name should be phone")
+	assert.Equal(t, "int64", labels[2].Type, "field type should be string")
 
 	edgeSchema := LabelSchema{
 		Name: "account_email",
@@ -442,15 +442,15 @@ func TestSessionPoolApplySchema(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, 1, len(edges), "should have 1 edge")
-	assert.Equal(t, "account_email", edges[0].Name, "edge name should be account_email")
-	edge, err := sessionPool.DescribeEdge("account_email")
+	assert.Equal(t, 1, len(edges), "should have 1 edges")
+	assert.Equal(t, "account_email", edges[0], "edge name should be account_email")
+	labels, err = sessionPool.DescEdge("account_email")
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, 1, len(edge.Fields), "should have 1 field")
-	assert.Equal(t, "email", edge.Fields[0].Name, "field name should be email")
-	assert.Equal(t, "string", edge.Fields[0].Type, "field type should be string")
+	assert.Equal(t, 1, len(labels), "should have 1 labels")
+	assert.Equal(t, "email", labels[0].Field, "field name should be email")
+	assert.Equal(t, "string", labels[0].Type, "field type should be string")
 }
 
 func TestIdleSessionCleaner(t *testing.T) {
