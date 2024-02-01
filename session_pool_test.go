@@ -424,6 +424,33 @@ func TestSessionPoolApplySchema(t *testing.T) {
 	assert.Equal(t, "string", tag.Fields[1].Type, "field type should be string")
 	assert.Equal(t, "phone", tag.Fields[2].Name, "field name should be phone")
 	assert.Equal(t, "int64", tag.Fields[2].Type, "field type should be string")
+
+	edgeSchema := LabelSchema{
+		Name: "account_email",
+		Fields: []LabelFieldSchema{
+			{
+				Field: "email",
+				Null:  false,
+			},
+		},
+	}
+	_, err = sessionPool.CreateEdge(edgeSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+	edges, err := sessionPool.ShowEdges()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(edges), "should have 1 edge")
+	assert.Equal(t, "account_email", edges[0].Name, "edge name should be account_email")
+	edge, err := sessionPool.DescribeEdge("account_email")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(edge.Fields), "should have 1 field")
+	assert.Equal(t, "email", edge.Fields[0].Name, "field name should be email")
+	assert.Equal(t, "string", edge.Fields[0].Type, "field type should be string")
 }
 
 func TestIdleSessionCleaner(t *testing.T) {
