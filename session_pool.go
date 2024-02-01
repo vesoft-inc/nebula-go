@@ -272,6 +272,107 @@ func (pool *SessionPool) GetTotalSessionCount() int {
 	return pool.activeSessions.Len() + pool.idleSessions.Len()
 }
 
+func (pool *SessionPool) ExecuteAndCheck(q string) (*ResultSet, error) {
+	rs, err := pool.Execute(q)
+	if err != nil {
+		return nil, err
+	}
+
+	errCode := rs.GetErrorCode()
+	if errCode != ErrorCode_SUCCEEDED {
+		errMsg := rs.GetErrorMsg()
+		return nil, fmt.Errorf("Fail to execute query. %s", errMsg)
+	}
+
+	return rs, nil
+}
+
+type _Tag struct {
+	Name string `nebula:"Name"`
+}
+
+func (pool *SessionPool) ShowTags() ([]string, error) {
+	rs, err := pool.ExecuteAndCheck("SHOW TAGS;")
+	if err != nil {
+		return nil, err
+	}
+
+	var tags []_Tag
+	rs.Scan(&tags)
+
+	var names []string
+	for _, tag := range tags {
+		names = append(names, tag.Name)
+	}
+
+	return names, nil
+}
+
+func (pool *SessionPool) CreateTag(tag LabelSchema) (*ResultSet, error) {
+	q := tag.BuildCreateTagQL()
+	rs, err := pool.ExecuteAndCheck(q)
+	if err != nil {
+		return rs, err
+	}
+	return rs, nil
+}
+
+func (pool *SessionPool) DescTag(tagName string) ([]Label, error) {
+	q := fmt.Sprintf("DESC TAG %s;", tagName)
+	rs, err := pool.ExecuteAndCheck(q)
+	if err != nil {
+		return nil, err
+	}
+
+	var fields []Label
+	rs.Scan(&fields)
+
+	return fields, nil
+}
+
+type _Edge struct {
+	Name string `nebula:"Name"`
+}
+
+func (pool *SessionPool) GetEdges() ([]string, error) {
+	rs, err := pool.ExecuteAndCheck("SHOW EDGES;")
+	if err != nil {
+		return nil, err
+	}
+
+	var edges []_Edge
+	rs.Scan(&edges)
+
+	var names []string
+	for _, edge := range edges {
+		names = append(names, edge.Name)
+	}
+
+	return names, nil
+}
+
+func (pool *SessionPool) CreateEdge(edge LabelSchema) (*ResultSet, error) {
+	q := edge.BuildCreateEdgeQL()
+	rs, err := pool.ExecuteAndCheck(q)
+	if err != nil {
+		return rs, err
+	}
+	return rs, nil
+}
+
+func (pool *SessionPool) DescEdge(edgeName string) ([]Label, error) {
+	q := fmt.Sprintf("DESC EDGE %s;", edgeName)
+	rs, err := pool.ExecuteAndCheck(q)
+	if err != nil {
+		return nil, err
+	}
+
+	var fields []Label
+	rs.Scan(&fields)
+
+	return fields, nil
+}
+
 // newSession creates a new session and returns it.
 // `use <space>` will be executed so that the new session will be in the default space.
 func (pool *SessionPool) newSession() (*pureSession, error) {
