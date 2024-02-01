@@ -287,7 +287,7 @@ func (pool *SessionPool) ExecuteAndCheck(q string) (*ResultSet, error) {
 	return rs, nil
 }
 
-type _Tag struct {
+type _Label struct {
 	Name string `nebula:"Name"`
 }
 
@@ -297,7 +297,7 @@ func (pool *SessionPool) ShowTags() ([]string, error) {
 		return nil, err
 	}
 
-	var tags []_Tag
+	var tags []_Label
 	rs.Scan(&tags)
 
 	var names []string
@@ -330,17 +330,13 @@ func (pool *SessionPool) DescTag(tagName string) ([]Label, error) {
 	return fields, nil
 }
 
-type _Edge struct {
-	Name string `nebula:"Name"`
-}
-
 func (pool *SessionPool) ShowEdges() ([]string, error) {
 	rs, err := pool.ExecuteAndCheck("SHOW EDGES;")
 	if err != nil {
 		return nil, err
 	}
 
-	var edges []_Edge
+	var edges []_Label
 	rs.Scan(&edges)
 
 	var names []string
