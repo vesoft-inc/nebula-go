@@ -358,6 +358,74 @@ func TestSessionPoolSpaceChange(t *testing.T) {
 	assert.Equal(t, resultSet.GetSpaceName(), "test_space_1", "space name should be test_space_1")
 }
 
+func TestSessionPoolApplySchema(t *testing.T) {
+	err := prepareSpace("test_space_schema")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dropSpace("test_space_schema")
+
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		"test_space_schema")
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+
+	// allow only one session in the pool so it is easier to test
+	config.maxSize = 1
+
+	// create session pool
+	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sessionPool.Close()
+
+	tagSchema := LabelSchema{
+		Name: "account",
+		Fields: []LabelFieldSchema{
+			{
+				Field: "name",
+				Null:  false,
+			},
+			{
+				Field: "email",
+				Null:  true,
+			},
+			{
+				Field: "phone",
+				Type:  "int64",
+				Null:  true,
+			},
+		},
+	}
+	_, err := sessionPool.CreateTag(tagSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tags, err := sessionPool.ShowTags()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(tags), "should have 1 tag")
+	assert.Equal(t, "account", tags[0].Name, "tag name should be account")
+	tag, err := sessionPool.DescribeTag("account")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 3, len(tag.Fields), "should have 3 fields")
+	assert.Equal(t, "name", tag.Fields[0].Name, "field name should be name")
+	assert.Equal(t, "string", tag.Fields[0].Type, "field type should be string")
+	assert.Equal(t, "email", tag.Fields[1].Name, "field name should be email")
+	assert.Equal(t, "string", tag.Fields[1].Type, "field type should be string")
+	assert.Equal(t, "phone", tag.Fields[2].Name, "field name should be phone")
+	assert.Equal(t, "int64", tag.Fields[2].Type, "field type should be string")
+}
+
 func TestIdleSessionCleaner(t *testing.T) {
 	err := prepareSpace("client_test")
 	if err != nil {
