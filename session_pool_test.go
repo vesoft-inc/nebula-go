@@ -389,17 +389,17 @@ func TestSessionPoolApplySchema(t *testing.T) {
 		Name: "account",
 		Fields: []LabelFieldSchema{
 			{
-				Field: "name",
-				Null:  false,
+				Field:    "name",
+				Nullable: false,
 			},
 			{
-				Field: "email",
-				Null:  true,
+				Field:    "email",
+				Nullable: true,
 			},
 			{
-				Field: "phone",
-				Type:  "int64",
-				Null:  true,
+				Field:    "phone",
+				Type:     "int64",
+				Nullable: true,
 			},
 		},
 	}
@@ -429,8 +429,8 @@ func TestSessionPoolApplySchema(t *testing.T) {
 		Name: "account_email",
 		Fields: []LabelFieldSchema{
 			{
-				Field: "email",
-				Null:  false,
+				Field:    "email",
+				Nullable: false,
 			},
 		},
 	}
