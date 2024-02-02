@@ -20,9 +20,9 @@ type Label struct {
 }
 
 type LabelFieldSchema struct {
-	Field string
-	Type  string
-	Null  bool
+	Field    string
+	Type     string
+	Nullable bool
 }
 
 type LabelSchema struct {
@@ -40,7 +40,7 @@ func (tag LabelSchema) BuildCreateTagQL() string {
 			t = "string"
 		}
 		n := "NULL"
-		if !field.Null {
+		if !field.Nullable {
 			n = "NOT NULL"
 		}
 		fs = append(fs, field.Field+" "+t+" "+n)
@@ -66,7 +66,7 @@ func (edge LabelSchema) BuildCreateEdgeQL() string {
 			t = "string"
 		}
 		n := "NULL"
-		if !field.Null {
+		if !field.Nullable {
 			n = "NOT NULL"
 		}
 		fs = append(fs, field.Field+" "+t+" "+n)
