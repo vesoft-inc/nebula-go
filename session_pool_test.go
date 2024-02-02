@@ -385,6 +385,13 @@ func TestSessionPoolApplySchema(t *testing.T) {
 	}
 	defer sessionPool.Close()
 
+	spaces, err := sessionPool.ShowSpaces()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(spaces), "should have 1 space")
+	assert.Equal(t, "test_space_schema", spaces[0].Name, "space name should be test_space_schema")
+
 	tagSchema := LabelSchema{
 		Name: "account",
 		Fields: []LabelFieldSchema{

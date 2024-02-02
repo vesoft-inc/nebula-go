@@ -287,6 +287,18 @@ func (pool *SessionPool) ExecuteAndCheck(q string) (*ResultSet, error) {
 	return rs, nil
 }
 
+func (pool *SessionPool) ShowSpaces() ([]LabelName, error) {
+	rs, err := pool.ExecuteAndCheck("SHOW SPACES;")
+	if err != nil {
+		return nil, err
+	}
+
+	var names []LabelName
+	rs.Scan(&names)
+
+	return names, nil
+}
+
 func (pool *SessionPool) ShowTags() ([]LabelName, error) {
 	rs, err := pool.ExecuteAndCheck("SHOW TAGS;")
 	if err != nil {
