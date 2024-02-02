@@ -321,19 +321,14 @@ func (pool *SessionPool) DescTag(tagName string) ([]Label, error) {
 	return fields, nil
 }
 
-func (pool *SessionPool) ShowEdges() ([]string, error) {
+func (pool *SessionPool) ShowEdges() ([]LabelName, error) {
 	rs, err := pool.ExecuteAndCheck("SHOW EDGES;")
 	if err != nil {
 		return nil, err
 	}
 
-	var edges []LabelName
-	rs.Scan(&edges)
-
-	var names []string
-	for _, edge := range edges {
-		names = append(names, edge.Name)
-	}
+	var names []LabelName
+	rs.Scan(&names)
 
 	return names, nil
 }
