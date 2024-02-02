@@ -412,7 +412,7 @@ func TestSessionPoolApplySchema(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(tags), "should have 1 tags")
-	assert.Equal(t, "account", tags[0], "tag name should be account")
+	assert.Equal(t, "account", tags[0].Name, "tag name should be account")
 	labels, err := sessionPool.DescTag("account")
 	if err != nil {
 		t.Fatal(err)
@@ -443,7 +443,7 @@ func TestSessionPoolApplySchema(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(edges), "should have 1 edges")
-	assert.Equal(t, "account_email", edges[0], "edge name should be account_email")
+	assert.Equal(t, "account_email", edges[0].Name, "edge name should be account_email")
 	labels, err = sessionPool.DescEdge("account_email")
 	if err != nil {
 		t.Fatal(err)

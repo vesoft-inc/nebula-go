@@ -287,19 +287,14 @@ func (pool *SessionPool) ExecuteAndCheck(q string) (*ResultSet, error) {
 	return rs, nil
 }
 
-func (pool *SessionPool) ShowTags() ([]string, error) {
+func (pool *SessionPool) ShowTags() ([]LabelName, error) {
 	rs, err := pool.ExecuteAndCheck("SHOW TAGS;")
 	if err != nil {
 		return nil, err
 	}
 
-	var tags []_Label
-	rs.Scan(&tags)
-
-	var names []string
-	for _, tag := range tags {
-		names = append(names, tag.Name)
-	}
+	var names []LabelName
+	rs.Scan(&names)
 
 	return names, nil
 }
@@ -332,7 +327,7 @@ func (pool *SessionPool) ShowEdges() ([]string, error) {
 		return nil, err
 	}
 
-	var edges []_Label
+	var edges []LabelName
 	rs.Scan(&edges)
 
 	var names []string
