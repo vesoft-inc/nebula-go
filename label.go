@@ -83,3 +83,8 @@ func (edge LabelSchema) BuildDropEdgeQL() string {
 	q := "DROP EDGE IF EXISTS " + edge.Name + ";"
 	return q
 }
+
+// For internal use
+type _Label struct {
+	Name string `nebula:"Name"`
+}

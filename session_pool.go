@@ -287,10 +287,6 @@ func (pool *SessionPool) ExecuteAndCheck(q string) (*ResultSet, error) {
 	return rs, nil
 }
 
-type _Label struct {
-	Name string `nebula:"Name"`
-}
-
 func (pool *SessionPool) ShowTags() ([]string, error) {
 	rs, err := pool.ExecuteAndCheck("SHOW TAGS;")
 	if err != nil {
