@@ -278,8 +278,7 @@ func (pool *SessionPool) ExecuteAndCheck(q string) (*ResultSet, error) {
 		return nil, err
 	}
 
-	errCode := rs.GetErrorCode()
-	if errCode != ErrorCode_SUCCEEDED {
+	if !rs.IsSucceed() {
 		errMsg := rs.GetErrorMsg()
 		return nil, fmt.Errorf("Fail to execute query. %s", errMsg)
 	}
