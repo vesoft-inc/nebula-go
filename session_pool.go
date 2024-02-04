@@ -287,13 +287,13 @@ func (pool *SessionPool) ExecuteAndCheck(q string) (*ResultSet, error) {
 	return rs, nil
 }
 
-func (pool *SessionPool) ShowSpaces() ([]LabelName, error) {
+func (pool *SessionPool) ShowSpaces() ([]SpaceName, error) {
 	rs, err := pool.ExecuteAndCheck("SHOW SPACES;")
 	if err != nil {
 		return nil, err
 	}
 
-	var names []LabelName
+	var names []SpaceName
 	rs.Scan(&names)
 
 	return names, nil
