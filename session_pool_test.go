@@ -385,6 +385,17 @@ func TestSessionPoolApplySchema(t *testing.T) {
 	}
 	defer sessionPool.Close()
 
+	spaces, err := sessionPool.ShowSpaces()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.LessOrEqual(t, 1, len(spaces), "should have at least 1 space")
+	var spaceNames []string
+	for _, space := range spaces {
+		spaceNames = append(spaceNames, space.Name)
+	}
+	assert.Contains(t, spaceNames, "test_space_schema", "should have test_space_schema")
+
 	tagSchema := LabelSchema{
 		Name: "account",
 		Fields: []LabelFieldSchema{
@@ -423,7 +434,7 @@ func TestSessionPoolApplySchema(t *testing.T) {
 	assert.Equal(t, "email", labels[1].Field, "field name should be email")
 	assert.Equal(t, "string", labels[1].Type, "field type should be string")
 	assert.Equal(t, "phone", labels[2].Field, "field name should be phone")
-	assert.Equal(t, "int64", labels[2].Type, "field type should be string")
+	assert.Equal(t, "int64", labels[2].Type, "field type should be int64")
 
 	edgeSchema := LabelSchema{
 		Name: "account_email",

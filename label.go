@@ -84,7 +84,10 @@ func (edge LabelSchema) BuildDropEdgeQL() string {
 	return q
 }
 
-// For internal use
 type LabelName struct {
+	Name string `nebula:"Name"`
+}
+
+type SpaceName struct {
 	Name string `nebula:"Name"`
 }
