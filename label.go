@@ -93,7 +93,7 @@ func (field LabelFieldSchema) BuildAddFieldQL(labelName string) string {
 }
 
 func (field Label) BuildDropFieldQL(labelName string) string {
-	return "ALTER TAG " + labelName + " DROP " + field.Field + ";"
+	return "ALTER TAG " + labelName + " DROP (" + field.Field + ");"
 }
 
 type LabelName struct {

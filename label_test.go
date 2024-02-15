@@ -64,5 +64,5 @@ func TestBuildDropFieldQL(t *testing.T) {
 	field := Label{
 		Field: "name",
 	}
-	assert.Equal(t, "ALTER TAG account DROP name;", field.BuildDropFieldQL("account"))
+	assert.Equal(t, "ALTER TAG account DROP (name);", field.BuildDropFieldQL("account"))
 }

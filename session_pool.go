@@ -327,8 +327,7 @@ func (pool *SessionPool) CreateTag(tag LabelSchema) (*ResultSet, error) {
 // 2.1 If not, the new fields will be added.
 // 2.2 If the field type is different, it will return an error.
 // 2.3 If a field exists in the graph but not in the given tag,
-//
-//	it will be removed.
+// it will be removed.
 //
 // Notice:
 // We won't change the field type because it has
@@ -367,8 +366,6 @@ func (pool *SessionPool) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 		if !found {
 			// 4.2 Add the not exists field
 			q := expected.BuildAddFieldQL(tag.Name)
-			fmt.Println("DEBUG: Add field")
-			fmt.Println(q)
 			_, err := pool.ExecuteAndCheck(q)
 			if err != nil {
 				return nil, err
@@ -388,8 +385,6 @@ func (pool *SessionPool) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 		if redundant {
 			// 5.1 Remove the not expected field
 			q := actual.BuildDropFieldQL(tag.Name)
-			fmt.Println("DEBUG: Remove field")
-			fmt.Println(q)
 			_, err := pool.ExecuteAndCheck(q)
 			if err != nil {
 				return nil, err
