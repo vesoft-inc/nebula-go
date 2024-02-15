@@ -12,6 +12,7 @@ import (
 	"container/list"
 	"fmt"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -318,6 +319,22 @@ func (pool *SessionPool) CreateTag(tag LabelSchema) (*ResultSet, error) {
 		return rs, err
 	}
 	return rs, nil
+}
+
+func (pool *SessionPool) ApplyTag(tag LabelSchema) (*ResultSet, error) {
+	// 1. Check if the tag exists
+	_, err := pool.DescTag(tag.Name)
+	fmt.Println("DEBUG: apply tag")
+	fmt.Println(err)
+	if err != nil {
+		// 2. If the tag does not exist, create it
+		if strings.Contains(strings.ToLower(err.Error()), "not exist") {
+			return pool.CreateTag(tag)
+		}
+		return nil, err
+	}
+
+	return nil, nil
 }
 
 func (pool *SessionPool) DescTag(tagName string) ([]Label, error) {
