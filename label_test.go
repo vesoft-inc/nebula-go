@@ -59,3 +59,10 @@ func TestBuildAddFieldQL(t *testing.T) {
 	field.Nullable = true
 	assert.Equal(t, "ALTER TAG account ADD (name string);", field.BuildAddFieldQL("account"))
 }
+
+func TestBuildDropFieldQL(t *testing.T) {
+	field := Label{
+		Field: "name",
+	}
+	assert.Equal(t, "ALTER TAG account DROP name;", field.BuildDropFieldQL("account"))
+}

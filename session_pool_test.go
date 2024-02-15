@@ -497,7 +497,7 @@ func TestSessionPoolApplyTag(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.LessOrEqual(t, 1, len(spaces), "should have at least 1 space")
+	assert.LessOrEqual(t, 1, len(spaces))
 	var spaceNames []string
 	for _, space := range spaces {
 		spaceNames = append(spaceNames, space.Name)
@@ -521,13 +521,13 @@ func TestSessionPoolApplyTag(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, 1, len(tags), "should have 1 tags")
+	assert.Equal(t, 1, len(tags))
 	assert.Equal(t, "account", tags[0].Name, "tag name should be account")
 	labels, err := sessionPool.DescTag("account")
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, 1, len(labels), "should have 1 labels")
+	assert.Equal(t, 1, len(labels))
 	assert.Equal(t, "name", labels[0].Field, "field name should be name")
 	assert.Equal(t, "string", labels[0].Type, "field type should be string")
 
@@ -536,17 +536,19 @@ func TestSessionPoolApplyTag(t *testing.T) {
 		Fields: []LabelFieldSchema{
 			{
 				Field:    "name",
+				Type:     "string",
 				Nullable: false,
 			},
 			{
 				Field:    "email",
+				Type:     "string",
 				Nullable: true,
 			},
-			// {
-			// 	Field:    "phone",
-			// 	Type:     "int64",
-			// 	Nullable: true,
-			// },
+			{
+				Field:    "phone",
+				Type:     "int64",
+				Nullable: true,
+			},
 		},
 	}
 	_, err = sessionPool.ApplyTag(tagSchema)
@@ -557,19 +559,19 @@ func TestSessionPoolApplyTag(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, 1, len(tags), "should have 1 tags")
+	assert.Equal(t, 1, len(tags))
 	assert.Equal(t, "account", tags[0].Name, "tag name should be account")
 	labels, err = sessionPool.DescTag("account")
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, 2, len(labels), "should have 2 labels")
+	assert.Equal(t, 3, len(labels))
 	assert.Equal(t, "name", labels[0].Field, "field name should be name")
 	assert.Equal(t, "string", labels[0].Type, "field type should be string")
 	assert.Equal(t, "email", labels[1].Field, "field name should be email")
 	assert.Equal(t, "string", labels[1].Type, "field type should be string")
-	// assert.Equal(t, "phone", labels[2].Field, "field name should be phone")
-	// assert.Equal(t, "int64", labels[2].Type, "field type should be int64")
+	assert.Equal(t, "phone", labels[2].Field, "field name should be phone")
+	assert.Equal(t, "int64", labels[2].Type, "field type should be int64")
 }
 
 func TestIdleSessionCleaner(t *testing.T) {

@@ -92,6 +92,10 @@ func (field LabelFieldSchema) BuildAddFieldQL(labelName string) string {
 	return q + ");"
 }
 
+func (field Label) BuildDropFieldQL(labelName string) string {
+	return "ALTER TAG " + labelName + " DROP " + field.Field + ";"
+}
+
 type LabelName struct {
 	Name string `nebula:"Name"`
 }
