@@ -84,6 +84,14 @@ func (edge LabelSchema) BuildDropEdgeQL() string {
 	return q
 }
 
+func (field LabelFieldSchema) BuildAddFieldQL(labelName string) string {
+	q := "ALTER TAG " + labelName + " ADD (" + field.Field + " " + field.Type
+	if !field.Nullable {
+		q += " NOT NULL"
+	}
+	return q + ");"
+}
+
 type LabelName struct {
 	Name string `nebula:"Name"`
 }

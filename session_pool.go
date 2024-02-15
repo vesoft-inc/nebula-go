@@ -324,15 +324,42 @@ func (pool *SessionPool) CreateTag(tag LabelSchema) (*ResultSet, error) {
 func (pool *SessionPool) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 	// 1. Check if the tag exists
 	_, err := pool.DescTag(tag.Name)
-	fmt.Println("DEBUG: apply tag")
-	fmt.Println(err)
 	if err != nil {
 		// 2. If the tag does not exist, create it
-		if strings.Contains(strings.ToLower(err.Error()), "not exist") {
+		if strings.Contains(err.Error(), ErrorTagNotFound) {
 			return pool.CreateTag(tag)
 		}
 		return nil, err
 	}
+
+	// 3. If the tag exists, check if the fields are the same
+	fields, err := pool.DescTag(tag.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	// 4. Add new fields
+	for _, expected := range tag.Fields {
+		found := false
+		for _, actual := range fields {
+			if expected.Field == actual.Field {
+				found = true
+				break
+			}
+		}
+		if !found {
+			// 4.1 Add the field
+			q := expected.BuildAddFieldQL(tag.Name)
+			rs, err := pool.ExecuteAndCheck(q)
+			if err != nil {
+				fmt.Println("DEBUG: create field")
+				fmt.Println(rs)
+				return nil, err
+			}
+		}
+	}
+	fmt.Println("DEBUG: apply tag")
+	fmt.Println(err)
 
 	return nil, nil
 }

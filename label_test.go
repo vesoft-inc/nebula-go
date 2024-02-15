@@ -48,3 +48,14 @@ func TestBuildCreateEdgeQL(t *testing.T) {
 	assert.Equal(t, "CREATE EDGE IF NOT EXISTS account_email (email string NOT NULL);", edge.BuildCreateEdgeQL())
 	assert.Equal(t, "DROP EDGE IF EXISTS account_email;", edge.BuildDropEdgeQL())
 }
+
+func TestBuildAddFieldQL(t *testing.T) {
+	field := LabelFieldSchema{
+		Field:    "name",
+		Type:     "string",
+		Nullable: false,
+	}
+	assert.Equal(t, "ALTER TAG account ADD (name string NOT NULL);", field.BuildAddFieldQL("account"))
+	field.Nullable = true
+	assert.Equal(t, "ALTER TAG account ADD (name string);", field.BuildAddFieldQL("account"))
+}
