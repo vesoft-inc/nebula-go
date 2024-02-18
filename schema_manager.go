@@ -107,3 +107,90 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 
 	return nil, nil
 }
+
+// ApplyEdge applies the given edge to the graph.
+// 1. If the edge does not exist, it will be created.
+// 2. If the edge exists, it will be checked if the fields are the same.
+// 2.1 If not, the new fields will be added.
+// 2.2 If the field type is different, it will return an error.
+// 2.3 If a field exists in the graph but not in the given edge,
+// it will be removed.
+//
+// Notice:
+// We won't change the field type because it has
+// unexpected behavior for the data.
+func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
+	// 1. Check if the edge exists
+	fields, err := mgr.pool.DescEdge(edge.Name)
+	if err != nil {
+		// 2. If the edge does not exist, create it
+		if strings.Contains(err.Error(), ErrorEdgeNotFound) {
+			return mgr.pool.CreateEdge(edge)
+		}
+		return nil, err
+	}
+
+	// 3. If the edge exists, check if the fields are the same
+	if err != nil {
+		return nil, err
+	}
+
+	// 4. Add new fields
+	// 4.1 Prepare the new fields
+	addFieldQLs := []string{}
+	for _, expected := range edge.Fields {
+		found := false
+		for _, actual := range fields {
+			if expected.Field == actual.Field {
+				found = true
+				// 4.1 Check if the field type is different
+				if expected.Type != actual.Type {
+					return nil, fmt.Errorf("field type is different. "+
+						"Expected: %s, Actual: %s", expected.Type, actual.Type)
+				}
+				break
+			}
+		}
+		if !found {
+			// 4.2 Add the not exists field QL
+			q := expected.BuildAddEdgeFieldQL(edge.Name)
+			addFieldQLs = append(addFieldQLs, q)
+		}
+	}
+	// 4.3 Execute the add field QLs if needed
+	if len(addFieldQLs) > 0 {
+		queries := strings.Join(addFieldQLs, "")
+		_, err := mgr.pool.ExecuteAndCheck(queries)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// 5. Remove the not expected field
+	// 5.1 Prepare the not expected fields
+	dropFieldQLs := []string{}
+	for _, actual := range fields {
+		redundant := true
+		for _, expected := range edge.Fields {
+			if expected.Field == actual.Field {
+				redundant = false
+				break
+			}
+		}
+		if redundant {
+			// 5.2 Remove the not expected field
+			q := actual.BuildDropEdgeFieldQL(edge.Name)
+			dropFieldQLs = append(dropFieldQLs, q)
+		}
+	}
+	// 5.3 Execute the drop field QLs if needed
+	if len(dropFieldQLs) > 0 {
+		queries := strings.Join(dropFieldQLs, "")
+		_, err := mgr.pool.ExecuteAndCheck(queries)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return nil, nil
+}

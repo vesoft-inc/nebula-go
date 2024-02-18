@@ -92,8 +92,20 @@ func (field LabelFieldSchema) BuildAddTagFieldQL(labelName string) string {
 	return q + ");"
 }
 
+func (field LabelFieldSchema) BuildAddEdgeFieldQL(labelName string) string {
+	q := "ALTER EDGE " + labelName + " ADD (" + field.Field + " " + field.Type
+	if !field.Nullable {
+		q += " NOT NULL"
+	}
+	return q + ");"
+}
+
 func (field Label) BuildDropTagFieldQL(labelName string) string {
 	return "ALTER TAG " + labelName + " DROP (" + field.Field + ");"
+}
+
+func (field Label) BuildDropEdgeFieldQL(labelName string) string {
+	return "ALTER EDGE " + labelName + " DROP (" + field.Field + ");"
 }
 
 type LabelName struct {
