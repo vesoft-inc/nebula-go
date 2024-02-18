@@ -84,7 +84,7 @@ func (edge LabelSchema) BuildDropEdgeQL() string {
 	return q
 }
 
-func (field LabelFieldSchema) BuildAddFieldQL(labelName string) string {
+func (field LabelFieldSchema) BuildAddTagFieldQL(labelName string) string {
 	q := "ALTER TAG " + labelName + " ADD (" + field.Field + " " + field.Type
 	if !field.Nullable {
 		q += " NOT NULL"
@@ -92,7 +92,7 @@ func (field LabelFieldSchema) BuildAddFieldQL(labelName string) string {
 	return q + ");"
 }
 
-func (field Label) BuildDropFieldQL(labelName string) string {
+func (field Label) BuildDropTagFieldQL(labelName string) string {
 	return "ALTER TAG " + labelName + " DROP (" + field.Field + ");"
 }
 

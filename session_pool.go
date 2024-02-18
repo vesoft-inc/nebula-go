@@ -365,7 +365,7 @@ func (pool *SessionPool) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 		}
 		if !found {
 			// 4.2 Add the not exists field
-			q := expected.BuildAddFieldQL(tag.Name)
+			q := expected.BuildAddTagFieldQL(tag.Name)
 			_, err := pool.ExecuteAndCheck(q)
 			if err != nil {
 				return nil, err
@@ -384,7 +384,7 @@ func (pool *SessionPool) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 		}
 		if redundant {
 			// 5.1 Remove the not expected field
-			q := actual.BuildDropFieldQL(tag.Name)
+			q := actual.BuildDropTagFieldQL(tag.Name)
 			_, err := pool.ExecuteAndCheck(q)
 			if err != nil {
 				return nil, err
