@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSessionPoolApplyTag(t *testing.T) {
+func TestSchemaManagerApplyTag(t *testing.T) {
 	spaceName := "test_space_apply_tag"
 	err := prepareSpace(spaceName)
 	if err != nil {
