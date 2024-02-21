@@ -359,18 +359,19 @@ func TestSessionPoolSpaceChange(t *testing.T) {
 }
 
 func TestSessionPoolApplySchema(t *testing.T) {
-	err := prepareSpace("test_space_schema")
+	spaceName := "test_space_schema"
+	err := prepareSpace(spaceName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace("test_space_schema")
+	defer dropSpace(spaceName)
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
 		"root",
 		"nebula",
 		[]HostAddress{hostAddress},
-		"test_space_schema")
+		spaceName)
 	if err != nil {
 		t.Errorf("failed to create session pool config, %s", err.Error())
 	}
@@ -394,7 +395,7 @@ func TestSessionPoolApplySchema(t *testing.T) {
 	for _, space := range spaces {
 		spaceNames = append(spaceNames, space.Name)
 	}
-	assert.Contains(t, spaceNames, "test_space_schema", "should have test_space_schema")
+	assert.Contains(t, spaceNames, spaceName)
 
 	tagSchema := LabelSchema{
 		Name: "account",
