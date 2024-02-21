@@ -80,6 +80,8 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 	}
 
 	// 5. Remove the not expected field
+	// 5.1 Prepare the not expected fields
+	dropFieldQLs := []string{}
 	for _, actual := range fields {
 		redundant := true
 		for _, expected := range tag.Fields {
@@ -89,12 +91,17 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 			}
 		}
 		if redundant {
-			// 5.1 Remove the not expected field
+			// 5.2 Remove the not expected field
 			q := actual.BuildDropTagFieldQL(tag.Name)
-			_, err := mgr.pool.ExecuteAndCheck(q)
-			if err != nil {
-				return nil, err
-			}
+			dropFieldQLs = append(dropFieldQLs, q)
+		}
+	}
+	// 5.3 Execute the drop field QLs if needed
+	if len(dropFieldQLs) > 0 {
+		queries := strings.Join(dropFieldQLs, "")
+		_, err := mgr.pool.ExecuteAndCheck(queries)
+		if err != nil {
+			return nil, err
 		}
 	}
 
