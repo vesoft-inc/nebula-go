@@ -70,11 +70,13 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 			addFieldQLs = append(addFieldQLs, q)
 		}
 	}
-	// 4.4 Execute the add field QLs
-	queries := strings.Join(addFieldQLs, "")
-	_, err = mgr.pool.ExecuteAndCheck(queries)
-	if err != nil {
-		return nil, err
+	// 4.4 Execute the add field QLs if needed
+	if len(addFieldQLs) > 0 {
+		queries := strings.Join(addFieldQLs, "")
+		_, err = mgr.pool.ExecuteAndCheck(queries)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// 5. Remove the not expected field
