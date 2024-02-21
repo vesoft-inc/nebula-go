@@ -34,7 +34,7 @@ func NewSchemaManager(pool *SessionPool) *SchemaManager {
 // unexpected behavior for the data.
 func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 	// 1. Check if the tag exists
-	_, err := mgr.pool.DescTag(tag.Name)
+	fields, err := mgr.pool.DescTag(tag.Name)
 	if err != nil {
 		// 2. If the tag does not exist, create it
 		if strings.Contains(err.Error(), ErrorTagNotFound) {
@@ -44,7 +44,6 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 	}
 
 	// 3. If the tag exists, check if the fields are the same
-	fields, err := mgr.pool.DescTag(tag.Name)
 	if err != nil {
 		return nil, err
 	}
