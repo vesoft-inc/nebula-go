@@ -96,7 +96,6 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 				return nil, err
 			}
 		}
-
 	}
 
 	return nil, nil
