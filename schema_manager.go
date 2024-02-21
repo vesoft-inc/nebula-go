@@ -49,12 +49,14 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 	}
 
 	// 4. Add new fields
+	// 4.1 Prepare the new fields
+	addFieldQLs := []string{}
 	for _, expected := range tag.Fields {
 		found := false
 		for _, actual := range fields {
 			if expected.Field == actual.Field {
 				found = true
-				// 4.1 Check if the field type is different
+				// 4.2 Check if the field type is different
 				if expected.Type != actual.Type {
 					return nil, fmt.Errorf("field type is different. "+
 						"Expected: %s, Actual: %s", expected.Type, actual.Type)
@@ -63,13 +65,16 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 			}
 		}
 		if !found {
-			// 4.2 Add the not exists field
+			// 4.3 Add the not exists field QL
 			q := expected.BuildAddTagFieldQL(tag.Name)
-			_, err := mgr.pool.ExecuteAndCheck(q)
-			if err != nil {
-				return nil, err
-			}
+			addFieldQLs = append(addFieldQLs, q)
 		}
+	}
+	// 4.4 Execute the add field QLs
+	queries := strings.Join(addFieldQLs, "")
+	_, err = mgr.pool.ExecuteAndCheck(queries)
+	if err != nil {
+		return nil, err
 	}
 
 	// 5. Remove the not expected field
