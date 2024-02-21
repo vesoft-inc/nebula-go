@@ -211,7 +211,7 @@ func TestSchemaManagerApplyEdge(t *testing.T) {
 			},
 		},
 	}
-	_, err = schemaManager.ApplyTag(edgeSchema)
+	_, err = schemaManager.ApplyEdge(edgeSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -254,7 +254,7 @@ func TestSchemaManagerApplyEdge(t *testing.T) {
 	}
 	assert.Equal(t, 1, len(edges))
 	assert.Equal(t, "account_email", edges[0].Name)
-	labels, err = sessionPool.DescTag("account_email")
+	labels, err = sessionPool.DescEdge("account_email")
 	if err != nil {
 		t.Fatal(err)
 	}
