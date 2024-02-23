@@ -79,7 +79,7 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 	if len(addFieldQLs) > 0 {
 		queries := strings.Join(addFieldQLs, " ")
 		if mgr.verbose {
-			log.Printf("ApplyTag: add the not existing fields. name=%s, queries=%s\n", tag.Name, queries)
+			log.Printf("ApplyTag: add the not existing fields. name=%s queries=%s\n", tag.Name, queries)
 		}
 		_, err = mgr.pool.ExecuteAndCheck(queries)
 		if err != nil {
@@ -108,7 +108,7 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 	if len(dropFieldQLs) > 0 {
 		queries := strings.Join(dropFieldQLs, " ")
 		if mgr.verbose {
-			log.Printf("ApplyTag: remove the not expected fields. name=%s, queries=%s\n", tag.Name, queries)
+			log.Printf("ApplyTag: remove the not expected fields. name=%s queries=%s\n", tag.Name, queries)
 		}
 		_, err := mgr.pool.ExecuteAndCheck(queries)
 		if err != nil {
@@ -170,7 +170,7 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 	if len(addFieldQLs) > 0 {
 		queries := strings.Join(addFieldQLs, " ")
 		if mgr.verbose {
-			log.Printf("ApplyEdge: add the not existing fields. name=%s, queries=%s\n", edge.Name, queries)
+			log.Printf("ApplyEdge: add the not existing fields. name=%s queries=%s\n", edge.Name, queries)
 		}
 		_, err := mgr.pool.ExecuteAndCheck(queries)
 		if err != nil {
@@ -199,7 +199,7 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 	if len(dropFieldQLs) > 0 {
 		queries := strings.Join(dropFieldQLs, "")
 		if mgr.verbose {
-			log.Printf("ApplyEdge: remove the not expected fields. name=%s, queries=%s\n", edge.Name, queries)
+			log.Printf("ApplyEdge: remove the not expected fields. name=%s queries=%s\n", edge.Name, queries)
 		}
 		_, err := mgr.pool.ExecuteAndCheck(queries)
 		if err != nil {
