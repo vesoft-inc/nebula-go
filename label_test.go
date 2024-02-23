@@ -55,14 +55,22 @@ func TestBuildAddFieldQL(t *testing.T) {
 		Type:     "string",
 		Nullable: false,
 	}
+	// tag
 	assert.Equal(t, "ALTER TAG account ADD (name string NOT NULL);", field.BuildAddTagFieldQL("account"))
 	field.Nullable = true
 	assert.Equal(t, "ALTER TAG account ADD (name string);", field.BuildAddTagFieldQL("account"))
+	// edge
+	assert.Equal(t, "ALTER EDGE account ADD (name string);", field.BuildAddEdgeFieldQL("account"))
+	field.Nullable = false
+	assert.Equal(t, "ALTER EDGE account ADD (name string NOT NULL);", field.BuildAddEdgeFieldQL("account"))
 }
 
 func TestBuildDropFieldQL(t *testing.T) {
 	field := Label{
 		Field: "name",
 	}
+	// tag
 	assert.Equal(t, "ALTER TAG account DROP (name);", field.BuildDropTagFieldQL("account"))
+	// edge
+	assert.Equal(t, "ALTER EDGE account DROP (name);", field.BuildDropEdgeFieldQL("account"))
 }

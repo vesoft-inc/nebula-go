@@ -9,5 +9,6 @@
 package nebula_go
 
 const (
-	ErrorTagNotFound = "TagNotFound: Tag not existed!"
+	ErrorTagNotFound  = "TagNotFound: Tag not existed!"
+	ErrorEdgeNotFound = "EdgeNotFound: Edge not existed!"
 )

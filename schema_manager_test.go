@@ -60,6 +60,7 @@ func TestSchemaManagerApplyTag(t *testing.T) {
 		Fields: []LabelFieldSchema{
 			{
 				Field:    "name",
+				Type:     "string",
 				Nullable: false,
 			},
 		},
@@ -157,4 +158,137 @@ func TestSchemaManagerApplyTag(t *testing.T) {
 	assert.Equal(t, "string", labels[0].Type)
 	assert.Equal(t, "phone", labels[1].Field)
 	assert.Equal(t, "int64", labels[1].Type)
+}
+
+func TestSchemaManagerApplyEdge(t *testing.T) {
+	spaceName := "test_space_apply_edge"
+	err := prepareSpace(spaceName)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dropSpace(spaceName)
+
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		spaceName)
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+
+	// allow only one session in the pool so it is easier to test
+	config.maxSize = 1
+
+	// create session pool
+	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sessionPool.Close()
+
+	schemaManager := NewSchemaManager(sessionPool)
+
+	spaces, err := sessionPool.ShowSpaces()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.LessOrEqual(t, 1, len(spaces))
+	var spaceNames []string
+	for _, space := range spaces {
+		spaceNames = append(spaceNames, space.Name)
+	}
+	assert.Contains(t, spaceNames, spaceName)
+
+	edgeSchema := LabelSchema{
+		Name: "account_email",
+		Fields: []LabelFieldSchema{
+			{
+				Field:    "email",
+				Type:     "string",
+				Nullable: false,
+			},
+		},
+	}
+	_, err = schemaManager.ApplyEdge(edgeSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+	edges, err := sessionPool.ShowEdges()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(edges))
+	assert.Equal(t, "account_email", edges[0].Name)
+	labels, err := sessionPool.DescEdge("account_email")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(labels))
+	assert.Equal(t, "email", labels[0].Field)
+	assert.Equal(t, "string", labels[0].Type)
+
+	edgeSchema = LabelSchema{
+		Name: "account_email",
+		Fields: []LabelFieldSchema{
+			{
+				Field:    "email",
+				Type:     "string",
+				Nullable: false,
+			},
+			{
+				Field:    "created_at",
+				Type:     "timestamp",
+				Nullable: true,
+			},
+		},
+	}
+	_, err = schemaManager.ApplyEdge(edgeSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+	edges, err = sessionPool.ShowEdges()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(edges))
+	assert.Equal(t, "account_email", edges[0].Name)
+	labels, err = sessionPool.DescEdge("account_email")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 2, len(labels))
+	assert.Equal(t, "email", labels[0].Field)
+	assert.Equal(t, "string", labels[0].Type)
+	assert.Equal(t, "created_at", labels[1].Field)
+	assert.Equal(t, "timestamp", labels[1].Type)
+
+	edgeSchema = LabelSchema{
+		Name: "account_email",
+		Fields: []LabelFieldSchema{
+			{
+				Field:    "email",
+				Type:     "string",
+				Nullable: false,
+			},
+		},
+	}
+	_, err = schemaManager.ApplyEdge(edgeSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+	edges, err = sessionPool.ShowEdges()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(edges))
+	assert.Equal(t, "account_email", edges[0].Name)
+	labels, err = sessionPool.DescEdge("account_email")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(labels))
+	assert.Equal(t, "email", labels[0].Field)
+	assert.Equal(t, "string", labels[0].Type)
 }
