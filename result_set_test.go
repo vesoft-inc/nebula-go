@@ -696,10 +696,10 @@ func TestResultSet(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	temp, err := record.GetValueByIndex(0)
+	temp, _ := record.GetValueByIndex(0)
 	_, err = temp.AsNode()
 	assert.EqualError(t, err, "failed to convert value int to Node, value is not an vertex")
-	temp, err = record.GetValueByColName("col2")
+	_, err = record.GetValueByColName("col2")
 	assert.EqualError(t, err, "failed to get values, given column name 'col2' does not exist")
 	val, _ := record.GetValueByColName("col2_vertex")
 	node, _ := val.AsNode()
