@@ -117,3 +117,24 @@ func TestSession_Recover(t *testing.T) {
 	}
 	assert.Equal(t, 1, pool.getActiveConnCount()+pool.getIdleConnCount())
 }
+
+func TestSession_ShowSpaces(t *testing.T) {
+	config := GetDefaultConf()
+	host := HostAddress{address, port}
+	pool, err := NewConnectionPool([]HostAddress{host}, config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	sess, err := pool.GetSession("root", "nebula")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, pool.getActiveConnCount()+pool.getIdleConnCount())
+
+	spaceNames, err := sess.ShowSpaces()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.LessOrEqual(t, 1, len(spaceNames))
+}

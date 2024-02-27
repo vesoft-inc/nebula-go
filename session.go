@@ -185,6 +185,32 @@ func (session *Session) ExecuteJsonWithParameter(stmt string, params map[string]
 	return resp.([]byte), err
 }
 
+func (session *Session) ExecuteAndCheck(stmt string) (*ResultSet, error) {
+	rs, err := session.Execute(stmt)
+	if err != nil {
+		return nil, err
+	}
+
+	if !rs.IsSucceed() {
+		errMsg := rs.GetErrorMsg()
+		return nil, fmt.Errorf("Fail to execute query. %s", errMsg)
+	}
+
+	return rs, nil
+}
+
+func (session *Session) ShowSpaces() ([]SpaceName, error) {
+	rs, err := session.ExecuteAndCheck("SHOW SPACES;")
+	if err != nil {
+		return nil, err
+	}
+
+	var names []SpaceName
+	rs.Scan(&names)
+
+	return names, nil
+}
+
 func (session *Session) reConnect() error {
 	newConnection, err := session.connPool.getIdleConn()
 	if err != nil {
