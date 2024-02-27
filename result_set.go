@@ -714,7 +714,7 @@ func (relationship Relationship) String() string {
 		dst = ValueWrapper{edge.Src, relationship.timezoneInfo}.String()
 	}
 	return fmt.Sprintf(`[:%s %s->%s @%d {%s}]`,
-		string(edge.Name), src, dst, edge.Ranking, fmt.Sprintf("%s", strings.Join(kvStr, ", ")))
+		string(edge.Name), src, dst, edge.Ranking, strings.Join(kvStr, ", "))
 }
 
 func (r1 Relationship) IsEqualTo(r2 *Relationship) bool {
@@ -814,7 +814,7 @@ func (pathWrap *PathWrapper) String() string {
 			dirChar1,
 			string(step.Name),
 			step.Ranking,
-			fmt.Sprintf("%s", strings.Join(kvStr, ", ")),
+			strings.Join(kvStr, ", "),
 			dirChar2,
 			ValueWrapper{&nebula.Value{VVal: step.Dst}, pathWrap.timezoneInfo}.String())
 	}
@@ -1379,7 +1379,7 @@ func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription, isTckFmt bool) s
 	}
 	var buffer bytes.Buffer
 	json.Indent(&buffer, []byte(allProfiles), "", "  ")
-	return string(buffer.Bytes())
+	return buffer.String()
 }
 
 // generate operator info for Row format.

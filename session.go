@@ -327,7 +327,7 @@ func value2Nvalue(any interface{}) (value *nebula.Value, err error) {
 		value.SetGgVal(&v)
 	} else {
 		// unsupported other Value type, use this function carefully
-		err = fmt.Errorf("Only support convert boolean/float/int/string/map/list to nebula.Value but %T", any)
+		err = fmt.Errorf("only support convert boolean/float/int/string/map/list to nebula.Value but %T", any)
 	}
 	return
 }
