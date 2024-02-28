@@ -1348,6 +1348,10 @@ func (res ResultSet) MakeDotGraphByStruct() string {
 // generate profiling data for both Row and TCK formats.
 func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription, isTckFmt bool) string {
 	var profileArr []string
+	re, err := regexp.Compile(`^[^{(\[]\w+`)
+	if err != nil {
+		panic(err)
+	}
 	for i, profile := range planNodeDesc.GetProfiles() {
 		var statArr []string
 		statArr = append(statArr, fmt.Sprintf("\"version\":%d", i))
@@ -1359,7 +1363,7 @@ func MakeProfilingData(planNodeDesc *graph.PlanNodeDescription, isTckFmt bool) s
 		}
 		for k, v := range profile.GetOtherStats() {
 			s := string(v)
-			if matched, err := regexp.Match(`^[^{(\[]\w+`, v); err == nil && matched {
+			if matched := re.Match(v); matched {
 				if !strings.HasPrefix(s, "\"") {
 					s = fmt.Sprintf("\"%s", s)
 				}
