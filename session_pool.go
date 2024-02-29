@@ -319,6 +319,16 @@ func (pool *SessionPool) CreateTag(tag LabelSchema) (*ResultSet, error) {
 	return rs, nil
 }
 
+func (pool *SessionPool) AddTagTTL(tagName string, colName string, duration uint) (*ResultSet, error) {
+	q := fmt.Sprintf(`ALTER TAG %s TTL_DURATION = %d, TTL_COL = "%s";`, tagName, duration, colName)
+	rs, err := pool.ExecuteAndCheck(q)
+	if err != nil {
+		return nil, err
+	}
+
+	return rs, nil
+}
+
 func (pool *SessionPool) DescTag(tagName string) ([]Label, error) {
 	q := fmt.Sprintf("DESC TAG %s;", tagName)
 	rs, err := pool.ExecuteAndCheck(q)
@@ -350,6 +360,16 @@ func (pool *SessionPool) CreateEdge(edge LabelSchema) (*ResultSet, error) {
 	if err != nil {
 		return rs, err
 	}
+	return rs, nil
+}
+
+func (pool *SessionPool) AddEdgeTTL(tagName string, colName string, duration uint) (*ResultSet, error) {
+	q := fmt.Sprintf(`ALTER EDGE %s TTL_DURATION = %d, TTL_COL = "%s";`, tagName, duration, colName)
+	rs, err := pool.ExecuteAndCheck(q)
+	if err != nil {
+		return nil, err
+	}
+
 	return rs, nil
 }
 
