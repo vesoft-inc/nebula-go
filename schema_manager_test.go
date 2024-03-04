@@ -42,7 +42,7 @@ func TestSchemaManagerApplyTag(t *testing.T) {
 	}
 	defer sessionPool.Close()
 
-	schemaManager := NewSchemaManager(sessionPool)
+	schemaManager := NewSchemaManager(sessionPool).WithVerbose(true)
 
 	spaces, err := sessionPool.ShowSpaces()
 	if err != nil {
@@ -188,7 +188,7 @@ func TestSchemaManagerApplyEdge(t *testing.T) {
 	}
 	defer sessionPool.Close()
 
-	schemaManager := NewSchemaManager(sessionPool)
+	schemaManager := NewSchemaManager(sessionPool).WithVerbose(true)
 
 	spaces, err := sessionPool.ShowSpaces()
 	if err != nil {
