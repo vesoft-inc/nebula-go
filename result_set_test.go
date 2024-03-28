@@ -631,6 +631,7 @@ func TestResultSet(t *testing.T) {
 
 	assert.Equal(t, ErrorCode_E_STATEMENT_EMPTY, resultSetWithNil.GetErrorCode())
 	assert.Equal(t, int64(1000), resultSetWithNil.GetLatency())
+	assert.Equal(t, int64(1), resultSetWithNil.GetLatencyInMs())
 	assert.Equal(t, "", resultSetWithNil.GetErrorMsg())
 	assert.Equal(t, "", resultSetWithNil.GetSpaceName())
 	assert.Equal(t, "", resultSetWithNil.GetComment())
@@ -675,6 +676,7 @@ func TestResultSet(t *testing.T) {
 	}
 	assert.Equal(t, ErrorCode_SUCCEEDED, resultSet.GetErrorCode())
 	assert.Equal(t, int64(1000), resultSet.GetLatency())
+	assert.Equal(t, int64(1), resultSet.GetLatencyInMs())
 	assert.Equal(t, "test_err_msg", resultSet.GetErrorMsg())
 	assert.Equal(t, "test_space", resultSet.GetSpaceName())
 	assert.Equal(t, "test_comment", resultSet.GetComment())
