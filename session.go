@@ -199,6 +199,52 @@ func (session *Session) ExecuteAndCheck(stmt string) (*ResultSet, error) {
 	return rs, nil
 }
 
+type SpaceConf struct {
+	Name           string
+	Partition      uint
+	Replica        uint
+	VidType        string
+	IgnoreIfExists bool
+	Comment        string
+}
+
+func (session *Session) CreateSpace(conf SpaceConf) (*ResultSet, error) {
+	if conf.Partition == 0 {
+		conf.Partition = 100
+	}
+	if conf.Replica == 0 {
+		conf.Replica = 1
+	}
+	if conf.VidType == "" {
+		conf.VidType = "FIXED_STRING(8)"
+	}
+
+	q := ""
+	if conf.IgnoreIfExists {
+		q = fmt.Sprintf(
+			"CREATE SPACE IF NOT EXISTS %s (partition_num = %d, replica_factor = %d, vid_type = %s)",
+			conf.Name,
+			conf.Partition,
+			conf.Replica,
+			conf.VidType,
+		)
+	} else {
+		q = fmt.Sprintf(
+			"CREATE SPACE %s (partition_num = %d, replica_factor = %d, vid_type = %s)",
+			conf.Name,
+			conf.Partition,
+			conf.Replica,
+			conf.VidType,
+		)
+	}
+
+	if conf.Comment != "" {
+		q += fmt.Sprintf(` COMMENT = "%s"`, conf.Comment)
+	}
+
+	return session.ExecuteAndCheck(q + ";")
+}
+
 func (session *Session) ShowSpaces() ([]SpaceName, error) {
 	rs, err := session.ExecuteAndCheck("SHOW SPACES;")
 	if err != nil {
