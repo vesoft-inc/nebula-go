@@ -118,7 +118,7 @@ func TestSession_Recover(t *testing.T) {
 	assert.Equal(t, 1, pool.getActiveConnCount()+pool.getIdleConnCount())
 }
 
-func TestSession_ShowSpaces(t *testing.T) {
+func TestSession_CreateSpace_ShowSpaces(t *testing.T) {
 	config := GetDefaultConf()
 	host := HostAddress{address, port}
 	pool, err := NewConnectionPool([]HostAddress{host}, config, DefaultLogger{})
@@ -132,9 +132,34 @@ func TestSession_ShowSpaces(t *testing.T) {
 	}
 	assert.Equal(t, 1, pool.getActiveConnCount()+pool.getIdleConnCount())
 
+	newSpaceName := "new_created_space"
+	conf := SpaceConf{
+		Name:      newSpaceName,
+		Partition: 1,
+		Replica:   1,
+		VidType:   "FIXED_STRING(12)",
+	}
+
+	_, err = sess.CreateSpace(conf)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	conf.IgnoreIfExists = true
+	// Create again should work
+	_, err = sess.CreateSpace(conf)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	spaceNames, err := sess.ShowSpaces()
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.LessOrEqual(t, 1, len(spaceNames))
+	var names []string
+	for _, space := range spaceNames {
+		names = append(names, space.Name)
+	}
+	assert.LessOrEqual(t, 1, len(names))
+	assert.Contains(t, names, newSpaceName)
 }

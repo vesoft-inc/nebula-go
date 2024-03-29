@@ -434,6 +434,10 @@ func (res ResultSet) GetLatency() int64 {
 	return res.resp.LatencyInUs
 }
 
+func (res ResultSet) GetLatencyInMs() int64 {
+	return res.resp.LatencyInUs / 1000
+}
+
 func (res ResultSet) GetSpaceName() string {
 	if res.resp.SpaceName == nil {
 		return ""
