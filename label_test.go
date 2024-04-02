@@ -33,6 +33,20 @@ func TestBuildCreateTagQL(t *testing.T) {
 	}
 	assert.Equal(t, "CREATE TAG IF NOT EXISTS account (name string NOT NULL, email string NULL, phone string NULL);", tag.BuildCreateTagQL())
 	assert.Equal(t, "DROP TAG IF EXISTS account;", tag.BuildDropTagQL())
+
+	tag.TTLDuration = 100
+	tag.TTLCol = "created_at"
+	assert.PanicsWithError(t, "TTL column created_at does not exist in the fields", func() {
+		tag.BuildCreateTagQL()
+	})
+
+	tag.Fields = append(tag.Fields, LabelFieldSchema{
+		Field:    "created_at",
+		Type:     "timestamp",
+		Nullable: true,
+	})
+
+	assert.Equal(t, `CREATE TAG IF NOT EXISTS account (name string NOT NULL, email string NULL, phone string NULL, created_at timestamp NULL) TTL_DURATION = 100, TTL_COL = "created_at";`, tag.BuildCreateTagQL())
 }
 
 func TestBuildCreateEdgeQL(t *testing.T) {
@@ -47,6 +61,21 @@ func TestBuildCreateEdgeQL(t *testing.T) {
 	}
 	assert.Equal(t, "CREATE EDGE IF NOT EXISTS account_email (email string NOT NULL);", edge.BuildCreateEdgeQL())
 	assert.Equal(t, "DROP EDGE IF EXISTS account_email;", edge.BuildDropEdgeQL())
+
+	edge.TTLDuration = 100
+	edge.TTLCol = "created_at"
+
+	assert.PanicsWithError(t, "TTL column created_at does not exist in the fields", func() {
+		edge.BuildCreateEdgeQL()
+	})
+
+	edge.Fields = append(edge.Fields, LabelFieldSchema{
+		Field:    "created_at",
+		Type:     "timestamp",
+		Nullable: true,
+	})
+
+	assert.Equal(t, `CREATE EDGE IF NOT EXISTS account_email (email string NOT NULL, created_at timestamp NULL) TTL_DURATION = 100, TTL_COL = "created_at";`, edge.BuildCreateEdgeQL())
 }
 
 func TestBuildAddFieldQL(t *testing.T) {

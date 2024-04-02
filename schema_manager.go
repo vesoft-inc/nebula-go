@@ -35,6 +35,8 @@ func (mgr *SchemaManager) WithVerbose(verbose bool) *SchemaManager {
 // 2.2 If the field type is different, it will return an error.
 // 2.3 If a field exists in the graph but not in the given tag,
 // it will be removed.
+// 3. If the tag exists and the fields are the same,
+// it will be checked if the TTL is set as expected.
 //
 // Notice:
 // We won't change the field type because it has
@@ -43,7 +45,7 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 	// 1. Make sure the tag exists
 	fields, err := mgr.pool.DescTag(tag.Name)
 	if err != nil {
-		// 2. If the tag does not exist, create it
+		// If the tag does not exist, create it
 		if strings.Contains(err.Error(), ErrorTagNotFound) {
 			if mgr.verbose {
 				log.Printf("ApplyTag: create the not existing tag. name=%s\n", tag.Name)
@@ -53,15 +55,15 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 		return nil, err
 	}
 
-	// 3. The tag exists, add new fields if needed
-	// 3.1 Prepare the new fields
+	// 2. The tag exists, add new fields if needed
+	// 2.1 Prepare the new fields
 	addFieldQLs := []string{}
 	for _, expected := range tag.Fields {
 		found := false
 		for _, actual := range fields {
 			if expected.Field == actual.Field {
 				found = true
-				// 3.2 Check if the field type is different
+				// 2.2 Check if the field type is different
 				if expected.Type != actual.Type {
 					return nil, fmt.Errorf("field type is different. "+
 						"Expected: %s, Actual: %s", expected.Type, actual.Type)
@@ -70,12 +72,12 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 			}
 		}
 		if !found {
-			// 3.3 Add the not exists field QL
+			// 2.3 Add the not exists field QL
 			q := expected.BuildAddTagFieldQL(tag.Name)
 			addFieldQLs = append(addFieldQLs, q)
 		}
 	}
-	// 3.4 Execute the add field QLs if needed
+	// 2.4 Execute the add field QLs if needed
 	if len(addFieldQLs) > 0 {
 		queries := strings.Join(addFieldQLs, " ")
 		if mgr.verbose {
@@ -87,8 +89,8 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 		}
 	}
 
-	// 4. Remove the not expected field if needed
-	// 4.1 Prepare the not expected fields
+	// 3. Remove the not expected field if needed
+	// 3.1 Prepare the not expected fields
 	dropFieldQLs := []string{}
 	for _, actual := range fields {
 		redundant := true
@@ -99,12 +101,12 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 			}
 		}
 		if redundant {
-			// 4.2 Remove the not expected field
+			// 3.2 Remove the not expected field
 			q := actual.BuildDropTagFieldQL(tag.Name)
 			dropFieldQLs = append(dropFieldQLs, q)
 		}
 	}
-	// 4.3 Execute the drop field QLs if needed
+	// 3.3 Execute the drop field QLs if needed
 	if len(dropFieldQLs) > 0 {
 		queries := strings.Join(dropFieldQLs, " ")
 		if mgr.verbose {
@@ -116,6 +118,9 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 		}
 	}
 
+	// 4. Check if the TTL is set as expected.
+	// @TODO
+
 	return nil, nil
 }
 
@@ -126,6 +131,8 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 // 2.2 If the field type is different, it will return an error.
 // 2.3 If a field exists in the graph but not in the given edge,
 // it will be removed.
+// 3. If the edge exists and the fields are the same,
+// it will be checked if the TTL is set as expected.
 //
 // Notice:
 // We won't change the field type because it has
@@ -134,7 +141,7 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 	// 1. Make sure the edge exists
 	fields, err := mgr.pool.DescEdge(edge.Name)
 	if err != nil {
-		// 2. If the edge does not exist, create it
+		// If the edge does not exist, create it
 		if strings.Contains(err.Error(), ErrorEdgeNotFound) {
 			if mgr.verbose {
 				log.Printf("ApplyEdge: create the not existing edge. name=%s\n", edge.Name)
@@ -144,15 +151,15 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 		return nil, err
 	}
 
-	// 3. The edge exists now, add new fields if needed
-	// 3.1 Prepare the new fields
+	// 2. The edge exists now, add new fields if needed
+	// 2.1 Prepare the new fields
 	addFieldQLs := []string{}
 	for _, expected := range edge.Fields {
 		found := false
 		for _, actual := range fields {
 			if expected.Field == actual.Field {
 				found = true
-				// 3.2 Check if the field type is different
+				// 2.2 Check if the field type is different
 				if expected.Type != actual.Type {
 					return nil, fmt.Errorf("field type is different. "+
 						"Expected: %s, Actual: %s", expected.Type, actual.Type)
@@ -161,12 +168,12 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 			}
 		}
 		if !found {
-			// 3.3 Add the not exists field QL
+			// 2.3 Add the not exists field QL
 			q := expected.BuildAddEdgeFieldQL(edge.Name)
 			addFieldQLs = append(addFieldQLs, q)
 		}
 	}
-	// 3.4 Execute the add field QLs if needed
+	// 2.4 Execute the add field QLs if needed
 	if len(addFieldQLs) > 0 {
 		queries := strings.Join(addFieldQLs, " ")
 		if mgr.verbose {
@@ -178,8 +185,8 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 		}
 	}
 
-	// 4. Remove the not expected field if needed
-	// 4.1 Prepare the not expected fields
+	// 3. Remove the not expected field if needed
+	// 3.1 Prepare the not expected fields
 	dropFieldQLs := []string{}
 	for _, actual := range fields {
 		redundant := true
@@ -190,12 +197,12 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 			}
 		}
 		if redundant {
-			// 4.2 Remove the not expected field
+			// 3.2 Remove the not expected field
 			q := actual.BuildDropEdgeFieldQL(edge.Name)
 			dropFieldQLs = append(dropFieldQLs, q)
 		}
 	}
-	// 4.3 Execute the drop field QLs if needed
+	// 3.3 Execute the drop field QLs if needed
 	if len(dropFieldQLs) > 0 {
 		queries := strings.Join(dropFieldQLs, "")
 		if mgr.verbose {
@@ -206,6 +213,9 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 			return nil, err
 		}
 	}
+
+	// 4. Check if the TTL is set as expected.
+	// @TODO
 
 	return nil, nil
 }
