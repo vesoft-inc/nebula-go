@@ -348,7 +348,7 @@ func (res ResultSet) scanRow(row *nebula.Row, colNames []string, t reflect.Type)
 			continue
 		}
 
-		cIdx := IndexOf(colNames, tag)
+		cIdx := indexOf(colNames, tag)
 		if cIdx == -1 {
 			// It is possible that the tag is not in the result set
 			continue

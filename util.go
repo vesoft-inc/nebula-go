@@ -1,6 +1,6 @@
 package nebula_go
 
-func IndexOf(collection []string, element string) int {
+func indexOf(collection []string, element string) int {
 	for i, item := range collection {
 		if item == element {
 			return i
