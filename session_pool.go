@@ -329,6 +329,18 @@ func (pool *SessionPool) AddTagTTL(tagName string, colName string, duration uint
 	return rs, nil
 }
 
+func (pool *SessionPool) GetTagTTL(tagName string) (string, uint, error) {
+	q := fmt.Sprintf("SHOW CREATE TAG %s;", tagName)
+	rs, err := pool.ExecuteAndCheck(q)
+	if err != nil {
+		return "", 0, err
+	}
+
+	s := string(rs.GetRows()[0].Values[1].GetSVal())
+
+	return parseTTL(s)
+}
+
 func (pool *SessionPool) DescTag(tagName string) ([]Label, error) {
 	q := fmt.Sprintf("DESC TAG %s;", tagName)
 	rs, err := pool.ExecuteAndCheck(q)
@@ -371,6 +383,18 @@ func (pool *SessionPool) AddEdgeTTL(tagName string, colName string, duration uin
 	}
 
 	return rs, nil
+}
+
+func (pool *SessionPool) GetEdgeTTL(edgeName string) (string, uint, error) {
+	q := fmt.Sprintf("SHOW CREATE EDGE %s;", edgeName)
+	rs, err := pool.ExecuteAndCheck(q)
+	if err != nil {
+		return "", 0, err
+	}
+
+	s := string(rs.GetRows()[0].Values[1].GetSVal())
+
+	return parseTTL(s)
 }
 
 func (pool *SessionPool) DescEdge(edgeName string) ([]Label, error) {
