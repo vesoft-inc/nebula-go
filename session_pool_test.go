@@ -469,6 +469,130 @@ func TestSessionPoolCreateTagAndEdge(t *testing.T) {
 	assert.Equal(t, "string", labels[0].Type)
 }
 
+func TestSessionPoolCreateTagAndEdgeWithTTL(t *testing.T) {
+	spaceName := "test_space_schema_ttl"
+	err := prepareSpace(spaceName)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dropSpace(spaceName)
+
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		spaceName)
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+
+	// allow only one session in the pool so it is easier to test
+	config.maxSize = 1
+
+	// create session pool
+	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sessionPool.Close()
+
+	spaces, err := sessionPool.ShowSpaces()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.LessOrEqual(t, 1, len(spaces), "should have at least 1 space")
+	var spaceNames []string
+	for _, space := range spaces {
+		spaceNames = append(spaceNames, space.Name)
+	}
+	assert.Contains(t, spaceNames, spaceName)
+
+	tagSchema := LabelSchema{
+		Name: "user",
+		Fields: []LabelFieldSchema{
+			{
+				Field:    "name",
+				Nullable: false,
+			},
+			{
+				Field:    "created_at",
+				Type:     "int64",
+				Nullable: true,
+			},
+		},
+		TTLCol:      "created_at",
+		TTLDuration: 5,
+	}
+
+	_, err = sessionPool.CreateTag(tagSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tags, err := sessionPool.ShowTags()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(tags))
+	assert.Equal(t, "user", tags[0].Name)
+	labels, err := sessionPool.DescTag("user")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 2, len(labels))
+	assert.Equal(t, "name", labels[0].Field)
+	assert.Equal(t, "string", labels[0].Type)
+	assert.Equal(t, "created_at", labels[1].Field)
+	assert.Equal(t, "int64", labels[1].Type)
+
+	col, duration, err := sessionPool.GetTagTTL("user")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "created_at", col)
+	assert.Equal(t, uint(5), duration)
+
+	edgeSchema := LabelSchema{
+		Name: "friend",
+		Fields: []LabelFieldSchema{
+			{
+				Field:    "created_at",
+				Type:     "int64",
+				Nullable: false,
+			},
+		},
+		TTLCol:      "created_at",
+		TTLDuration: 5,
+	}
+
+	_, err = sessionPool.CreateEdge(edgeSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	edges, err := sessionPool.ShowEdges()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(edges))
+	assert.Equal(t, "friend", edges[0].Name)
+	labels, err = sessionPool.DescEdge("friend")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(labels))
+	assert.Equal(t, "created_at", labels[0].Field)
+	assert.Equal(t, "int64", labels[0].Type)
+
+	col, duration, err = sessionPool.GetEdgeTTL("friend")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "created_at", col)
+	assert.Equal(t, uint(5), duration)
+}
+
 func TestSessionPoolAddTTL(t *testing.T) {
 	spaceName := "test_space_ttl"
 	err := prepareSpace(spaceName)
