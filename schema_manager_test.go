@@ -481,7 +481,7 @@ func TestSchemaManagerApplyEdgeWithTTL(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, 2, len(labels))
+	assert.Equal(t, 1, len(labels))
 	ttlCol, ttlDuration, err := sessionPool.GetEdgeTTL("friend")
 	if err != nil {
 		t.Fatal(err)
@@ -500,7 +500,7 @@ func TestSchemaManagerApplyEdgeWithTTL(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, 2, len(labels))
+	assert.Equal(t, 1, len(labels))
 	ttlCol, ttlDuration, err = sessionPool.GetEdgeTTL("friend")
 	if err != nil {
 		t.Fatal(err)
@@ -520,7 +520,7 @@ func TestSchemaManagerApplyEdgeWithTTL(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, 2, len(labels))
+	assert.Equal(t, 1, len(labels))
 	ttlCol, ttlDuration, err = sessionPool.GetEdgeTTL("friend")
 	if err != nil {
 		t.Fatal(err)
