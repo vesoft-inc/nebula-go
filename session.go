@@ -49,7 +49,6 @@ func (session *Session) executeWithReconnect(f func() (interface{}, error)) (int
 	}
 	// Execute with the new connection
 	return f()
-
 }
 
 // ExecuteWithParameter returns the result of the given query as a ResultSet
@@ -81,7 +80,6 @@ func (session *Session) ExecuteWithParameter(stmt string, params map[string]inte
 		return nil, err
 	}
 	return resp.(*ResultSet), err
-
 }
 
 // Execute returns the result of the given query as a ResultSet
@@ -219,7 +217,7 @@ func (session *Session) CreateSpace(conf SpaceConf) (*ResultSet, error) {
 		conf.VidType = "FIXED_STRING(8)"
 	}
 
-	q := ""
+	var q string
 	if conf.IgnoreIfExists {
 		q = fmt.Sprintf(
 			"CREATE SPACE IF NOT EXISTS %s (partition_num = %d, replica_factor = %d, vid_type = %s)",
@@ -264,7 +262,7 @@ func (session *Session) reConnect() error {
 		return err
 	}
 
-	session.connPool.releaseAndBack(session.connection, false)
+	session.connPool.deactivate(session.connection, false, false)
 	session.connection = newConnection
 	return nil
 }
