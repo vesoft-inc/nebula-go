@@ -217,7 +217,7 @@ func (session *Session) CreateSpace(conf SpaceConf) (*ResultSet, error) {
 		conf.VidType = "FIXED_STRING(8)"
 	}
 
-	q := ""
+	var q string
 	if conf.IgnoreIfExists {
 		q = fmt.Sprintf(
 			"CREATE SPACE IF NOT EXISTS %s (partition_num = %d, replica_factor = %d, vid_type = %s)",
