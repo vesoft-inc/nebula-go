@@ -295,3 +295,236 @@ func TestSchemaManagerApplyEdge(t *testing.T) {
 	assert.Equal(t, "email", labels[0].Field)
 	assert.Equal(t, "string", labels[0].Type)
 }
+
+func TestSchemaManagerApplyTagWithTTL(t *testing.T) {
+	spaceName := "test_space_apply_tag_with_ttl"
+	err := prepareSpace(spaceName)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dropSpace(spaceName)
+
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		spaceName)
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+
+	// allow only one session in the pool so it is easier to test
+	config.maxSize = 1
+
+	// create session pool
+	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sessionPool.Close()
+
+	schemaManager := NewSchemaManager(sessionPool).WithVerbose(true)
+
+	spaces, err := sessionPool.ShowSpaces()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.LessOrEqual(t, 1, len(spaces))
+	var spaceNames []string
+	for _, space := range spaces {
+		spaceNames = append(spaceNames, space.Name)
+	}
+	assert.Contains(t, spaceNames, spaceName)
+
+	tagSchema := LabelSchema{
+		Name: "user",
+		Fields: []LabelFieldSchema{
+			{
+				Field:    "name",
+				Type:     "string",
+				Nullable: false,
+			},
+			{
+				Field:    "created_at",
+				Type:     "int64",
+				Nullable: false,
+			},
+		},
+		TTLDuration: 100,
+		TTLCol:      "created_at",
+	}
+	_, err = schemaManager.ApplyTag(tagSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tags, err := sessionPool.ShowTags()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(tags))
+	labels, err := sessionPool.DescTag("user")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 2, len(labels))
+	ttlCol, ttlDuration, err := sessionPool.GetTagTTL("user")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "created_at", ttlCol)
+	assert.Equal(t, uint(100), ttlDuration)
+
+	// update ttl
+	tagSchema.TTLDuration = 300
+
+	_, err = schemaManager.ApplyTag(tagSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+	labels, err = sessionPool.DescTag("user")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 2, len(labels))
+	ttlCol, ttlDuration, err = sessionPool.GetTagTTL("user")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "created_at", ttlCol)
+	assert.Equal(t, uint(300), ttlDuration)
+
+	// remove ttl
+	tagSchema.TTLDuration = 0
+	tagSchema.TTLCol = ""
+
+	_, err = schemaManager.ApplyTag(tagSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+	labels, err = sessionPool.DescTag("user")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 2, len(labels))
+	ttlCol, ttlDuration, err = sessionPool.GetTagTTL("user")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "", ttlCol)
+	assert.Equal(t, uint(0), ttlDuration)
+}
+
+func TestSchemaManagerApplyEdgeWithTTL(t *testing.T) {
+	spaceName := "test_space_apply_edge_with_ttl"
+	err := prepareSpace(spaceName)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dropSpace(spaceName)
+
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		spaceName)
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+
+	// allow only one session in the pool so it is easier to test
+	config.maxSize = 1
+
+	// create session pool
+	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sessionPool.Close()
+
+	schemaManager := NewSchemaManager(sessionPool).WithVerbose(true)
+
+	spaces, err := sessionPool.ShowSpaces()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.LessOrEqual(t, 1, len(spaces))
+	var spaceNames []string
+	for _, space := range spaces {
+		spaceNames = append(spaceNames, space.Name)
+	}
+	assert.Contains(t, spaceNames, spaceName)
+
+	edgeSchema := LabelSchema{
+		Name: "friend",
+		Fields: []LabelFieldSchema{
+			{
+				Field:    "created_at",
+				Type:     "int64",
+				Nullable: false,
+			},
+		},
+		TTLDuration: 100,
+		TTLCol:      "created_at",
+	}
+	_, err = schemaManager.ApplyEdge(edgeSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+	edges, err := sessionPool.ShowEdges()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(edges))
+	labels, err := sessionPool.DescEdge("friend")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 2, len(labels))
+	ttlCol, ttlDuration, err := sessionPool.GetEdgeTTL("friend")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "created_at", ttlCol)
+	assert.Equal(t, uint(100), ttlDuration)
+
+	// update ttl
+	edgeSchema.TTLDuration = 300
+
+	_, err = schemaManager.ApplyEdge(edgeSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+	labels, err = sessionPool.DescEdge("friend")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 2, len(labels))
+	ttlCol, ttlDuration, err = sessionPool.GetEdgeTTL("friend")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "created_at", ttlCol)
+	assert.Equal(t, uint(300), ttlDuration)
+
+	// remove ttl
+	edgeSchema.TTLDuration = 0
+	edgeSchema.TTLCol = ""
+
+	_, err = schemaManager.ApplyEdge(edgeSchema)
+	if err != nil {
+		t.Fatal(err)
+	}
+	labels, err = sessionPool.DescEdge("friend")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 2, len(labels))
+	ttlCol, ttlDuration, err = sessionPool.GetEdgeTTL("friend")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "", ttlCol)
+	assert.Equal(t, uint(0), ttlDuration)
+}
