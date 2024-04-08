@@ -119,7 +119,21 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 	}
 
 	// 4. Check if the TTL is set as expected.
-	// @TODO
+	ttlCol, ttlDuration, err := mgr.pool.GetTagTTL(tag.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	if ttlCol != tag.TTLCol || ttlDuration != tag.TTLDuration {
+		if mgr.verbose {
+			log.Printf("ApplyTag: Alter the tag TTL. name=%s, col=%s, duration=%d\n", tag.Name, ttlCol, ttlDuration)
+		}
+
+		_, err = mgr.pool.AddTagTTL(tag.Name, ttlCol, ttlDuration)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return nil, nil
 }
@@ -215,7 +229,21 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 	}
 
 	// 4. Check if the TTL is set as expected.
-	// @TODO
+	ttlCol, ttlDuration, err := mgr.pool.GetEdgeTTL(edge.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	if ttlCol != edge.TTLCol || ttlDuration != edge.TTLDuration {
+		if mgr.verbose {
+			log.Printf("ApplyEdge: Alter the edge TTL. name=%s, col=%s, duration=%d\n", edge.Name, ttlCol, ttlDuration)
+		}
+
+		_, err = mgr.pool.AddEdgeTTL(edge.Name, ttlCol, ttlDuration)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return nil, nil
 }
