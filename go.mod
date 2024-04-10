@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/stretchr/testify v1.7.0
 	github.com/vesoft-inc/fbthrift v0.0.0-20230214024353-fa2f34755b28
-	golang.org/x/net v0.23.0
+	golang.org/x/net v0.24.0
 )
 
 require (
