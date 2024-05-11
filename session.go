@@ -191,7 +191,7 @@ func (session *Session) ExecuteAndCheck(stmt string) (*ResultSet, error) {
 
 	if !rs.IsSucceed() {
 		errMsg := rs.GetErrorMsg()
-		return nil, fmt.Errorf("Fail to execute query. %s", errMsg)
+		return nil, fmt.Errorf("fail to execute query. %s", errMsg)
 	}
 
 	return rs, nil
