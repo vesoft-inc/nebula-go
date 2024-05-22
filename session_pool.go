@@ -11,7 +11,6 @@ package nebula_go
 import (
 	"container/list"
 	"fmt"
-	"strconv"
 	"sync"
 	"time"
 
@@ -53,7 +52,8 @@ type pureSession struct {
 	sessPool   *SessionPool
 	returnedAt time.Time // the timestamp that the session was created or returned.
 	timezoneInfo
-	spaceName string
+	spaceName  string
+	enableHttp bool
 }
 
 // NewSessionPool creates a new session pool with the given configs.
@@ -143,8 +143,13 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 
 	rs, err := pool.executeWithRetry(session, execFunc, pool.conf.retryGetSessionTimes)
 	if err != nil {
-		session.close()
-		pool.removeSessionFromActive(session)
+		if !pool.enableHttp() {
+			session.close()
+			pool.removeSessionFromActive(session)
+		}
+		// for http connections like client->LB->Server.
+		// if LB->Server is broken, suppose client->LB is always valid
+		// so we do not need to close the session
 		return nil, err
 	}
 
@@ -367,44 +372,91 @@ func (pool *SessionPool) getSessionFromIdle() (*pureSession, error) {
 }
 
 // retryGetSession tries to create a new session when:
-// 1. the current session is invalid.
-// 2. connection is invalid.
-// and then change the original session to the new one.
-func (pool *SessionPool) executeWithRetry(
-	session *pureSession,
-	f func(*pureSession) (*ResultSet, error),
-	retry int) (*ResultSet, error) {
-	rs, err := f(session)
-	if err == nil {
-		if rs.GetErrorCode() == ErrorCode_SUCCEEDED {
-			return rs, nil
-		} else if rs.GetErrorCode() != ErrorCode_E_SESSION_INVALID { // only retry when the session is invalid
-			return rs, err
-		}
-	}
+// if do not enable http:
+//  1. the current session is invalid.
+//  2. connection is invalid.
+//     and then change the original session to the new one.
+//
+// else:
+//  1. the current session is invalid, and then get idle session from pool
+//  2. the connection is invalid, and do not logout, just retry execution
+func (pool *SessionPool) executeWithRetry(session *pureSession,
+	f func(*pureSession) (*ResultSet, error), retry int) (*ResultSet, error) {
+	return pool.executeWithRetryLimit(session, f, 0, retry)
+}
 
-	// If the session is invalid, close it first
-	session.close()
-	// get a new session
-	for i := 0; i < retry; i++ {
-		pool.log.Info("retry to get sessions")
-		newSession, err := pool.newSession()
-		if err != nil {
+func (pool *SessionPool) executeWithRetryLimit(session *pureSession,
+	f func(*pureSession) (*ResultSet, error), retryTimes, retryLimit int) (*ResultSet, error) {
+	rs, err := f(session)
+	if retryTimes >= retryLimit {
+		return rs, err
+	}
+	if err == nil {
+		if rs.GetErrorCode() != ErrorCode_E_SESSION_INVALID {
+			return rs, nil
+		} else {
+			if err := pool.retryStrategySessionInvalid(session); err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		if err := pool.retryStrategyErr(session); err != nil {
 			return nil, err
 		}
-
-		pingErr := newSession.ping()
-		if pingErr != nil {
-			pool.log.Error("failed to ping the session, error: " + pingErr.Error())
-			continue
-		}
-		pool.log.Info("retry to get sessions successfully")
-		*session = *newSession
-
-		return f(session)
 	}
-	pool.log.Error(fmt.Sprintf("failed to get session after " + strconv.Itoa(retry) + " retries"))
-	return nil, fmt.Errorf("failed to get session after %d retries", retry)
+	pool.log.Info(fmt.Sprintf("retry to execute the query %d times", retryTimes+1))
+	return pool.executeWithRetryLimit(session, f, retryTimes+1, retryLimit)
+}
+
+func (pool *SessionPool) retryStrategySessionInvalid(session *pureSession) error {
+	if !pool.enableHttp() {
+		session.close()
+		pool.log.Info("retry to get new session")
+		newSession, err := pool.newSession()
+		if err != nil {
+			return err
+		}
+		if err := newSession.ping(); err != nil {
+			return err
+		}
+		pool.log.Info("retry to get session successfully")
+		*session = *newSession
+	} else {
+		pool.log.Info("retry to get session from idle list")
+		newSession, err := pool.getSessionFromIdle()
+		if err != nil {
+			return err
+		}
+		if newSession == nil {
+			pool.log.Info("retry to get new session")
+			newSession, err = pool.newSession()
+			if err != nil {
+				return err
+			}
+			pool.log.Info("retry to get session successfully")
+		}
+		*session = *newSession
+	}
+	return nil
+
+}
+
+func (pool *SessionPool) retryStrategyErr(session *pureSession) error {
+	if !pool.enableHttp() {
+		session.close()
+		pool.log.Info("retry to get new session")
+		newSession, err := pool.newSession()
+		if err != nil {
+			return err
+		}
+		if err := newSession.ping(); err != nil {
+			return err
+		}
+		pool.log.Info("retry to get session successfully")
+		*session = *newSession
+	}
+	// http do nothing for connection error
+	return nil
 }
 
 // startCleaner starts sessionCleaner if idleTime > 0.
@@ -558,6 +610,13 @@ func (pool *SessionPool) setSessionSpaceToDefault(session *pureSession) error {
 	pool.removeSessionFromActive(session)
 	return fmt.Errorf("failed to reset the space of the session: errorCode: %d, errorMsg: %s",
 		rs.GetErrorCode(), rs.GetErrorMsg())
+}
+
+// enableHttp returns whether the pool is using HTTP2
+// If the pool is using HTTP2, the session will be created with
+// an HTTP2 connection in L7 load balancing.
+func (pool *SessionPool) enableHttp() bool {
+	return pool.conf.useHTTP2
 }
 
 func (session *pureSession) execute(stmt string) (*ResultSet, error) {
