@@ -599,6 +599,117 @@ func TestSessionPoolRetry(t *testing.T) {
 	}
 }
 
+type retryFn struct {
+	fn         func(*pureSession) (*ResultSet, error)
+	retryTimes int
+}
+
+func (r *retryFn) retry(s *pureSession) (*ResultSet, error) {
+	r.retryTimes++
+	return r.fn(s)
+}
+
+func newRetryFn(rs *ResultSet, err error) *retryFn {
+	return &retryFn{
+		fn: func(*pureSession) (*ResultSet, error) {
+			return rs, err
+		},
+	}
+}
+
+func TestSessionPoolRetryHttp(t *testing.T) {
+	t.Skip("Skipping test because it is not supported in CI environment")
+	err := prepareSpace("client_test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dropSpace("client_test")
+
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		"client_test",
+		WithHTTP2(true),
+	)
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+	config.minSize = 2
+	config.maxSize = 2
+	config.retryGetSessionTimes = 1
+
+	// create session pool
+	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sessionPool.Close()
+
+	testcaes := []struct {
+		name       string
+		retryFn    *retryFn
+		retry      bool
+		newSession bool
+	}{
+		{
+			name: "success",
+			retryFn: newRetryFn(&ResultSet{
+				resp: &graph.ExecutionResponse{
+					ErrorCode: nebula.ErrorCode_SUCCEEDED,
+				}}, nil),
+			retry: false,
+		},
+		{
+			name:       "error",
+			retryFn:    newRetryFn(nil, fmt.Errorf("error")),
+			retry:      true,
+			newSession: false,
+		},
+		{
+			name: "invalid session error code",
+			retryFn: newRetryFn(&ResultSet{
+				resp: &graph.ExecutionResponse{
+					ErrorCode: nebula.ErrorCode_E_SESSION_INVALID,
+				}}, nil),
+			retry:      true,
+			newSession: true,
+		},
+		{
+			name: "execution error code",
+			retryFn: newRetryFn(&ResultSet{
+				resp: &graph.ExecutionResponse{
+					ErrorCode: nebula.ErrorCode_E_EXECUTION_ERROR,
+				}}, nil),
+			retry: false,
+		},
+	}
+	for _, tc := range testcaes {
+		session, err := sessionPool.newSession()
+		if err != nil {
+			t.Fatal(err)
+		}
+		original := session.sessionID
+		conn := session.connection
+		_, _ = sessionPool.executeWithRetry(session, tc.retryFn.retry, 1)
+		if tc.retry {
+			if tc.newSession {
+				assert.NotEqual(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
+				assert.NotEqual(t, conn, session.connection, fmt.Sprintf("test case: %s", tc.name))
+			} else {
+				assert.Equal(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
+				assert.Equal(t, conn, session.connection, fmt.Sprintf("test case: %s", tc.name))
+			}
+			assert.Equal(t, 2, tc.retryFn.retryTimes, fmt.Sprintf("test case: %s", tc.name))
+		} else {
+			assert.Equal(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
+			assert.Equal(t, conn, session.connection, fmt.Sprintf("test case: %s", tc.name))
+			assert.Equal(t, 1, tc.retryFn.retryTimes, fmt.Sprintf("test case: %s", tc.name))
+		}
+	}
+}
+
 func TestSessionPoolClose(t *testing.T) {
 	err := prepareSpace("client_test")
 	if err != nil {
