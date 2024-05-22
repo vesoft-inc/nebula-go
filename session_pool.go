@@ -396,11 +396,13 @@ func (pool *SessionPool) executeWithRetryLimit(session *pureSession,
 			return rs, nil
 		} else {
 			if err := pool.retryStrategySessionInvalid(session); err != nil {
+				pool.log.Error(fmt.Sprintf("cannot retry when session is invalid, error: %s", err.Error()))
 				return nil, err
 			}
 		}
 	} else {
 		if err := pool.retryStrategyErr(session); err != nil {
+			pool.log.Error(fmt.Sprintf("cannot retry when error, error: %s", err.Error()))
 			return nil, err
 		}
 	}
