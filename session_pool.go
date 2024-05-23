@@ -52,8 +52,7 @@ type pureSession struct {
 	sessPool   *SessionPool
 	returnedAt time.Time // the timestamp that the session was created or returned.
 	timezoneInfo
-	spaceName  string
-	enableHttp bool
+	spaceName string
 }
 
 // NewSessionPool creates a new session pool with the given configs.
