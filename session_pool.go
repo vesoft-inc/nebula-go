@@ -52,8 +52,7 @@ type pureSession struct {
 	sessPool   *SessionPool
 	returnedAt time.Time // the timestamp that the session was created or returned.
 	timezoneInfo
-	spaceName  string
-	enableHttp bool
+	spaceName string
 }
 
 // NewSessionPool creates a new session pool with the given configs.
@@ -146,10 +145,12 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 		if !pool.enableHttp() {
 			session.close()
 			pool.removeSessionFromActive(session)
+		} else {
+			// for http connections like client->LB->Server.
+			// if LB->Server is broken, suppose client->LB is always valid
+			// so we do not need to close the session, just put it back
+			pool.returnSession(session)
 		}
-		// for http connections like client->LB->Server.
-		// if LB->Server is broken, suppose client->LB is always valid
-		// so we do not need to close the session
 		return nil, err
 	}
 
@@ -293,17 +294,20 @@ func (pool *SessionPool) newSession() (*pureSession, error) {
 	// open a new connection
 	if err := cn.open(cn.severAddress, pool.conf.timeOut, pool.conf.sslConfig,
 		pool.conf.useHTTP2, pool.conf.httpHeader, pool.conf.handshakeKey); err != nil {
+		cn.close()
 		return nil, fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
 	}
 
 	// authenticate with username and password to get a new session
 	authResp, err := cn.authenticate(pool.conf.username, pool.conf.password)
 	if err != nil {
+		cn.close()
 		return nil, fmt.Errorf("failed to create a new session: %s", err.Error())
 	}
 
 	// If the authentication failed, close the session pool because the pool must have a valid user to work
 	if authResp.GetErrorCode() != 0 {
+		cn.close()
 		if authResp.GetErrorCode() == nebula.ErrorCode_E_BAD_USERNAME_PASSWORD ||
 			authResp.GetErrorCode() == nebula.ErrorCode_E_USER_NOT_FOUND {
 			pool.Close()
@@ -330,6 +334,7 @@ func (pool *SessionPool) newSession() (*pureSession, error) {
 	stmt := fmt.Sprintf("USE %s", pool.conf.spaceName)
 	useSpaceRs, err := newSession.execute(stmt)
 	if err != nil {
+		newSession.close()
 		return nil, err
 	}
 

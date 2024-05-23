@@ -228,5 +228,7 @@ func (cn *connection) release() {
 
 // Close transport
 func (cn *connection) close() {
-	cn.graph.Close()
+	if cn.graph.IsOpen() {
+		cn.graph.Close()
+	}
 }
