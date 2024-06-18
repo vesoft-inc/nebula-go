@@ -187,6 +187,10 @@ func (cn *connection) executeWithParameter(sessionID int64, stmt string,
 	return resp, nil
 }
 
+func (cn *connection) executeWithParameterTimeout(sessionID int64, stmt string, params map[string]*nebula.Value, timeoutMs int64) (*graph.ExecutionResponse, error) {
+	return cn.graph.ExecuteWithTimeout(sessionID, []byte(stmt), params, timeoutMs)
+}
+
 func (cn *connection) executeJson(sessionID int64, stmt string) ([]byte, error) {
 	return cn.ExecuteJsonWithParameter(sessionID, stmt, map[string]*nebula.Value{})
 }

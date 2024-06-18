@@ -55,16 +55,29 @@ func (session *Session) executeWithReconnect(f func() (interface{}, error)) (int
 func (session *Session) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
-	if session.connection == nil {
-		return nil, fmt.Errorf("failed to execute: Session has been released")
-	}
 	paramsMap, err := parseParams(params)
 	if err != nil {
 		return nil, err
 	}
 
+	fn := func() (*graph.ExecutionResponse, error) {
+		return session.connection.executeWithParameter(session.sessionID, stmt, paramsMap)
+	}
+	return session.tryExecuteLocked(fn)
+
+}
+
+// Execute returns the result of the given query as a ResultSet
+func (session *Session) Execute(stmt string) (*ResultSet, error) {
+	return session.ExecuteWithParameter(stmt, map[string]interface{}{})
+}
+
+func (session *Session) tryExecuteLocked(fn func() (*graph.ExecutionResponse, error)) (*ResultSet, error) {
+	if session.connection == nil {
+		return nil, fmt.Errorf("failed to execute: Session has been released")
+	}
 	execFunc := func() (interface{}, error) {
-		resp, err := session.connection.executeWithParameter(session.sessionID, stmt, paramsMap)
+		resp, err := fn()
 		if err != nil {
 			return nil, err
 		}
@@ -74,7 +87,6 @@ func (session *Session) ExecuteWithParameter(stmt string, params map[string]inte
 		}
 		return resSet, nil
 	}
-
 	resp, err := session.executeWithReconnect(execFunc)
 	if err != nil {
 		return nil, err
@@ -82,9 +94,23 @@ func (session *Session) ExecuteWithParameter(stmt string, params map[string]inte
 	return resp.(*ResultSet), err
 }
 
-// Execute returns the result of the given query as a ResultSet
-func (session *Session) Execute(stmt string) (*ResultSet, error) {
-	return session.ExecuteWithParameter(stmt, map[string]interface{}{})
+func (session *Session) ExecuteWithTimeout(stmt string, timeout int64) (*ResultSet, error) {
+	return session.ExecuteWithParameterTimeout(stmt, map[string]interface{}{}, timeout)
+}
+
+func (session *Session) ExecuteWithParameterTimeout(stmt string, params map[string]interface{}, timeout int64) (*ResultSet, error) {
+	session.mu.Lock()
+	defer session.mu.Unlock()
+
+	paramsMap, err := parseParams(params)
+	if err != nil {
+		return nil, err
+	}
+
+	fn := func() (*graph.ExecutionResponse, error) {
+		return session.connection.executeWithParameterTimeout(session.sessionID, stmt, paramsMap, timeout)
+	}
+	return session.tryExecuteLocked(fn)
 }
 
 // ExecuteJson returns the result of the given query as a json string
