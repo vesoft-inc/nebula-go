@@ -177,6 +177,9 @@ func (pool *SessionPool) ExecuteWithTimeout(stmt string, timeoutMs int64) (*Resu
 // ExecuteWithParameter returns the result of the given query as a ResultSet
 func (pool *SessionPool) ExecuteWithParameterTimeout(stmt string, params map[string]interface{}, timeoutMs int64) (*ResultSet, error) {
 	// Execute the query
+	if timeoutMs <= 0 {
+		return nil, fmt.Errorf("timeout should be a positive number")
+	}
 	execFunc := func(s *pureSession) (*ResultSet, error) {
 		rs, err := s.executeWithParameterTimeout(stmt, params, timeoutMs)
 		if err != nil {

@@ -94,21 +94,23 @@ func (session *Session) tryExecuteLocked(fn func() (*graph.ExecutionResponse, er
 	return resp.(*ResultSet), err
 }
 
-func (session *Session) ExecuteWithTimeout(stmt string, timeout int64) (*ResultSet, error) {
-	return session.ExecuteWithParameterTimeout(stmt, map[string]interface{}{}, timeout)
+func (session *Session) ExecuteWithTimeout(stmt string, timeoutMs int64) (*ResultSet, error) {
+	return session.ExecuteWithParameterTimeout(stmt, map[string]interface{}{}, timeoutMs)
 }
 
-func (session *Session) ExecuteWithParameterTimeout(stmt string, params map[string]interface{}, timeout int64) (*ResultSet, error) {
+func (session *Session) ExecuteWithParameterTimeout(stmt string, params map[string]interface{}, timeoutMs int64) (*ResultSet, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
-
+	if timeoutMs <= 0 {
+		return nil, fmt.Errorf("timeout should be a positive number")
+	}
 	paramsMap, err := parseParams(params)
 	if err != nil {
 		return nil, err
 	}
 
 	fn := func() (*graph.ExecutionResponse, error) {
-		return session.connection.executeWithParameterTimeout(session.sessionID, stmt, paramsMap, timeout)
+		return session.connection.executeWithParameterTimeout(session.sessionID, stmt, paramsMap, timeoutMs)
 	}
 	return session.tryExecuteLocked(fn)
 }
