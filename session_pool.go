@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/vesoft-inc/nebula-go/v3/nebula"
+	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
 
 // SessionPool is a pool that manages sessions internally.
@@ -97,19 +98,7 @@ func (pool *SessionPool) init() error {
 	return nil
 }
 
-// Execute returns the result of the given query as a ResultSet
-// Notice there are some limitations:
-// 1. The query should not be a plain space switch statement, e.g. "USE test_space",
-// but queries like "use space xxx; match (v) return v" are accepted.
-// 2. If the query contains statements like "USE <space name>", the space will be set to the
-// one in the pool config after the execution of the query.
-// 3. The query should not change the user password nor drop a user.
-func (pool *SessionPool) Execute(stmt string) (*ResultSet, error) {
-	return pool.ExecuteWithParameter(stmt, map[string]interface{}{})
-}
-
-// ExecuteWithParameter returns the result of the given query as a ResultSet
-func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
+func (pool *SessionPool) executeFn(execFunc func(s *pureSession) (*ResultSet, error)) (*ResultSet, error) {
 	// Check if the pool is closed
 	if pool.closed {
 		return nil, fmt.Errorf("failed to execute: Session pool has been closed")
@@ -131,16 +120,6 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 		pool.removeSessionFromIdle(session)
 		pool.addSessionToActive(session)
 	}
-
-	// Execute the query
-	execFunc := func(s *pureSession) (*ResultSet, error) {
-		rs, err := s.executeWithParameter(stmt, params)
-		if err != nil {
-			return nil, err
-		}
-		return rs, nil
-	}
-
 	rs, err := pool.executeWithRetry(session, execFunc, pool.conf.retryGetSessionTimes)
 	if err != nil {
 		session.close()
@@ -164,6 +143,51 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 	pool.returnSession(session)
 
 	return rs, nil
+}
+
+// Execute returns the result of the given query as a ResultSet
+// Notice there are some limitations:
+// 1. The query should not be a plain space switch statement, e.g. "USE test_space",
+// but queries like "use space xxx; match (v) return v" are accepted.
+// 2. If the query contains statements like "USE <space name>", the space will be set to the
+// one in the pool config after the execution of the query.
+// 3. The query should not change the user password nor drop a user.
+func (pool *SessionPool) Execute(stmt string) (*ResultSet, error) {
+	return pool.ExecuteWithParameter(stmt, map[string]interface{}{})
+}
+
+// ExecuteWithParameter returns the result of the given query as a ResultSet
+func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
+
+	// Execute the query
+	execFunc := func(s *pureSession) (*ResultSet, error) {
+		rs, err := s.executeWithParameter(stmt, params)
+		if err != nil {
+			return nil, err
+		}
+		return rs, nil
+	}
+	return pool.executeFn(execFunc)
+}
+
+func (pool *SessionPool) ExecuteWithTimeout(stmt string, timeoutMs int64) (*ResultSet, error) {
+	return pool.ExecuteWithParameterTimeout(stmt, map[string]interface{}{}, timeoutMs)
+}
+
+// ExecuteWithParameter returns the result of the given query as a ResultSet
+func (pool *SessionPool) ExecuteWithParameterTimeout(stmt string, params map[string]interface{}, timeoutMs int64) (*ResultSet, error) {
+	// Execute the query
+	if timeoutMs <= 0 {
+		return nil, fmt.Errorf("timeout should be a positive number")
+	}
+	execFunc := func(s *pureSession) (*ResultSet, error) {
+		rs, err := s.executeWithParameterTimeout(stmt, params, timeoutMs)
+		if err != nil {
+			return nil, err
+		}
+		return rs, nil
+	}
+	return pool.executeFn(execFunc)
 }
 
 // ExecuteJson returns the result of the given query as a json string
@@ -702,15 +726,11 @@ func (session *pureSession) execute(stmt string) (*ResultSet, error) {
 	return session.executeWithParameter(stmt, nil)
 }
 
-func (session *pureSession) executeWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
-	paramsMap, err := parseParams(params)
-	if err != nil {
-		return nil, err
-	}
+func (session *pureSession) executeFn(fn func() (*graph.ExecutionResponse, error)) (*ResultSet, error) {
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
 	}
-	resp, err := session.connection.executeWithParameter(session.sessionID, stmt, paramsMap)
+	resp, err := fn()
 	if err != nil {
 		return nil, err
 	}
@@ -719,6 +739,28 @@ func (session *pureSession) executeWithParameter(stmt string, params map[string]
 		return nil, err
 	}
 	return rs, nil
+}
+
+func (session *pureSession) executeWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
+	paramsMap, err := parseParams(params)
+	if err != nil {
+		return nil, err
+	}
+	fn := func() (*graph.ExecutionResponse, error) {
+		return session.connection.executeWithParameter(session.sessionID, stmt, paramsMap)
+	}
+	return session.executeFn(fn)
+}
+
+func (session *pureSession) executeWithParameterTimeout(stmt string, params map[string]interface{}, timeout int64) (*ResultSet, error) {
+	paramsMap, err := parseParams(params)
+	if err != nil {
+		return nil, err
+	}
+	fn := func() (*graph.ExecutionResponse, error) {
+		return session.connection.executeWithParameterTimeout(session.sessionID, stmt, paramsMap, timeout)
+	}
+	return session.executeFn(fn)
 }
 
 func (session *pureSession) close() {
