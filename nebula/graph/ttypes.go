@@ -2452,3 +2452,119 @@ func (p *VerifyClientVersionReq) String() string {
   return fmt.Sprintf("VerifyClientVersionReq({Version:%s})", versionVal)
 }
 
+// Attributes:
+//  - ErrorCode
+type HealthResp struct {
+  ErrorCode int64 `thrift:"error_code,1,required" db:"error_code" json:"error_code"`
+}
+
+func NewHealthResp() *HealthResp {
+  return &HealthResp{}
+}
+
+
+func (p *HealthResp) GetErrorCode() int64 {
+  return p.ErrorCode
+}
+type HealthRespBuilder struct {
+  obj *HealthResp
+}
+
+func NewHealthRespBuilder() *HealthRespBuilder{
+  return &HealthRespBuilder{
+    obj: NewHealthResp(),
+  }
+}
+
+func (p HealthRespBuilder) Emit() *HealthResp{
+  return &HealthResp{
+    ErrorCode: p.obj.ErrorCode,
+  }
+}
+
+func (h *HealthRespBuilder) ErrorCode(errorCode int64) *HealthRespBuilder {
+  h.obj.ErrorCode = errorCode
+  return h
+}
+
+func (h *HealthResp) SetErrorCode(errorCode int64) *HealthResp {
+  h.ErrorCode = errorCode
+  return h
+}
+
+func (p *HealthResp) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+  var issetErrorCode bool = false;
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+      issetErrorCode = true
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  if !issetErrorCode{
+    return thrift.NewProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field ErrorCode is not set"));
+  }
+  return nil
+}
+
+func (p *HealthResp)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.ErrorCode = v
+  }
+  return nil
+}
+
+func (p *HealthResp) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("HealthResp"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *HealthResp) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("error_code", thrift.I64, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:error_code: ", p), err) }
+  if err := oprot.WriteI64(int64(p.ErrorCode)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.error_code (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:error_code: ", p), err) }
+  return err
+}
+
+func (p *HealthResp) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  errorCodeVal := fmt.Sprintf("%v", p.ErrorCode)
+  return fmt.Sprintf("HealthResp({ErrorCode:%s})", errorCodeVal)
+}
+
