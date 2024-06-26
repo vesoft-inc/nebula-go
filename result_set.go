@@ -335,13 +335,13 @@ func (res ResultSet) Scan(v interface{}) error {
 }
 
 // Scan scans the rows into the given value.
-func (res ResultSet) scanRow(row *nebula.Row, colNames []string, t reflect.Type) (reflect.Value, error) {
+func (res ResultSet) scanRow(row *nebula.Row, colNames []string, rowType reflect.Type) (reflect.Value, error) {
 	rowVals := row.GetValues()
 
-	val := reflect.New(t).Elem()
+	val := reflect.New(rowType).Elem()
 
-	for fIdx := 0; fIdx < t.NumField(); fIdx++ {
-		f := t.Field(fIdx)
+	for fIdx := 0; fIdx < rowType.NumField(); fIdx++ {
+		f := rowType.Field(fIdx)
 		tag := f.Tag.Get("nebula")
 
 		if tag == "" {
@@ -356,31 +356,114 @@ func (res ResultSet) scanRow(row *nebula.Row, colNames []string, t reflect.Type)
 
 		rowVal := rowVals[cIdx]
 
-		switch f.Type.Kind() {
-		case reflect.Bool:
-			val.Field(fIdx).SetBool(rowVal.GetBVal())
-		case reflect.Int:
-			val.Field(fIdx).SetInt(rowVal.GetIVal())
-		case reflect.Int8:
-			val.Field(fIdx).SetInt(rowVal.GetIVal())
-		case reflect.Int16:
-			val.Field(fIdx).SetInt(rowVal.GetIVal())
-		case reflect.Int32:
-			val.Field(fIdx).SetInt(rowVal.GetIVal())
-		case reflect.Int64:
-			val.Field(fIdx).SetInt(rowVal.GetIVal())
-		case reflect.Float32:
-			val.Field(fIdx).SetFloat(rowVal.GetFVal())
-		case reflect.Float64:
-			val.Field(fIdx).SetFloat(rowVal.GetFVal())
-		case reflect.String:
-			val.Field(fIdx).SetString(string(rowVal.GetSVal()))
-		default:
-			return val, errors.New("scan: not support type")
+		if f.Type.Kind() == reflect.Slice {
+			list := rowVal.GetLVal()
+			err := scanListCol(list.Values, val.Field(fIdx), f.Type)
+			if err != nil {
+				return val, err
+			}
+		} else {
+			err := scanPrimitiveCol(rowVal, val.Field(fIdx), f.Type.Kind())
+			if err != nil {
+				return val, err
+			}
 		}
 	}
 
 	return val, nil
+}
+
+func scanListCol(vals []*nebula.Value, listVal reflect.Value, sliceType reflect.Type) error {
+	var listCol = reflect.MakeSlice(sliceType, len(vals), len(vals))
+	for _, val := range vals {
+		switch sliceType.Elem().Kind() {
+		case reflect.Struct:
+			ele := reflect.New(sliceType.Elem()).Elem()
+			err := scanStructField(val, ele, sliceType.Elem())
+			if err != nil {
+				return err
+			}
+			listCol = reflect.Append(listCol, ele)
+		default:
+			return errors.New("scan: not support list type")
+		}
+	}
+
+	listVal.Set(listCol)
+
+	return nil
+}
+
+func scanStructField(val *nebula.Value, eleVal reflect.Value, eleType reflect.Type) error {
+	vertex := val.GetVVal()
+	if vertex != nil {
+		tags := vertex.GetTags()
+		if len(tags) != 0 {
+			tag := tags[0] // TODO: support multiple tags
+			props := tag.GetProps()
+			err := scanValFromProps(props, eleVal, eleType)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
+	edge := val.GetEVal()
+	if edge != nil {
+		props := edge.GetProps()
+		err := scanValFromProps(props, eleVal, eleType)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	return errors.New("scan: not support struct type")
+}
+
+func scanValFromProps(props map[string]*nebula.Value, val reflect.Value, tpe reflect.Type) error {
+	for fIdx := 0; fIdx < tpe.NumField(); fIdx++ {
+		f := tpe.Field(fIdx)
+		n := f.Tag.Get("nebula")
+		v, ok := props[n]
+		if !ok {
+			continue
+		}
+		err := scanPrimitiveCol(v, val.Field(fIdx), f.Type.Kind())
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func scanPrimitiveCol(rowVal *nebula.Value, val reflect.Value, kind reflect.Kind) error {
+	switch kind {
+	case reflect.Bool:
+		val.SetBool(rowVal.GetBVal())
+	case reflect.Int:
+		val.SetInt(rowVal.GetIVal())
+	case reflect.Int8:
+		val.SetInt(rowVal.GetIVal())
+	case reflect.Int16:
+		val.SetInt(rowVal.GetIVal())
+	case reflect.Int32:
+		val.SetInt(rowVal.GetIVal())
+	case reflect.Int64:
+		val.SetInt(rowVal.GetIVal())
+	case reflect.Float32:
+		val.SetFloat(rowVal.GetFVal())
+	case reflect.Float64:
+		val.SetFloat(rowVal.GetFVal())
+	case reflect.String:
+		val.SetString(string(rowVal.GetSVal()))
+	default:
+		return errors.New("scan: not support primitive type")
+	}
+
+	return nil
 }
 
 // Returns the number of total rows
