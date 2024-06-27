@@ -374,19 +374,20 @@ func (res ResultSet) scanRow(row *nebula.Row, colNames []string, rowType reflect
 }
 
 func scanListCol(vals []*nebula.Value, listVal reflect.Value, sliceType reflect.Type) error {
-	var listCol = reflect.MakeSlice(sliceType, len(vals), len(vals))
-	for _, val := range vals {
-		switch sliceType.Elem().Kind() {
-		case reflect.Struct:
+	var listCol = reflect.MakeSlice(sliceType, 0, len(vals))
+
+	switch sliceType.Elem().Kind() {
+	case reflect.Struct:
+		for _, val := range vals {
 			ele := reflect.New(sliceType.Elem()).Elem()
 			err := scanStructField(val, ele, sliceType.Elem())
 			if err != nil {
 				return err
 			}
 			listCol = reflect.Append(listCol, ele)
-		default:
-			return errors.New("scan: not support list type")
 		}
+	default:
+		return errors.New("scan: not support list type")
 	}
 
 	listVal.Set(listCol)
@@ -398,15 +399,23 @@ func scanStructField(val *nebula.Value, eleVal reflect.Value, eleType reflect.Ty
 	vertex := val.GetVVal()
 	if vertex != nil {
 		tags := vertex.GetTags()
+		vid := vertex.GetVid()
+
 		if len(tags) != 0 {
-			tag := tags[0] // TODO: support multiple tags
+			tag := tags[0]
+
 			props := tag.GetProps()
+			props["_vid"] = vid
+			tagName := tag.GetName()
+			props["_tag_name"] = &nebula.Value{SVal: tagName}
+
 			err := scanValFromProps(props, eleVal, eleType)
 			if err != nil {
 				return err
 			}
+			return nil
 		}
-		return nil
+		// no tags, continue
 	}
 
 	edge := val.GetEVal()
