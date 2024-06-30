@@ -374,10 +374,9 @@ func (res ResultSet) scanRow(row *nebula.Row, colNames []string, rowType reflect
 }
 
 func scanListCol(vals []*nebula.Value, listVal reflect.Value, sliceType reflect.Type) error {
-	var listCol = reflect.MakeSlice(sliceType, 0, len(vals))
-
 	switch sliceType.Elem().Kind() {
 	case reflect.Struct:
+		var listCol = reflect.MakeSlice(sliceType, 0, len(vals))
 		for _, val := range vals {
 			ele := reflect.New(sliceType.Elem()).Elem()
 			err := scanStructField(val, ele, sliceType.Elem())
@@ -386,11 +385,21 @@ func scanListCol(vals []*nebula.Value, listVal reflect.Value, sliceType reflect.
 			}
 			listCol = reflect.Append(listCol, ele)
 		}
+		listVal.Set(listCol)
+	case reflect.Ptr:
+		var listCol = reflect.MakeSlice(sliceType, 0, len(vals))
+		for _, val := range vals {
+			ele := reflect.New(sliceType.Elem().Elem())
+			err := scanStructField(val, reflect.Indirect(ele), sliceType.Elem().Elem())
+			if err != nil {
+				return err
+			}
+			listCol = reflect.Append(listCol, ele)
+		}
+		listVal.Set(listCol)
 	default:
 		return errors.New("scan: not support list type")
 	}
-
-	listVal.Set(listCol)
 
 	return nil
 }
@@ -428,7 +437,7 @@ func scanStructField(val *nebula.Value, eleVal reflect.Value, eleType reflect.Ty
 		return nil
 	}
 
-	return errors.New("scan: not support struct type")
+	return nil
 }
 
 func scanValFromProps(props map[string]*nebula.Value, val reflect.Value, tpe reflect.Type) error {
