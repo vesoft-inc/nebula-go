@@ -66,10 +66,11 @@ func main() {
 		params["p2"] = 3
 		params["p3"] = []interface{}{true, 3}
 		params["p4"] = map[string]interface{}{"a": true, "b": 3}
+		params["p5"] = int64(9223372036854775807)
 
 		// Extract data from the resultSet
 		{
-			query := "RETURN abs($p2)+1 AS col1, toBoolean($p1) and false AS col2, $p3, $p4.a"
+			query := "RETURN abs($p2)+1 AS col1, toBoolean($p1) and false AS col2, $p3, $p4.a, $p5 AS col5"
 			// Send query
 			// resultSet, err := session.ExecuteWithParameter(query, params)
 			resultSet, err := session.ExecuteWithParameter(query, params)
@@ -90,6 +91,14 @@ func main() {
 			}
 			// Print whole row
 			fmt.Printf("The first row elements: %s\n", record.String())
+
+			// Specifically check the int64 value
+			int64Val, err := record.GetInt64(4) // Assuming it's the 5th column (index 4)
+			if err != nil {
+				log.Error(err.Error())
+			} else {
+				fmt.Printf("The int64 value: %d\n", int64Val)
+			}
 		}
 	}(&wg)
 	wg.Wait()
