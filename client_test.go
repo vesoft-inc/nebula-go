@@ -1117,17 +1117,29 @@ func TestExecuteWithParameter(t *testing.T) {
 	// Load data
 	loadTestData(t, session)
 
-	// p1:true  p2:3  p3:[true,3]  p4:{"a":true,"b":"Bob"}  p5:9223372036854775807
+	// Update the params map
 	params := make(map[string]interface{})
 	params["p1"] = true
 	params["p2"] = 3
 	params["p3"] = []interface{}{true, 3}
 	params["p4"] = map[string]interface{}{"a": true, "b": "Bob"}
-	params["p5"] = int64(9223372036854775807)
+	params["p5"] = int64(9223372036854775807)  // Max int64
+	params["p6"] = int64(-9223372036854775808) // Min int64
+	params["p7"] = int64(42)                   // Normal int64 value
 
 	// Simple result
 	{
-		resp, err := tryToExecuteWithParameter(session, "RETURN toBoolean($p1) and false, $p2+3, $p3[1]>3, $p5 + 1 AS int64_val", params)
+		query := `RETURN 
+			toBoolean($p1) and false, 
+			$p2+3, 
+			$p3[1]>3, 
+			$p5, 
+			$p6, 
+			$p7,
+			$p5 + 1 AS overflow_add,
+			$p6 - 1 AS overflow_subtract,
+			$p7 * 2 AS normal_multiply`
+		resp, err := tryToExecuteWithParameter(session, query, params)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -1138,6 +1150,9 @@ func TestExecuteWithParameter(t *testing.T) {
 			t.Fatalf(err.Error())
 			return
 		}
+
+		// Test existing cases
+		// col0 toBoolean($p1) and false, p1 = true
 		valWrap, err := record.GetValueByIndex(0)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -1150,6 +1165,7 @@ func TestExecuteWithParameter(t *testing.T) {
 		}
 		assert.Equal(t, false, col1)
 
+		// col1 $p2+3, p2 = 3
 		valWrap, err = record.GetValueByIndex(1)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -1162,6 +1178,7 @@ func TestExecuteWithParameter(t *testing.T) {
 		}
 		assert.Equal(t, int64(6), col2)
 
+		// col2 $p3[1]>3, p3 = [true,3]
 		valWrap, err = record.GetValueByIndex(2)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -1174,17 +1191,78 @@ func TestExecuteWithParameter(t *testing.T) {
 		}
 		assert.Equal(t, false, col3)
 
+		// Test int64 cases
+		// Max int64
 		valWrap, err = record.GetValueByIndex(3)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
 		}
-		col4, err := valWrap.AsInt()
+		assert.False(t, valWrap.IsNull())
+		maxInt64, err := valWrap.AsInt()
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
 		}
-		assert.Equal(t, int64(-9223372036854775808), col4) // This is the result of 9223372036854775807 + 1 (overflow)
+		assert.Equal(t, int64(9223372036854775807), maxInt64)
+
+		// Min int64
+		valWrap, err = record.GetValueByIndex(4)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.False(t, valWrap.IsNull())
+		minInt64, err := valWrap.AsInt()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, int64(-9223372036854775808), minInt64)
+
+		// Normal int64
+		valWrap, err = record.GetValueByIndex(5)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.False(t, valWrap.IsNull())
+		normalInt64, err := valWrap.AsInt()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, int64(42), normalInt64)
+
+		// Overflow addition
+		valWrap, err = record.GetValueByIndex(6)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.True(t, valWrap.IsNull(), "Overflow addition should result in null")
+
+		// Overflow subtraction
+		valWrap, err = record.GetValueByIndex(7)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.True(t, valWrap.IsNull(), "Overflow subtraction should result in null")
+
+		// Normal multiplication
+		valWrap, err = record.GetValueByIndex(8)
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.False(t, valWrap.IsNull())
+		normalMultiply, err := valWrap.AsInt()
+		if err != nil {
+			t.Fatalf(err.Error())
+			return
+		}
+		assert.Equal(t, int64(84), normalMultiply)
 	}
 	// Complex result
 	{

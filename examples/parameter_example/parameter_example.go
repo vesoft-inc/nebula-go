@@ -93,11 +93,16 @@ func main() {
 			fmt.Printf("The first row elements: %s\n", record.String())
 
 			// Specifically check the int64 value
-			int64Val, err := record.GetInt64(4) // Assuming it's the 5th column (index 4)
+			valWrap, err := record.GetValueByIndex(4) // Column 'col5'
 			if err != nil {
 				log.Error(err.Error())
 			} else {
-				fmt.Printf("The int64 value: %d\n", int64Val)
+				int64Val, err := valWrap.AsInt()
+				if err != nil {
+					log.Error(err.Error())
+				} else {
+					fmt.Printf("The int64 value (col5): %d\n", int64Val)
+				}
 			}
 		}
 	}(&wg)
