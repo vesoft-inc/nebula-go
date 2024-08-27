@@ -372,9 +372,9 @@ func map2Nmap(m map[string]interface{}) (*nebula.NMap, error) {
 }
 
 // construct go-type to nebula.Value
-func value2Nvalue(any interface{}) (value *nebula.Value, err error) {
+func value2Nvalue(param interface{}) (value *nebula.Value, err error) {
 	value = nebula.NewValue()
-	switch v := any.(type) {
+	switch v := param.(type) {
 	case bool:
 		value.BVal = &v
 	case int:
@@ -428,7 +428,7 @@ func value2Nvalue(any interface{}) (value *nebula.Value, err error) {
 		value.SetGgVal(&v)
 	default:
 		// unsupported other Value type, use this function carefully
-		err = fmt.Errorf("only support convert boolean/float/int/int64/string/map/list to nebula.Value but %T", any)
+		err = fmt.Errorf("only support convert boolean/float/int/int64/string/map/list to nebula.Value but %T", param)
 	}
 	return
 }
