@@ -1117,16 +1117,17 @@ func TestExecuteWithParameter(t *testing.T) {
 	// Load data
 	loadTestData(t, session)
 
-	// p1:true  p2:3  p3:[true,3]  p4:{"a":true,"b":"Bob"}
+	// p1:true  p2:3  p3:[true,3]  p4:{"a":true,"b":"Bob"}  p5:9223372036854775807
 	params := make(map[string]interface{})
 	params["p1"] = true
 	params["p2"] = 3
 	params["p3"] = []interface{}{true, 3}
 	params["p4"] = map[string]interface{}{"a": true, "b": "Bob"}
+	params["p5"] = int64(9223372036854775807)
 
 	// Simple result
 	{
-		resp, err := tryToExecuteWithParameter(session, "RETURN toBoolean($p1) and false, $p2+3, $p3[1]>3", params)
+		resp, err := tryToExecuteWithParameter(session, "RETURN toBoolean($p1) and false, $p2+3, $p3[1]>3, $p5 + 1 AS int64_val", params)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -1147,9 +1148,8 @@ func TestExecuteWithParameter(t *testing.T) {
 			t.Fatalf(err.Error())
 			return
 		}
-		assert.Equal(t,
-			false,
-			col1)
+		assert.Equal(t, false, col1)
+
 		valWrap, err = record.GetValueByIndex(1)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -1160,9 +1160,8 @@ func TestExecuteWithParameter(t *testing.T) {
 			t.Fatalf(err.Error())
 			return
 		}
-		assert.Equal(t,
-			int64(6),
-			col2)
+		assert.Equal(t, int64(6), col2)
+
 		valWrap, err = record.GetValueByIndex(2)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -1173,22 +1172,19 @@ func TestExecuteWithParameter(t *testing.T) {
 			t.Fatalf(err.Error())
 			return
 		}
-		assert.Equal(t,
-			false,
-			col3)
-		valWrap, err = record.GetValueByIndex(2)
+		assert.Equal(t, false, col3)
+
+		valWrap, err = record.GetValueByIndex(3)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
 		}
-		col3, err = valWrap.AsBool()
+		col4, err := valWrap.AsInt()
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
 		}
-		assert.Equal(t,
-			false,
-			col3)
+		assert.Equal(t, int64(-9223372036854775808), col4) // This is the result of 9223372036854775807 + 1 (overflow)
 	}
 	// Complex result
 	{
