@@ -39,7 +39,6 @@ type SessionPool struct {
 	idleSessions   list.List
 	activeSessions list.List
 	conf           SessionPoolConf
-	tz             timezoneInfo
 	log            Logger
 	closed         bool
 	cleanerChan    chan struct{} //notify when pool is close
