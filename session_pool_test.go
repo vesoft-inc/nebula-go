@@ -56,8 +56,10 @@ func TestSessionPoolInvalidConfig(t *testing.T) {
 }
 
 func TestSessionPoolServerCheck(t *testing.T) {
-	prepareSpace("client_test")
-	defer dropSpace("client_test")
+	ctx := context.Background()
+
+	prepareSpace(ctx, "client_test")
+	defer dropSpace(ctx, "client_test")
 	hostAddress := HostAddress{Host: address, Port: port}
 	testcases := []struct {
 		conf   *SessionPoolConf
@@ -116,7 +118,7 @@ func TestSessionPoolServerCheck(t *testing.T) {
 		},
 	}
 	for _, tc := range testcases {
-		_, err := NewSessionPool(*tc.conf, DefaultLogger{})
+		_, err := NewSessionPool(ctx, *tc.conf, DefaultLogger{})
 		if err == nil {
 			t.Fatal("should return error")
 		}
@@ -126,8 +128,10 @@ func TestSessionPoolServerCheck(t *testing.T) {
 }
 
 func TestSessionPoolInvalidHandshakeKey(t *testing.T) {
-	prepareSpace("client_test")
-	defer dropSpace("client_test")
+	ctx := context.Background()
+
+	prepareSpace(ctx, "client_test")
+	defer dropSpace(ctx, "client_test")
 	hostAddress := HostAddress{Host: address, Port: port}
 
 	// wrong handshakeKey info
@@ -141,15 +145,17 @@ func TestSessionPoolInvalidHandshakeKey(t *testing.T) {
 	versionConfig.minSize = 1
 
 	// create session pool
-	_, err = NewSessionPool(*versionConfig, DefaultLogger{})
+	_, err = NewSessionPool(ctx, *versionConfig, DefaultLogger{})
 	if err != nil {
 		assert.Contains(t, err.Error(), "incompatible handshakeKey between client and server")
 	}
 }
 
 func TestSessionPoolBasic(t *testing.T) {
-	prepareSpace("client_test")
-	defer dropSpace("client_test")
+	ctx := context.Background()
+
+	prepareSpace(ctx, "client_test")
+	defer dropSpace(ctx, "client_test")
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
@@ -162,14 +168,14 @@ func TestSessionPoolBasic(t *testing.T) {
 	}
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
 	// execute query
-	resultSet, err := sessionPool.Execute("RETURN 1")
+	resultSet, err := sessionPool.Execute(ctx, "RETURN 1")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -181,11 +187,13 @@ func TestSessionPoolBasic(t *testing.T) {
 }
 
 func TestSessionPoolMultiThreadGetSession(t *testing.T) {
-	err := prepareSpace("client_test")
+	ctx := context.Background()
+
+	err := prepareSpace(ctx, "client_test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace("client_test")
+	defer dropSpace(ctx, "client_test")
 
 	hostList := poolAddress
 	config, err := NewSessionPoolConf(
@@ -199,11 +207,11 @@ func TestSessionPoolMultiThreadGetSession(t *testing.T) {
 	config.maxSize = 333
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
 	var wg sync.WaitGroup
 	rsCh := make(chan *ResultSet, sessionPool.conf.maxSize)
@@ -214,7 +222,7 @@ func TestSessionPoolMultiThreadGetSession(t *testing.T) {
 	for i := 0; i < sessionPool.conf.maxSize; i++ {
 		go func(sessCh chan<- *ResultSet, wg *sync.WaitGroup) {
 			defer wg.Done()
-			rs, err := sessionPool.Execute("yield 1")
+			rs, err := sessionPool.Execute(ctx, "yield 1")
 			if err != nil {
 				t.Errorf("fail to execute query, %s", err.Error())
 			}
@@ -242,11 +250,13 @@ func TestSessionPoolMultiThreadGetSession(t *testing.T) {
 }
 
 func TestSessionPoolMultiThreadExecute(t *testing.T) {
-	err := prepareSpace("client_test")
+	ctx := context.Background()
+
+	err := prepareSpace(ctx, "client_test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace("client_test")
+	defer dropSpace(ctx, "client_test")
 
 	hostList := poolAddress
 	config, err := NewSessionPoolConf(
@@ -260,11 +270,11 @@ func TestSessionPoolMultiThreadExecute(t *testing.T) {
 	config.maxSize = 300
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
 	var wg sync.WaitGroup
 	wg.Add(sessionPool.conf.maxSize)
@@ -274,7 +284,7 @@ func TestSessionPoolMultiThreadExecute(t *testing.T) {
 	for i := 0; i < sessionPool.conf.maxSize; i++ {
 		go func(respCh chan<- *ResultSet, wg *sync.WaitGroup) {
 			defer wg.Done()
-			resp, err := sessionPool.Execute("SHOW HOSTS")
+			resp, err := sessionPool.Execute(ctx, "SHOW HOSTS")
 			if err != nil {
 				t.Errorf(err.Error())
 			}
@@ -308,17 +318,19 @@ func TestSessionPoolMultiThreadExecute(t *testing.T) {
 // This test is used to test if the space bond to session is the same as the space in the session pool config after executing
 // a query contains `USE <space_name>` statement.
 func TestSessionPoolSpaceChange(t *testing.T) {
-	err := prepareSpace("test_space_1")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer dropSpace("test_space_1")
+	ctx := context.Background()
 
-	err = prepareSpace("test_space_2")
+	err := prepareSpace(ctx, "test_space_1")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace("test_space_2")
+	defer dropSpace(ctx, "test_space_1")
+
+	err = prepareSpace(ctx, "test_space_2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dropSpace(ctx, "test_space_2")
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
@@ -334,14 +346,14 @@ func TestSessionPoolSpaceChange(t *testing.T) {
 	config.maxSize = 1
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
 	// execute query in test_space_2
-	resultSet, err := sessionPool.Execute("USE test_space_2; SHOW HOSTS;")
+	resultSet, err := sessionPool.Execute(ctx, "USE test_space_2; SHOW HOSTS;")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -349,7 +361,7 @@ func TestSessionPoolSpaceChange(t *testing.T) {
 		resultSet.GetErrorCode(), resultSet.GetErrorMsg()))
 
 	// this query should be executed in test_space_1
-	resultSet, err = sessionPool.Execute("SHOW HOSTS;")
+	resultSet, err = sessionPool.Execute(ctx, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -359,12 +371,14 @@ func TestSessionPoolSpaceChange(t *testing.T) {
 }
 
 func TestSessionPoolCreateTagAndEdge(t *testing.T) {
+	ctx := context.Background()
+
 	spaceName := "test_space_schema"
-	err := prepareSpace(spaceName)
+	err := prepareSpace(ctx, spaceName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace(spaceName)
+	defer dropSpace(ctx, spaceName)
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
@@ -380,13 +394,13 @@ func TestSessionPoolCreateTagAndEdge(t *testing.T) {
 	config.maxSize = 1
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
-	spaces, err := sessionPool.ShowSpaces()
+	spaces, err := sessionPool.ShowSpaces(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -416,18 +430,18 @@ func TestSessionPoolCreateTagAndEdge(t *testing.T) {
 		},
 	}
 
-	_, err = sessionPool.CreateTag(tagSchema)
+	_, err = sessionPool.CreateTag(ctx, tagSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	tags, err := sessionPool.ShowTags()
+	tags, err := sessionPool.ShowTags(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(tags))
 	assert.Equal(t, "account", tags[0].Name)
-	labels, err := sessionPool.DescTag("account")
+	labels, err := sessionPool.DescTag(ctx, "account")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -449,18 +463,18 @@ func TestSessionPoolCreateTagAndEdge(t *testing.T) {
 		},
 	}
 
-	_, err = sessionPool.CreateEdge(edgeSchema)
+	_, err = sessionPool.CreateEdge(ctx, edgeSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	edges, err := sessionPool.ShowEdges()
+	edges, err := sessionPool.ShowEdges(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(edges))
 	assert.Equal(t, "account_email", edges[0].Name)
-	labels, err = sessionPool.DescEdge("account_email")
+	labels, err = sessionPool.DescEdge(ctx, "account_email")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -470,12 +484,14 @@ func TestSessionPoolCreateTagAndEdge(t *testing.T) {
 }
 
 func TestSessionPoolCreateTagAndEdgeWithTTL(t *testing.T) {
+	ctx := context.Background()
+
 	spaceName := "test_space_schema_ttl"
-	err := prepareSpace(spaceName)
+	err := prepareSpace(ctx, spaceName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace(spaceName)
+	defer dropSpace(ctx, spaceName)
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
@@ -491,13 +507,13 @@ func TestSessionPoolCreateTagAndEdgeWithTTL(t *testing.T) {
 	config.maxSize = 1
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
-	spaces, err := sessionPool.ShowSpaces()
+	spaces, err := sessionPool.ShowSpaces(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -525,18 +541,18 @@ func TestSessionPoolCreateTagAndEdgeWithTTL(t *testing.T) {
 		TTLDuration: 5,
 	}
 
-	_, err = sessionPool.CreateTag(tagSchema)
+	_, err = sessionPool.CreateTag(ctx, tagSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	tags, err := sessionPool.ShowTags()
+	tags, err := sessionPool.ShowTags(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(tags))
 	assert.Equal(t, "user", tags[0].Name)
-	labels, err := sessionPool.DescTag("user")
+	labels, err := sessionPool.DescTag(ctx, "user")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -546,7 +562,7 @@ func TestSessionPoolCreateTagAndEdgeWithTTL(t *testing.T) {
 	assert.Equal(t, "created_at", labels[1].Field)
 	assert.Equal(t, "int64", labels[1].Type)
 
-	col, duration, err := sessionPool.GetTagTTL("user")
+	col, duration, err := sessionPool.GetTagTTL(ctx, "user")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -566,18 +582,18 @@ func TestSessionPoolCreateTagAndEdgeWithTTL(t *testing.T) {
 		TTLDuration: 5,
 	}
 
-	_, err = sessionPool.CreateEdge(edgeSchema)
+	_, err = sessionPool.CreateEdge(ctx, edgeSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	edges, err := sessionPool.ShowEdges()
+	edges, err := sessionPool.ShowEdges(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(edges))
 	assert.Equal(t, "friend", edges[0].Name)
-	labels, err = sessionPool.DescEdge("friend")
+	labels, err = sessionPool.DescEdge(ctx, "friend")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -585,7 +601,7 @@ func TestSessionPoolCreateTagAndEdgeWithTTL(t *testing.T) {
 	assert.Equal(t, "created_at", labels[0].Field)
 	assert.Equal(t, "int64", labels[0].Type)
 
-	col, duration, err = sessionPool.GetEdgeTTL("friend")
+	col, duration, err = sessionPool.GetEdgeTTL(ctx, "friend")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -594,12 +610,14 @@ func TestSessionPoolCreateTagAndEdgeWithTTL(t *testing.T) {
 }
 
 func TestSessionPoolAddTTL(t *testing.T) {
+	ctx := context.Background()
+
 	spaceName := "test_space_ttl"
-	err := prepareSpace(spaceName)
+	err := prepareSpace(ctx, spaceName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace(spaceName)
+	defer dropSpace(ctx, spaceName)
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
@@ -615,13 +633,13 @@ func TestSessionPoolAddTTL(t *testing.T) {
 	config.maxSize = 1
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
-	spaces, err := sessionPool.ShowSpaces()
+	spaces, err := sessionPool.ShowSpaces(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -643,24 +661,24 @@ func TestSessionPoolAddTTL(t *testing.T) {
 		},
 	}
 
-	_, err = sessionPool.CreateTag(tagSchema)
+	_, err = sessionPool.CreateTag(ctx, tagSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Add TTL to tag
-	_, err = sessionPool.AddTagTTL("user", "created_at", 5)
+	_, err = sessionPool.AddTagTTL(ctx, "user", "created_at", 5)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	tags, err := sessionPool.ShowTags()
+	tags, err := sessionPool.ShowTags(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(tags))
 	assert.Equal(t, "user", tags[0].Name)
-	labels, err := sessionPool.DescTag("user")
+	labels, err := sessionPool.DescTag(ctx, "user")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -679,24 +697,24 @@ func TestSessionPoolAddTTL(t *testing.T) {
 		},
 	}
 
-	_, err = sessionPool.CreateEdge(edgeSchema)
+	_, err = sessionPool.CreateEdge(ctx, edgeSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Add TTL to edge
-	_, err = sessionPool.AddEdgeTTL("friend", "created_at", 3)
+	_, err = sessionPool.AddEdgeTTL(ctx, "friend", "created_at", 3)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	edges, err := sessionPool.ShowEdges()
+	edges, err := sessionPool.ShowEdges(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(edges))
 	assert.Equal(t, "friend", edges[0].Name)
-	labels, err = sessionPool.DescEdge("friend")
+	labels, err = sessionPool.DescEdge(ctx, "friend")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -710,30 +728,30 @@ func TestSessionPoolAddTTL(t *testing.T) {
 	now := time.Now().Unix()
 	// Insert vertices and edges
 	q := fmt.Sprintf(`INSERT VERTEX user(created_at) VALUES "test1":(%d);`, now)
-	_, err = sessionPool.ExecuteAndCheck(q)
+	_, err = sessionPool.ExecuteAndCheck(ctx, q)
 	if err != nil {
 		t.Fatal(err)
 	}
 	q = fmt.Sprintf(`INSERT VERTEX user(created_at) VALUES "test2":(%d);`, now)
-	_, err = sessionPool.ExecuteAndCheck(q)
+	_, err = sessionPool.ExecuteAndCheck(ctx, q)
 	if err != nil {
 		t.Fatal(err)
 
 	}
 	q = fmt.Sprintf(`INSERT EDGE friend(created_at) VALUES "test1" -> "test2":(%d);`, now)
-	_, err = sessionPool.ExecuteAndCheck(q)
+	_, err = sessionPool.ExecuteAndCheck(ctx, q)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	rs, err := sessionPool.ExecuteAndCheck(`FETCH PROP ON friend "test1" -> "test2" YIELD edge AS e;`)
+	rs, err := sessionPool.ExecuteAndCheck(ctx, `FETCH PROP ON friend "test1" -> "test2" YIELD edge AS e;`)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(rs.GetRows()))
 	// Sleep for 5 seconds to wait for the tag to be expired
 	time.Sleep(5 * time.Second)
-	rs, err = sessionPool.ExecuteAndCheck(`FETCH PROP ON friend "test1" -> "test2" YIELD edge AS e;`)
+	rs, err = sessionPool.ExecuteAndCheck(ctx, `FETCH PROP ON friend "test1" -> "test2" YIELD edge AS e;`)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -741,11 +759,13 @@ func TestSessionPoolAddTTL(t *testing.T) {
 }
 
 func TestIdleSessionCleaner(t *testing.T) {
-	err := prepareSpace("client_test")
+	ctx := context.Background()
+
+	err := prepareSpace(ctx, "client_test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace("client_test")
+	defer dropSpace(ctx, "client_test")
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	idleTimeoutConfig, err := NewSessionPoolConf(
@@ -762,11 +782,11 @@ func TestIdleSessionCleaner(t *testing.T) {
 	idleTimeoutConfig.maxSize = 100
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*idleTimeoutConfig, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *idleTimeoutConfig, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 	assert.Equal(t, 5, sessionPool.activeSessions.Len()+sessionPool.idleSessions.Len(),
 		"Total number of sessions should be 5")
 
@@ -777,7 +797,7 @@ func TestIdleSessionCleaner(t *testing.T) {
 	for i := 0; i < sessionPool.conf.maxSize; i++ {
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			_, err := sessionPool.Execute("RETURN 1")
+			_, err := sessionPool.Execute(ctx, "RETURN 1")
 			if err != nil {
 				t.Errorf(err.Error())
 			}
@@ -799,11 +819,13 @@ func TestIdleSessionCleaner(t *testing.T) {
 }
 
 func TestRetryGetSession(t *testing.T) {
-	err := prepareSpace("client_test")
+	ctx := context.Background()
+
+	err := prepareSpace(ctx, "client_test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace("client_test")
+	defer dropSpace(ctx, "client_test")
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
@@ -819,14 +841,14 @@ func TestRetryGetSession(t *testing.T) {
 	config.retryGetSessionTimes = 1
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
 	// kill all sessions in the cluster
-	resultSet, err := sessionPool.Execute("SHOW SESSIONS | KILL SESSIONS $-.SessionId")
+	resultSet, err := sessionPool.Execute(ctx, "SHOW SESSIONS | KILL SESSIONS $-.SessionId")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -834,7 +856,7 @@ func TestRetryGetSession(t *testing.T) {
 		resultSet.GetErrorCode(), resultSet.GetErrorMsg()))
 
 	// execute query, it should retry to get session
-	resultSet, err = sessionPool.Execute("SHOW HOSTS;")
+	resultSet, err = sessionPool.Execute(ctx, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -843,11 +865,13 @@ func TestRetryGetSession(t *testing.T) {
 }
 
 func BenchmarkConcurrency(b *testing.B) {
-	err := prepareSpace("client_test")
+	ctx := context.Background()
+
+	err := prepareSpace(ctx, "client_test")
 	if err != nil {
 		b.Fatal(err)
 	}
-	defer dropSpace("client_test")
+	defer dropSpace(ctx, "client_test")
 
 	// create session pool config
 	hostAddress := HostAddress{Host: address, Port: port}
@@ -863,11 +887,11 @@ func BenchmarkConcurrency(b *testing.B) {
 	}
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		b.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
 	concurrencyLevels := []int{5, 10, 100, 1000}
 	for _, clients := range concurrencyLevels {
@@ -877,7 +901,7 @@ func BenchmarkConcurrency(b *testing.B) {
 			for n := 0; n < clients; n++ {
 				wg.Add(1)
 				go func() {
-					_, err := sessionPool.Execute("SHOW HOSTS;")
+					_, err := sessionPool.Execute(ctx, "SHOW HOSTS;")
 					if err != nil {
 						b.Errorf(err.Error())
 					}
@@ -893,11 +917,13 @@ func BenchmarkConcurrency(b *testing.B) {
 
 // retry when return the error code *ErrorCode_E_SESSION_INVALID*
 func TestSessionPoolRetry(t *testing.T) {
-	err := prepareSpace("client_test")
+	ctx := context.Background()
+
+	err := prepareSpace(ctx, "client_test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace("client_test")
+	defer dropSpace(ctx, "client_test")
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
@@ -913,11 +939,11 @@ func TestSessionPoolRetry(t *testing.T) {
 	config.retryGetSessionTimes = 1
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 	testcaes := []struct {
 		name    string
 		retryFn func(*pureSession) (*ResultSet, error)
@@ -965,13 +991,13 @@ func TestSessionPoolRetry(t *testing.T) {
 		},
 	}
 	for _, tc := range testcaes {
-		session, err := sessionPool.newSession()
+		session, err := sessionPool.newSession(ctx)
 		if err != nil {
 			t.Fatal(err)
 		}
 		original := session.sessionID
 		conn := session.connection
-		_, _ = sessionPool.executeWithRetry(session, tc.retryFn, 2)
+		_, _ = sessionPool.executeWithRetry(ctx, session, tc.retryFn, 2)
 		if tc.retry {
 			assert.NotEqual(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
 			assert.NotEqual(t, conn, nil, fmt.Sprintf("test case: %s", tc.name))
@@ -982,11 +1008,13 @@ func TestSessionPoolRetry(t *testing.T) {
 }
 
 func TestSessionPoolClose(t *testing.T) {
-	err := prepareSpace("client_test")
+	ctx := context.Background()
+
+	err := prepareSpace(ctx, "client_test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace("client_test")
+	defer dropSpace(ctx, "client_test")
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
@@ -1002,21 +1030,23 @@ func TestSessionPoolClose(t *testing.T) {
 	config.retryGetSessionTimes = 1
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	sessionPool.Close()
+	sessionPool.Close(ctx)
 
 	assert.Equal(t, 0, sessionPool.activeSessions.Len(), "Total number of active connections should be 0")
 	assert.Equal(t, 0, sessionPool.idleSessions.Len(), "Total number of active connections should be 0")
-	_, err = sessionPool.Execute("SHOW HOSTS;")
+	_, err = sessionPool.Execute(ctx, "SHOW HOSTS;")
 	assert.Equal(t, err.Error(), "failed to execute: Session pool has been closed", "session pool should be closed")
 }
 
 // TestSessionPoolGetSessionTimeout tests the scenario that if all requests are timeout,
 // the session pool should return timeout error, not reach the pool size limit.
 func TestQueryTimeout(t *testing.T) {
+	ctx := context.Background()
+
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
 		"root",
@@ -1031,13 +1061,13 @@ func TestQueryTimeout(t *testing.T) {
 	config.retryGetSessionTimes = 1
 	config.timeOut = 100 * time.Millisecond
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
-	createTestDataSchema(t, sessionPool)
-	loadTestData(t, sessionPool)
+	defer sessionPool.Close(ctx)
+	createTestDataSchema(ctx, t, sessionPool)
+	loadTestData(ctx, t, sessionPool)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	errCh := make(chan error, 1)
 	defer cancel()
@@ -1051,7 +1081,7 @@ func TestQueryTimeout(t *testing.T) {
 				case <-ctx.Done():
 					return
 				default:
-					_, err := sessionPool.Execute(`go 2000 step from "Bob" over like yield tags($$)`)
+					_, err := sessionPool.Execute(ctx, `go 2000 step from "Bob" over like yield tags($$)`)
 					if err == nil {
 						errCh <- fmt.Errorf("should return error")
 						return

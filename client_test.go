@@ -11,6 +11,7 @@
 package nebula_go
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -57,20 +58,21 @@ var testPoolConfig = GetDefaultConf()
 // Using docker-compose is the easiest way and you can reference this file:
 //   https://github.com/vesoft-inc/nebula/blob/master/docker/docker-compose.yaml
 
-func logoutAndClose(conn *connection, sessionID int64) {
-	conn.signOut(sessionID)
+func logoutAndClose(ctx context.Context, conn *connection, sessionID int64) {
+	conn.signOut(ctx, sessionID)
 	conn.close()
 }
 
 func TestConnection(t *testing.T) {
+	ctx := context.Background()
 	hostAddress := HostAddress{Host: address, Port: port}
 	conn := newConnection(hostAddress)
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil, "")
+	err := conn.open(ctx, hostAddress, testPoolConfig.TimeOut, nil, false, nil, "")
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
 
-	authResp, authErr := conn.authenticate(username, password)
+	authResp, authErr := conn.authenticate(ctx, username, password)
 	if authErr != nil {
 		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
 	}
@@ -82,37 +84,37 @@ func TestConnection(t *testing.T) {
 
 	sessionID := authResp.GetSessionID()
 
-	defer logoutAndClose(conn, sessionID)
+	defer logoutAndClose(ctx, conn, sessionID)
 
-	resp, err := conn.execute(sessionID, "SHOW HOSTS;")
+	resp, err := conn.execute(ctx, sessionID, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkConResp("show hosts", resp)
 
-	resp, err = conn.execute(sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
+	resp, err = conn.execute(ctx, sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
 	checkConResp("create space", resp)
 
-	resp, err = conn.execute(sessionID, "return 1")
+	resp, err = conn.execute(ctx, sessionID, "return 1")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
 	checkConResp("return 1", resp)
 
-	resp, err = conn.execute(sessionID, "DROP SPACE client_test;")
+	resp, err = conn.execute(ctx, sessionID, "DROP SPACE client_test;")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
 	checkConResp("drop space", resp)
 
-	res := conn.ping()
+	res := conn.ping(ctx)
 	if res != true {
 		t.Error("Connection ping failed")
 		return
@@ -120,14 +122,15 @@ func TestConnection(t *testing.T) {
 }
 
 func TestConnectionIPv6(t *testing.T) {
+	ctx := context.Background()
 	hostAddress := HostAddress{Host: addressIPv6, Port: port}
 	conn := newConnection(hostAddress)
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil, "")
+	err := conn.open(ctx, hostAddress, testPoolConfig.TimeOut, nil, false, nil, "")
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
 
-	authResp, authErr := conn.authenticate(username, password)
+	authResp, authErr := conn.authenticate(ctx, username, password)
 	if authErr != nil {
 		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
 	}
@@ -139,29 +142,29 @@ func TestConnectionIPv6(t *testing.T) {
 
 	sessionID := authResp.GetSessionID()
 
-	defer logoutAndClose(conn, sessionID)
+	defer logoutAndClose(ctx, conn, sessionID)
 
-	resp, err := conn.execute(sessionID, "SHOW HOSTS;")
+	resp, err := conn.execute(ctx, sessionID, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkConResp("show hosts", resp)
 
-	resp, err = conn.execute(sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
+	resp, err = conn.execute(ctx, sessionID, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
 	checkConResp("create space", resp)
-	resp, err = conn.execute(sessionID, "DROP SPACE client_test;")
+	resp, err = conn.execute(ctx, sessionID, "DROP SPACE client_test;")
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
 	checkConResp("drop space", resp)
 
-	res := conn.ping()
+	res := conn.ping(ctx)
 	if res != true {
 		t.Error("Connection ping failed")
 		return
@@ -169,6 +172,8 @@ func TestConnectionIPv6(t *testing.T) {
 }
 
 func TestConfigs(t *testing.T) {
+	ctx := context.Background()
+
 	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
 	hostList = append(hostList, hostAddress)
@@ -206,7 +211,7 @@ func TestConfigs(t *testing.T) {
 
 	for _, testPoolConfig := range configList {
 		// Initialize connection pool
-		pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+		pool, err := NewConnectionPool(ctx, hostList, testPoolConfig, nebulaLog)
 		if err != nil {
 			t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 		}
@@ -214,14 +219,14 @@ func TestConfigs(t *testing.T) {
 		defer pool.Close()
 
 		// Create session
-		session, err := pool.GetSession(username, password)
+		session, err := pool.GetSession(ctx, username, password)
 		if err != nil {
 			t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 				username, password, err.Error())
 		}
-		defer session.Release()
+		defer session.Release(ctx)
 		// Execute a query
-		resp, err := tryToExecute(session, "SHOW HOSTS;")
+		resp, err := tryToExecute(ctx, session, "SHOW HOSTS;")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -229,6 +234,7 @@ func TestConfigs(t *testing.T) {
 		checkResultSet(t, "show hosts", resp)
 		// Create a new space
 		resp, err = tryToExecute(
+			ctx,
 			session,
 			"CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 		if err != nil {
@@ -237,7 +243,7 @@ func TestConfigs(t *testing.T) {
 		}
 		checkResultSet(t, "create space", resp)
 
-		err = dropSpace("client_test")
+		err = dropSpace(ctx, "client_test")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -246,6 +252,7 @@ func TestConfigs(t *testing.T) {
 }
 
 func TestVersionVerify(t *testing.T) {
+	ctx := context.Background()
 	const (
 		username = "root"
 		password = "nebula"
@@ -254,7 +261,7 @@ func TestVersionVerify(t *testing.T) {
 	hostAddress := HostAddress{Host: address, Port: port}
 
 	conn := newConnection(hostAddress)
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil, "INVALID_VERSION")
+	err := conn.open(ctx, hostAddress, testPoolConfig.TimeOut, nil, false, nil, "INVALID_VERSION")
 	if err != nil {
 		assert.Contains(t, err.Error(), "incompatible handshakeKey between client and server")
 	}
@@ -262,6 +269,8 @@ func TestVersionVerify(t *testing.T) {
 }
 
 func TestAuthentication(t *testing.T) {
+	ctx := context.Background()
+
 	const (
 		username = "dummy"
 		password = "nebula"
@@ -270,13 +279,13 @@ func TestAuthentication(t *testing.T) {
 	hostAddress := HostAddress{Host: address, Port: port}
 
 	conn := newConnection(hostAddress)
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil, "")
+	err := conn.open(ctx, hostAddress, testPoolConfig.TimeOut, nil, false, nil, "")
 	if err != nil {
 		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
 	defer conn.close()
 
-	resp, authErr := conn.authenticate(username, password)
+	resp, authErr := conn.authenticate(ctx, username, password)
 	if authErr != nil {
 		t.Fatalf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
 	}
@@ -285,6 +294,8 @@ func TestAuthentication(t *testing.T) {
 }
 
 func TestInvalidHostTimeout(t *testing.T) {
+	ctx := context.Background()
+
 	hostAddress := HostAddress{Host: address, Port: port}
 	// invalid host
 	invalidHostAddress := HostAddress{Host: "192.168.100.125", Port: 3699}
@@ -296,21 +307,22 @@ func TestInvalidHostTimeout(t *testing.T) {
 	}
 
 	// Initialize connection pool
-	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+	pool, err := NewConnectionPool(ctx, hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
 	// close all connections in the pool
 	defer pool.Close()
-	err = pool.Ping(invalidHostList[0], 1000*time.Millisecond)
+	err = pool.Ping(ctx, invalidHostList[0], 1000*time.Millisecond)
 	assert.EqualError(t, err, "failed to open transport, error: dial tcp 192.168.100.125:3699: i/o timeout")
-	err = pool.Ping(invalidHostList[1], 1000*time.Millisecond)
+	err = pool.Ping(ctx, invalidHostList[1], 1000*time.Millisecond)
 	if err != nil {
 		t.Error("failed to ping 127.0.0.1")
 	}
 }
 
 func TestServiceDataIO(t *testing.T) {
+	ctx := context.Background()
 	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
 	hostList = append(hostList, hostAddress)
@@ -323,7 +335,7 @@ func TestServiceDataIO(t *testing.T) {
 	}
 
 	// Initialize connection pool
-	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+	pool, err := NewConnectionPool(ctx, hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -331,7 +343,7 @@ func TestServiceDataIO(t *testing.T) {
 	defer pool.Close()
 
 	// Create session
-	session, err := pool.GetSession(username, password)
+	session, err := pool.GetSession(ctx, username, password)
 	if err != nil {
 		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error())
@@ -339,12 +351,12 @@ func TestServiceDataIO(t *testing.T) {
 	// Save session create time
 	loc, _ := time.LoadLocation("Asia/Shanghai")
 	sessionCreatedTime := time.Now().In(loc)
-	defer session.Release()
+	defer session.Release(ctx)
 
 	// Create schemas
-	createTestDataSchema(t, session)
+	createTestDataSchema(ctx, t, session)
 	// Load data
-	loadTestData(t, session)
+	loadTestData(ctx, t, session)
 
 	// test base type
 	{
@@ -355,7 +367,7 @@ func TestServiceDataIO(t *testing.T) {
 				"person.start_school, person.morning, " +
 				"person.property, person.is_girl, person.child_name, " +
 				"person.expend, person.first_out_city, person.hobby"
-		resp, err := tryToExecute(session, query)
+		resp, err := tryToExecute(ctx, session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -437,7 +449,7 @@ func TestServiceDataIO(t *testing.T) {
 
 	// test node
 	{
-		resp, err := tryToExecute(session, "MATCH (v:person {name: \"Bob\"}) RETURN v")
+		resp, err := tryToExecute(ctx, session, "MATCH (v:person {name: \"Bob\"}) RETURN v")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -485,7 +497,7 @@ func TestServiceDataIO(t *testing.T) {
 
 	// test edge
 	{
-		resp, err := tryToExecute(session, "MATCH (:person{name: \"Bob\"}) -[e:friend]-> (:person{name: \"Lily\"}) RETURN e")
+		resp, err := tryToExecute(ctx, session, "MATCH (:person{name: \"Bob\"}) -[e:friend]-> (:person{name: \"Lily\"}) RETURN e")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -527,7 +539,7 @@ func TestServiceDataIO(t *testing.T) {
 
 	// Test path
 	{
-		resp, err := tryToExecute(session, "MATCH p = (:person{name: \"Bob\"}) -[e:friend]-> (:person{name: \"Lily\"}) RETURN p")
+		resp, err := tryToExecute(ctx, session, "MATCH p = (:person{name: \"Bob\"}) -[e:friend]-> (:person{name: \"Lily\"}) RETURN p")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -556,7 +568,7 @@ func TestServiceDataIO(t *testing.T) {
 	// Check timestamp
 	{
 		// test show jobs
-		_, err := tryToExecute(session, "SUBMIT JOB STATS")
+		_, err := tryToExecute(ctx, session, "SUBMIT JOB STATS")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -564,7 +576,7 @@ func TestServiceDataIO(t *testing.T) {
 		expected := int8(time.Now().In(loc).Hour())
 		time.Sleep(5 * time.Second)
 
-		resp, err := tryToExecute(session, "SHOW JOBS")
+		resp, err := tryToExecute(ctx, session, "SHOW JOBS")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -595,7 +607,7 @@ func TestServiceDataIO(t *testing.T) {
 		assert.Equal(t, expected, localTime.GetHour())
 
 		// test show sessions
-		resp, err = tryToExecute(session, "SHOW SESSIONS")
+		resp, err = tryToExecute(ctx, session, "SHOW SESSIONS")
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -624,7 +636,7 @@ func TestServiceDataIO(t *testing.T) {
 		}
 		assert.Equal(t, int8(sessionCreatedTime.Hour()), localTime.GetHour())
 	}
-	err = dropSpace("client_test")
+	err = dropSpace(ctx, "client_test")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -632,6 +644,7 @@ func TestServiceDataIO(t *testing.T) {
 }
 
 func TestPool_SingleHost(t *testing.T) {
+	ctx := context.Background()
 	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
 	hostList = append(hostList, hostAddress)
@@ -644,7 +657,7 @@ func TestPool_SingleHost(t *testing.T) {
 	}
 
 	// Initialize connection pool
-	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+	pool, err := NewConnectionPool(ctx, hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -652,34 +665,36 @@ func TestPool_SingleHost(t *testing.T) {
 	defer pool.Close()
 
 	// Create session
-	session, err := pool.GetSession(username, password)
+	session, err := pool.GetSession(ctx, username, password)
 	if err != nil {
 		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error())
 	}
-	defer session.Release()
+	defer session.Release(ctx)
 	// Execute a query
-	resp, err := tryToExecute(session, "SHOW HOSTS;")
+	resp, err := tryToExecute(ctx, session, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkResultSet(t, "show hosts", resp)
 	// Create a new space
-	resp, err = tryToExecute(session, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
+	resp, err = tryToExecute(ctx, session, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkResultSet(t, "create space", resp)
 
-	err = dropSpace("client_test")
+	err = dropSpace(ctx, "client_test")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
 }
 
 func TestPool_MultiHosts(t *testing.T) {
+	ctx := context.Background()
+
 	hostList := poolAddress
 	// Minimum pool size < hosts number
 	multiHostsConfig := PoolConfig{
@@ -690,7 +705,7 @@ func TestPool_MultiHosts(t *testing.T) {
 	}
 
 	// Initialize connection pool
-	pool, err := NewConnectionPool(hostList, multiHostsConfig, nebulaLog)
+	pool, err := NewConnectionPool(ctx, hostList, multiHostsConfig, nebulaLog)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
 	}
@@ -699,7 +714,7 @@ func TestPool_MultiHosts(t *testing.T) {
 
 	// Take all idle connection and try to create a new session
 	for i := 0; i < multiHostsConfig.MaxConnPoolSize; i++ {
-		session, err := pool.GetSession(username, password)
+		session, err := pool.GetSession(ctx, username, password)
 		if err != nil {
 			t.Errorf("fail to create a new session from connection pool, %s", err.Error())
 		}
@@ -709,24 +724,24 @@ func TestPool_MultiHosts(t *testing.T) {
 	assert.Equal(t, 0, pool.idleConnectionQueue.Len())
 	assert.Equal(t, 3, pool.activeConnectionQueue.Len())
 
-	_, err = pool.GetSession(username, password)
+	_, err = pool.GetSession(ctx, username, password)
 	assert.EqualError(t, err, "failed to get connection: No valid connection in the idle queue and connection number has reached the pool capacity")
 
 	// Release 1 connection back to pool
 	sessionToRelease := sessionList[0]
-	sessionToRelease.Release()
+	sessionToRelease.Release(ctx)
 	sessionList = sessionList[1:]
 	assert.Equal(t, 1, pool.idleConnectionQueue.Len())
 	assert.Equal(t, 2, pool.activeConnectionQueue.Len())
 	// Try again to get connection
-	newSession, err := pool.GetSession(username, password)
+	newSession, err := pool.GetSession(ctx, username, password)
 	if err != nil {
 		t.Errorf("fail to create a new session, %s", err.Error())
 	}
 	assert.Equal(t, 0, pool.idleConnectionQueue.Len())
 	assert.Equal(t, 3, pool.activeConnectionQueue.Len())
 
-	resp, err := tryToExecute(newSession, "SHOW HOSTS;")
+	resp, err := tryToExecute(ctx, newSession, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -734,15 +749,17 @@ func TestPool_MultiHosts(t *testing.T) {
 	checkResultSet(t, "show hosts", resp)
 
 	// Try to get more session when the pool is full
-	_, err = pool.GetSession(username, password)
+	_, err = pool.GetSession(ctx, username, password)
 	assert.EqualError(t, err, "failed to get connection: No valid connection in the idle queue and connection number has reached the pool capacity")
 
 	for i := 0; i < len(sessionList); i++ {
-		sessionList[i].Release()
+		sessionList[i].Release(ctx)
 	}
 }
 
 func TestMultiThreads(t *testing.T) {
+	ctx := context.Background()
+
 	hostList := poolAddress
 
 	testPoolConfig := PoolConfig{
@@ -753,7 +770,7 @@ func TestMultiThreads(t *testing.T) {
 	}
 
 	// Initialize connection pool
-	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+	pool, err := NewConnectionPool(ctx, hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("fail to initialize the connection pool, host: %s, port: %d, %s",
 			address, port, err.Error()))
@@ -770,7 +787,7 @@ func TestMultiThreads(t *testing.T) {
 	for i := 0; i < testPoolConfig.MaxConnPoolSize; i++ {
 		go func(sessCh chan<- *Session, wg *sync.WaitGroup) {
 			defer wg.Done()
-			session, err := pool.GetSession(username, password)
+			session, err := pool.GetSession(ctx, username, password)
 			if err != nil {
 				t.Errorf("fail to create a new session from connection pool, %s", err.Error())
 			}
@@ -792,12 +809,14 @@ func TestMultiThreads(t *testing.T) {
 	assert.Equal(t, 666, len(sessionList), "Total number of sessions should be 666")
 
 	for i := 0; i < testPoolConfig.MaxConnPoolSize; i++ {
-		sessionList[i].Release()
+		sessionList[i].Release(ctx)
 	}
 	assert.Equal(t, 666, pool.getIdleConnCount(), "Total number of idle connections should be 666")
 }
 
 func TestLoadBalancer(t *testing.T) {
+	ctx := context.Background()
+
 	hostList := poolAddress
 	var loadPerHost = make(map[HostAddress]int)
 	testPoolConfig := PoolConfig{
@@ -808,7 +827,7 @@ func TestLoadBalancer(t *testing.T) {
 	}
 
 	// Initialize connection pool
-	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+	pool, err := NewConnectionPool(ctx, hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -818,7 +837,7 @@ func TestLoadBalancer(t *testing.T) {
 
 	// Create multiple sessions
 	for i := 0; i < 999; i++ {
-		session, err := pool.GetSession(username, password)
+		session, err := pool.GetSession(ctx, username, password)
 		if err != nil {
 			t.Errorf("fail to create a new session from connection pool, %s", err.Error())
 		}
@@ -831,11 +850,13 @@ func TestLoadBalancer(t *testing.T) {
 		assert.Equal(t, 333, v, "Total number of sessions should be 333")
 	}
 	for i := 0; i < len(sessionList); i++ {
-		sessionList[i].Release()
+		sessionList[i].Release(ctx)
 	}
 }
 
 func TestIdleTimeoutCleaner(t *testing.T) {
+	ctx := context.Background()
+
 	hostList := poolAddress
 
 	idleTimeoutConfig := PoolConfig{
@@ -846,7 +867,7 @@ func TestIdleTimeoutCleaner(t *testing.T) {
 	}
 
 	// Initialize connection pool
-	pool, err := NewConnectionPool(hostList, idleTimeoutConfig, nebulaLog)
+	pool, err := NewConnectionPool(ctx, hostList, idleTimeoutConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -856,7 +877,7 @@ func TestIdleTimeoutCleaner(t *testing.T) {
 
 	// Create session
 	for i := 0; i < idleTimeoutConfig.MaxConnPoolSize; i++ {
-		session, err := pool.GetSession(username, password)
+		session, err := pool.GetSession(ctx, username, password)
 		if err != nil {
 			t.Errorf("fail to create a new session from connection pool, %s", err.Error())
 		}
@@ -864,12 +885,12 @@ func TestIdleTimeoutCleaner(t *testing.T) {
 	}
 
 	for i := range sessionList {
-		_, err := sessionList[i].Execute("SHOW HOSTS;")
+		_, err := sessionList[i].Execute(ctx, "SHOW HOSTS;")
 		if err != nil {
 			t.Errorf("Error info: %s", err.Error())
 			return
 		}
-		sessionList[i].Release()
+		sessionList[i].Release(ctx)
 	}
 
 	time.Sleep(idleTimeoutConfig.IdleTime)
@@ -883,6 +904,8 @@ func TestIdleTimeoutCleaner(t *testing.T) {
 }
 
 func TestTimeout(t *testing.T) {
+	ctx := context.Background()
+
 	hostAddress := HostAddress{Host: address, Port: port}
 	hostList := []HostAddress{}
 	hostList = append(hostList, hostAddress)
@@ -895,7 +918,7 @@ func TestTimeout(t *testing.T) {
 	}
 
 	// Initialize connection pool
-	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+	pool, err := NewConnectionPool(ctx, hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -903,7 +926,7 @@ func TestTimeout(t *testing.T) {
 	defer pool.Close()
 
 	// Create session
-	session, err := pool.GetSession(username, password)
+	session, err := pool.GetSession(ctx, username, password)
 	if err != nil {
 		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error())
@@ -917,7 +940,7 @@ func TestTimeout(t *testing.T) {
 				"USE test_timeout;" +
 				"CREATE TAG IF NOT EXISTS person (name string, age int);" +
 				"CREATE EDGE IF NOT EXISTS like(likeness int);"
-		resultSet, err := tryToExecute(session, createSchema)
+		resultSet, err := tryToExecute(ctx, session, createSchema)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -933,7 +956,7 @@ func TestTimeout(t *testing.T) {
 			"'B':('B', 10), " +
 			"'C':('C', 10), " +
 			"'D':('D', 10)"
-		resultSet, err := tryToExecute(session, query)
+		resultSet, err := tryToExecute(ctx, session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -945,7 +968,7 @@ func TestTimeout(t *testing.T) {
 				"'B'->'C':(70), " +
 				"'C'->'D':(84), " +
 				"'D'->'A':(68)"
-		resultSet, err = tryToExecute(session, query)
+		resultSet, err = tryToExecute(ctx, session, query)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -954,22 +977,24 @@ func TestTimeout(t *testing.T) {
 	}
 
 	// trigger timeout
-	_, err = session.Execute("GO 10000 STEPS FROM 'A' OVER * YIELD like.likeness")
+	_, err = session.Execute(ctx, "GO 10000 STEPS FROM 'A' OVER * YIELD like.likeness")
 	assert.Contains(t, err.Error(), "timeout")
 
-	resultSet, err := tryToExecute(session, "YIELD 999")
+	resultSet, err := tryToExecute(ctx, session, "YIELD 999")
 	assert.Empty(t, err)
 	assert.True(t, resultSet.IsSucceed())
 	assert.Contains(t, resultSet.AsStringTable(), []string{"999"})
 
 	// Drop space
-	err = dropSpace("client_test")
+	err = dropSpace(ctx, "client_test")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
 }
 
 func TestExecuteJson(t *testing.T) {
+	ctx := context.Background()
+
 	hostList := []HostAddress{{Host: address, Port: port}}
 
 	testPoolConfig = PoolConfig{
@@ -980,7 +1005,7 @@ func TestExecuteJson(t *testing.T) {
 	}
 
 	// Initialize connection pool
-	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+	pool, err := NewConnectionPool(ctx, hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -988,21 +1013,21 @@ func TestExecuteJson(t *testing.T) {
 	defer pool.Close()
 
 	// Create session
-	session, err := pool.GetSession(username, password)
+	session, err := pool.GetSession(ctx, username, password)
 	if err != nil {
 		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error())
 	}
-	defer session.Release()
+	defer session.Release(ctx)
 
 	// Create schemas
-	createTestDataSchema(t, session)
+	createTestDataSchema(ctx, t, session)
 	// Load data
-	loadTestData(t, session)
+	loadTestData(ctx, t, session)
 
 	// Simple query
 	{
-		jsonStrResult, err := session.ExecuteJson(`YIELD 1, 2.2, "hello", [1,2,"abc"], {key: "value"}, "汉字"`)
+		jsonStrResult, err := session.ExecuteJson(ctx, `YIELD 1, 2.2, "hello", [1,2,"abc"], {key: "value"}, "汉字"`)
 		if err != nil {
 			t.Fatalf("fail to get the result in json format, %s", err.Error())
 		}
@@ -1033,7 +1058,7 @@ func TestExecuteJson(t *testing.T) {
 
 	// Complex result
 	{
-		jsonStrResult, err := session.ExecuteJson("MATCH (v:person {name: \"Bob\"}) RETURN v")
+		jsonStrResult, err := session.ExecuteJson(ctx, "MATCH (v:person {name: \"Bob\"}) RETURN v")
 		if err != nil {
 			t.Fatalf("fail to get the result in json format, %s", err.Error())
 		}
@@ -1067,7 +1092,7 @@ func TestExecuteJson(t *testing.T) {
 
 	// Error test
 	{
-		jsonStrResult, err := session.ExecuteJson("MATCH (v:invalidTag {name: \"Bob\"}) RETURN v")
+		jsonStrResult, err := session.ExecuteJson(ctx, "MATCH (v:invalidTag {name: \"Bob\"}) RETURN v")
 		if err != nil {
 			t.Fatalf("fail to get the result in json format, %s", err.Error())
 		}
@@ -1087,6 +1112,8 @@ func TestExecuteJson(t *testing.T) {
 }
 
 func TestExecuteWithParameter(t *testing.T) {
+	ctx := context.Background()
+
 	hostList := []HostAddress{{Host: address, Port: port}}
 
 	testPoolConfig = PoolConfig{
@@ -1097,7 +1124,7 @@ func TestExecuteWithParameter(t *testing.T) {
 	}
 
 	// Initialize connection pool
-	pool, err := NewConnectionPool(hostList, testPoolConfig, nebulaLog)
+	pool, err := NewConnectionPool(ctx, hostList, testPoolConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -1105,17 +1132,17 @@ func TestExecuteWithParameter(t *testing.T) {
 	defer pool.Close()
 
 	// Create session
-	session, err := pool.GetSession(username, password)
+	session, err := pool.GetSession(ctx, username, password)
 	if err != nil {
 		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error())
 	}
-	defer session.Release()
+	defer session.Release(ctx)
 
 	// Create schemas
-	createTestDataSchema(t, session)
+	createTestDataSchema(ctx, t, session)
 	// Load data
-	loadTestData(t, session)
+	loadTestData(ctx, t, session)
 
 	// p1:true  p2:3  p3:[true,3]  p4:{"a":true,"b":"Bob"}
 	params := make(map[string]interface{})
@@ -1126,7 +1153,7 @@ func TestExecuteWithParameter(t *testing.T) {
 
 	// Simple result
 	{
-		resp, err := tryToExecuteWithParameter(session, "RETURN toBoolean($p1) and false, $p2+3, $p3[1]>3", params)
+		resp, err := tryToExecuteWithParameter(ctx, session, "RETURN toBoolean($p1) and false, $p2+3, $p3[1]>3", params)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -1193,7 +1220,7 @@ func TestExecuteWithParameter(t *testing.T) {
 	// Complex result
 	{
 		query := "MATCH (v:person {name: $p4.b}) WHERE v.person.age>$p2-3 and $p1==true RETURN v ORDER BY $p3[0] LIMIT $p2"
-		resp, err := tryToExecuteWithParameter(session, query, params)
+		resp, err := tryToExecuteWithParameter(ctx, session, query, params)
 		if err != nil {
 			t.Fatalf(err.Error())
 			return
@@ -1229,6 +1256,8 @@ func TestExecuteWithParameter(t *testing.T) {
 }
 
 func TestReconnect(t *testing.T) {
+	ctx := context.Background()
+
 	hostList := poolAddress
 
 	timeoutConfig := PoolConfig{
@@ -1239,18 +1268,18 @@ func TestReconnect(t *testing.T) {
 	}
 
 	// Initialize connection pool
-	pool, err := NewConnectionPool(hostList, timeoutConfig, nebulaLog)
+	pool, err := NewConnectionPool(ctx, hostList, timeoutConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
 	defer pool.Close()
 
 	// Create session
-	session, err := pool.GetSession(username, password)
+	session, err := pool.GetSession(ctx, username, password)
 	if err != nil {
 		t.Errorf("fail to create a new session from connection pool, %s", err.Error())
 	}
-	defer session.Release()
+	defer session.Release(ctx)
 
 	// Send query to server periodically
 	for i := 0; i < timeoutConfig.MaxConnPoolSize; i++ {
@@ -1261,7 +1290,7 @@ func TestReconnect(t *testing.T) {
 		if i == 7 {
 			stopContainer(t, "nebula-docker-compose_graphd1_1")
 		}
-		_, err := session.Execute("SHOW HOSTS;")
+		_, err := session.Execute(ctx, "SHOW HOSTS;")
 		fmt.Println("Sending query...")
 
 		if err != nil {
@@ -1270,7 +1299,7 @@ func TestReconnect(t *testing.T) {
 		}
 	}
 
-	resp, err := session.Execute("SHOW HOSTS;")
+	resp, err := session.Execute(ctx, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -1315,12 +1344,12 @@ func startContainer(t *testing.T, containerName string) {
 }
 
 type executer interface {
-	Execute(query string) (*ResultSet, error)
+	Execute(ctx context.Context, query string) (*ResultSet, error)
 }
 
-func tryToExecute(e executer, query string) (resp *ResultSet, err error) {
+func tryToExecute(ctx context.Context, e executer, query string) (resp *ResultSet, err error) {
 	for i := 3; i > 0; i-- {
-		resp, err = e.Execute(query)
+		resp, err = e.Execute(ctx, query)
 		if err == nil && resp.IsSucceed() {
 			return
 		}
@@ -1329,9 +1358,9 @@ func tryToExecute(e executer, query string) (resp *ResultSet, err error) {
 	return
 }
 
-func tryToExecuteWithParameter(session *Session, query string, params map[string]interface{}) (resp *ResultSet, err error) {
+func tryToExecuteWithParameter(ctx context.Context, session *Session, query string, params map[string]interface{}) (resp *ResultSet, err error) {
 	for i := 3; i > 0; i-- {
-		resp, err = session.ExecuteWithParameter(query, params)
+		resp, err = session.ExecuteWithParameter(ctx, query, params)
 		if err == nil && resp.IsSucceed() {
 			return
 		}
@@ -1341,7 +1370,7 @@ func tryToExecuteWithParameter(session *Session, query string, params map[string
 }
 
 // creates schema
-func createTestDataSchema(t *testing.T, executor executer) {
+func createTestDataSchema(ctx context.Context, t *testing.T, executor executer) {
 	createSchema := "CREATE SPACE IF NOT EXISTS test_data(vid_type = FIXED_STRING(30));" +
 		"USE test_data; " +
 		"CREATE TAG IF NOT EXISTS person(name string, age int8, grade int16, " +
@@ -1353,7 +1382,7 @@ func createTestDataSchema(t *testing.T, executor executer) {
 		"CREATE EDGE IF NOT EXISTS like(likeness double); " +
 		"CREATE EDGE IF NOT EXISTS friend(start_Datetime datetime, end_Datetime datetime); " +
 		"CREATE TAG INDEX IF NOT EXISTS person_name_index ON person(name(8));"
-	resultSet, err := tryToExecute(executor, createSchema)
+	resultSet, err := tryToExecute(ctx, executor, createSchema)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -1364,7 +1393,7 @@ func createTestDataSchema(t *testing.T, executor executer) {
 }
 
 // inserts data that used in tests
-func loadTestData(t *testing.T, e executer) {
+func loadTestData(ctx context.Context, t *testing.T, e executer) {
 	query := "INSERT VERTEX person(name, age, grade, friends, book_num," +
 		"birthday, start_school, morning, property," +
 		"is_girl, child_name, expend, first_out_city) VALUES" +
@@ -1383,7 +1412,7 @@ func loadTestData(t *testing.T, e executer) {
 		"'John':('John', 10, 3, 10, 100, datetime('2010-09-10T10:08:02'), " +
 		"date('2017-09-10'), time('07:10:00'), " +
 		"1000.0, false, \"Hello World!\", 100.0, 1111)"
-	resultSet, err := tryToExecute(e, query)
+	resultSet, err := tryToExecute(ctx, e, query)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -1394,7 +1423,7 @@ func loadTestData(t *testing.T, e executer) {
 		"INSERT VERTEX student(name, interval) VALUES " +
 			"'Bob':('Bob', duration({months:1, seconds:100, microseconds:20})), 'Lily':('Lily', duration({years: 1, seconds: 0})), " +
 			"'Tom':('Tom', duration({years: 1, seconds: 0})), 'Jerry':('Jerry', duration({years: 1, seconds: 0})), 'John':('John', duration({years: 1, seconds: 0}))"
-	resultSet, err = tryToExecute(e, query)
+	resultSet, err = tryToExecute(ctx, e, query)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -1409,7 +1438,7 @@ func loadTestData(t *testing.T, e executer) {
 			"'Tom'->'Jerry':(68.3), " +
 			"'Bob'->'John':(97.2), " +
 			"'Lily'->'Tom':(80.0)"
-	resultSet, err = tryToExecute(e, query)
+	resultSet, err = tryToExecute(ctx, e, query)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -1423,7 +1452,7 @@ func loadTestData(t *testing.T, e executer) {
 			"'Jerry'->'Lily':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
 			"'Tom'->'Jerry':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
 			"'Bob'->'John':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02'))"
-	resultSet, err = tryToExecute(e, query)
+	resultSet, err = tryToExecute(ctx, e, query)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -1432,17 +1461,17 @@ func loadTestData(t *testing.T, e executer) {
 }
 
 // prepareSpace creates a space for test
-func prepareSpace(spaceName string) error {
+func prepareSpace(ctx context.Context, spaceName string) error {
 	hostAddress := HostAddress{Host: address, Port: port}
 	conn := newConnection(hostAddress)
 	testPoolConfig := GetDefaultConf()
 
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil, "")
+	err := conn.open(ctx, hostAddress, testPoolConfig.TimeOut, nil, false, nil, "")
 	if err != nil {
 		return fmt.Errorf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
 
-	authResp, authErr := conn.authenticate(username, password)
+	authResp, authErr := conn.authenticate(ctx, username, password)
 	if authErr != nil {
 		return fmt.Errorf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
 	}
@@ -1454,11 +1483,11 @@ func prepareSpace(spaceName string) error {
 
 	sessionID := authResp.GetSessionID()
 
-	defer logoutAndClose(conn, sessionID)
+	defer logoutAndClose(ctx, conn, sessionID)
 
 	query := fmt.Sprintf("CREATE SPACE IF NOT EXISTS"+
 		" %s(partition_num=32, replica_factor=1, vid_type = FIXED_STRING(30));", spaceName)
-	resp, err := conn.execute(sessionID, query)
+	resp, err := conn.execute(ctx, sessionID, query)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -1469,17 +1498,17 @@ func prepareSpace(spaceName string) error {
 }
 
 // dropSpace drops a space. The space name should be the same as the one created in prepareSpace
-func dropSpace(spaceName string) error {
+func dropSpace(ctx context.Context, spaceName string) error {
 	hostAddress := HostAddress{Host: address, Port: port}
 	conn := newConnection(hostAddress)
 	testPoolConfig := GetDefaultConf()
 
-	err := conn.open(hostAddress, testPoolConfig.TimeOut, nil, false, nil, "")
+	err := conn.open(ctx, hostAddress, testPoolConfig.TimeOut, nil, false, nil, "")
 	if err != nil {
 		return fmt.Errorf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
 	}
 
-	authResp, authErr := conn.authenticate(username, password)
+	authResp, authErr := conn.authenticate(ctx, username, password)
 	if authErr != nil {
 		return fmt.Errorf("fail to authenticate, username: %s, password: %s, %s", username, password, authErr.Error())
 	}
@@ -1491,10 +1520,10 @@ func dropSpace(spaceName string) error {
 
 	sessionID := authResp.GetSessionID()
 
-	defer logoutAndClose(conn, sessionID)
+	defer logoutAndClose(ctx, conn, sessionID)
 
 	query := fmt.Sprintf("DROP SPACE IF EXISTS %s;", spaceName)
-	resp, err := conn.execute(sessionID, query)
+	resp, err := conn.execute(ctx, sessionID, query)
 	if err != nil {
 		return err
 	}

@@ -10,6 +10,7 @@ package nebula_go
 
 import (
 	"container/list"
+	"context"
 	"crypto/tls"
 	"fmt"
 	"net/http"
@@ -33,12 +34,13 @@ type ConnectionPool struct {
 }
 
 // NewConnectionPool constructs a new connection pool using the given addresses and configs
-func NewConnectionPool(addresses []HostAddress, conf PoolConfig, log Logger) (*ConnectionPool, error) {
-	return NewSslConnectionPool(addresses, conf, nil, log)
+func NewConnectionPool(ctx context.Context, addresses []HostAddress, conf PoolConfig, log Logger) (*ConnectionPool, error) {
+	return NewSslConnectionPool(ctx, addresses, conf, nil, log)
 }
 
-// NewConnectionPool constructs a new SSL connection pool using the given addresses and configs
-func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *tls.Config, log Logger) (*ConnectionPool, error) {
+// NewSslConnectionPool constructs a new SSL connection pool using the given addresses and configs
+func NewSslConnectionPool(
+	ctx context.Context, addresses []HostAddress, conf PoolConfig, sslConfig *tls.Config, log Logger) (*ConnectionPool, error) {
 	// Check input
 	if len(addresses) == 0 {
 		return nil, fmt.Errorf("failed to initialize connection pool: illegal address input")
@@ -56,7 +58,7 @@ func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *t
 	}
 
 	// Init pool with SSL socket
-	if err := newPool.initPool(); err != nil {
+	if err := newPool.initPool(ctx); err != nil {
 		return nil, err
 	}
 	newPool.startCleaner()
@@ -64,8 +66,8 @@ func NewSslConnectionPool(addresses []HostAddress, conf PoolConfig, sslConfig *t
 }
 
 // initPool initializes the connection pool
-func (pool *ConnectionPool) initPool() error {
-	if err := checkAddresses(pool.conf.TimeOut, pool.addresses, pool.sslConfig,
+func (pool *ConnectionPool) initPool(ctx context.Context) error {
+	if err := checkAddresses(ctx, pool.conf.TimeOut, pool.addresses, pool.sslConfig,
 		pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.HandshakeKey); err != nil {
 		return fmt.Errorf("failed to open connection, error: %s ", err.Error())
 	}
@@ -75,12 +77,14 @@ func (pool *ConnectionPool) initPool() error {
 		newConn := newConnection(pool.addresses[i%len(pool.addresses)])
 
 		// Open connection to host
-		if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig,
+		if err := newConn.open(ctx, newConn.severAddress, pool.conf.TimeOut, pool.sslConfig,
 			pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.HandshakeKey); err != nil {
 			// If initialization failed, clean idle queue
 			idleLen := pool.idleConnectionQueue.Len()
 			for i := 0; i < idleLen; i++ {
-				pool.idleConnectionQueue.Front().Value.(*connection).close()
+				if err := pool.idleConnectionQueue.Front().Value.(*connection).close(); err != nil {
+					pool.log.Error(fmt.Sprintf("failed to close connection, error: %s", err.Error()))
+				}
 				pool.idleConnectionQueue.Remove(pool.idleConnectionQueue.Front())
 			}
 			return fmt.Errorf("failed to open connection, error: %s ", err.Error())
@@ -93,13 +97,13 @@ func (pool *ConnectionPool) initPool() error {
 
 // GetSession authenticates the username and password.
 // It returns a session if the authentication succeed.
-func (pool *ConnectionPool) GetSession(username, password string) (*Session, error) {
+func (pool *ConnectionPool) GetSession(ctx context.Context, username, password string) (*Session, error) {
 	// Get valid and usable connection
 	var conn *connection = nil
 	var err error = nil
 	const retryTimes = 3
 	for i := 0; i < retryTimes; i++ {
-		conn, err = pool.getIdleConn()
+		conn, err = pool.getIdleConn(ctx)
 		if err == nil {
 			break
 		}
@@ -108,7 +112,7 @@ func (pool *ConnectionPool) GetSession(username, password string) (*Session, err
 		return nil, err
 	}
 	// Authenticate
-	resp, err := conn.authenticate(username, password)
+	resp, err := conn.authenticate(ctx, username, password)
 	if err != nil {
 		// if authentication failed, put connection back
 		pool.pushBack(conn)
@@ -138,7 +142,7 @@ func (pool *ConnectionPool) GetSession(username, password string) (*Session, err
 	return &newSession, nil
 }
 
-func (pool *ConnectionPool) getIdleConn() (*connection, error) {
+func (pool *ConnectionPool) getIdleConn(ctx context.Context) (*connection, error) {
 	pool.rwLock.Lock()
 	defer pool.rwLock.Unlock()
 
@@ -149,18 +153,20 @@ func (pool *ConnectionPool) getIdleConn() (*connection, error) {
 		var tmpNextEle *list.Element
 		for ele := pool.idleConnectionQueue.Front(); ele != nil; ele = tmpNextEle {
 			// Check if connection is valid
-			if res := ele.Value.(*connection).ping(); res {
+			if res := ele.Value.(*connection).ping(ctx); res {
 				newConn = ele.Value.(*connection)
 				newEle = ele
 				break
 			} else {
 				tmpNextEle = ele.Next()
 				pool.idleConnectionQueue.Remove(ele)
-				ele.Value.(*connection).close()
+				if err := ele.Value.(*connection).close(); err != nil {
+					pool.log.Error(fmt.Sprintf("failed to close connection, error: %s", err.Error()))
+				}
 			}
 		}
 		if newConn == nil {
-			return pool.createConnection()
+			return pool.createConnection(ctx)
 		}
 		// Remove new connection from idle and add to active if found
 		pool.idleConnectionQueue.Remove(newEle)
@@ -169,7 +175,7 @@ func (pool *ConnectionPool) getIdleConn() (*connection, error) {
 	}
 
 	// Create a new connection if there is no idle connection and total connection < pool max size
-	newConn, err := pool.createConnection()
+	newConn, err := pool.createConnection(ctx)
 	// TODO: If no idle available, wait for timeout and reconnect
 	return newConn, err
 }
@@ -199,8 +205,8 @@ func (pool *ConnectionPool) deactivate(conn *connection, pushBack, release bool)
 }
 
 // Ping checks availability of host
-func (pool *ConnectionPool) Ping(host HostAddress, timeout time.Duration) error {
-	return pingAddress(host, timeout, pool.sslConfig, pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.HandshakeKey)
+func (pool *ConnectionPool) Ping(ctx context.Context, host HostAddress, timeout time.Duration) error {
+	return pingAddress(ctx, host, timeout, pool.sslConfig, pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.HandshakeKey)
 }
 
 // Close closes all connection
@@ -213,11 +219,16 @@ func (pool *ConnectionPool) Close() {
 	activeLen := pool.activeConnectionQueue.Len()
 
 	for i := 0; i < idleLen; i++ {
-		pool.idleConnectionQueue.Front().Value.(*connection).close()
+		if err := pool.idleConnectionQueue.Front().Value.(*connection).close(); err != nil {
+			pool.log.Error(fmt.Sprintf("failed to close connection, error: %s", err.Error()))
+		}
 		pool.idleConnectionQueue.Remove(pool.idleConnectionQueue.Front())
 	}
 	for i := 0; i < activeLen; i++ {
-		pool.activeConnectionQueue.Front().Value.(*connection).close()
+		if err := pool.activeConnectionQueue.Front().Value.(*connection).close(); err != nil {
+			pool.log.Error(fmt.Sprintf("failed to close connection, error: %s", err.Error()))
+		}
+
 		pool.activeConnectionQueue.Remove(pool.activeConnectionQueue.Front())
 	}
 
@@ -246,12 +257,12 @@ func (pool *ConnectionPool) getHost() HostAddress {
 }
 
 // Select a new host to create a new connection
-func (pool *ConnectionPool) newConnToHost() (*connection, error) {
+func (pool *ConnectionPool) newConnToHost(ctx context.Context) (*connection, error) {
 	// Get a valid host (round robin)
 	host := pool.getHost()
 	newConn := newConnection(host)
 	// Open connection to host
-	if err := newConn.open(newConn.severAddress, pool.conf.TimeOut, pool.sslConfig,
+	if err := newConn.open(ctx, newConn.severAddress, pool.conf.TimeOut, pool.sslConfig,
 		pool.conf.UseHTTP2, pool.conf.HttpHeader, pool.conf.HandshakeKey); err != nil {
 		return nil, err
 	}
@@ -271,7 +282,7 @@ func removeFromList(l *list.List, conn *connection) {
 }
 
 // Compare total connection number with pool max size and return a connection if capable
-func (pool *ConnectionPool) createConnection() (*connection, error) {
+func (pool *ConnectionPool) createConnection(ctx context.Context) (*connection, error) {
 	totalConn := pool.idleConnectionQueue.Len() + pool.activeConnectionQueue.Len()
 	// If no idle available and the number of total connection reaches the max pool size, return error/wait for timeout
 	if totalConn >= pool.conf.MaxConnPoolSize {
@@ -279,7 +290,7 @@ func (pool *ConnectionPool) createConnection() (*connection, error) {
 			" in the idle queue and connection number has reached the pool capacity")
 	}
 
-	newConn, err := pool.newConnToHost()
+	newConn, err := pool.newConnToHost(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -322,7 +333,9 @@ func (pool *ConnectionPool) connectionCleaner() {
 		closing := pool.timeoutConnectionList()
 		pool.rwLock.Unlock()
 		for _, c := range closing {
-			c.close()
+			if err := c.close(); err != nil {
+				pool.log.Error(fmt.Sprintf("failed to close connection, error: %s", err.Error()))
+			}
 		}
 
 		t.Reset(d)
@@ -359,6 +372,7 @@ func (pool *ConnectionPool) timeoutConnectionList() (closing []*connection) {
 // It opens a temporary connection to each address and closes it immediately.
 // If no error is returned, the addresses are available.
 func checkAddresses(
+	ctx context.Context,
 	confTimeout time.Duration, addresses []HostAddress, sslConfig *tls.Config,
 	useHTTP2 bool, httpHeader http.Header, handshakeKey string,
 ) error {
@@ -367,7 +381,7 @@ func checkAddresses(
 		timeout = confTimeout
 	}
 	for _, address := range addresses {
-		if err := pingAddress(address, timeout, sslConfig, useHTTP2, httpHeader, handshakeKey); err != nil {
+		if err := pingAddress(ctx, address, timeout, sslConfig, useHTTP2, httpHeader, handshakeKey); err != nil {
 			return err
 		}
 	}
@@ -375,12 +389,13 @@ func checkAddresses(
 }
 
 func pingAddress(
+	ctx context.Context,
 	address HostAddress, timeout time.Duration, sslConfig *tls.Config,
 	useHTTP2 bool, httpHeader http.Header, handshakeKey string,
 ) error {
 	newConn := newConnection(address)
 	// Open connection to host
-	if err := newConn.open(newConn.severAddress, timeout, sslConfig, useHTTP2, httpHeader, handshakeKey); err != nil {
+	if err := newConn.open(ctx, newConn.severAddress, timeout, sslConfig, useHTTP2, httpHeader, handshakeKey); err != nil {
 		return err
 	}
 	defer newConn.close()

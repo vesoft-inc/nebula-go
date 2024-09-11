@@ -9,6 +9,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -74,6 +75,8 @@ type JsonObj struct {
 }
 
 func main() {
+	ctx := context.Background()
+
 	hostAddress := nebula.HostAddress{Host: address, Port: port}
 	hostList := []nebula.HostAddress{hostAddress}
 	// Create configs for connection pool using default values
@@ -81,7 +84,7 @@ func main() {
 	testPoolConfig.UseHTTP2 = useHTTP2
 
 	// Initialize connection pool
-	pool, err := nebula.NewConnectionPool(hostList, testPoolConfig, log)
+	pool, err := nebula.NewConnectionPool(ctx, hostList, testPoolConfig, log)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
 	}
@@ -89,22 +92,22 @@ func main() {
 	defer pool.Close()
 
 	// Create session
-	session, err := pool.GetSession(username, password)
+	session, err := pool.GetSession(ctx, username, password)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error()))
 	}
 	// Release session and return connection back to connection pool
-	defer session.Release()
+	defer session.Release(ctx)
 
 	// Create schemas
-	createTestDataSchema(session)
+	createTestDataSchema(ctx, session)
 	// Load data
-	loadTestData(session)
+	loadTestData(ctx, session)
 
 	// Complex result
 	{
-		jsonStrResult, err := session.ExecuteJson("MATCH (v:person {name: \"Bob\"}) RETURN v")
+		jsonStrResult, err := session.ExecuteJson(ctx, "MATCH (v:person {name: \"Bob\"}) RETURN v")
 		if err != nil {
 			log.Fatal(fmt.Sprintf("fail to get the result in json format, %s", err.Error()))
 		}
@@ -126,7 +129,7 @@ func main() {
 	}
 	// With error
 	{
-		jsonStrResult, err := session.ExecuteJson("MATCH (v:person {name: \"Bob\"}) RETURN v")
+		jsonStrResult, err := session.ExecuteJson(ctx, "MATCH (v:person {name: \"Bob\"}) RETURN v")
 		if err != nil {
 			log.Fatal(fmt.Sprintf("fail to get the result in json format, %s", err.Error()))
 		}
@@ -142,14 +145,14 @@ func main() {
 		}
 		fmt.Println("Error message: ", string(msg))
 	}
-	dropSpace(session, "client_test")
+	dropSpace(ctx, session, "client_test")
 
 	fmt.Print("\n")
 	log.Info("Nebula Go JSON parsing Example Finished")
 }
 
 // creates schema
-func createTestDataSchema(session *nebula.Session) {
+func createTestDataSchema(ctx context.Context, session *nebula.Session) {
 	createSchema := "CREATE SPACE IF NOT EXISTS test_data(vid_type = FIXED_STRING(30));" +
 		"USE test_data; " +
 		"CREATE TAG IF NOT EXISTS person(name string, age int8, grade int16, " +
@@ -161,7 +164,7 @@ func createTestDataSchema(session *nebula.Session) {
 		"CREATE EDGE IF NOT EXISTS like(likeness double); " +
 		"CREATE EDGE IF NOT EXISTS friend(start_Datetime datetime, end_Datetime datetime); " +
 		"CREATE TAG INDEX IF NOT EXISTS person_name_index ON person(name(8));"
-	resultSet, err := session.Execute(createSchema)
+	resultSet, err := session.Execute(ctx, createSchema)
 	if err != nil {
 		log.Fatal(err.Error())
 		return
@@ -172,7 +175,7 @@ func createTestDataSchema(session *nebula.Session) {
 }
 
 // inserts data that used in tests
-func loadTestData(session *nebula.Session) {
+func loadTestData(ctx context.Context, session *nebula.Session) {
 	query := "INSERT VERTEX person(name, age, grade, friends, book_num," +
 		"birthday, start_school, morning, property," +
 		"is_girl, child_name, expend, first_out_city) VALUES" +
@@ -191,7 +194,7 @@ func loadTestData(session *nebula.Session) {
 		"'John':('John', 10, 3, 10, 100, datetime('2010-09-10T10:08:02'), " +
 		"date('2017-09-10'), time('07:10:00'), " +
 		"1000.0, false, \"Hello World!\", 100.0, 1111)"
-	resultSet, err := session.Execute(query)
+	resultSet, err := session.Execute(ctx, query)
 	if err != nil {
 		log.Fatal(err.Error())
 		return
@@ -202,7 +205,7 @@ func loadTestData(session *nebula.Session) {
 		"INSERT VERTEX student(name) VALUES " +
 			"'Bob':('Bob'), 'Lily':('Lily'), " +
 			"'Tom':('Tom'), 'Jerry':('Jerry'), 'John':('John')"
-	resultSet, err = session.Execute(query)
+	resultSet, err = session.Execute(ctx, query)
 	if err != nil {
 		log.Fatal(err.Error())
 		return
@@ -216,7 +219,7 @@ func loadTestData(session *nebula.Session) {
 			"'Jerry'->'Lily':(84.0)," +
 			"'Tom'->'Jerry':(68.3), " +
 			"'Bob'->'John':(97.2)"
-	resultSet, err = session.Execute(query)
+	resultSet, err = session.Execute(ctx, query)
 	if err != nil {
 		log.Fatal(err.Error())
 		return
@@ -230,7 +233,7 @@ func loadTestData(session *nebula.Session) {
 			"'Jerry'->'Lily':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
 			"'Tom'->'Jerry':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02')), " +
 			"'Bob'->'John':(datetime('2008-09-10T10:08:02'), datetime('2010-09-10T10:08:02'))"
-	resultSet, err = session.Execute(query)
+	resultSet, err = session.Execute(ctx, query)
 	if err != nil {
 		log.Fatal(err.Error())
 		return
@@ -238,9 +241,9 @@ func loadTestData(session *nebula.Session) {
 	checkResultSet(query, resultSet)
 }
 
-func dropSpace(session *nebula.Session, spaceName string) {
+func dropSpace(ctx context.Context, session *nebula.Session, spaceName string) {
 	query := fmt.Sprintf("DROP SPACE IF EXISTS %s;", spaceName)
-	resultSet, err := session.Execute(query)
+	resultSet, err := session.Execute(ctx, query)
 	if err != nil {
 		log.Fatal(err.Error())
 		return
