@@ -224,6 +224,14 @@ func WithHandshakeKey(handshakeKey string) SessionPoolConfOption {
 		conf.handshakeKey = handshakeKey
 	}
 }
+func WithRetryTimes(retryTimes int) SessionPoolConfOption {
+	if retryTimes < 0 {
+		retryTimes = 0
+	}
+	return func(conf *SessionPoolConf) {
+		conf.retryGetSessionTimes = retryTimes
+	}
+}
 
 func (conf *SessionPoolConf) checkMandatoryFields() error {
 	// Check mandatory fields
