@@ -19,13 +19,13 @@ lint:
 	@test -z `gofmt -l *.go` || (echo "Please run 'make fmt' to format Go code" && exit 1)
 
 up:
-	cd ./nebula-docker-compose && docker-compose up -d
+	cd ./nebula-docker-compose && docker compose up -d
 
 up-ssl:
-	cd ./nebula-docker-compose && enable_ssl=true docker-compose -f docker-compose-ssl.yaml up -d
+	cd ./nebula-docker-compose && enable_ssl=true docker compose -f docker-compose-ssl.yaml up -d
 
 down:
-	cd ./nebula-docker-compose && docker-compose down -v
+	cd ./nebula-docker-compose && docker compose down -v
 
 ssl-test:
 	ssl_test=true go test -v --tags=integration -run TestSslConnection;
