@@ -9,6 +9,7 @@
 package nebula_go
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -41,16 +42,16 @@ func (mgr *SchemaManager) WithVerbose(verbose bool) *SchemaManager {
 // Notice:
 // We won't change the field type because it has
 // unexpected behavior for the data.
-func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
+func (mgr *SchemaManager) ApplyTag(ctx context.Context, tag LabelSchema) (*ResultSet, error) {
 	// 1. Make sure the tag exists
-	fields, err := mgr.pool.DescTag(tag.Name)
+	fields, err := mgr.pool.DescTag(ctx, tag.Name)
 	if err != nil {
 		// If the tag does not exist, create it
 		if strings.Contains(err.Error(), ErrorTagNotFound) {
 			if mgr.verbose {
 				log.Printf("ApplyTag: create the not existing tag. name=%s\n", tag.Name)
 			}
-			return mgr.pool.CreateTag(tag)
+			return mgr.pool.CreateTag(ctx, tag)
 		}
 		return nil, err
 	}
@@ -83,7 +84,7 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 		if mgr.verbose {
 			log.Printf("ApplyTag: add the not existing fields. name=%s queries=%s\n", tag.Name, queries)
 		}
-		_, err = mgr.pool.ExecuteAndCheck(queries)
+		_, err = mgr.pool.ExecuteAndCheck(ctx, queries)
 		if err != nil {
 			return nil, err
 		}
@@ -112,14 +113,14 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 		if mgr.verbose {
 			log.Printf("ApplyTag: remove the not expected fields. name=%s queries=%s\n", tag.Name, queries)
 		}
-		_, err := mgr.pool.ExecuteAndCheck(queries)
+		_, err := mgr.pool.ExecuteAndCheck(ctx, queries)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	// 4. Check if the TTL is set as expected.
-	ttlCol, ttlDuration, err := mgr.pool.GetTagTTL(tag.Name)
+	ttlCol, ttlDuration, err := mgr.pool.GetTagTTL(ctx, tag.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +137,7 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 			)
 		}
 
-		_, err = mgr.pool.AddTagTTL(tag.Name, tag.TTLCol, tag.TTLDuration)
+		_, err = mgr.pool.AddTagTTL(ctx, tag.Name, tag.TTLCol, tag.TTLDuration)
 		if err != nil {
 			return nil, err
 		}
@@ -158,16 +159,16 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 // Notice:
 // We won't change the field type because it has
 // unexpected behavior for the data.
-func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
+func (mgr *SchemaManager) ApplyEdge(ctx context.Context, edge LabelSchema) (*ResultSet, error) {
 	// 1. Make sure the edge exists
-	fields, err := mgr.pool.DescEdge(edge.Name)
+	fields, err := mgr.pool.DescEdge(ctx, edge.Name)
 	if err != nil {
 		// If the edge does not exist, create it
 		if strings.Contains(err.Error(), ErrorEdgeNotFound) {
 			if mgr.verbose {
 				log.Printf("ApplyEdge: create the not existing edge. name=%s\n", edge.Name)
 			}
-			return mgr.pool.CreateEdge(edge)
+			return mgr.pool.CreateEdge(ctx, edge)
 		}
 		return nil, err
 	}
@@ -200,7 +201,7 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 		if mgr.verbose {
 			log.Printf("ApplyEdge: add the not existing fields. name=%s queries=%s\n", edge.Name, queries)
 		}
-		_, err := mgr.pool.ExecuteAndCheck(queries)
+		_, err := mgr.pool.ExecuteAndCheck(ctx, queries)
 		if err != nil {
 			return nil, err
 		}
@@ -229,14 +230,14 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 		if mgr.verbose {
 			log.Printf("ApplyEdge: remove the not expected fields. name=%s queries=%s\n", edge.Name, queries)
 		}
-		_, err := mgr.pool.ExecuteAndCheck(queries)
+		_, err := mgr.pool.ExecuteAndCheck(ctx, queries)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	// 4. Check if the TTL is set as expected.
-	ttlCol, ttlDuration, err := mgr.pool.GetEdgeTTL(edge.Name)
+	ttlCol, ttlDuration, err := mgr.pool.GetEdgeTTL(ctx, edge.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -253,7 +254,7 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 			)
 		}
 
-		_, err = mgr.pool.AddEdgeTTL(edge.Name, edge.TTLCol, edge.TTLDuration)
+		_, err = mgr.pool.AddEdgeTTL(ctx, edge.Name, edge.TTLCol, edge.TTLDuration)
 		if err != nil {
 			return nil, err
 		}

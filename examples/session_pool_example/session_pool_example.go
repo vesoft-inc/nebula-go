@@ -9,6 +9,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -37,7 +38,9 @@ type Person struct {
 }
 
 func main() {
-	prepareSpace()
+	ctx := context.Background()
+
+	prepareSpace(ctx)
 	hostAddress := nebula.HostAddress{Host: address, Port: port}
 
 	// Create configs for session pool
@@ -53,11 +56,11 @@ func main() {
 	}
 
 	// create session pool
-	sessionPool, err := nebula.NewSessionPool(*config, nebula.DefaultLogger{})
+	sessionPool, err := nebula.NewSessionPool(ctx, *config, nebula.DefaultLogger{})
 	if err != nil {
 		log.Fatal(fmt.Sprintf("failed to initialize session pool, %s", err.Error()))
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
 	checkResultSet := func(prefix string, res *nebula.ResultSet) {
 		if !res.IsSucceed() {
@@ -75,7 +78,7 @@ func main() {
 			"'John':('John', 11);"
 
 		// Insert multiple vertexes
-		resultSet, err := sessionPool.Execute(insertVertexes)
+		resultSet, err := sessionPool.Execute(ctx, insertVertexes)
 		if err != nil {
 			fmt.Print(err.Error())
 			return
@@ -91,7 +94,7 @@ func main() {
 			"'Tom'->'Jerry':(68.3), " +
 			"'Bob'->'John':(97.2);"
 
-		resultSet, err := sessionPool.Execute(insertEdges)
+		resultSet, err := sessionPool.Execute(ctx, insertEdges)
 		if err != nil {
 			fmt.Print(err.Error())
 			return
@@ -108,7 +111,7 @@ func main() {
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
 
-			resultSet, err = sessionPool.Execute(query)
+			resultSet, err = sessionPool.Execute(ctx, query)
 			if err != nil {
 				fmt.Print(err.Error())
 				return
@@ -155,7 +158,7 @@ func main() {
 	{
 		query := "DROP SPACE IF EXISTS example_space"
 		// Send query
-		resultSet, err := sessionPool.Execute(query)
+		resultSet, err := sessionPool.Execute(ctx, query)
 		if err != nil {
 			fmt.Print(err.Error())
 			return
@@ -167,7 +170,7 @@ func main() {
 }
 
 // Just a helper function to create a space for this example to run.
-func prepareSpace() {
+func prepareSpace(ctx context.Context) {
 	hostAddress := nebula.HostAddress{Host: address, Port: port}
 	hostList := []nebula.HostAddress{hostAddress}
 	// Create configs for connection pool using default values
@@ -175,7 +178,7 @@ func prepareSpace() {
 	testPoolConfig.UseHTTP2 = useHTTP2
 
 	// Initialize connection pool
-	pool, err := nebula.NewConnectionPool(hostList, testPoolConfig, log)
+	pool, err := nebula.NewConnectionPool(ctx, hostList, testPoolConfig, log)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
 	}
@@ -183,13 +186,13 @@ func prepareSpace() {
 	defer pool.Close()
 
 	// Create session
-	session, err := pool.GetSession(username, password)
+	session, err := pool.GetSession(ctx, username, password)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error()))
 	}
 	// Release session and return connection back to connection pool
-	defer session.Release()
+	defer session.Release(ctx)
 
 	checkResultSet := func(prefix string, res *nebula.ResultSet) {
 		if !res.IsSucceed() {
@@ -205,7 +208,7 @@ func prepareSpace() {
 			"CREATE EDGE IF NOT EXISTS like(likeness double)"
 
 		// Execute a query
-		resultSet, err := session.Execute(createSchema)
+		resultSet, err := session.Execute(ctx, createSchema)
 		if err != nil {
 			fmt.Print(err.Error())
 			return

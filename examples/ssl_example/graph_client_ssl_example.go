@@ -9,6 +9,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	nebula "github.com/vesoft-inc/nebula-go/v3"
@@ -27,6 +28,9 @@ const (
 var log = nebula.DefaultLogger{}
 
 func main() {
+
+	ctx := context.Background()
+
 	hostAddress := nebula.HostAddress{Host: address, Port: port}
 	hostList := []nebula.HostAddress{hostAddress}
 	// Create configs for connection pool using default values
@@ -45,7 +49,7 @@ func main() {
 	sslConfig.InsecureSkipVerify = false
 
 	// Initialize connection pool
-	pool, err := nebula.NewSslConnectionPool(hostList, testPoolConfig, sslConfig, log)
+	pool, err := nebula.NewSslConnectionPool(ctx, hostList, testPoolConfig, sslConfig, log)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
 	}
@@ -53,13 +57,13 @@ func main() {
 	defer pool.Close()
 
 	// Create session
-	session, err := pool.GetSession(username, password)
+	session, err := pool.GetSession(ctx, username, password)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error()))
 	}
 	// Release session and return connection back to connection pool
-	defer session.Release()
+	defer session.Release(ctx)
 
 	checkResultSet := func(prefix string, res *nebula.ResultSet) {
 		if !res.IsSucceed() {
@@ -75,7 +79,7 @@ func main() {
 			"CREATE EDGE IF NOT EXISTS like(likeness double)"
 
 		// Execute a query
-		resultSet, err := session.Execute(createSchema)
+		resultSet, err := session.Execute(ctx, createSchema)
 		if err != nil {
 			fmt.Print(err.Error())
 			return
@@ -86,7 +90,7 @@ func main() {
 	{
 		query := "DROP SPACE IF EXISTS basic_example_space"
 		// Send query
-		resultSet, err := session.Execute(query)
+		resultSet, err := session.Execute(ctx, query)
 		if err != nil {
 			fmt.Print(err.Error())
 			return

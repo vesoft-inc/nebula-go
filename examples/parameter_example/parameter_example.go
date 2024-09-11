@@ -7,6 +7,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -28,6 +29,8 @@ const (
 var log = nebulago.DefaultLogger{}
 
 func main() {
+	ctx := context.Background()
+
 	hostAddress := nebulago.HostAddress{Host: address, Port: port}
 	hostList := []nebulago.HostAddress{hostAddress}
 	// Create configs for connection pool using default values
@@ -35,7 +38,7 @@ func main() {
 	testPoolConfig.UseHTTP2 = useHTTP2
 
 	// Initialize connection pool
-	pool, err := nebulago.NewConnectionPool(hostList, testPoolConfig, log)
+	pool, err := nebulago.NewConnectionPool(ctx, hostList, testPoolConfig, log)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
 	}
@@ -47,13 +50,13 @@ func main() {
 	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
 		// Create session
-		session, err := pool.GetSession(username, password)
+		session, err := pool.GetSession(ctx, username, password)
 		if err != nil {
 			log.Fatal(fmt.Sprintf("Fail to create a new session from connection pool, username: %s, password: %s, %s",
 				username, password, err.Error()))
 		}
 		// Release session and return connection back to connection pool
-		defer session.Release()
+		defer session.Release(ctx)
 
 		checkResultSet := func(prefix string, res *nebulago.ResultSet) {
 			if !res.IsSucceed() {
@@ -72,7 +75,7 @@ func main() {
 			query := "RETURN abs($p2)+1 AS col1, toBoolean($p1) and false AS col2, $p3, $p4.a"
 			// Send query
 			// resultSet, err := session.ExecuteWithParameter(query, params)
-			resultSet, err := session.ExecuteWithParameter(query, params)
+			resultSet, err := session.ExecuteWithParameter(ctx, query, params)
 			if err != nil {
 				fmt.Print(err.Error())
 				return

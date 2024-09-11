@@ -10,6 +10,7 @@ package nebula_go
 
 import (
 	"container/list"
+	"context"
 	"fmt"
 	"strconv"
 	"sync"
@@ -59,7 +60,7 @@ type pureSession struct {
 
 // NewSessionPool creates a new session pool with the given configs.
 // There must be an existing SPACE in the DB.
-func NewSessionPool(conf SessionPoolConf, log Logger) (*SessionPool, error) {
+func NewSessionPool(ctx context.Context, conf SessionPoolConf, log Logger) (*SessionPool, error) {
 	// check the config
 	conf.checkBasicFields(log)
 
@@ -69,24 +70,24 @@ func NewSessionPool(conf SessionPoolConf, log Logger) (*SessionPool, error) {
 	}
 
 	// init the pool
-	if err := newSessionPool.init(); err != nil {
+	if err := newSessionPool.init(ctx); err != nil {
 		return nil, fmt.Errorf("failed to create a new session pool, %s", err.Error())
 	}
-	newSessionPool.startCleaner()
+	newSessionPool.startCleaner(ctx)
 	return newSessionPool, nil
 }
 
 // init initializes the session pool.
-func (pool *SessionPool) init() error {
+func (pool *SessionPool) init(ctx context.Context) error {
 	// check the hosts status
-	if err := checkAddresses(pool.conf.timeOut, pool.conf.serviceAddrs, pool.conf.sslConfig,
+	if err := checkAddresses(ctx, pool.conf.timeOut, pool.conf.serviceAddrs, pool.conf.sslConfig,
 		pool.conf.useHTTP2, pool.conf.httpHeader, pool.conf.handshakeKey); err != nil {
 		return fmt.Errorf("failed to initialize the session pool, %s", err.Error())
 	}
 
 	// create sessions to fulfill the min pool size
 	for i := 0; i < pool.conf.minSize; i++ {
-		session, err := pool.newSession()
+		session, err := pool.newSession(ctx)
 		if err != nil {
 			return fmt.Errorf("failed to initialize the session pool, %s", err.Error())
 		}
@@ -98,7 +99,7 @@ func (pool *SessionPool) init() error {
 	return nil
 }
 
-func (pool *SessionPool) executeFn(execFunc func(s *pureSession) (*ResultSet, error)) (*ResultSet, error) {
+func (pool *SessionPool) executeFn(ctx context.Context, execFunc func(s *pureSession) (*ResultSet, error)) (*ResultSet, error) {
 	// Check if the pool is closed
 	if pool.closed {
 		return nil, fmt.Errorf("failed to execute: Session pool has been closed")
@@ -111,7 +112,7 @@ func (pool *SessionPool) executeFn(execFunc func(s *pureSession) (*ResultSet, er
 	}
 	// if there's no idle session, create a new one
 	if session == nil {
-		session, err = pool.newSession()
+		session, err = pool.newSession(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -120,9 +121,9 @@ func (pool *SessionPool) executeFn(execFunc func(s *pureSession) (*ResultSet, er
 		pool.removeSessionFromIdle(session)
 		pool.addSessionToActive(session)
 	}
-	rs, err := pool.executeWithRetry(session, execFunc, pool.conf.retryGetSessionTimes)
+	rs, err := pool.executeWithRetry(ctx, session, execFunc, pool.conf.retryGetSessionTimes)
 	if err != nil {
-		session.close()
+		session.close(ctx)
 		pool.removeSessionFromActive(session)
 		return nil, err
 	}
@@ -130,10 +131,10 @@ func (pool *SessionPool) executeFn(execFunc func(s *pureSession) (*ResultSet, er
 	// if the space was changed after the execution of the given query,
 	// change it back to the default space specified in the pool config
 	if rs.GetSpaceName() != "" && rs.GetSpaceName() != pool.conf.spaceName {
-		err := session.setSessionSpaceToDefault()
+		err := session.setSessionSpaceToDefault(ctx)
 		if err != nil {
 			pool.log.Warn(err.Error())
-			session.close()
+			session.close(ctx)
 			pool.removeSessionFromActive(session)
 			return nil, err
 		}
@@ -152,42 +153,42 @@ func (pool *SessionPool) executeFn(execFunc func(s *pureSession) (*ResultSet, er
 // 2. If the query contains statements like "USE <space name>", the space will be set to the
 // one in the pool config after the execution of the query.
 // 3. The query should not change the user password nor drop a user.
-func (pool *SessionPool) Execute(stmt string) (*ResultSet, error) {
-	return pool.ExecuteWithParameter(stmt, map[string]interface{}{})
+func (pool *SessionPool) Execute(ctx context.Context, stmt string) (*ResultSet, error) {
+	return pool.ExecuteWithParameter(ctx, stmt, map[string]interface{}{})
 }
 
 // ExecuteWithParameter returns the result of the given query as a ResultSet
-func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
+func (pool *SessionPool) ExecuteWithParameter(ctx context.Context, stmt string, params map[string]interface{}) (*ResultSet, error) {
 
 	// Execute the query
 	execFunc := func(s *pureSession) (*ResultSet, error) {
-		rs, err := s.executeWithParameter(stmt, params)
+		rs, err := s.executeWithParameter(ctx, stmt, params)
 		if err != nil {
 			return nil, err
 		}
 		return rs, nil
 	}
-	return pool.executeFn(execFunc)
+	return pool.executeFn(ctx, execFunc)
 }
 
-func (pool *SessionPool) ExecuteWithTimeout(stmt string, timeoutMs int64) (*ResultSet, error) {
-	return pool.ExecuteWithParameterTimeout(stmt, map[string]interface{}{}, timeoutMs)
+func (pool *SessionPool) ExecuteWithTimeout(ctx context.Context, stmt string, timeoutMs int64) (*ResultSet, error) {
+	return pool.ExecuteWithParameterTimeout(ctx, stmt, map[string]interface{}{}, timeoutMs)
 }
 
 // ExecuteWithParameter returns the result of the given query as a ResultSet
-func (pool *SessionPool) ExecuteWithParameterTimeout(stmt string, params map[string]interface{}, timeoutMs int64) (*ResultSet, error) {
+func (pool *SessionPool) ExecuteWithParameterTimeout(ctx context.Context, stmt string, params map[string]interface{}, timeoutMs int64) (*ResultSet, error) {
 	// Execute the query
 	if timeoutMs <= 0 {
 		return nil, fmt.Errorf("timeout should be a positive number")
 	}
 	execFunc := func(s *pureSession) (*ResultSet, error) {
-		rs, err := s.executeWithParameterTimeout(stmt, params, timeoutMs)
+		rs, err := s.executeWithParameterTimeout(ctx, stmt, params, timeoutMs)
 		if err != nil {
 			return nil, err
 		}
 		return rs, nil
 	}
-	return pool.executeFn(execFunc)
+	return pool.executeFn(ctx, execFunc)
 }
 
 // ExecuteJson returns the result of the given query as a json string
@@ -263,7 +264,7 @@ func (pool *SessionPool) ExecuteJsonWithParameter(stmt string, params map[string
 }
 
 // Close logs out all sessions and closes bonded connection.
-func (pool *SessionPool) Close() {
+func (pool *SessionPool) Close(ctx context.Context) {
 	pool.rwLock.Lock()
 	defer pool.rwLock.Unlock()
 
@@ -274,12 +275,12 @@ func (pool *SessionPool) Close() {
 	// iterate all sessions
 	for i := 0; i < idleLen; i++ {
 		session := pool.idleSessions.Front().Value.(*pureSession)
-		session.close()
+		session.close(ctx)
 		pool.idleSessions.Remove(pool.idleSessions.Front())
 	}
 	for i := 0; i < activeLen; i++ {
 		session := pool.activeSessions.Front().Value.(*pureSession)
-		session.close()
+		session.close(ctx)
 		pool.activeSessions.Remove(pool.activeSessions.Front())
 	}
 
@@ -296,8 +297,8 @@ func (pool *SessionPool) GetTotalSessionCount() int {
 	return pool.activeSessions.Len() + pool.idleSessions.Len()
 }
 
-func (pool *SessionPool) ExecuteAndCheck(q string) (*ResultSet, error) {
-	rs, err := pool.Execute(q)
+func (pool *SessionPool) ExecuteAndCheck(ctx context.Context, q string) (*ResultSet, error) {
+	rs, err := pool.Execute(ctx, q)
 	if err != nil {
 		return nil, err
 	}
@@ -310,8 +311,8 @@ func (pool *SessionPool) ExecuteAndCheck(q string) (*ResultSet, error) {
 	return rs, nil
 }
 
-func (pool *SessionPool) ShowSpaces() ([]SpaceName, error) {
-	rs, err := pool.ExecuteAndCheck("SHOW SPACES;")
+func (pool *SessionPool) ShowSpaces(ctx context.Context) ([]SpaceName, error) {
+	rs, err := pool.ExecuteAndCheck(ctx, "SHOW SPACES;")
 	if err != nil {
 		return nil, err
 	}
@@ -322,8 +323,8 @@ func (pool *SessionPool) ShowSpaces() ([]SpaceName, error) {
 	return names, nil
 }
 
-func (pool *SessionPool) ShowTags() ([]LabelName, error) {
-	rs, err := pool.ExecuteAndCheck("SHOW TAGS;")
+func (pool *SessionPool) ShowTags(ctx context.Context) ([]LabelName, error) {
+	rs, err := pool.ExecuteAndCheck(ctx, "SHOW TAGS;")
 	if err != nil {
 		return nil, err
 	}
@@ -334,18 +335,18 @@ func (pool *SessionPool) ShowTags() ([]LabelName, error) {
 	return names, nil
 }
 
-func (pool *SessionPool) CreateTag(tag LabelSchema) (*ResultSet, error) {
+func (pool *SessionPool) CreateTag(ctx context.Context, tag LabelSchema) (*ResultSet, error) {
 	q := tag.BuildCreateTagQL()
-	rs, err := pool.ExecuteAndCheck(q)
+	rs, err := pool.ExecuteAndCheck(ctx, q)
 	if err != nil {
 		return rs, err
 	}
 	return rs, nil
 }
 
-func (pool *SessionPool) AddTagTTL(tagName string, colName string, duration uint) (*ResultSet, error) {
+func (pool *SessionPool) AddTagTTL(ctx context.Context, tagName string, colName string, duration uint) (*ResultSet, error) {
 	q := fmt.Sprintf(`ALTER TAG %s TTL_DURATION = %d, TTL_COL = "%s";`, tagName, duration, colName)
-	rs, err := pool.ExecuteAndCheck(q)
+	rs, err := pool.ExecuteAndCheck(ctx, q)
 	if err != nil {
 		return nil, err
 	}
@@ -353,9 +354,9 @@ func (pool *SessionPool) AddTagTTL(tagName string, colName string, duration uint
 	return rs, nil
 }
 
-func (pool *SessionPool) GetTagTTL(tagName string) (string, uint, error) {
+func (pool *SessionPool) GetTagTTL(ctx context.Context, tagName string) (string, uint, error) {
 	q := fmt.Sprintf("SHOW CREATE TAG %s;", tagName)
-	rs, err := pool.ExecuteAndCheck(q)
+	rs, err := pool.ExecuteAndCheck(ctx, q)
 	if err != nil {
 		return "", 0, err
 	}
@@ -365,9 +366,9 @@ func (pool *SessionPool) GetTagTTL(tagName string) (string, uint, error) {
 	return parseTTL(s)
 }
 
-func (pool *SessionPool) DescTag(tagName string) ([]Label, error) {
+func (pool *SessionPool) DescTag(ctx context.Context, tagName string) ([]Label, error) {
 	q := fmt.Sprintf("DESC TAG %s;", tagName)
-	rs, err := pool.ExecuteAndCheck(q)
+	rs, err := pool.ExecuteAndCheck(ctx, q)
 	if err != nil {
 		return nil, err
 	}
@@ -378,8 +379,8 @@ func (pool *SessionPool) DescTag(tagName string) ([]Label, error) {
 	return fields, nil
 }
 
-func (pool *SessionPool) ShowEdges() ([]LabelName, error) {
-	rs, err := pool.ExecuteAndCheck("SHOW EDGES;")
+func (pool *SessionPool) ShowEdges(ctx context.Context) ([]LabelName, error) {
+	rs, err := pool.ExecuteAndCheck(ctx, "SHOW EDGES;")
 	if err != nil {
 		return nil, err
 	}
@@ -390,18 +391,18 @@ func (pool *SessionPool) ShowEdges() ([]LabelName, error) {
 	return names, nil
 }
 
-func (pool *SessionPool) CreateEdge(edge LabelSchema) (*ResultSet, error) {
+func (pool *SessionPool) CreateEdge(ctx context.Context, edge LabelSchema) (*ResultSet, error) {
 	q := edge.BuildCreateEdgeQL()
-	rs, err := pool.ExecuteAndCheck(q)
+	rs, err := pool.ExecuteAndCheck(ctx, q)
 	if err != nil {
 		return rs, err
 	}
 	return rs, nil
 }
 
-func (pool *SessionPool) AddEdgeTTL(tagName string, colName string, duration uint) (*ResultSet, error) {
+func (pool *SessionPool) AddEdgeTTL(ctx context.Context, tagName string, colName string, duration uint) (*ResultSet, error) {
 	q := fmt.Sprintf(`ALTER EDGE %s TTL_DURATION = %d, TTL_COL = "%s";`, tagName, duration, colName)
-	rs, err := pool.ExecuteAndCheck(q)
+	rs, err := pool.ExecuteAndCheck(ctx, q)
 	if err != nil {
 		return nil, err
 	}
@@ -409,9 +410,9 @@ func (pool *SessionPool) AddEdgeTTL(tagName string, colName string, duration uin
 	return rs, nil
 }
 
-func (pool *SessionPool) GetEdgeTTL(edgeName string) (string, uint, error) {
+func (pool *SessionPool) GetEdgeTTL(ctx context.Context, edgeName string) (string, uint, error) {
 	q := fmt.Sprintf("SHOW CREATE EDGE %s;", edgeName)
-	rs, err := pool.ExecuteAndCheck(q)
+	rs, err := pool.ExecuteAndCheck(ctx, q)
 	if err != nil {
 		return "", 0, err
 	}
@@ -421,9 +422,9 @@ func (pool *SessionPool) GetEdgeTTL(edgeName string) (string, uint, error) {
 	return parseTTL(s)
 }
 
-func (pool *SessionPool) DescEdge(edgeName string) ([]Label, error) {
+func (pool *SessionPool) DescEdge(ctx context.Context, edgeName string) ([]Label, error) {
 	q := fmt.Sprintf("DESC EDGE %s;", edgeName)
-	rs, err := pool.ExecuteAndCheck(q)
+	rs, err := pool.ExecuteAndCheck(ctx, q)
 	if err != nil {
 		return nil, err
 	}
@@ -436,7 +437,7 @@ func (pool *SessionPool) DescEdge(edgeName string) ([]Label, error) {
 
 // newSession creates a new session and returns it.
 // `use <space>` will be executed so that the new session will be in the default space.
-func (pool *SessionPool) newSession() (*pureSession, error) {
+func (pool *SessionPool) newSession(ctx context.Context) (*pureSession, error) {
 	graphAddr := pool.getNextAddr()
 	cn := connection{
 		severAddress: graphAddr,
@@ -448,13 +449,13 @@ func (pool *SessionPool) newSession() (*pureSession, error) {
 	}
 
 	// open a new connection
-	if err := cn.open(cn.severAddress, pool.conf.timeOut, pool.conf.sslConfig,
+	if err := cn.open(ctx, cn.severAddress, pool.conf.timeOut, pool.conf.sslConfig,
 		pool.conf.useHTTP2, pool.conf.httpHeader, pool.conf.handshakeKey); err != nil {
 		return nil, fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
 	}
 
 	// authenticate with username and password to get a new session
-	authResp, err := cn.authenticate(pool.conf.username, pool.conf.password)
+	authResp, err := cn.authenticate(ctx, pool.conf.username, pool.conf.password)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a new session: %s", err.Error())
 	}
@@ -463,7 +464,7 @@ func (pool *SessionPool) newSession() (*pureSession, error) {
 	if authResp.GetErrorCode() != 0 {
 		if authResp.GetErrorCode() == nebula.ErrorCode_E_BAD_USERNAME_PASSWORD ||
 			authResp.GetErrorCode() == nebula.ErrorCode_E_USER_NOT_FOUND {
-			pool.Close()
+			pool.Close(ctx)
 			return nil, fmt.Errorf(
 				"failed to authenticate the user, error code: %d, error message: %s, the pool has been closed",
 				authResp.ErrorCode, authResp.ErrorMsg)
@@ -485,13 +486,13 @@ func (pool *SessionPool) newSession() (*pureSession, error) {
 
 	// Switch to the default space
 	stmt := fmt.Sprintf("USE %s", pool.conf.spaceName)
-	useSpaceRs, err := newSession.execute(stmt)
+	useSpaceRs, err := newSession.execute(ctx, stmt)
 	if err != nil {
 		return nil, err
 	}
 
 	if useSpaceRs.GetErrorCode() != ErrorCode_SUCCEEDED {
-		newSession.close()
+		newSession.close(ctx)
 		return nil, fmt.Errorf("failed to use space %s: %s",
 			pool.conf.spaceName, useSpaceRs.GetErrorMsg())
 	}
@@ -533,6 +534,7 @@ func (pool *SessionPool) getSessionFromIdle() (*pureSession, error) {
 // 2. connection is invalid.
 // and then change the original session to the new one.
 func (pool *SessionPool) executeWithRetry(
+	ctx context.Context,
 	session *pureSession,
 	f func(*pureSession) (*ResultSet, error),
 	retry int) (*ResultSet, error) {
@@ -546,16 +548,16 @@ func (pool *SessionPool) executeWithRetry(
 	}
 
 	// If the session is invalid, close it first
-	session.close()
+	session.close(ctx)
 	// get a new session
 	for i := 0; i < retry; i++ {
 		pool.log.Info("retry to get sessions")
-		newSession, err := pool.newSession()
+		newSession, err := pool.newSession(ctx)
 		if err != nil {
 			return nil, err
 		}
 
-		pingErr := newSession.ping()
+		pingErr := newSession.ping(ctx)
 		if pingErr != nil {
 			pool.log.Error("failed to ping the session, error: " + pingErr.Error())
 			continue
@@ -570,14 +572,14 @@ func (pool *SessionPool) executeWithRetry(
 }
 
 // startCleaner starts sessionCleaner if idleTime > 0.
-func (pool *SessionPool) startCleaner() {
+func (pool *SessionPool) startCleaner(ctx context.Context) {
 	if pool.conf.idleTime > 0 && pool.cleanerChan == nil {
 		pool.cleanerChan = make(chan struct{}, 1)
-		go pool.sessionCleaner()
+		go pool.sessionCleaner(ctx)
 	}
 }
 
-func (pool *SessionPool) sessionCleaner() {
+func (pool *SessionPool) sessionCleaner(ctx context.Context) {
 	const minInterval = time.Minute
 
 	d := pool.conf.idleTime
@@ -601,7 +603,7 @@ func (pool *SessionPool) sessionCleaner() {
 		closing := pool.timeoutSessionList()
 		//release expired session from the pool
 		for _, session := range closing {
-			session.close()
+			session.close(ctx)
 		}
 		t.Reset(d)
 	}
@@ -702,9 +704,9 @@ func (pool *SessionPool) returnSession(session *pureSession) {
 	session.returnedAt = time.Now()
 }
 
-func (pool *SessionPool) setSessionSpaceToDefault(session *pureSession) error {
+func (pool *SessionPool) setSessionSpaceToDefault(ctx context.Context, session *pureSession) error {
 	stmt := fmt.Sprintf("USE %s", pool.conf.spaceName)
-	rs, err := session.execute(stmt)
+	rs, err := session.execute(ctx, stmt)
 	if err != nil {
 		return err
 	}
@@ -716,14 +718,14 @@ func (pool *SessionPool) setSessionSpaceToDefault(session *pureSession) error {
 	// and remove the session from the pool because it is malformed.
 	pool.log.Warn(fmt.Sprintf("failed to reset the space of the session: errorCode: %d, errorMsg: %s, session removed",
 		rs.GetErrorCode(), rs.GetErrorMsg()))
-	session.close()
+	session.close(ctx)
 	pool.removeSessionFromActive(session)
 	return fmt.Errorf("failed to reset the space of the session: errorCode: %d, errorMsg: %s",
 		rs.GetErrorCode(), rs.GetErrorMsg())
 }
 
-func (session *pureSession) execute(stmt string) (*ResultSet, error) {
-	return session.executeWithParameter(stmt, nil)
+func (session *pureSession) execute(ctx context.Context, stmt string) (*ResultSet, error) {
+	return session.executeWithParameter(ctx, stmt, nil)
 }
 
 func (session *pureSession) executeFn(fn func() (*graph.ExecutionResponse, error)) (*ResultSet, error) {
@@ -741,29 +743,29 @@ func (session *pureSession) executeFn(fn func() (*graph.ExecutionResponse, error
 	return rs, nil
 }
 
-func (session *pureSession) executeWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
+func (session *pureSession) executeWithParameter(ctx context.Context, stmt string, params map[string]interface{}) (*ResultSet, error) {
 	paramsMap, err := parseParams(params)
 	if err != nil {
 		return nil, err
 	}
 	fn := func() (*graph.ExecutionResponse, error) {
-		return session.connection.executeWithParameter(session.sessionID, stmt, paramsMap)
+		return session.connection.executeWithParameter(ctx, session.sessionID, stmt, paramsMap)
 	}
 	return session.executeFn(fn)
 }
 
-func (session *pureSession) executeWithParameterTimeout(stmt string, params map[string]interface{}, timeout int64) (*ResultSet, error) {
+func (session *pureSession) executeWithParameterTimeout(ctx context.Context, stmt string, params map[string]interface{}, timeout int64) (*ResultSet, error) {
 	paramsMap, err := parseParams(params)
 	if err != nil {
 		return nil, err
 	}
 	fn := func() (*graph.ExecutionResponse, error) {
-		return session.connection.executeWithParameterTimeout(session.sessionID, stmt, paramsMap, timeout)
+		return session.connection.executeWithParameterTimeout(ctx, session.sessionID, stmt, paramsMap, timeout)
 	}
 	return session.executeFn(fn)
 }
 
-func (session *pureSession) close() {
+func (session *pureSession) close(ctx context.Context) {
 	defer func() {
 		if err := recover(); err != nil {
 			return
@@ -771,19 +773,19 @@ func (session *pureSession) close() {
 	}()
 	if session.connection != nil {
 		// ignore signout error
-		_ = session.connection.signOut(session.sessionID)
+		_ = session.connection.signOut(ctx, session.sessionID)
 		session.connection.close()
 		session.connection = nil
 	}
 }
 
 // Ping checks if the session is valid
-func (session *pureSession) ping() error {
+func (session *pureSession) ping(ctx context.Context) error {
 	if session.connection == nil {
 		return fmt.Errorf("failed to ping: Session has been released")
 	}
 	// send ping request
-	rs, err := session.execute(`RETURN "NEBULA GO PING"`)
+	rs, err := session.execute(ctx, `RETURN "NEBULA GO PING"`)
 	// check connection level error
 	if err != nil {
 		return fmt.Errorf("session ping failed, %s" + err.Error())
@@ -795,9 +797,9 @@ func (session *pureSession) ping() error {
 	return nil
 }
 
-func (session *pureSession) setSessionSpaceToDefault() error {
+func (session *pureSession) setSessionSpaceToDefault(ctx context.Context) error {
 	stmt := fmt.Sprintf("USE %s", session.spaceName)
-	rs, err := session.execute(stmt)
+	rs, err := session.execute(ctx, stmt)
 	if err != nil {
 		return err
 	}

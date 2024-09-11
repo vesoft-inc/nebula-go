@@ -12,12 +12,15 @@
 package nebula_go
 
 import (
+	"context"
 	"os"
 	"testing"
 	"time"
 )
 
 func TestSslConnection(t *testing.T) {
+	ctx := context.Background()
+
 	// skip test when ssl_test is not set to true
 	skipSsl(t)
 
@@ -44,7 +47,7 @@ func TestSslConnection(t *testing.T) {
 	sslConfig.InsecureSkipVerify = false
 
 	// Initialize connection pool
-	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConfig, nebulaLog)
+	pool, err := NewSslConnectionPool(ctx, hostList, testPoolConfig, sslConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -52,28 +55,28 @@ func TestSslConnection(t *testing.T) {
 	defer pool.Close()
 
 	// Create session
-	session, err := pool.GetSession(username, password)
+	session, err := pool.GetSession(ctx, username, password)
 	if err != nil {
 		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error())
 	}
-	defer session.Release()
+	defer session.Release(ctx)
 	// Execute a query
-	resp, err := tryToExecute(session, "SHOW HOSTS;")
+	resp, err := tryToExecute(ctx, session, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkResultSet(t, "show hosts", resp)
 	// Create a new space
-	resp, err = tryToExecute(session, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
+	resp, err = tryToExecute(ctx, session, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkResultSet(t, "create space", resp)
 
-	resp, err = tryToExecute(session, "DROP SPACE client_test;")
+	resp, err = tryToExecute(ctx, session, "DROP SPACE client_test;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -83,6 +86,8 @@ func TestSslConnection(t *testing.T) {
 
 // TODO: generate certificate with hostName info and disable InsecureSkipVerify
 func TestSslConnectionSelfSigned(t *testing.T) {
+	ctx := context.Background()
+
 	// skip test when ssl_test is not set to true
 	skipSslSelfSigned(t)
 
@@ -109,7 +114,7 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	sslConfig.InsecureSkipVerify = false
 
 	// Initialize connection pool
-	pool, err := NewSslConnectionPool(hostList, testPoolConfig, sslConfig, nebulaLog)
+	pool, err := NewSslConnectionPool(ctx, hostList, testPoolConfig, sslConfig, nebulaLog)
 	if err != nil {
 		t.Fatalf("fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error())
 	}
@@ -117,28 +122,28 @@ func TestSslConnectionSelfSigned(t *testing.T) {
 	defer pool.Close()
 
 	// Create session
-	session, err := pool.GetSession(username, password)
+	session, err := pool.GetSession(ctx, username, password)
 	if err != nil {
 		t.Fatalf("fail to create a new session from connection pool, username: %s, password: %s, %s",
 			username, password, err.Error())
 	}
-	defer session.Release()
+	defer session.Release(ctx)
 	// Execute a query
-	resp, err := tryToExecute(session, "SHOW HOSTS;")
+	resp, err := tryToExecute(ctx, session, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkResultSet(t, "show hosts", resp)
 	// Create a new space
-	resp, err = tryToExecute(session, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
+	resp, err = tryToExecute(ctx, session, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkResultSet(t, "create space", resp)
 
-	resp, err = tryToExecute(session, "DROP SPACE client_test;")
+	resp, err = tryToExecute(ctx, session, "DROP SPACE client_test;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return

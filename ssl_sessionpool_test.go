@@ -12,11 +12,14 @@
 package nebula_go
 
 import (
+	"context"
 	"testing"
 	"time"
 )
 
 func TestSslSessionPool(t *testing.T) {
+	ctx := context.Background()
+
 	skipSsl(t)
 
 	hostAddress := HostAddress{Host: address, Port: port}
@@ -46,26 +49,26 @@ func TestSslSessionPool(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	pool, err := NewSessionPool(*conf, nebulaLog)
+	pool, err := NewSessionPool(ctx, *conf, nebulaLog)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer pool.Close()
-	resp, err := pool.Execute("SHOW HOSTS;")
+	defer pool.Close(ctx)
+	resp, err := pool.Execute(ctx, "SHOW HOSTS;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkResultSet(t, "show hosts", resp)
 	// Create a new space
-	resp, err = pool.Execute("CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
+	resp, err = pool.Execute(ctx, "CREATE SPACE client_test(partition_num=1024, replica_factor=1, vid_type = FIXED_STRING(30));")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 	checkResultSet(t, "create space", resp)
 
-	resp, err = pool.Execute("DROP SPACE client_test;")
+	resp, err = pool.Execute(ctx, "DROP SPACE client_test;")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return

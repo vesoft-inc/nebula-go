@@ -9,6 +9,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -31,6 +32,8 @@ const (
 var log = nebula.DefaultLogger{}
 
 func main() {
+	ctx := context.Background()
+
 	hostAddress := nebula.HostAddress{Host: address, Port: port}
 	hostList := []nebula.HostAddress{hostAddress}
 	// Create configs for connection pool using default values
@@ -38,7 +41,7 @@ func main() {
 	testPoolConfig.UseHTTP2 = useHTTP2
 
 	// Initialize connection pool
-	pool, err := nebula.NewConnectionPool(hostList, testPoolConfig, log)
+	pool, err := nebula.NewConnectionPool(ctx, hostList, testPoolConfig, log)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Fail to initialize the connection pool, host: %s, port: %d, %s", address, port, err.Error()))
 	}
@@ -50,13 +53,13 @@ func main() {
 	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
 		// Create session
-		session, err := pool.GetSession(username, password)
+		session, err := pool.GetSession(ctx, username, password)
 		if err != nil {
 			log.Fatal(fmt.Sprintf("Fail to create a new session from connection pool, username: %s, password: %s, %s",
 				username, password, err.Error()))
 		}
 		// Release session and return connection back to connection pool
-		defer session.Release()
+		defer session.Release(ctx)
 		// Method used to check execution response
 		checkResultSet := func(prefix string, res *nebula.ResultSet) {
 			if !res.IsSucceed() {
@@ -70,7 +73,7 @@ func main() {
 				"CREATE EDGE IF NOT EXISTS like(likeness double)"
 
 			// Execute a query
-			resultSet, err := session.Execute(createSchema)
+			resultSet, err := session.Execute(ctx, createSchema)
 			if err != nil {
 				fmt.Print(err.Error())
 				return
@@ -87,7 +90,7 @@ func main() {
 				"'John':('John', 11);"
 
 			// Insert multiple vertexes
-			resultSet, err := session.Execute(insertVertexes)
+			resultSet, err := session.Execute(ctx, insertVertexes)
 			if err != nil {
 				fmt.Print(err.Error())
 				return
@@ -103,7 +106,7 @@ func main() {
 				"'Tom'->'Jerry':(68.3), " +
 				"'Bob'->'John':(97.2);"
 
-			resultSet, err := session.Execute(insertEdges)
+			resultSet, err := session.Execute(ctx, insertEdges)
 			if err != nil {
 				fmt.Print(err.Error())
 				return
@@ -114,7 +117,7 @@ func main() {
 		{
 			query := "GO FROM 'Bob' OVER like YIELD $^.person.name, $^.person.age, like.likeness"
 			// Send query
-			resultSet, err := session.Execute(query)
+			resultSet, err := session.Execute(ctx, query)
 			if err != nil {
 				fmt.Print(err.Error())
 				return
@@ -155,7 +158,7 @@ func main() {
 		{
 			query := "DROP SPACE IF EXISTS example_space"
 			// Send query
-			resultSet, err := session.Execute(query)
+			resultSet, err := session.Execute(ctx, query)
 			if err != nil {
 				fmt.Print(err.Error())
 				return
