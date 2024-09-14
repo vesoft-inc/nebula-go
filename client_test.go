@@ -19,9 +19,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/haoxins/nebula-go/nebula"
+	"github.com/haoxins/nebula-go/nebula/graph"
 	"github.com/stretchr/testify/assert"
-	"github.com/vesoft-inc/nebula-go/v3/nebula"
-	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 )
 
 const (
@@ -1129,12 +1129,12 @@ func TestExecuteWithParameter(t *testing.T) {
 
 	// Simple result
 	{
-		query := `RETURN 
-			toBoolean($p1) and false, 
-			$p2+3, 
-			$p3[1]>3, 
-			$p5, 
-			$p6, 
+		query := `RETURN
+			toBoolean($p1) and false,
+			$p2+3,
+			$p3[1]>3,
+			$p5,
+			$p6,
 			$p7,
 			$p5 + 1 AS overflow_add,
 			$p6 - 1 AS overflow_subtract,

@@ -12,8 +12,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/vesoft-inc/nebula-go/v3/nebula"
-	graph "github.com/vesoft-inc/nebula-go/v3/nebula/graph"
+	"github.com/haoxins/nebula-go/nebula"
+	graph "github.com/haoxins/nebula-go/nebula/graph"
 )
 
 type timezoneInfo struct {

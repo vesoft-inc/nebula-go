@@ -17,9 +17,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/haoxins/nebula-go/nebula"
+	"github.com/haoxins/nebula-go/nebula/graph"
 	"github.com/stretchr/testify/assert"
-	"github.com/vesoft-inc/nebula-go/v3/nebula"
-	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 	"golang.org/x/net/context"
 )
 

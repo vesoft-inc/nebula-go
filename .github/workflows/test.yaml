@@ -1,11 +1,11 @@
 name: test
 on:
   push:
-    branches: [ master, 'release-**']
+    branches:
+    - main
   pull_request:
-    branches: [ master, 'release-**']
-  schedule:
-    - cron: "0 6 * * *"
+    branches:
+    - main
 
 jobs:
   lint:
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goVer: ['1.16', '1.17', '1.18', '1.19', '1.20', '1.21', '1.22']
+        goVer: ['1.23']
     steps:
       - uses: actions/checkout@v2
       - name: Setup go ${{ matrix.goVer }}
@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goVer: ['1.16', '1.17', '1.18', '1.19', '1.20', '1.21', '1.22']
+        goVer: ['1.23']
     steps:
       - uses: actions/checkout@v2
       - name: Setup go ${{ matrix.goVer }}
@@ -59,26 +59,6 @@ jobs:
           make up-ssl
           sleep 10
           make ssl-test-self-signed
-      - name: down
-        if: always()
-        run: |
-          make down
-  go-client-example:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        goVer: ['1.16', '1.17', '1.18', '1.19', '1.20', '1.21', '1.22']
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup go ${{ matrix.goVer }}
-        uses: actions/setup-go@v1
-        with:
-          go-version: ${{ matrix.goVer }}
-      - name: Run examples
-        run: |
-          make up
-          sleep 10
-          make run-examples
       - name: down
         if: always()
         run: |

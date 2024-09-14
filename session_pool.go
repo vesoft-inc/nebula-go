@@ -15,8 +15,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vesoft-inc/nebula-go/v3/nebula"
-	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
+	"github.com/haoxins/nebula-go/nebula"
+	"github.com/haoxins/nebula-go/nebula/graph"
 )
 
 // SessionPool is a pool that manages sessions internally.

@@ -16,7 +16,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vesoft-inc/nebula-go/v3/nebula"
+	"github.com/haoxins/nebula-go/nebula"
 )
 
 type ConnectionPool struct {

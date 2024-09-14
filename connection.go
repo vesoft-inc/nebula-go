@@ -17,9 +17,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/haoxins/nebula-go/nebula"
+	"github.com/haoxins/nebula-go/nebula/graph"
 	"github.com/vesoft-inc/fbthrift/thrift/lib/go/thrift"
-	"github.com/vesoft-inc/nebula-go/v3/nebula"
-	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
 	"golang.org/x/net/http2"
 )
 

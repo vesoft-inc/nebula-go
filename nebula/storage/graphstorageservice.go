@@ -10,8 +10,8 @@ import (
 	"sync"
 	"fmt"
 	thrift "github.com/vesoft-inc/fbthrift/thrift/lib/go/thrift"
-	nebula0 "github.com/vesoft-inc/nebula-go/v3/nebula"
-	meta1 "github.com/vesoft-inc/nebula-go/v3/nebula/meta"
+	nebula0 "github.com/haoxins/nebula-go/nebula"
+	meta1 "github.com/haoxins/nebula-go/nebula/meta"
 
 )
 
