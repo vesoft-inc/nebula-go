@@ -1330,10 +1330,10 @@ func TestReconnect(t *testing.T) {
 	for i := 0; i < timeoutConfig.MaxConnPoolSize; i++ {
 		time.Sleep(200 * time.Millisecond)
 		if i == 3 {
-			stopContainer(t, "nebula-docker-compose-graphd0-1")
+			stopContainer(t, "nebula-docker-compose_graphd0_1")
 		}
 		if i == 7 {
-			stopContainer(t, "nebula-docker-compose-graphd1-1")
+			stopContainer(t, "nebula-docker-compose_graphd1_1")
 		}
 		_, err := session.Execute("SHOW HOSTS;")
 		fmt.Println("Sending query...")
@@ -1351,8 +1351,8 @@ func TestReconnect(t *testing.T) {
 	}
 	checkResultSet(t, "SHOW HOSTS;", resp)
 
-	startContainer(t, "nebula-docker-compose-graphd0-1")
-	startContainer(t, "nebula-docker-compose-graphd1-1")
+	startContainer(t, "nebula-docker-compose_graphd0_1")
+	startContainer(t, "nebula-docker-compose_graphd1_1")
 
 	// Wait for graphd to be up
 	time.Sleep(5 * time.Second)

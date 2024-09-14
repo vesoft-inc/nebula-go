@@ -101,15 +101,15 @@ func TestSession_Recover(t *testing.T) {
 			_, _ = sess.Execute(query)
 		}
 	}()
-	stopContainer(t, "nebula-docker-compose-graphd0-1")
-	stopContainer(t, "nebula-docker-compose-graphd1-1")
-	stopContainer(t, "nebula-docker-compose-graphd2-1")
+	stopContainer(t, "nebula-docker-compose_graphd0_1")
+	stopContainer(t, "nebula-docker-compose_graphd1_1")
+	stopContainer(t, "nebula-docker-compose_graphd2_1")
 	defer func() {
-		startContainer(t, "nebula-docker-compose-graphd1-1")
-		startContainer(t, "nebula-docker-compose-graphd2-1")
+		startContainer(t, "nebula-docker-compose_graphd1_1")
+		startContainer(t, "nebula-docker-compose_graphd2_1")
 	}()
 	<-time.After(3 * time.Second)
-	startContainer(t, "nebula-docker-compose-graphd0-1")
+	startContainer(t, "nebula-docker-compose_graphd0_1")
 	<-time.After(3 * time.Second)
 	_, err = sess.Execute(query)
 	if err != nil {
