@@ -1,4 +1,3 @@
-version: '3.4'
 services:
   metad0:
     image: vesoft/nebula-metad:v3
