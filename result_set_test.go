@@ -502,7 +502,7 @@ func TestNode(t *testing.T) {
 	vertex := getVertex("Tom", 3, 5)
 	node, err := genNode(vertex, testTimezone)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 
 	assert.Equal(t, "\"Tom\"", node.GetID().String())
@@ -517,7 +517,7 @@ func TestNode(t *testing.T) {
 	for i := 0; i < len(keysCopy); i++ {
 		actualVal, err := props[keysCopy[i]].AsInt()
 		if err != nil {
-			t.Errorf(err.Error())
+			t.Error(err.Error())
 		}
 		assert.Equal(t, int64(i), actualVal)
 	}
@@ -527,7 +527,7 @@ func TestRelationship(t *testing.T) {
 	edge := getEdge("Tom", "Lily", 5)
 	relationship, err := genRelationship(edge, testTimezone)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	assert.Equal(t, "\"Tom\"", relationship.GetSrcVertexID().String())
 	assert.Equal(t, "\"Lily\"", relationship.GetDstVertexID().String())
@@ -542,7 +542,7 @@ func TestRelationship(t *testing.T) {
 	for i := 0; i < len(keysCopy); i++ {
 		actualVal, err := props[keysCopy[i]].AsInt()
 		if err != nil {
-			t.Errorf(err.Error())
+			t.Error(err.Error())
 		}
 		assert.Equal(t, int64(i), actualVal)
 	}
@@ -552,17 +552,17 @@ func TestPathWrapper(t *testing.T) {
 	path := getPath("Tom", 5)
 	pathWrapper, err := genPathWrapper(path, testTimezone)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	assert.Equal(t, 5, pathWrapper.GetPathLength())
 	node, err := genNode(getVertex("Tom", 3, 5), testTimezone)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	assert.Equal(t, true, pathWrapper.ContainsNode(*node))
 	relationship, err := genRelationship(getEdge("Tom", "vertex0", 5), testTimezone)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	assert.Equal(t, true, pathWrapper.ContainsRelationship(relationship))
 
@@ -571,7 +571,7 @@ func TestPathWrapper(t *testing.T) {
 	for i := 0; i < 5; i++ {
 		genNode, err := genNode(getVertex(fmt.Sprintf("vertex%d", i), 3, 5), testTimezone)
 		if err != nil {
-			t.Errorf(err.Error())
+			t.Error(err.Error())
 		}
 		nodeList = append(nodeList, *genNode)
 	}
@@ -587,7 +587,7 @@ func TestPathWrapper(t *testing.T) {
 		}
 		newRelationship, err := genRelationship(edge, testTimezone)
 		if err != nil {
-			t.Errorf(err.Error())
+			t.Error(err.Error())
 		}
 		relationshipList = append(relationshipList, newRelationship)
 	}
@@ -696,7 +696,7 @@ func TestResultSet(t *testing.T) {
 
 	record, err := resultSet.GetRowValuesByIndex(0)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err.Error())
 	}
 	temp, _ := record.GetValueByIndex(0)
 	_, err = temp.AsNode()
@@ -839,7 +839,7 @@ func TestIntVid(t *testing.T) {
 	vertex := getVertexInt(101, 3, 5)
 	node, err := genNode(vertex, testTimezone)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 
 	assert.Equal(t, "101", node.GetID().String())
@@ -854,7 +854,7 @@ func TestIntVid(t *testing.T) {
 	for i := 0; i < len(keysCopy); i++ {
 		actualVal, err := props[keysCopy[i]].AsInt()
 		if err != nil {
-			t.Errorf(err.Error())
+			t.Error(err.Error())
 		}
 		assert.Equal(t, int64(i), actualVal)
 	}

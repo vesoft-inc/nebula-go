@@ -286,7 +286,6 @@ func (session *Session) ShowSpaces() ([]SpaceName, error) {
 func (session *Session) reConnect() error {
 	newConnection, err := session.connPool.getIdleConn()
 	if err != nil {
-		err = fmt.Errorf(err.Error())
 		return err
 	}
 
