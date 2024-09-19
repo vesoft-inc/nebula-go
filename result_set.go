@@ -430,6 +430,14 @@ func scanStructField(val *nebula.Value, eleVal reflect.Value, eleType reflect.Ty
 	edge := val.GetEVal()
 	if edge != nil {
 		props := edge.GetProps()
+
+		src := edge.GetSrc()
+		dst := edge.GetDst()
+		name := edge.GetName()
+		props["_src"] = src
+		props["_dst"] = dst
+		props["_name"] = &nebula.Value{SVal: name}
+
 		err := scanValFromProps(props, eleVal, eleType)
 		if err != nil {
 			return err

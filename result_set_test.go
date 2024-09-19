@@ -850,10 +850,14 @@ func TestScanWithNestStruct(t *testing.T) {
 	}
 
 	type Person struct {
+		Vid  string `nebula:"_vid"`
 		Name string `nebula:"name"`
 		City string `nebula:"city"`
 	}
 	type Friend struct {
+		Src       string `nebula:"_src"`
+		Dst       string `nebula:"_dst"`
+		EdgeName  string `nebula:"_name"`
 		CreatedAt string `nebula:"created_at"`
 	}
 	type Result struct {
@@ -867,12 +871,16 @@ func TestScanWithNestStruct(t *testing.T) {
 		t.Error(err)
 	}
 	assert.Equal(t, 1, len(results))
+	assert.NotEmpty(t, results[0].Nodes[0].Vid)
 	assert.Equal(t, "Tom", results[0].Nodes[0].Name)
 	assert.Equal(t, "Shanghai", results[0].Nodes[0].City)
 	assert.Equal(t, "Bob", results[0].Nodes[1].Name)
 	assert.Equal(t, "Hangzhou", results[0].Nodes[1].City)
 	assert.Equal(t, "2024-07-07", results[0].Edges[0].CreatedAt)
 	assert.Equal(t, "2024-07-07", results[0].Edges[1].CreatedAt)
+	assert.NotEmpty(t, results[0].Edges[0].Src)
+	assert.NotEmpty(t, results[0].Edges[0].Dst)
+	assert.Equal(t, "friend", results[0].Edges[0].EdgeName)
 
 	// Scan again should work
 	err = resultSet.Scan(&results)
