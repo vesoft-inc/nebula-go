@@ -589,7 +589,7 @@ func TestSessionPoolRetry(t *testing.T) {
 		}
 		original := session.sessionID
 		conn := session.connection
-		_, _ = sessionPool.executeWithRetry(session, tc.retryFn, 2)
+		_, _ = sessionPool.executeWithRetry(session, tc.retryFn, 2, 2)
 		if tc.retry {
 			assert.NotEqual(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
 			assert.NotEqual(t, conn, nil, fmt.Sprintf("test case: %s", tc.name))
@@ -692,7 +692,7 @@ func TestSessionPoolRetryHttp(t *testing.T) {
 		}
 		original := session.sessionID
 		conn := session.connection
-		_, _ = sessionPool.executeWithRetry(session, tc.retryFn.retry, 1)
+		_, _ = sessionPool.executeWithRetry(session, tc.retryFn.retry, 1, 1)
 		if tc.retry {
 			if tc.newSession {
 				assert.NotEqual(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
