@@ -428,7 +428,7 @@ func (pool *SessionPool) executeWithRetryLimit(session *pureSession,
 		if sessionRetryTimes >= sessionRetryLimit {
 			return rs, nil
 		}
-		pool.log.Info(fmt.Sprintf("retry %d times to execute the query for session invalid", sessionRetryTimes+1))
+		pool.log.Info(fmt.Sprintf("retry to execute the query %d times for session invalid", sessionRetryTimes+1))
 		if err := pool.retryStrategySessionInvalid(session); err != nil {
 			pool.log.Error(fmt.Sprintf("cannot retry when session is invalid, error: %s", err.Error()))
 			return nil, err
@@ -442,7 +442,7 @@ func (pool *SessionPool) executeWithRetryLimit(session *pureSession,
 			pool.log.Error(fmt.Sprintf("cannot retry when error, error: %s", err.Error()))
 			return nil, err
 		}
-		pool.log.Info(fmt.Sprintf("retry  %d times to execute the query for error %v", errRetryLimit+1, err))
+		pool.log.Info(fmt.Sprintf("retry to execute the query %d times for error %v", errRetryTimes+1, err))
 		return pool.executeWithRetryLimit(session, fn, sessionRetryTimes, sessionRetryLimit, errRetryTimes+1, errRetryLimit)
 	}
 }
