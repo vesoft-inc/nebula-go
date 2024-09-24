@@ -622,7 +622,7 @@ func TestSessionPoolSplitRetry(t *testing.T) {
 					ErrorCode: nebula.ErrorCode_E_SESSION_INVALID,
 				}}, nil),
 			sessionInvaildLimit: 5,
-			errLimit:            0,
+			errLimit:            4,
 			err:                 nil,
 			hasErr:              false,
 			hasResult:           true,
@@ -631,7 +631,7 @@ func TestSessionPoolSplitRetry(t *testing.T) {
 		// retry when occur error
 		{
 			retryFn:             newRetryFn(nil, fmt.Errorf("error")),
-			sessionInvaildLimit: 0,
+			sessionInvaildLimit: 5,
 			errLimit:            4,
 			err:                 fmt.Errorf("error"),
 			hasErr:              true,
