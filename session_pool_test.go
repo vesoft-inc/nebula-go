@@ -661,7 +661,7 @@ func TestSessionPoolSplitRetry(t *testing.T) {
 		}
 		defer sessionPool.Close()
 		resp, err := sessionPool.executeFn(tc.retryFn.retry)
-		assert.Equal(t, tc.retryTimes, tc.retryFn.retryTimes)
+		assert.Equal(t, tc.retryTimes+1, tc.retryFn.executeTimes)
 		if tc.hasErr {
 			assert.EqualError(t, tc.err, err.Error())
 		}
@@ -672,12 +672,12 @@ func TestSessionPoolSplitRetry(t *testing.T) {
 }
 
 type retryFn struct {
-	fn         func(*pureSession) (*ResultSet, error)
-	retryTimes int
+	fn           func(*pureSession) (*ResultSet, error)
+	executeTimes int
 }
 
 func (r *retryFn) retry(s *pureSession) (*ResultSet, error) {
-	r.retryTimes++
+	r.executeTimes++
 	return r.fn(s)
 }
 
@@ -773,11 +773,11 @@ func TestSessionPoolRetryHttp(t *testing.T) {
 				assert.Equal(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
 				assert.Equal(t, conn, session.connection, fmt.Sprintf("test case: %s", tc.name))
 			}
-			assert.Equal(t, 2, tc.retryFn.retryTimes, fmt.Sprintf("test case: %s", tc.name))
+			assert.Equal(t, 2, tc.retryFn.executeTimes, fmt.Sprintf("test case: %s", tc.name))
 		} else {
 			assert.Equal(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
 			assert.Equal(t, conn, session.connection, fmt.Sprintf("test case: %s", tc.name))
-			assert.Equal(t, 1, tc.retryFn.retryTimes, fmt.Sprintf("test case: %s", tc.name))
+			assert.Equal(t, 1, tc.retryFn.executeTimes, fmt.Sprintf("test case: %s", tc.name))
 		}
 	}
 }
