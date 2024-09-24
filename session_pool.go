@@ -119,7 +119,7 @@ func (pool *SessionPool) executeFn(execFunc func(s *pureSession) (*ResultSet, er
 		pool.removeSessionFromIdle(session)
 		pool.addSessionToActive(session)
 	}
-	rs, err := pool.executeWithRetry(session, execFunc, pool.conf.retryGetSessionTimes)
+	rs, err := pool.executeWithRetry(session, execFunc, pool.conf.retryGetSessionTimes, pool.conf.retryErrorTimes)
 	if err != nil {
 		if !pool.enableHttp() {
 			session.close()
@@ -410,33 +410,42 @@ func (pool *SessionPool) getSessionFromIdle() (*pureSession, error) {
 //  1. the current session is invalid, and then get idle session from pool
 //  2. the connection is invalid, and do not logout, just retry execution
 func (pool *SessionPool) executeWithRetry(session *pureSession,
-	f func(*pureSession) (*ResultSet, error), retry int) (*ResultSet, error) {
-	return pool.executeWithRetryLimit(session, f, 0, retry)
+	f func(*pureSession) (*ResultSet, error), sessionRetry int, errRetry int) (*ResultSet, error) {
+	return pool.executeWithRetryLimit(session, f, 0, sessionRetry, 0, errRetry)
 }
 
 func (pool *SessionPool) executeWithRetryLimit(session *pureSession,
-	f func(*pureSession) (*ResultSet, error), retryTimes, retryLimit int) (*ResultSet, error) {
-	rs, err := f(session)
-	if retryTimes >= retryLimit {
-		return rs, err
-	}
+	fn func(*pureSession) (*ResultSet, error),
+	sessionRetryTimes, sessionRetryLimit int,
+	errRetryTimes, errRetryLimit int,
+) (*ResultSet, error) {
+	rs, err := fn(session)
+
 	if err == nil {
 		if rs.GetErrorCode() != ErrorCode_E_SESSION_INVALID {
 			return rs, nil
-		} else {
-			if err := pool.retryStrategySessionInvalid(session); err != nil {
-				pool.log.Error(fmt.Sprintf("cannot retry when session is invalid, error: %s", err.Error()))
-				return nil, err
-			}
 		}
+		// exec fn first, so should +1 for validation
+		if sessionRetryTimes >= sessionRetryLimit {
+			return rs, nil
+		}
+		pool.log.Info(fmt.Sprintf("retry to execute the query %d times for session invalid", sessionRetryTimes+1))
+		if err := pool.retryStrategySessionInvalid(session); err != nil {
+			pool.log.Error(fmt.Sprintf("cannot retry when session is invalid, error: %s", err.Error()))
+			return nil, err
+		}
+		return pool.executeWithRetryLimit(session, fn, sessionRetryTimes+1, sessionRetryLimit, errRetryTimes, errRetryLimit)
 	} else {
+		if errRetryTimes >= errRetryLimit {
+			return rs, err
+		}
 		if err := pool.retryStrategyErr(session); err != nil {
 			pool.log.Error(fmt.Sprintf("cannot retry when error, error: %s", err.Error()))
 			return nil, err
 		}
+		pool.log.Info(fmt.Sprintf("retry to execute the query %d times for error %v", errRetryTimes+1, err))
+		return pool.executeWithRetryLimit(session, fn, sessionRetryTimes, sessionRetryLimit, errRetryTimes+1, errRetryLimit)
 	}
-	pool.log.Info(fmt.Sprintf("retry to execute the query %d times", retryTimes+1))
-	return pool.executeWithRetryLimit(session, f, retryTimes+1, retryLimit)
 }
 
 func (pool *SessionPool) retryStrategySessionInvalid(session *pureSession) error {

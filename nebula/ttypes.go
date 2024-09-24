@@ -93,6 +93,53 @@ func NullTypeFromString(s string) (NullType, error) {
 
 func NullTypePtr(v NullType) *NullType { return &v }
 
+type SyncStatus int64
+const (
+  SyncStatus_UNKNOWN SyncStatus = 0
+  SyncStatus_ONLINE SyncStatus = 1
+  SyncStatus_OFFLINE SyncStatus = 2
+)
+
+var SyncStatusToName = map[SyncStatus]string {
+  SyncStatus_UNKNOWN: "UNKNOWN",
+  SyncStatus_ONLINE: "ONLINE",
+  SyncStatus_OFFLINE: "OFFLINE",
+}
+
+var SyncStatusToValue = map[string]SyncStatus {
+  "UNKNOWN": SyncStatus_UNKNOWN,
+  "ONLINE": SyncStatus_ONLINE,
+  "OFFLINE": SyncStatus_OFFLINE,
+}
+
+var SyncStatusNames = []string {
+  "UNKNOWN",
+  "ONLINE",
+  "OFFLINE",
+}
+
+var SyncStatusValues = []SyncStatus {
+  SyncStatus_UNKNOWN,
+  SyncStatus_ONLINE,
+  SyncStatus_OFFLINE,
+}
+
+func (p SyncStatus) String() string {
+  if v, ok := SyncStatusToName[p]; ok {
+    return v
+  }
+  return "<UNSET>"
+}
+
+func SyncStatusFromString(s string) (SyncStatus, error) {
+  if v, ok := SyncStatusToValue[s]; ok {
+    return v, nil
+  }
+  return SyncStatus(0), fmt.Errorf("not a valid SyncStatus string")
+}
+
+func SyncStatusPtr(v SyncStatus) *SyncStatus { return &v }
+
 type PropertyType int64
 const (
   PropertyType_UNKNOWN PropertyType = 0
@@ -233,6 +280,9 @@ const (
   ErrorCode_E_USER_NOT_FOUND ErrorCode = -18
   ErrorCode_E_STATS_NOT_FOUND ErrorCode = -19
   ErrorCode_E_SERVICE_NOT_FOUND ErrorCode = -20
+  ErrorCode_E_DRAINER_NOT_FOUND ErrorCode = -21
+  ErrorCode_E_DRAINER_CLIENT_NOT_FOUND ErrorCode = -22
+  ErrorCode_E_PART_STOPPED ErrorCode = -23
   ErrorCode_E_BACKUP_FAILED ErrorCode = -24
   ErrorCode_E_BACKUP_EMPTY_TABLE ErrorCode = -25
   ErrorCode_E_BACKUP_TABLE_FAILED ErrorCode = -26
@@ -240,6 +290,13 @@ const (
   ErrorCode_E_REBUILD_INDEX_FAILED ErrorCode = -28
   ErrorCode_E_INVALID_PASSWORD ErrorCode = -29
   ErrorCode_E_FAILED_GET_ABS_PATH ErrorCode = -30
+  ErrorCode_E_LISTENER_PROGRESS_FAILED ErrorCode = -31
+  ErrorCode_E_SYNC_LISTENER_NOT_FOUND ErrorCode = -32
+  ErrorCode_E_DRAINER_PROGRESS_FAILED ErrorCode = -33
+  ErrorCode_E_PART_DISABLED ErrorCode = -34
+  ErrorCode_E_PART_ALREADY_STARTED ErrorCode = -35
+  ErrorCode_E_PART_ALREADY_STOPPED ErrorCode = -36
+  ErrorCode_E_QUERY_TIMEDOUT ErrorCode = -37
   ErrorCode_E_BAD_USERNAME_PASSWORD ErrorCode = -1001
   ErrorCode_E_SESSION_INVALID ErrorCode = -1002
   ErrorCode_E_SESSION_TIMEOUT ErrorCode = -1003
@@ -262,9 +319,13 @@ const (
   ErrorCode_E_WRONGCLUSTER ErrorCode = -2010
   ErrorCode_E_ZONE_NOT_ENOUGH ErrorCode = -2011
   ErrorCode_E_ZONE_IS_EMPTY ErrorCode = -2012
-  ErrorCode_E_SCHEMA_NAME_EXISTS ErrorCode = -2013
-  ErrorCode_E_RELATED_INDEX_EXISTS ErrorCode = -2014
-  ErrorCode_E_RELATED_SPACE_EXISTS ErrorCode = -2015
+  ErrorCode_E_LISTENER_CONFLICT ErrorCode = -2013
+  ErrorCode_E_SCHEMA_NAME_EXISTS ErrorCode = -2014
+  ErrorCode_E_RELATED_INDEX_EXISTS ErrorCode = -2015
+  ErrorCode_E_RELATED_SPACE_EXISTS ErrorCode = -2016
+  ErrorCode_E_RELATED_FULLTEXT_INDEX_EXISTS ErrorCode = -2017
+  ErrorCode_E_HISTORY_CONFLICT ErrorCode = -2018
+  ErrorCode_E_ZONE_IS_ENABLED ErrorCode = -2019
   ErrorCode_E_STORE_FAILURE ErrorCode = -2021
   ErrorCode_E_STORE_SEGMENT_ILLEGAL ErrorCode = -2022
   ErrorCode_E_BAD_BALANCE_PLAN ErrorCode = -2023
@@ -273,13 +334,21 @@ const (
   ErrorCode_E_NO_VALID_HOST ErrorCode = -2026
   ErrorCode_E_CORRUPTED_BALANCE_PLAN ErrorCode = -2027
   ErrorCode_E_NO_INVALID_BALANCE_PLAN ErrorCode = -2028
+  ErrorCode_E_NO_VALID_DRAINER ErrorCode = -2029
   ErrorCode_E_IMPROPER_ROLE ErrorCode = -2030
   ErrorCode_E_INVALID_PARTITION_NUM ErrorCode = -2031
   ErrorCode_E_INVALID_REPLICA_FACTOR ErrorCode = -2032
   ErrorCode_E_INVALID_CHARSET ErrorCode = -2033
   ErrorCode_E_INVALID_COLLATE ErrorCode = -2034
   ErrorCode_E_CHARSET_COLLATE_NOT_MATCH ErrorCode = -2035
+  ErrorCode_E_PRIVILEGE_ALL_TAG_EDGE_SETTLED ErrorCode = -2036
+  ErrorCode_E_PRIVILEGE_NOT_EXIST ErrorCode = -2037
+  ErrorCode_E_PRIVILEGE_NEED_BASIC_ROLE ErrorCode = -2038
+  ErrorCode_E_PRIVILEGE_ACTION_INVALID ErrorCode = -2039
+  ErrorCode_E_STORAGE_ENABLE_AUTH ErrorCode = -2058
   ErrorCode_E_SNAPSHOT_FAILURE ErrorCode = -2040
+  ErrorCode_E_SNAPSHOT_RUNNING_JOBS ErrorCode = -2056
+  ErrorCode_E_SNAPSHOT_NOT_FOUND ErrorCode = -2057
   ErrorCode_E_BLOCK_WRITE_FAILURE ErrorCode = -2041
   ErrorCode_E_REBUILD_INDEX_FAILURE ErrorCode = -2042
   ErrorCode_E_INDEX_WITH_TTL ErrorCode = -2043
@@ -296,7 +365,7 @@ const (
   ErrorCode_E_JOB_NOT_STOPPABLE ErrorCode = -2054
   ErrorCode_E_JOB_HAS_NO_TARGET_STORAGE ErrorCode = -2055
   ErrorCode_E_INVALID_JOB ErrorCode = -2065
-  ErrorCode_E_BACKUP_BUILDING_INDEX ErrorCode = -2066
+  ErrorCode_E_BACKUP_RUNNING_JOBS ErrorCode = -2066
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND ErrorCode = -2067
   ErrorCode_E_RESTORE_FAILURE ErrorCode = -2068
   ErrorCode_E_SESSION_NOT_FOUND ErrorCode = -2069
@@ -305,6 +374,11 @@ const (
   ErrorCode_E_LIST_CLUSTER_NO_AGENT_FAILURE ErrorCode = -2072
   ErrorCode_E_QUERY_NOT_FOUND ErrorCode = -2073
   ErrorCode_E_AGENT_HB_FAILUE ErrorCode = -2074
+  ErrorCode_E_INVALID_VARIABLE ErrorCode = -2080
+  ErrorCode_E_VARIABLE_TYPE_VALUE_MISMATCH ErrorCode = -2081
+  ErrorCode_E_HOST_CAN_NOT_BE_ADDED ErrorCode = -2082
+  ErrorCode_E_ACCESS_ES_FAILURE ErrorCode = -2090
+  ErrorCode_E_GRAPH_MEMORY_EXCEEDED ErrorCode = -2600
   ErrorCode_E_CONSENSUS_ERROR ErrorCode = -3001
   ErrorCode_E_KEY_HAS_EXISTS ErrorCode = -3002
   ErrorCode_E_DATA_TYPE_MISMATCH ErrorCode = -3003
@@ -366,6 +440,24 @@ const (
   ErrorCode_E_RAFT_BUFFER_OVERFLOW ErrorCode = -3529
   ErrorCode_E_RAFT_ATOMIC_OP_FAILED ErrorCode = -3530
   ErrorCode_E_LEADER_LEASE_FAILED ErrorCode = -3531
+  ErrorCode_E_RAFT_CAUGHT_UP ErrorCode = -3532
+  ErrorCode_E_LOG_GAP ErrorCode = -4001
+  ErrorCode_E_LOG_STALE ErrorCode = -4002
+  ErrorCode_E_INVALID_DRAINER_STORE ErrorCode = -4003
+  ErrorCode_E_SPACE_MISMATCH ErrorCode = -4004
+  ErrorCode_E_PART_MISMATCH ErrorCode = -4005
+  ErrorCode_E_DATA_CONFLICT ErrorCode = -4006
+  ErrorCode_E_REQ_CONFLICT ErrorCode = -4007
+  ErrorCode_E_DATA_ILLEGAL ErrorCode = -4008
+  ErrorCode_E_CACHE_CONFIG_ERROR ErrorCode = -5001
+  ErrorCode_E_NOT_ENOUGH_SPACE ErrorCode = -5002
+  ErrorCode_E_CACHE_MISS ErrorCode = -5003
+  ErrorCode_E_POOL_NOT_FOUND ErrorCode = -5004
+  ErrorCode_E_CACHE_WRITE_FAILURE ErrorCode = -5005
+  ErrorCode_E_NODE_NUMBER_EXCEED_LIMIT ErrorCode = -7001
+  ErrorCode_E_TOTAL_CPU_CORE_EXCEED_LIMIT ErrorCode = -7002
+  ErrorCode_E_INVALID_LICENSE_MANAGER_STATUS ErrorCode = -7003
+  ErrorCode_E_STORAGE_MEMORY_EXCEEDED ErrorCode = -3600
   ErrorCode_E_UNKNOWN ErrorCode = -8000
 )
 
@@ -391,6 +483,9 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_USER_NOT_FOUND: "E_USER_NOT_FOUND",
   ErrorCode_E_STATS_NOT_FOUND: "E_STATS_NOT_FOUND",
   ErrorCode_E_SERVICE_NOT_FOUND: "E_SERVICE_NOT_FOUND",
+  ErrorCode_E_DRAINER_NOT_FOUND: "E_DRAINER_NOT_FOUND",
+  ErrorCode_E_DRAINER_CLIENT_NOT_FOUND: "E_DRAINER_CLIENT_NOT_FOUND",
+  ErrorCode_E_PART_STOPPED: "E_PART_STOPPED",
   ErrorCode_E_BACKUP_FAILED: "E_BACKUP_FAILED",
   ErrorCode_E_BACKUP_EMPTY_TABLE: "E_BACKUP_EMPTY_TABLE",
   ErrorCode_E_BACKUP_TABLE_FAILED: "E_BACKUP_TABLE_FAILED",
@@ -398,6 +493,13 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_REBUILD_INDEX_FAILED: "E_REBUILD_INDEX_FAILED",
   ErrorCode_E_INVALID_PASSWORD: "E_INVALID_PASSWORD",
   ErrorCode_E_FAILED_GET_ABS_PATH: "E_FAILED_GET_ABS_PATH",
+  ErrorCode_E_LISTENER_PROGRESS_FAILED: "E_LISTENER_PROGRESS_FAILED",
+  ErrorCode_E_SYNC_LISTENER_NOT_FOUND: "E_SYNC_LISTENER_NOT_FOUND",
+  ErrorCode_E_DRAINER_PROGRESS_FAILED: "E_DRAINER_PROGRESS_FAILED",
+  ErrorCode_E_PART_DISABLED: "E_PART_DISABLED",
+  ErrorCode_E_PART_ALREADY_STARTED: "E_PART_ALREADY_STARTED",
+  ErrorCode_E_PART_ALREADY_STOPPED: "E_PART_ALREADY_STOPPED",
+  ErrorCode_E_QUERY_TIMEDOUT: "E_QUERY_TIMEDOUT",
   ErrorCode_E_BAD_USERNAME_PASSWORD: "E_BAD_USERNAME_PASSWORD",
   ErrorCode_E_SESSION_INVALID: "E_SESSION_INVALID",
   ErrorCode_E_SESSION_TIMEOUT: "E_SESSION_TIMEOUT",
@@ -420,9 +522,13 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_WRONGCLUSTER: "E_WRONGCLUSTER",
   ErrorCode_E_ZONE_NOT_ENOUGH: "E_ZONE_NOT_ENOUGH",
   ErrorCode_E_ZONE_IS_EMPTY: "E_ZONE_IS_EMPTY",
+  ErrorCode_E_LISTENER_CONFLICT: "E_LISTENER_CONFLICT",
   ErrorCode_E_SCHEMA_NAME_EXISTS: "E_SCHEMA_NAME_EXISTS",
   ErrorCode_E_RELATED_INDEX_EXISTS: "E_RELATED_INDEX_EXISTS",
   ErrorCode_E_RELATED_SPACE_EXISTS: "E_RELATED_SPACE_EXISTS",
+  ErrorCode_E_RELATED_FULLTEXT_INDEX_EXISTS: "E_RELATED_FULLTEXT_INDEX_EXISTS",
+  ErrorCode_E_HISTORY_CONFLICT: "E_HISTORY_CONFLICT",
+  ErrorCode_E_ZONE_IS_ENABLED: "E_ZONE_IS_ENABLED",
   ErrorCode_E_STORE_FAILURE: "E_STORE_FAILURE",
   ErrorCode_E_STORE_SEGMENT_ILLEGAL: "E_STORE_SEGMENT_ILLEGAL",
   ErrorCode_E_BAD_BALANCE_PLAN: "E_BAD_BALANCE_PLAN",
@@ -431,13 +537,21 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_NO_VALID_HOST: "E_NO_VALID_HOST",
   ErrorCode_E_CORRUPTED_BALANCE_PLAN: "E_CORRUPTED_BALANCE_PLAN",
   ErrorCode_E_NO_INVALID_BALANCE_PLAN: "E_NO_INVALID_BALANCE_PLAN",
+  ErrorCode_E_NO_VALID_DRAINER: "E_NO_VALID_DRAINER",
   ErrorCode_E_IMPROPER_ROLE: "E_IMPROPER_ROLE",
   ErrorCode_E_INVALID_PARTITION_NUM: "E_INVALID_PARTITION_NUM",
   ErrorCode_E_INVALID_REPLICA_FACTOR: "E_INVALID_REPLICA_FACTOR",
   ErrorCode_E_INVALID_CHARSET: "E_INVALID_CHARSET",
   ErrorCode_E_INVALID_COLLATE: "E_INVALID_COLLATE",
   ErrorCode_E_CHARSET_COLLATE_NOT_MATCH: "E_CHARSET_COLLATE_NOT_MATCH",
+  ErrorCode_E_PRIVILEGE_ALL_TAG_EDGE_SETTLED: "E_PRIVILEGE_ALL_TAG_EDGE_SETTLED",
+  ErrorCode_E_PRIVILEGE_NOT_EXIST: "E_PRIVILEGE_NOT_EXIST",
+  ErrorCode_E_PRIVILEGE_NEED_BASIC_ROLE: "E_PRIVILEGE_NEED_BASIC_ROLE",
+  ErrorCode_E_PRIVILEGE_ACTION_INVALID: "E_PRIVILEGE_ACTION_INVALID",
+  ErrorCode_E_STORAGE_ENABLE_AUTH: "E_STORAGE_ENABLE_AUTH",
   ErrorCode_E_SNAPSHOT_FAILURE: "E_SNAPSHOT_FAILURE",
+  ErrorCode_E_SNAPSHOT_RUNNING_JOBS: "E_SNAPSHOT_RUNNING_JOBS",
+  ErrorCode_E_SNAPSHOT_NOT_FOUND: "E_SNAPSHOT_NOT_FOUND",
   ErrorCode_E_BLOCK_WRITE_FAILURE: "E_BLOCK_WRITE_FAILURE",
   ErrorCode_E_REBUILD_INDEX_FAILURE: "E_REBUILD_INDEX_FAILURE",
   ErrorCode_E_INDEX_WITH_TTL: "E_INDEX_WITH_TTL",
@@ -454,7 +568,7 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_JOB_NOT_STOPPABLE: "E_JOB_NOT_STOPPABLE",
   ErrorCode_E_JOB_HAS_NO_TARGET_STORAGE: "E_JOB_HAS_NO_TARGET_STORAGE",
   ErrorCode_E_INVALID_JOB: "E_INVALID_JOB",
-  ErrorCode_E_BACKUP_BUILDING_INDEX: "E_BACKUP_BUILDING_INDEX",
+  ErrorCode_E_BACKUP_RUNNING_JOBS: "E_BACKUP_RUNNING_JOBS",
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND: "E_BACKUP_SPACE_NOT_FOUND",
   ErrorCode_E_RESTORE_FAILURE: "E_RESTORE_FAILURE",
   ErrorCode_E_SESSION_NOT_FOUND: "E_SESSION_NOT_FOUND",
@@ -463,6 +577,11 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_LIST_CLUSTER_NO_AGENT_FAILURE: "E_LIST_CLUSTER_NO_AGENT_FAILURE",
   ErrorCode_E_QUERY_NOT_FOUND: "E_QUERY_NOT_FOUND",
   ErrorCode_E_AGENT_HB_FAILUE: "E_AGENT_HB_FAILUE",
+  ErrorCode_E_INVALID_VARIABLE: "E_INVALID_VARIABLE",
+  ErrorCode_E_VARIABLE_TYPE_VALUE_MISMATCH: "E_VARIABLE_TYPE_VALUE_MISMATCH",
+  ErrorCode_E_HOST_CAN_NOT_BE_ADDED: "E_HOST_CAN_NOT_BE_ADDED",
+  ErrorCode_E_ACCESS_ES_FAILURE: "E_ACCESS_ES_FAILURE",
+  ErrorCode_E_GRAPH_MEMORY_EXCEEDED: "E_GRAPH_MEMORY_EXCEEDED",
   ErrorCode_E_CONSENSUS_ERROR: "E_CONSENSUS_ERROR",
   ErrorCode_E_KEY_HAS_EXISTS: "E_KEY_HAS_EXISTS",
   ErrorCode_E_DATA_TYPE_MISMATCH: "E_DATA_TYPE_MISMATCH",
@@ -524,6 +643,24 @@ var ErrorCodeToName = map[ErrorCode]string {
   ErrorCode_E_RAFT_BUFFER_OVERFLOW: "E_RAFT_BUFFER_OVERFLOW",
   ErrorCode_E_RAFT_ATOMIC_OP_FAILED: "E_RAFT_ATOMIC_OP_FAILED",
   ErrorCode_E_LEADER_LEASE_FAILED: "E_LEADER_LEASE_FAILED",
+  ErrorCode_E_RAFT_CAUGHT_UP: "E_RAFT_CAUGHT_UP",
+  ErrorCode_E_LOG_GAP: "E_LOG_GAP",
+  ErrorCode_E_LOG_STALE: "E_LOG_STALE",
+  ErrorCode_E_INVALID_DRAINER_STORE: "E_INVALID_DRAINER_STORE",
+  ErrorCode_E_SPACE_MISMATCH: "E_SPACE_MISMATCH",
+  ErrorCode_E_PART_MISMATCH: "E_PART_MISMATCH",
+  ErrorCode_E_DATA_CONFLICT: "E_DATA_CONFLICT",
+  ErrorCode_E_REQ_CONFLICT: "E_REQ_CONFLICT",
+  ErrorCode_E_DATA_ILLEGAL: "E_DATA_ILLEGAL",
+  ErrorCode_E_CACHE_CONFIG_ERROR: "E_CACHE_CONFIG_ERROR",
+  ErrorCode_E_NOT_ENOUGH_SPACE: "E_NOT_ENOUGH_SPACE",
+  ErrorCode_E_CACHE_MISS: "E_CACHE_MISS",
+  ErrorCode_E_POOL_NOT_FOUND: "E_POOL_NOT_FOUND",
+  ErrorCode_E_CACHE_WRITE_FAILURE: "E_CACHE_WRITE_FAILURE",
+  ErrorCode_E_NODE_NUMBER_EXCEED_LIMIT: "E_NODE_NUMBER_EXCEED_LIMIT",
+  ErrorCode_E_TOTAL_CPU_CORE_EXCEED_LIMIT: "E_TOTAL_CPU_CORE_EXCEED_LIMIT",
+  ErrorCode_E_INVALID_LICENSE_MANAGER_STATUS: "E_INVALID_LICENSE_MANAGER_STATUS",
+  ErrorCode_E_STORAGE_MEMORY_EXCEEDED: "E_STORAGE_MEMORY_EXCEEDED",
   ErrorCode_E_UNKNOWN: "E_UNKNOWN",
 }
 
@@ -549,6 +686,9 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_USER_NOT_FOUND": ErrorCode_E_USER_NOT_FOUND,
   "E_STATS_NOT_FOUND": ErrorCode_E_STATS_NOT_FOUND,
   "E_SERVICE_NOT_FOUND": ErrorCode_E_SERVICE_NOT_FOUND,
+  "E_DRAINER_NOT_FOUND": ErrorCode_E_DRAINER_NOT_FOUND,
+  "E_DRAINER_CLIENT_NOT_FOUND": ErrorCode_E_DRAINER_CLIENT_NOT_FOUND,
+  "E_PART_STOPPED": ErrorCode_E_PART_STOPPED,
   "E_BACKUP_FAILED": ErrorCode_E_BACKUP_FAILED,
   "E_BACKUP_EMPTY_TABLE": ErrorCode_E_BACKUP_EMPTY_TABLE,
   "E_BACKUP_TABLE_FAILED": ErrorCode_E_BACKUP_TABLE_FAILED,
@@ -556,6 +696,13 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_REBUILD_INDEX_FAILED": ErrorCode_E_REBUILD_INDEX_FAILED,
   "E_INVALID_PASSWORD": ErrorCode_E_INVALID_PASSWORD,
   "E_FAILED_GET_ABS_PATH": ErrorCode_E_FAILED_GET_ABS_PATH,
+  "E_LISTENER_PROGRESS_FAILED": ErrorCode_E_LISTENER_PROGRESS_FAILED,
+  "E_SYNC_LISTENER_NOT_FOUND": ErrorCode_E_SYNC_LISTENER_NOT_FOUND,
+  "E_DRAINER_PROGRESS_FAILED": ErrorCode_E_DRAINER_PROGRESS_FAILED,
+  "E_PART_DISABLED": ErrorCode_E_PART_DISABLED,
+  "E_PART_ALREADY_STARTED": ErrorCode_E_PART_ALREADY_STARTED,
+  "E_PART_ALREADY_STOPPED": ErrorCode_E_PART_ALREADY_STOPPED,
+  "E_QUERY_TIMEDOUT": ErrorCode_E_QUERY_TIMEDOUT,
   "E_BAD_USERNAME_PASSWORD": ErrorCode_E_BAD_USERNAME_PASSWORD,
   "E_SESSION_INVALID": ErrorCode_E_SESSION_INVALID,
   "E_SESSION_TIMEOUT": ErrorCode_E_SESSION_TIMEOUT,
@@ -578,9 +725,13 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_WRONGCLUSTER": ErrorCode_E_WRONGCLUSTER,
   "E_ZONE_NOT_ENOUGH": ErrorCode_E_ZONE_NOT_ENOUGH,
   "E_ZONE_IS_EMPTY": ErrorCode_E_ZONE_IS_EMPTY,
+  "E_LISTENER_CONFLICT": ErrorCode_E_LISTENER_CONFLICT,
   "E_SCHEMA_NAME_EXISTS": ErrorCode_E_SCHEMA_NAME_EXISTS,
   "E_RELATED_INDEX_EXISTS": ErrorCode_E_RELATED_INDEX_EXISTS,
   "E_RELATED_SPACE_EXISTS": ErrorCode_E_RELATED_SPACE_EXISTS,
+  "E_RELATED_FULLTEXT_INDEX_EXISTS": ErrorCode_E_RELATED_FULLTEXT_INDEX_EXISTS,
+  "E_HISTORY_CONFLICT": ErrorCode_E_HISTORY_CONFLICT,
+  "E_ZONE_IS_ENABLED": ErrorCode_E_ZONE_IS_ENABLED,
   "E_STORE_FAILURE": ErrorCode_E_STORE_FAILURE,
   "E_STORE_SEGMENT_ILLEGAL": ErrorCode_E_STORE_SEGMENT_ILLEGAL,
   "E_BAD_BALANCE_PLAN": ErrorCode_E_BAD_BALANCE_PLAN,
@@ -589,13 +740,21 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_NO_VALID_HOST": ErrorCode_E_NO_VALID_HOST,
   "E_CORRUPTED_BALANCE_PLAN": ErrorCode_E_CORRUPTED_BALANCE_PLAN,
   "E_NO_INVALID_BALANCE_PLAN": ErrorCode_E_NO_INVALID_BALANCE_PLAN,
+  "E_NO_VALID_DRAINER": ErrorCode_E_NO_VALID_DRAINER,
   "E_IMPROPER_ROLE": ErrorCode_E_IMPROPER_ROLE,
   "E_INVALID_PARTITION_NUM": ErrorCode_E_INVALID_PARTITION_NUM,
   "E_INVALID_REPLICA_FACTOR": ErrorCode_E_INVALID_REPLICA_FACTOR,
   "E_INVALID_CHARSET": ErrorCode_E_INVALID_CHARSET,
   "E_INVALID_COLLATE": ErrorCode_E_INVALID_COLLATE,
   "E_CHARSET_COLLATE_NOT_MATCH": ErrorCode_E_CHARSET_COLLATE_NOT_MATCH,
+  "E_PRIVILEGE_ALL_TAG_EDGE_SETTLED": ErrorCode_E_PRIVILEGE_ALL_TAG_EDGE_SETTLED,
+  "E_PRIVILEGE_NOT_EXIST": ErrorCode_E_PRIVILEGE_NOT_EXIST,
+  "E_PRIVILEGE_NEED_BASIC_ROLE": ErrorCode_E_PRIVILEGE_NEED_BASIC_ROLE,
+  "E_PRIVILEGE_ACTION_INVALID": ErrorCode_E_PRIVILEGE_ACTION_INVALID,
+  "E_STORAGE_ENABLE_AUTH": ErrorCode_E_STORAGE_ENABLE_AUTH,
   "E_SNAPSHOT_FAILURE": ErrorCode_E_SNAPSHOT_FAILURE,
+  "E_SNAPSHOT_RUNNING_JOBS": ErrorCode_E_SNAPSHOT_RUNNING_JOBS,
+  "E_SNAPSHOT_NOT_FOUND": ErrorCode_E_SNAPSHOT_NOT_FOUND,
   "E_BLOCK_WRITE_FAILURE": ErrorCode_E_BLOCK_WRITE_FAILURE,
   "E_REBUILD_INDEX_FAILURE": ErrorCode_E_REBUILD_INDEX_FAILURE,
   "E_INDEX_WITH_TTL": ErrorCode_E_INDEX_WITH_TTL,
@@ -612,7 +771,7 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_JOB_NOT_STOPPABLE": ErrorCode_E_JOB_NOT_STOPPABLE,
   "E_JOB_HAS_NO_TARGET_STORAGE": ErrorCode_E_JOB_HAS_NO_TARGET_STORAGE,
   "E_INVALID_JOB": ErrorCode_E_INVALID_JOB,
-  "E_BACKUP_BUILDING_INDEX": ErrorCode_E_BACKUP_BUILDING_INDEX,
+  "E_BACKUP_RUNNING_JOBS": ErrorCode_E_BACKUP_RUNNING_JOBS,
   "E_BACKUP_SPACE_NOT_FOUND": ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
   "E_RESTORE_FAILURE": ErrorCode_E_RESTORE_FAILURE,
   "E_SESSION_NOT_FOUND": ErrorCode_E_SESSION_NOT_FOUND,
@@ -621,6 +780,11 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_LIST_CLUSTER_NO_AGENT_FAILURE": ErrorCode_E_LIST_CLUSTER_NO_AGENT_FAILURE,
   "E_QUERY_NOT_FOUND": ErrorCode_E_QUERY_NOT_FOUND,
   "E_AGENT_HB_FAILUE": ErrorCode_E_AGENT_HB_FAILUE,
+  "E_INVALID_VARIABLE": ErrorCode_E_INVALID_VARIABLE,
+  "E_VARIABLE_TYPE_VALUE_MISMATCH": ErrorCode_E_VARIABLE_TYPE_VALUE_MISMATCH,
+  "E_HOST_CAN_NOT_BE_ADDED": ErrorCode_E_HOST_CAN_NOT_BE_ADDED,
+  "E_ACCESS_ES_FAILURE": ErrorCode_E_ACCESS_ES_FAILURE,
+  "E_GRAPH_MEMORY_EXCEEDED": ErrorCode_E_GRAPH_MEMORY_EXCEEDED,
   "E_CONSENSUS_ERROR": ErrorCode_E_CONSENSUS_ERROR,
   "E_KEY_HAS_EXISTS": ErrorCode_E_KEY_HAS_EXISTS,
   "E_DATA_TYPE_MISMATCH": ErrorCode_E_DATA_TYPE_MISMATCH,
@@ -682,6 +846,24 @@ var ErrorCodeToValue = map[string]ErrorCode {
   "E_RAFT_BUFFER_OVERFLOW": ErrorCode_E_RAFT_BUFFER_OVERFLOW,
   "E_RAFT_ATOMIC_OP_FAILED": ErrorCode_E_RAFT_ATOMIC_OP_FAILED,
   "E_LEADER_LEASE_FAILED": ErrorCode_E_LEADER_LEASE_FAILED,
+  "E_RAFT_CAUGHT_UP": ErrorCode_E_RAFT_CAUGHT_UP,
+  "E_LOG_GAP": ErrorCode_E_LOG_GAP,
+  "E_LOG_STALE": ErrorCode_E_LOG_STALE,
+  "E_INVALID_DRAINER_STORE": ErrorCode_E_INVALID_DRAINER_STORE,
+  "E_SPACE_MISMATCH": ErrorCode_E_SPACE_MISMATCH,
+  "E_PART_MISMATCH": ErrorCode_E_PART_MISMATCH,
+  "E_DATA_CONFLICT": ErrorCode_E_DATA_CONFLICT,
+  "E_REQ_CONFLICT": ErrorCode_E_REQ_CONFLICT,
+  "E_DATA_ILLEGAL": ErrorCode_E_DATA_ILLEGAL,
+  "E_CACHE_CONFIG_ERROR": ErrorCode_E_CACHE_CONFIG_ERROR,
+  "E_NOT_ENOUGH_SPACE": ErrorCode_E_NOT_ENOUGH_SPACE,
+  "E_CACHE_MISS": ErrorCode_E_CACHE_MISS,
+  "E_POOL_NOT_FOUND": ErrorCode_E_POOL_NOT_FOUND,
+  "E_CACHE_WRITE_FAILURE": ErrorCode_E_CACHE_WRITE_FAILURE,
+  "E_NODE_NUMBER_EXCEED_LIMIT": ErrorCode_E_NODE_NUMBER_EXCEED_LIMIT,
+  "E_TOTAL_CPU_CORE_EXCEED_LIMIT": ErrorCode_E_TOTAL_CPU_CORE_EXCEED_LIMIT,
+  "E_INVALID_LICENSE_MANAGER_STATUS": ErrorCode_E_INVALID_LICENSE_MANAGER_STATUS,
+  "E_STORAGE_MEMORY_EXCEEDED": ErrorCode_E_STORAGE_MEMORY_EXCEEDED,
   "E_UNKNOWN": ErrorCode_E_UNKNOWN,
 }
 
@@ -707,6 +889,9 @@ var ErrorCodeNames = []string {
   "E_USER_NOT_FOUND",
   "E_STATS_NOT_FOUND",
   "E_SERVICE_NOT_FOUND",
+  "E_DRAINER_NOT_FOUND",
+  "E_DRAINER_CLIENT_NOT_FOUND",
+  "E_PART_STOPPED",
   "E_BACKUP_FAILED",
   "E_BACKUP_EMPTY_TABLE",
   "E_BACKUP_TABLE_FAILED",
@@ -714,6 +899,13 @@ var ErrorCodeNames = []string {
   "E_REBUILD_INDEX_FAILED",
   "E_INVALID_PASSWORD",
   "E_FAILED_GET_ABS_PATH",
+  "E_LISTENER_PROGRESS_FAILED",
+  "E_SYNC_LISTENER_NOT_FOUND",
+  "E_DRAINER_PROGRESS_FAILED",
+  "E_PART_DISABLED",
+  "E_PART_ALREADY_STARTED",
+  "E_PART_ALREADY_STOPPED",
+  "E_QUERY_TIMEDOUT",
   "E_BAD_USERNAME_PASSWORD",
   "E_SESSION_INVALID",
   "E_SESSION_TIMEOUT",
@@ -736,9 +928,13 @@ var ErrorCodeNames = []string {
   "E_WRONGCLUSTER",
   "E_ZONE_NOT_ENOUGH",
   "E_ZONE_IS_EMPTY",
+  "E_LISTENER_CONFLICT",
   "E_SCHEMA_NAME_EXISTS",
   "E_RELATED_INDEX_EXISTS",
   "E_RELATED_SPACE_EXISTS",
+  "E_RELATED_FULLTEXT_INDEX_EXISTS",
+  "E_HISTORY_CONFLICT",
+  "E_ZONE_IS_ENABLED",
   "E_STORE_FAILURE",
   "E_STORE_SEGMENT_ILLEGAL",
   "E_BAD_BALANCE_PLAN",
@@ -747,13 +943,21 @@ var ErrorCodeNames = []string {
   "E_NO_VALID_HOST",
   "E_CORRUPTED_BALANCE_PLAN",
   "E_NO_INVALID_BALANCE_PLAN",
+  "E_NO_VALID_DRAINER",
   "E_IMPROPER_ROLE",
   "E_INVALID_PARTITION_NUM",
   "E_INVALID_REPLICA_FACTOR",
   "E_INVALID_CHARSET",
   "E_INVALID_COLLATE",
   "E_CHARSET_COLLATE_NOT_MATCH",
+  "E_PRIVILEGE_ALL_TAG_EDGE_SETTLED",
+  "E_PRIVILEGE_NOT_EXIST",
+  "E_PRIVILEGE_NEED_BASIC_ROLE",
+  "E_PRIVILEGE_ACTION_INVALID",
+  "E_STORAGE_ENABLE_AUTH",
   "E_SNAPSHOT_FAILURE",
+  "E_SNAPSHOT_RUNNING_JOBS",
+  "E_SNAPSHOT_NOT_FOUND",
   "E_BLOCK_WRITE_FAILURE",
   "E_REBUILD_INDEX_FAILURE",
   "E_INDEX_WITH_TTL",
@@ -770,7 +974,7 @@ var ErrorCodeNames = []string {
   "E_JOB_NOT_STOPPABLE",
   "E_JOB_HAS_NO_TARGET_STORAGE",
   "E_INVALID_JOB",
-  "E_BACKUP_BUILDING_INDEX",
+  "E_BACKUP_RUNNING_JOBS",
   "E_BACKUP_SPACE_NOT_FOUND",
   "E_RESTORE_FAILURE",
   "E_SESSION_NOT_FOUND",
@@ -779,6 +983,11 @@ var ErrorCodeNames = []string {
   "E_LIST_CLUSTER_NO_AGENT_FAILURE",
   "E_QUERY_NOT_FOUND",
   "E_AGENT_HB_FAILUE",
+  "E_INVALID_VARIABLE",
+  "E_VARIABLE_TYPE_VALUE_MISMATCH",
+  "E_HOST_CAN_NOT_BE_ADDED",
+  "E_ACCESS_ES_FAILURE",
+  "E_GRAPH_MEMORY_EXCEEDED",
   "E_CONSENSUS_ERROR",
   "E_KEY_HAS_EXISTS",
   "E_DATA_TYPE_MISMATCH",
@@ -840,6 +1049,24 @@ var ErrorCodeNames = []string {
   "E_RAFT_BUFFER_OVERFLOW",
   "E_RAFT_ATOMIC_OP_FAILED",
   "E_LEADER_LEASE_FAILED",
+  "E_RAFT_CAUGHT_UP",
+  "E_LOG_GAP",
+  "E_LOG_STALE",
+  "E_INVALID_DRAINER_STORE",
+  "E_SPACE_MISMATCH",
+  "E_PART_MISMATCH",
+  "E_DATA_CONFLICT",
+  "E_REQ_CONFLICT",
+  "E_DATA_ILLEGAL",
+  "E_CACHE_CONFIG_ERROR",
+  "E_NOT_ENOUGH_SPACE",
+  "E_CACHE_MISS",
+  "E_POOL_NOT_FOUND",
+  "E_CACHE_WRITE_FAILURE",
+  "E_NODE_NUMBER_EXCEED_LIMIT",
+  "E_TOTAL_CPU_CORE_EXCEED_LIMIT",
+  "E_INVALID_LICENSE_MANAGER_STATUS",
+  "E_STORAGE_MEMORY_EXCEEDED",
   "E_UNKNOWN",
 }
 
@@ -865,6 +1092,9 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_USER_NOT_FOUND,
   ErrorCode_E_STATS_NOT_FOUND,
   ErrorCode_E_SERVICE_NOT_FOUND,
+  ErrorCode_E_DRAINER_NOT_FOUND,
+  ErrorCode_E_DRAINER_CLIENT_NOT_FOUND,
+  ErrorCode_E_PART_STOPPED,
   ErrorCode_E_BACKUP_FAILED,
   ErrorCode_E_BACKUP_EMPTY_TABLE,
   ErrorCode_E_BACKUP_TABLE_FAILED,
@@ -872,6 +1102,13 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_REBUILD_INDEX_FAILED,
   ErrorCode_E_INVALID_PASSWORD,
   ErrorCode_E_FAILED_GET_ABS_PATH,
+  ErrorCode_E_LISTENER_PROGRESS_FAILED,
+  ErrorCode_E_SYNC_LISTENER_NOT_FOUND,
+  ErrorCode_E_DRAINER_PROGRESS_FAILED,
+  ErrorCode_E_PART_DISABLED,
+  ErrorCode_E_PART_ALREADY_STARTED,
+  ErrorCode_E_PART_ALREADY_STOPPED,
+  ErrorCode_E_QUERY_TIMEDOUT,
   ErrorCode_E_BAD_USERNAME_PASSWORD,
   ErrorCode_E_SESSION_INVALID,
   ErrorCode_E_SESSION_TIMEOUT,
@@ -894,9 +1131,13 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_WRONGCLUSTER,
   ErrorCode_E_ZONE_NOT_ENOUGH,
   ErrorCode_E_ZONE_IS_EMPTY,
+  ErrorCode_E_LISTENER_CONFLICT,
   ErrorCode_E_SCHEMA_NAME_EXISTS,
   ErrorCode_E_RELATED_INDEX_EXISTS,
   ErrorCode_E_RELATED_SPACE_EXISTS,
+  ErrorCode_E_RELATED_FULLTEXT_INDEX_EXISTS,
+  ErrorCode_E_HISTORY_CONFLICT,
+  ErrorCode_E_ZONE_IS_ENABLED,
   ErrorCode_E_STORE_FAILURE,
   ErrorCode_E_STORE_SEGMENT_ILLEGAL,
   ErrorCode_E_BAD_BALANCE_PLAN,
@@ -905,13 +1146,21 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_NO_VALID_HOST,
   ErrorCode_E_CORRUPTED_BALANCE_PLAN,
   ErrorCode_E_NO_INVALID_BALANCE_PLAN,
+  ErrorCode_E_NO_VALID_DRAINER,
   ErrorCode_E_IMPROPER_ROLE,
   ErrorCode_E_INVALID_PARTITION_NUM,
   ErrorCode_E_INVALID_REPLICA_FACTOR,
   ErrorCode_E_INVALID_CHARSET,
   ErrorCode_E_INVALID_COLLATE,
   ErrorCode_E_CHARSET_COLLATE_NOT_MATCH,
+  ErrorCode_E_PRIVILEGE_ALL_TAG_EDGE_SETTLED,
+  ErrorCode_E_PRIVILEGE_NOT_EXIST,
+  ErrorCode_E_PRIVILEGE_NEED_BASIC_ROLE,
+  ErrorCode_E_PRIVILEGE_ACTION_INVALID,
+  ErrorCode_E_STORAGE_ENABLE_AUTH,
   ErrorCode_E_SNAPSHOT_FAILURE,
+  ErrorCode_E_SNAPSHOT_RUNNING_JOBS,
+  ErrorCode_E_SNAPSHOT_NOT_FOUND,
   ErrorCode_E_BLOCK_WRITE_FAILURE,
   ErrorCode_E_REBUILD_INDEX_FAILURE,
   ErrorCode_E_INDEX_WITH_TTL,
@@ -928,7 +1177,7 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_JOB_NOT_STOPPABLE,
   ErrorCode_E_JOB_HAS_NO_TARGET_STORAGE,
   ErrorCode_E_INVALID_JOB,
-  ErrorCode_E_BACKUP_BUILDING_INDEX,
+  ErrorCode_E_BACKUP_RUNNING_JOBS,
   ErrorCode_E_BACKUP_SPACE_NOT_FOUND,
   ErrorCode_E_RESTORE_FAILURE,
   ErrorCode_E_SESSION_NOT_FOUND,
@@ -937,6 +1186,11 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_LIST_CLUSTER_NO_AGENT_FAILURE,
   ErrorCode_E_QUERY_NOT_FOUND,
   ErrorCode_E_AGENT_HB_FAILUE,
+  ErrorCode_E_INVALID_VARIABLE,
+  ErrorCode_E_VARIABLE_TYPE_VALUE_MISMATCH,
+  ErrorCode_E_HOST_CAN_NOT_BE_ADDED,
+  ErrorCode_E_ACCESS_ES_FAILURE,
+  ErrorCode_E_GRAPH_MEMORY_EXCEEDED,
   ErrorCode_E_CONSENSUS_ERROR,
   ErrorCode_E_KEY_HAS_EXISTS,
   ErrorCode_E_DATA_TYPE_MISMATCH,
@@ -998,6 +1252,24 @@ var ErrorCodeValues = []ErrorCode {
   ErrorCode_E_RAFT_BUFFER_OVERFLOW,
   ErrorCode_E_RAFT_ATOMIC_OP_FAILED,
   ErrorCode_E_LEADER_LEASE_FAILED,
+  ErrorCode_E_RAFT_CAUGHT_UP,
+  ErrorCode_E_LOG_GAP,
+  ErrorCode_E_LOG_STALE,
+  ErrorCode_E_INVALID_DRAINER_STORE,
+  ErrorCode_E_SPACE_MISMATCH,
+  ErrorCode_E_PART_MISMATCH,
+  ErrorCode_E_DATA_CONFLICT,
+  ErrorCode_E_REQ_CONFLICT,
+  ErrorCode_E_DATA_ILLEGAL,
+  ErrorCode_E_CACHE_CONFIG_ERROR,
+  ErrorCode_E_NOT_ENOUGH_SPACE,
+  ErrorCode_E_CACHE_MISS,
+  ErrorCode_E_POOL_NOT_FOUND,
+  ErrorCode_E_CACHE_WRITE_FAILURE,
+  ErrorCode_E_NODE_NUMBER_EXCEED_LIMIT,
+  ErrorCode_E_TOTAL_CPU_CORE_EXCEED_LIMIT,
+  ErrorCode_E_INVALID_LICENSE_MANAGER_STATUS,
+  ErrorCode_E_STORAGE_MEMORY_EXCEEDED,
   ErrorCode_E_UNKNOWN,
 }
 
@@ -7239,5 +7511,201 @@ func (p *LogEntry) String() string {
   clusterVal := fmt.Sprintf("%v", p.Cluster)
   logStrVal := fmt.Sprintf("%v", p.LogStr)
   return fmt.Sprintf("LogEntry({Cluster:%s LogStr:%s})", clusterVal, logStrVal)
+}
+
+// Attributes:
+//  - TimeLatency
+//  - IdLag
+//  - Status
+type SyncInfo struct {
+  TimeLatency int64 `thrift:"time_latency,1" db:"time_latency" json:"time_latency"`
+  IdLag int64 `thrift:"id_lag,2" db:"id_lag" json:"id_lag"`
+  Status SyncStatus `thrift:"status,3" db:"status" json:"status"`
+}
+
+func NewSyncInfo() *SyncInfo {
+  return &SyncInfo{}
+}
+
+
+func (p *SyncInfo) GetTimeLatency() int64 {
+  return p.TimeLatency
+}
+
+func (p *SyncInfo) GetIdLag() int64 {
+  return p.IdLag
+}
+
+func (p *SyncInfo) GetStatus() SyncStatus {
+  return p.Status
+}
+type SyncInfoBuilder struct {
+  obj *SyncInfo
+}
+
+func NewSyncInfoBuilder() *SyncInfoBuilder{
+  return &SyncInfoBuilder{
+    obj: NewSyncInfo(),
+  }
+}
+
+func (p SyncInfoBuilder) Emit() *SyncInfo{
+  return &SyncInfo{
+    TimeLatency: p.obj.TimeLatency,
+    IdLag: p.obj.IdLag,
+    Status: p.obj.Status,
+  }
+}
+
+func (s *SyncInfoBuilder) TimeLatency(timeLatency int64) *SyncInfoBuilder {
+  s.obj.TimeLatency = timeLatency
+  return s
+}
+
+func (s *SyncInfoBuilder) IdLag(idLag int64) *SyncInfoBuilder {
+  s.obj.IdLag = idLag
+  return s
+}
+
+func (s *SyncInfoBuilder) Status(status SyncStatus) *SyncInfoBuilder {
+  s.obj.Status = status
+  return s
+}
+
+func (s *SyncInfo) SetTimeLatency(timeLatency int64) *SyncInfo {
+  s.TimeLatency = timeLatency
+  return s
+}
+
+func (s *SyncInfo) SetIdLag(idLag int64) *SyncInfo {
+  s.IdLag = idLag
+  return s
+}
+
+func (s *SyncInfo) SetStatus(status SyncStatus) *SyncInfo {
+  s.Status = status
+  return s
+}
+
+func (p *SyncInfo) Read(iprot thrift.Protocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *SyncInfo)  ReadField1(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+    return thrift.PrependError("error reading field 1: ", err)
+  } else {
+    p.TimeLatency = v
+  }
+  return nil
+}
+
+func (p *SyncInfo)  ReadField2(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+    return thrift.PrependError("error reading field 2: ", err)
+  } else {
+    p.IdLag = v
+  }
+  return nil
+}
+
+func (p *SyncInfo)  ReadField3(iprot thrift.Protocol) error {
+  if v, err := iprot.ReadI32(); err != nil {
+    return thrift.PrependError("error reading field 3: ", err)
+  } else {
+    temp := SyncStatus(v)
+    p.Status = temp
+  }
+  return nil
+}
+
+func (p *SyncInfo) Write(oprot thrift.Protocol) error {
+  if err := oprot.WriteStructBegin("SyncInfo"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if err := p.writeField1(oprot); err != nil { return err }
+  if err := p.writeField2(oprot); err != nil { return err }
+  if err := p.writeField3(oprot); err != nil { return err }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *SyncInfo) writeField1(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("time_latency", thrift.I64, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:time_latency: ", p), err) }
+  if err := oprot.WriteI64(int64(p.TimeLatency)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.time_latency (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:time_latency: ", p), err) }
+  return err
+}
+
+func (p *SyncInfo) writeField2(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("id_lag", thrift.I64, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:id_lag: ", p), err) }
+  if err := oprot.WriteI64(int64(p.IdLag)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.id_lag (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:id_lag: ", p), err) }
+  return err
+}
+
+func (p *SyncInfo) writeField3(oprot thrift.Protocol) (err error) {
+  if err := oprot.WriteFieldBegin("status", thrift.I32, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:status: ", p), err) }
+  if err := oprot.WriteI32(int32(p.Status)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.status (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:status: ", p), err) }
+  return err
+}
+
+func (p *SyncInfo) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+
+  timeLatencyVal := fmt.Sprintf("%v", p.TimeLatency)
+  idLagVal := fmt.Sprintf("%v", p.IdLag)
+  statusVal := fmt.Sprintf("%v", p.Status)
+  return fmt.Sprintf("SyncInfo({TimeLatency:%s IdLag:%s Status:%s})", timeLatencyVal, idLagVal, statusVal)
 }
 

@@ -536,7 +536,7 @@ func TestSessionPoolRetry(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer sessionPool.Close()
-	testcaes := []struct {
+	testcases := []struct {
 		name    string
 		retryFn func(*pureSession) (*ResultSet, error)
 		retry   bool
@@ -582,14 +582,14 @@ func TestSessionPoolRetry(t *testing.T) {
 			retry: false,
 		},
 	}
-	for _, tc := range testcaes {
+	for _, tc := range testcases {
 		session, err := sessionPool.newSession()
 		if err != nil {
 			t.Fatal(err)
 		}
 		original := session.sessionID
 		conn := session.connection
-		_, _ = sessionPool.executeWithRetry(session, tc.retryFn, 2)
+		_, _ = sessionPool.executeWithRetry(session, tc.retryFn, 2, 2)
 		if tc.retry {
 			assert.NotEqual(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
 			assert.NotEqual(t, conn, nil, fmt.Sprintf("test case: %s", tc.name))
@@ -599,13 +599,85 @@ func TestSessionPoolRetry(t *testing.T) {
 	}
 }
 
+// split retry flags
+func TestSessionPoolSplitRetry(t *testing.T) {
+	err := prepareSpace("client_test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dropSpace("client_test")
+	testcases := []struct {
+		retryFn             *retryFn
+		retryTimes          int
+		sessionInvaildLimit int
+		errLimit            int
+		hasErr              bool
+		hasResult           bool
+		err                 error
+	}{
+		// retry when return the error code *ErrorCode_E_SESSION_INVALID*
+		{
+			retryFn: newRetryFn(&ResultSet{
+				resp: &graph.ExecutionResponse{
+					ErrorCode: nebula.ErrorCode_E_SESSION_INVALID,
+				}}, nil),
+			sessionInvaildLimit: 5,
+			errLimit:            4,
+			err:                 nil,
+			hasErr:              false,
+			hasResult:           true,
+			retryTimes:          5,
+		},
+		// retry when occur error
+		{
+			retryFn:             newRetryFn(nil, fmt.Errorf("error")),
+			sessionInvaildLimit: 5,
+			errLimit:            4,
+			err:                 fmt.Errorf("error"),
+			hasErr:              true,
+			hasResult:           false,
+			retryTimes:          4,
+		},
+	}
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		"root",
+		"nebula",
+		[]HostAddress{hostAddress},
+		"client_test")
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+	config.minSize = 2
+	config.maxSize = 2
+
+	for _, tc := range testcases {
+		c := *config
+		c.retryErrorTimes = tc.errLimit
+		c.retryGetSessionTimes = tc.sessionInvaildLimit
+		sessionPool, err := NewSessionPool(c, DefaultLogger{})
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer sessionPool.Close()
+		resp, err := sessionPool.executeFn(tc.retryFn.retry)
+		assert.Equal(t, tc.retryTimes+1, tc.retryFn.executeTimes)
+		if tc.hasErr {
+			assert.EqualError(t, tc.err, err.Error())
+		}
+		if tc.hasResult {
+			assert.Equal(t, resp.GetErrorCode(), ErrorCode_E_SESSION_INVALID)
+		}
+	}
+}
+
 type retryFn struct {
-	fn         func(*pureSession) (*ResultSet, error)
-	retryTimes int
+	fn           func(*pureSession) (*ResultSet, error)
+	executeTimes int
 }
 
 func (r *retryFn) retry(s *pureSession) (*ResultSet, error) {
-	r.retryTimes++
+	r.executeTimes++
 	return r.fn(s)
 }
 
@@ -692,7 +764,7 @@ func TestSessionPoolRetryHttp(t *testing.T) {
 		}
 		original := session.sessionID
 		conn := session.connection
-		_, _ = sessionPool.executeWithRetry(session, tc.retryFn.retry, 1)
+		_, _ = sessionPool.executeWithRetry(session, tc.retryFn.retry, 1, 1)
 		if tc.retry {
 			if tc.newSession {
 				assert.NotEqual(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
@@ -701,11 +773,11 @@ func TestSessionPoolRetryHttp(t *testing.T) {
 				assert.Equal(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
 				assert.Equal(t, conn, session.connection, fmt.Sprintf("test case: %s", tc.name))
 			}
-			assert.Equal(t, 2, tc.retryFn.retryTimes, fmt.Sprintf("test case: %s", tc.name))
+			assert.Equal(t, 2, tc.retryFn.executeTimes, fmt.Sprintf("test case: %s", tc.name))
 		} else {
 			assert.Equal(t, original, session.sessionID, fmt.Sprintf("test case: %s", tc.name))
 			assert.Equal(t, conn, session.connection, fmt.Sprintf("test case: %s", tc.name))
-			assert.Equal(t, 1, tc.retryFn.retryTimes, fmt.Sprintf("test case: %s", tc.name))
+			assert.Equal(t, 1, tc.retryFn.executeTimes, fmt.Sprintf("test case: %s", tc.name))
 		}
 	}
 }
