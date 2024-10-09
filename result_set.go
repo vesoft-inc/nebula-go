@@ -94,6 +94,7 @@ const (
 	ErrorCode_E_BAD_PERMISSION        ErrorCode = ErrorCode(nebula.ErrorCode_E_BAD_PERMISSION)
 	ErrorCode_E_SEMANTIC_ERROR        ErrorCode = ErrorCode(nebula.ErrorCode_E_SEMANTIC_ERROR)
 	ErrorCode_E_PARTIAL_SUCCEEDED     ErrorCode = ErrorCode(nebula.ErrorCode_E_PARTIAL_SUCCEEDED)
+	ErrorCode_E_QUERY_TIMEDOUT        ErrorCode = ErrorCode(nebula.ErrorCode_E_QUERY_TIMEDOUT)
 )
 
 func GenResultSet(resp *graph.ExecutionResponse) (*ResultSet, error) {
@@ -484,6 +485,10 @@ func (res ResultSet) IsSucceed() bool {
 
 func (res ResultSet) IsPartialSucceed() bool {
 	return res.GetErrorCode() == ErrorCode_E_PARTIAL_SUCCEEDED
+}
+
+func (res ResultSet) IsQueryTimeout() bool {
+	return res.GetErrorCode() == ErrorCode_E_QUERY_TIMEDOUT
 }
 
 func (res ResultSet) hasColName(colName string) bool {
