@@ -944,7 +944,7 @@ func (t TimeWrapper) getLocalTimeWithTimezoneOffset(timezoneOffsetSeconds int32)
 		Microsec: int32(localTime.Nanosecond() / 1000)}, nil
 }
 
-// getLocalTimeWithTimezoneName returns a nebula.Time object
+// GetLocalTimeWithTimezoneName returns a nebula.Time object
 // representing local time using user specified timezone name.
 // Year, month, day in time.Time are filled with 0.
 //
@@ -953,7 +953,7 @@ func (t TimeWrapper) getLocalTimeWithTimezoneOffset(timezoneOffsetSeconds int32)
 //
 // Otherwise, the name is taken to be a location name corresponding to a file
 // in the IANA Time Zone database, such as "America/New_York".
-func (t TimeWrapper) getLocalTimeWithTimezoneName(timezoneName string) (*nebula.Time, error) {
+func (t TimeWrapper) GetLocalTimeWithTimezoneName(timezoneName string) (*nebula.Time, error) {
 	// Original time object generated from server in UTC
 	// Year, month and day are mocked up to fill the parameters
 	rawTime := time.Date(2020,

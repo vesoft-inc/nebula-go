@@ -183,7 +183,7 @@ func TestAsTime(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	localTime, err := timeWrapper.getLocalTimeWithTimezoneName("Asia/Shanghai")
+	localTime, err := timeWrapper.GetLocalTimeWithTimezoneName("Asia/Shanghai")
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -195,7 +195,7 @@ func TestAsTime(t *testing.T) {
 	}
 	assert.Equal(t, expected, *localTime)
 
-	localTime, err = timeWrapper.getLocalTimeWithTimezoneName("America/Los_Angeles")
+	localTime, err = timeWrapper.GetLocalTimeWithTimezoneName("America/Los_Angeles")
 	if err != nil {
 		t.Error(err.Error())
 	}
