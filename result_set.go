@@ -338,10 +338,16 @@ func (res ResultSet) Scan(v interface{}) error {
 func (res ResultSet) scanRow(row *nebula.Row, colNames []string, rowType reflect.Type) (reflect.Value, error) {
 	rowVals := row.GetValues()
 
-	val := reflect.New(rowType).Elem()
+	var result reflect.Value
+	if rowType.Kind() == reflect.Ptr {
+		result = reflect.New(rowType.Elem())
+	} else {
+		result = reflect.New(rowType).Elem()
+	}
+	structVal := reflect.Indirect(result)
 
-	for fIdx := 0; fIdx < rowType.NumField(); fIdx++ {
-		f := rowType.Field(fIdx)
+	for fIdx := 0; fIdx < structVal.Type().NumField(); fIdx++ {
+		f := structVal.Type().Field(fIdx)
 		tag := f.Tag.Get("nebula")
 
 		if tag == "" {
@@ -358,19 +364,19 @@ func (res ResultSet) scanRow(row *nebula.Row, colNames []string, rowType reflect
 
 		if f.Type.Kind() == reflect.Slice {
 			list := rowVal.GetLVal()
-			err := scanListCol(list.Values, val.Field(fIdx), f.Type)
+			err := scanListCol(list.Values, structVal.Field(fIdx), f.Type)
 			if err != nil {
-				return val, err
+				return result, err
 			}
 		} else {
-			err := scanPrimitiveCol(rowVal, val.Field(fIdx), f.Type.Kind())
+			err := scanPrimitiveCol(rowVal, structVal.Field(fIdx), f.Type.Kind())
 			if err != nil {
-				return val, err
+				return result, err
 			}
 		}
 	}
 
-	return val, nil
+	return result, nil
 }
 
 func scanListCol(vals []*nebula.Value, listVal reflect.Value, sliceType reflect.Type) error {

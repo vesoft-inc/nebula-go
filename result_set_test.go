@@ -835,6 +835,54 @@ func TestScan(t *testing.T) {
 	assert.Equal(t, true, testStructList[1].Col3)
 }
 
+func TestScanPtr(t *testing.T) {
+	resp := &graph.ExecutionResponse{
+		ErrorCode:   nebula.ErrorCode_SUCCEEDED,
+		LatencyInUs: 1000,
+		Data:        getDateset2(),
+		SpaceName:   []byte("test_space"),
+		ErrorMsg:    []byte("test"),
+		PlanDesc:    graph.NewPlanDescription(),
+		Comment:     []byte("test_comment")}
+	resultSet, err := genResultSet(resp, testTimezone)
+	if err != nil {
+		t.Error(err)
+	}
+
+	type testStruct struct {
+		Col0 int64   `nebula:"col0_int64"`
+		Col1 float64 `nebula:"col1_float64"`
+		Col2 string  `nebula:"col2_string"`
+		Col3 bool    `nebula:"col3_bool"`
+	}
+
+	var testStructList []*testStruct
+	err = resultSet.Scan(&testStructList)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, 1, len(testStructList))
+	assert.Equal(t, int64(1), testStructList[0].Col0)
+	assert.Equal(t, float64(2.0), testStructList[0].Col1)
+	assert.Equal(t, "string", testStructList[0].Col2)
+	assert.Equal(t, true, testStructList[0].Col3)
+
+	// Scan again should work
+	err = resultSet.Scan(&testStructList)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, 2, len(testStructList))
+	assert.Equal(t, int64(1), testStructList[0].Col0)
+	assert.Equal(t, float64(2.0), testStructList[0].Col1)
+	assert.Equal(t, "string", testStructList[0].Col2)
+	assert.Equal(t, true, testStructList[0].Col3)
+	assert.Equal(t, int64(1), testStructList[1].Col0)
+	assert.Equal(t, float64(2.0), testStructList[1].Col1)
+	assert.Equal(t, "string", testStructList[1].Col2)
+	assert.Equal(t, true, testStructList[1].Col3)
+}
+
 func TestScanWithNestStruct(t *testing.T) {
 	resp := &graph.ExecutionResponse{
 		ErrorCode:   nebula.ErrorCode_SUCCEEDED,
@@ -916,9 +964,54 @@ func TestScanWithNestStructPtr(t *testing.T) {
 		Edges []*Friend `nebula:"relationships"`
 	}
 
-	// TODO: actually, the `results` should be []*Result,
-	// we still need to support this case
 	var results []Result
+	err = resultSet.Scan(&results)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, 1, len(results))
+	assert.Equal(t, "Tom", results[0].Nodes[0].Name)
+	assert.Equal(t, "Shanghai", results[0].Nodes[0].City)
+	assert.Equal(t, "Bob", results[0].Nodes[1].Name)
+	assert.Equal(t, "Hangzhou", results[0].Nodes[1].City)
+	assert.Equal(t, "2024-07-07", results[0].Edges[0].CreatedAt)
+	assert.Equal(t, "2024-07-07", results[0].Edges[1].CreatedAt)
+
+	// Scan again should work
+	err = resultSet.Scan(&results)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, 2, len(results))
+}
+
+func TestScanWithStructPtr(t *testing.T) {
+	resp := &graph.ExecutionResponse{
+		ErrorCode:   nebula.ErrorCode_SUCCEEDED,
+		LatencyInUs: 1000,
+		Data:        getNestDateset(),
+		SpaceName:   []byte("test_space"),
+		ErrorMsg:    []byte("test"),
+		PlanDesc:    graph.NewPlanDescription(),
+		Comment:     []byte("test_comment")}
+	resultSet, err := genResultSet(resp, testTimezone)
+	if err != nil {
+		t.Error(err)
+	}
+
+	type Person struct {
+		Name string `nebula:"name"`
+		City string `nebula:"city"`
+	}
+	type Friend struct {
+		CreatedAt string `nebula:"created_at"`
+	}
+	type Result struct {
+		Nodes []*Person `nebula:"nodes"`
+		Edges []*Friend `nebula:"relationships"`
+	}
+
+	var results []*Result
 	err = resultSet.Scan(&results)
 	if err != nil {
 		t.Error(err)
