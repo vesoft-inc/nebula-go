@@ -472,6 +472,12 @@ func scanValFromProps(props map[string]*nebula.Value, val reflect.Value, tpe ref
 }
 
 func scanPrimitiveCol(rowVal *nebula.Value, val reflect.Value, kind reflect.Kind) error {
+	w := ValueWrapper{value: rowVal}
+	if w.IsNull() || w.IsEmpty() {
+		val.SetZero()
+		return nil
+	}
+
 	switch kind {
 	case reflect.Bool:
 		val.SetBool(rowVal.GetBVal())
