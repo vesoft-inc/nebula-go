@@ -357,30 +357,53 @@ func (res ResultSet) scanRow(row *nebula.Row, colNames []string, t reflect.Type)
 		rowVal := rowVals[cIdx]
 
 		switch f.Type.Kind() {
-		case reflect.Bool:
-			val.Field(fIdx).SetBool(rowVal.GetBVal())
-		case reflect.Int:
-			val.Field(fIdx).SetInt(rowVal.GetIVal())
-		case reflect.Int8:
-			val.Field(fIdx).SetInt(rowVal.GetIVal())
-		case reflect.Int16:
-			val.Field(fIdx).SetInt(rowVal.GetIVal())
-		case reflect.Int32:
-			val.Field(fIdx).SetInt(rowVal.GetIVal())
-		case reflect.Int64:
-			val.Field(fIdx).SetInt(rowVal.GetIVal())
-		case reflect.Float32:
-			val.Field(fIdx).SetFloat(rowVal.GetFVal())
-		case reflect.Float64:
-			val.Field(fIdx).SetFloat(rowVal.GetFVal())
-		case reflect.String:
-			val.Field(fIdx).SetString(string(rowVal.GetSVal()))
+		case reflect.Slice, reflect.Array:
+			values := rowVal.GetLVal().Values
+			elementKind := f.Type.Elem().Kind()
+			sliceVal := reflect.MakeSlice(val.Field(fIdx).Type(), len(values), len(values))
+			for i := 0; i < len(values); i++ {
+				err := setValue(elementKind, sliceVal.Index(i), values[i])
+				if err != nil {
+					return val, err
+				}
+			}
+			val.Field(fIdx).Set(sliceVal)
 		default:
-			return val, errors.New("scan: not support type")
+			err := setValue(f.Type.Kind(), val.Field(fIdx), rowVal)
+			if err != nil {
+				return val, err
+			}
 		}
 	}
 
 	return val, nil
+}
+
+// Sets the nebula value to reflected value
+func setValue(kind reflect.Kind, val reflect.Value, rowVal *nebula.Value) error {
+	switch kind {
+	case reflect.Bool:
+		val.SetBool(rowVal.GetBVal())
+	case reflect.Int:
+		val.SetInt(rowVal.GetIVal())
+	case reflect.Int8:
+		val.SetInt(rowVal.GetIVal())
+	case reflect.Int16:
+		val.SetInt(rowVal.GetIVal())
+	case reflect.Int32:
+		val.SetInt(rowVal.GetIVal())
+	case reflect.Int64:
+		val.SetInt(rowVal.GetIVal())
+	case reflect.Float32:
+		val.SetFloat(rowVal.GetFVal())
+	case reflect.Float64:
+		val.SetFloat(rowVal.GetFVal())
+	case reflect.String:
+		val.SetString(string(rowVal.GetSVal()))
+	default:
+		return errors.New("scan: not supported type")
+	}
+	return nil
 }
 
 // Returns the number of total rows
