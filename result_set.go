@@ -306,7 +306,7 @@ func (res ResultSet) Scan(v interface{}) error {
 
 	rv := reflect.ValueOf(v)
 	switch {
-	case rv.Kind() != reflect.Ptr:
+	case rv.Kind() != reflect.Pointer:
 		if t := reflect.TypeOf(v); t != nil {
 			return fmt.Errorf("scan: Scan(non-pointer %s)", t)
 		}
@@ -339,7 +339,7 @@ func (res ResultSet) scanRow(row *nebula.Row, colNames []string, rowType reflect
 	rowVals := row.GetValues()
 
 	var result reflect.Value
-	if rowType.Kind() == reflect.Ptr {
+	if rowType.Kind() == reflect.Pointer {
 		result = reflect.New(rowType.Elem())
 	} else {
 		result = reflect.New(rowType).Elem()
@@ -392,7 +392,7 @@ func scanListCol(vals []*nebula.Value, listVal reflect.Value, sliceType reflect.
 			listCol = reflect.Append(listCol, ele)
 		}
 		listVal.Set(listCol)
-	case reflect.Ptr:
+	case reflect.Pointer:
 		var listCol = reflect.MakeSlice(sliceType, 0, len(vals))
 		for _, val := range vals {
 			ele := reflect.New(sliceType.Elem().Elem())
