@@ -73,7 +73,7 @@ func main() {
   flag.BoolVar(&useHttp, "http", false, "Use http")
   flag.Var(headers, "H", "Headers to set on the http(s) request (e.g. -H \"Key: Value\")")
   flag.Parse()
-
+  
   if len(urlString) > 0 {
     var err error
     parsedUrl, err = url.Parse(urlString)
@@ -90,7 +90,7 @@ func main() {
       flag.Usage()
     }
   }
-
+  
   cmd := flag.Arg(0)
   var err error
   var cfg *thrift.TConfiguration = nil
@@ -151,7 +151,7 @@ func main() {
     fmt.Fprintln(os.Stderr, "Error opening socket to ", host, ":", port, " ", err)
     os.Exit(1)
   }
-
+  
   switch cmd {
   case "authenticate":
     if flag.NArg() - 1 != 2 {
@@ -212,7 +212,7 @@ func main() {
     mbTrans63 := thrift.NewTMemoryBufferLen(len(arg62))
     defer mbTrans63.Close()
     _, err64 := mbTrans63.WriteString(arg62)
-    if err64 != nil {
+    if err64 != nil { 
       Usage()
       return
     }
@@ -262,7 +262,7 @@ func main() {
     mbTrans73 := thrift.NewTMemoryBufferLen(len(arg72))
     defer mbTrans73.Close()
     _, err74 := mbTrans73.WriteString(arg72)
-    if err74 != nil {
+    if err74 != nil { 
       Usage()
       return
     }

@@ -52,11 +52,11 @@ func (p StatType) String() string {
 
 func StatTypeFromString(s string) (StatType, error) {
   switch s {
-  case "SUM": return StatType_SUM, nil
-  case "COUNT": return StatType_COUNT, nil
-  case "AVG": return StatType_AVG, nil
-  case "MAX": return StatType_MAX, nil
-  case "MIN": return StatType_MIN, nil
+  case "SUM": return StatType_SUM, nil 
+  case "COUNT": return StatType_COUNT, nil 
+  case "AVG": return StatType_AVG, nil 
+  case "MAX": return StatType_MAX, nil 
+  case "MIN": return StatType_MIN, nil 
   }
   return StatType(0), fmt.Errorf("not a valid StatType string")
 }
@@ -108,8 +108,8 @@ func (p OrderDirection) String() string {
 
 func OrderDirectionFromString(s string) (OrderDirection, error) {
   switch s {
-  case "ASCENDING": return OrderDirection_ASCENDING, nil
-  case "DESCENDING": return OrderDirection_DESCENDING, nil
+  case "ASCENDING": return OrderDirection_ASCENDING, nil 
+  case "DESCENDING": return OrderDirection_DESCENDING, nil 
   }
   return OrderDirection(0), fmt.Errorf("not a valid OrderDirection string")
 }
@@ -163,9 +163,9 @@ func (p EdgeDirection) String() string {
 
 func EdgeDirectionFromString(s string) (EdgeDirection, error) {
   switch s {
-  case "BOTH": return EdgeDirection_BOTH, nil
-  case "IN_EDGE": return EdgeDirection_IN_EDGE, nil
-  case "OUT_EDGE": return EdgeDirection_OUT_EDGE, nil
+  case "BOTH": return EdgeDirection_BOTH, nil 
+  case "IN_EDGE": return EdgeDirection_IN_EDGE, nil 
+  case "OUT_EDGE": return EdgeDirection_OUT_EDGE, nil 
   }
   return EdgeDirection(0), fmt.Errorf("not a valid EdgeDirection string")
 }
@@ -217,8 +217,8 @@ func (p ScanType) String() string {
 
 func ScanTypeFromString(s string) (ScanType, error) {
   switch s {
-  case "PREFIX": return ScanType_PREFIX, nil
-  case "RANGE": return ScanType_RANGE, nil
+  case "PREFIX": return ScanType_PREFIX, nil 
+  case "RANGE": return ScanType_RANGE, nil 
   }
   return ScanType(0), fmt.Errorf("not a valid ScanType string")
 }
@@ -270,8 +270,8 @@ func (p EngineSignType) String() string {
 
 func EngineSignTypeFromString(s string) (EngineSignType, error) {
   switch s {
-  case "BLOCK_ON": return EngineSignType_BLOCK_ON, nil
-  case "BLOCK_OFF": return EngineSignType_BLOCK_OFF, nil
+  case "BLOCK_ON": return EngineSignType_BLOCK_ON, nil 
+  case "BLOCK_OFF": return EngineSignType_BLOCK_OFF, nil 
   }
   return EngineSignType(0), fmt.Errorf("not a valid EngineSignType string")
 }

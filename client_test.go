@@ -32,6 +32,8 @@ const (
 	password = "nebula"
 
 	addressIPv6 = "::1"
+
+	validSpaceName = "test_space_1"
 )
 
 var poolAddress = []HostAddress{
@@ -55,12 +57,29 @@ var nebulaLog = DefaultLogger{}
 var testPoolConfig = GetDefaultConf()
 
 // Before run `go test -v`, you should start a nebula server listening on 3699 port.
-// Using docker-compose is the easiest way and you can reference this file:
+// Using docker-compose is the easiest way, and you can reference this file:
 //   https://github.com/vesoft-inc/nebula/blob/master/docker/docker-compose.yaml
 
 func logoutAndClose(ctx context.Context, conn *connection, sessionID int64) {
 	conn.signOut(ctx, sessionID)
 	conn.close()
+}
+
+func TestConnection_AfterContextCancelled(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	hostAddress := HostAddress{Host: address, Port: port}
+	conn := newConnection(hostAddress)
+	err := conn.open(ctx, hostAddress, testPoolConfig.TimeOut, nil, false, nil, "")
+	if err != nil {
+		t.Fatalf("fail to open connection, address: %s, port: %d, %s", address, port, err.Error())
+	}
+
+	cancel()
+
+	_, err = conn.authenticate(ctx, username, password)
+
+	assert.Contains(t, err.Error(), "context canceled")
 }
 
 func TestConnection(t *testing.T) {

@@ -48,10 +48,10 @@ func (p AlterSchemaOp) String() string {
 
 func AlterSchemaOpFromString(s string) (AlterSchemaOp, error) {
   switch s {
-  case "ADD": return AlterSchemaOp_ADD, nil
-  case "CHANGE": return AlterSchemaOp_CHANGE, nil
-  case "DROP": return AlterSchemaOp_DROP, nil
-  case "UNKNOWN": return AlterSchemaOp_UNKNOWN, nil
+  case "ADD": return AlterSchemaOp_ADD, nil 
+  case "CHANGE": return AlterSchemaOp_CHANGE, nil 
+  case "DROP": return AlterSchemaOp_DROP, nil 
+  case "UNKNOWN": return AlterSchemaOp_UNKNOWN, nil 
   }
   return AlterSchemaOp(0), fmt.Errorf("not a valid AlterSchemaOp string")
 }
@@ -109,11 +109,11 @@ func (p RoleType) String() string {
 
 func RoleTypeFromString(s string) (RoleType, error) {
   switch s {
-  case "GOD": return RoleType_GOD, nil
-  case "ADMIN": return RoleType_ADMIN, nil
-  case "DBA": return RoleType_DBA, nil
-  case "USER": return RoleType_USER, nil
-  case "GUEST": return RoleType_GUEST, nil
+  case "GOD": return RoleType_GOD, nil 
+  case "ADMIN": return RoleType_ADMIN, nil 
+  case "DBA": return RoleType_DBA, nil 
+  case "USER": return RoleType_USER, nil 
+  case "GUEST": return RoleType_GUEST, nil 
   }
   return RoleType(0), fmt.Errorf("not a valid RoleType string")
 }
@@ -169,10 +169,10 @@ func (p GeoShape) String() string {
 
 func GeoShapeFromString(s string) (GeoShape, error) {
   switch s {
-  case "ANY": return GeoShape_ANY, nil
-  case "POINT": return GeoShape_POINT, nil
-  case "LINESTRING": return GeoShape_LINESTRING, nil
-  case "POLYGON": return GeoShape_POLYGON, nil
+  case "ANY": return GeoShape_ANY, nil 
+  case "POINT": return GeoShape_POINT, nil 
+  case "LINESTRING": return GeoShape_LINESTRING, nil 
+  case "POLYGON": return GeoShape_POLYGON, nil 
   }
   return GeoShape(0), fmt.Errorf("not a valid GeoShape string")
 }
@@ -224,8 +224,8 @@ func (p IsolationLevel) String() string {
 
 func IsolationLevelFromString(s string) (IsolationLevel, error) {
   switch s {
-  case "DEFAULT": return IsolationLevel_DEFAULT, nil
-  case "TOSS": return IsolationLevel_TOSS, nil
+  case "DEFAULT": return IsolationLevel_DEFAULT, nil 
+  case "TOSS": return IsolationLevel_TOSS, nil 
   }
   return IsolationLevel(0), fmt.Errorf("not a valid IsolationLevel string")
 }
@@ -279,9 +279,9 @@ func (p HostStatus) String() string {
 
 func HostStatusFromString(s string) (HostStatus, error) {
   switch s {
-  case "ONLINE": return HostStatus_ONLINE, nil
-  case "OFFLINE": return HostStatus_OFFLINE, nil
-  case "UNKNOWN": return HostStatus_UNKNOWN, nil
+  case "ONLINE": return HostStatus_ONLINE, nil 
+  case "OFFLINE": return HostStatus_OFFLINE, nil 
+  case "UNKNOWN": return HostStatus_UNKNOWN, nil 
   }
   return HostStatus(0), fmt.Errorf("not a valid HostStatus string")
 }
@@ -333,8 +333,8 @@ func (p SnapshotStatus) String() string {
 
 func SnapshotStatusFromString(s string) (SnapshotStatus, error) {
   switch s {
-  case "VALID": return SnapshotStatus_VALID, nil
-  case "INVALID": return SnapshotStatus_INVALID, nil
+  case "VALID": return SnapshotStatus_VALID, nil 
+  case "INVALID": return SnapshotStatus_INVALID, nil 
   }
   return SnapshotStatus(0), fmt.Errorf("not a valid SnapshotStatus string")
 }
@@ -384,7 +384,7 @@ func (p AlterSpaceOp) String() string {
 
 func AlterSpaceOpFromString(s string) (AlterSpaceOp, error) {
   switch s {
-  case "ADD_ZONE": return AlterSpaceOp_ADD_ZONE, nil
+  case "ADD_ZONE": return AlterSpaceOp_ADD_ZONE, nil 
   }
   return AlterSpaceOp(0), fmt.Errorf("not a valid AlterSpaceOp string")
 }
@@ -442,11 +442,11 @@ func (p JobOp) String() string {
 
 func JobOpFromString(s string) (JobOp, error) {
   switch s {
-  case "ADD": return JobOp_ADD, nil
-  case "SHOW_All": return JobOp_SHOW_All, nil
-  case "SHOW": return JobOp_SHOW, nil
-  case "STOP": return JobOp_STOP, nil
-  case "RECOVER": return JobOp_RECOVER, nil
+  case "ADD": return JobOp_ADD, nil 
+  case "SHOW_All": return JobOp_SHOW_All, nil 
+  case "SHOW": return JobOp_SHOW, nil 
+  case "STOP": return JobOp_STOP, nil 
+  case "RECOVER": return JobOp_RECOVER, nil 
   }
   return JobOp(0), fmt.Errorf("not a valid JobOp string")
 }
@@ -518,18 +518,18 @@ func (p JobType) String() string {
 
 func JobTypeFromString(s string) (JobType, error) {
   switch s {
-  case "COMPACT": return JobType_COMPACT, nil
-  case "FLUSH": return JobType_FLUSH, nil
-  case "REBUILD_TAG_INDEX": return JobType_REBUILD_TAG_INDEX, nil
-  case "REBUILD_EDGE_INDEX": return JobType_REBUILD_EDGE_INDEX, nil
-  case "REBUILD_FULLTEXT_INDEX": return JobType_REBUILD_FULLTEXT_INDEX, nil
-  case "STATS": return JobType_STATS, nil
-  case "DATA_BALANCE": return JobType_DATA_BALANCE, nil
-  case "DOWNLOAD": return JobType_DOWNLOAD, nil
-  case "INGEST": return JobType_INGEST, nil
-  case "LEADER_BALANCE": return JobType_LEADER_BALANCE, nil
-  case "ZONE_BALANCE": return JobType_ZONE_BALANCE, nil
-  case "UNKNOWN": return JobType_UNKNOWN, nil
+  case "COMPACT": return JobType_COMPACT, nil 
+  case "FLUSH": return JobType_FLUSH, nil 
+  case "REBUILD_TAG_INDEX": return JobType_REBUILD_TAG_INDEX, nil 
+  case "REBUILD_EDGE_INDEX": return JobType_REBUILD_EDGE_INDEX, nil 
+  case "REBUILD_FULLTEXT_INDEX": return JobType_REBUILD_FULLTEXT_INDEX, nil 
+  case "STATS": return JobType_STATS, nil 
+  case "DATA_BALANCE": return JobType_DATA_BALANCE, nil 
+  case "DOWNLOAD": return JobType_DOWNLOAD, nil 
+  case "INGEST": return JobType_INGEST, nil 
+  case "LEADER_BALANCE": return JobType_LEADER_BALANCE, nil 
+  case "ZONE_BALANCE": return JobType_ZONE_BALANCE, nil 
+  case "UNKNOWN": return JobType_UNKNOWN, nil 
   }
   return JobType(0), fmt.Errorf("not a valid JobType string")
 }
@@ -589,12 +589,12 @@ func (p JobStatus) String() string {
 
 func JobStatusFromString(s string) (JobStatus, error) {
   switch s {
-  case "QUEUE": return JobStatus_QUEUE, nil
-  case "RUNNING": return JobStatus_RUNNING, nil
-  case "FINISHED": return JobStatus_FINISHED, nil
-  case "FAILED": return JobStatus_FAILED, nil
-  case "STOPPED": return JobStatus_STOPPED, nil
-  case "INVALID": return JobStatus_INVALID, nil
+  case "QUEUE": return JobStatus_QUEUE, nil 
+  case "RUNNING": return JobStatus_RUNNING, nil 
+  case "FINISHED": return JobStatus_FINISHED, nil 
+  case "FAILED": return JobStatus_FAILED, nil 
+  case "STOPPED": return JobStatus_STOPPED, nil 
+  case "INVALID": return JobStatus_INVALID, nil 
   }
   return JobStatus(0), fmt.Errorf("not a valid JobStatus string")
 }
@@ -654,12 +654,12 @@ func (p ListHostType) String() string {
 
 func ListHostTypeFromString(s string) (ListHostType, error) {
   switch s {
-  case "ALLOC": return ListHostType_ALLOC, nil
-  case "GRAPH": return ListHostType_GRAPH, nil
-  case "META": return ListHostType_META, nil
-  case "STORAGE": return ListHostType_STORAGE, nil
-  case "AGENT": return ListHostType_AGENT, nil
-  case "STORAGE_LISTENER": return ListHostType_STORAGE_LISTENER, nil
+  case "ALLOC": return ListHostType_ALLOC, nil 
+  case "GRAPH": return ListHostType_GRAPH, nil 
+  case "META": return ListHostType_META, nil 
+  case "STORAGE": return ListHostType_STORAGE, nil 
+  case "AGENT": return ListHostType_AGENT, nil 
+  case "STORAGE_LISTENER": return ListHostType_STORAGE_LISTENER, nil 
   }
   return ListHostType(0), fmt.Errorf("not a valid ListHostType string")
 }
@@ -719,12 +719,12 @@ func (p HostRole) String() string {
 
 func HostRoleFromString(s string) (HostRole, error) {
   switch s {
-  case "GRAPH": return HostRole_GRAPH, nil
-  case "META": return HostRole_META, nil
-  case "STORAGE": return HostRole_STORAGE, nil
-  case "STORAGE_LISTENER": return HostRole_STORAGE_LISTENER, nil
-  case "AGENT": return HostRole_AGENT, nil
-  case "UNKNOWN": return HostRole_UNKNOWN, nil
+  case "GRAPH": return HostRole_GRAPH, nil 
+  case "META": return HostRole_META, nil 
+  case "STORAGE": return HostRole_STORAGE, nil 
+  case "STORAGE_LISTENER": return HostRole_STORAGE_LISTENER, nil 
+  case "AGENT": return HostRole_AGENT, nil 
+  case "UNKNOWN": return HostRole_UNKNOWN, nil 
   }
   return HostRole(0), fmt.Errorf("not a valid HostRole string")
 }
@@ -780,10 +780,10 @@ func (p TaskResult_) String() string {
 
 func TaskResult_FromString(s string) (TaskResult_, error) {
   switch s {
-  case "SUCCEEDED": return TaskResult__SUCCEEDED, nil
-  case "FAILED": return TaskResult__FAILED, nil
-  case "IN_PROGRESS": return TaskResult__IN_PROGRESS, nil
-  case "INVALID": return TaskResult__INVALID, nil
+  case "SUCCEEDED": return TaskResult__SUCCEEDED, nil 
+  case "FAILED": return TaskResult__FAILED, nil 
+  case "IN_PROGRESS": return TaskResult__IN_PROGRESS, nil 
+  case "INVALID": return TaskResult__INVALID, nil 
   }
   return TaskResult_(0), fmt.Errorf("not a valid TaskResult_ string")
 }
@@ -841,11 +841,11 @@ func (p ConfigModule) String() string {
 
 func ConfigModuleFromString(s string) (ConfigModule, error) {
   switch s {
-  case "UNKNOWN": return ConfigModule_UNKNOWN, nil
-  case "ALL": return ConfigModule_ALL, nil
-  case "GRAPH": return ConfigModule_GRAPH, nil
-  case "META": return ConfigModule_META, nil
-  case "STORAGE": return ConfigModule_STORAGE, nil
+  case "UNKNOWN": return ConfigModule_UNKNOWN, nil 
+  case "ALL": return ConfigModule_ALL, nil 
+  case "GRAPH": return ConfigModule_GRAPH, nil 
+  case "META": return ConfigModule_META, nil 
+  case "STORAGE": return ConfigModule_STORAGE, nil 
   }
   return ConfigModule(0), fmt.Errorf("not a valid ConfigModule string")
 }
@@ -901,10 +901,10 @@ func (p ConfigMode) String() string {
 
 func ConfigModeFromString(s string) (ConfigMode, error) {
   switch s {
-  case "IMMUTABLE": return ConfigMode_IMMUTABLE, nil
-  case "REBOOT": return ConfigMode_REBOOT, nil
-  case "MUTABLE": return ConfigMode_MUTABLE, nil
-  case "IGNORED": return ConfigMode_IGNORED, nil
+  case "IMMUTABLE": return ConfigMode_IMMUTABLE, nil 
+  case "REBOOT": return ConfigMode_REBOOT, nil 
+  case "MUTABLE": return ConfigMode_MUTABLE, nil 
+  case "IGNORED": return ConfigMode_IGNORED, nil 
   }
   return ConfigMode(0), fmt.Errorf("not a valid ConfigMode string")
 }
@@ -956,8 +956,8 @@ func (p ListenerType) String() string {
 
 func ListenerTypeFromString(s string) (ListenerType, error) {
   switch s {
-  case "UNKNOWN": return ListenerType_UNKNOWN, nil
-  case "ELASTICSEARCH": return ListenerType_ELASTICSEARCH, nil
+  case "UNKNOWN": return ListenerType_UNKNOWN, nil 
+  case "ELASTICSEARCH": return ListenerType_ELASTICSEARCH, nil 
   }
   return ListenerType(0), fmt.Errorf("not a valid ListenerType string")
 }
@@ -1007,7 +1007,7 @@ func (p ExternalServiceType) String() string {
 
 func ExternalServiceTypeFromString(s string) (ExternalServiceType, error) {
   switch s {
-  case "ELASTICSEARCH": return ExternalServiceType_ELASTICSEARCH, nil
+  case "ELASTICSEARCH": return ExternalServiceType_ELASTICSEARCH, nil 
   }
   return ExternalServiceType(0), fmt.Errorf("not a valid ExternalServiceType string")
 }
@@ -1059,8 +1059,8 @@ func (p QueryStatus) String() string {
 
 func QueryStatusFromString(s string) (QueryStatus, error) {
   switch s {
-  case "RUNNING": return QueryStatus_RUNNING, nil
-  case "KILLING": return QueryStatus_KILLING, nil
+  case "RUNNING": return QueryStatus_RUNNING, nil 
+  case "KILLING": return QueryStatus_KILLING, nil 
   }
   return QueryStatus(0), fmt.Errorf("not a valid QueryStatus string")
 }

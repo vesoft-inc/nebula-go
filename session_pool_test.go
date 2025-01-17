@@ -370,6 +370,30 @@ func TestSessionPoolSpaceChange(t *testing.T) {
 	assert.Equal(t, resultSet.GetSpaceName(), "test_space_1", "space name should be test_space_1")
 }
 
+func TestSessionPool_AfterContextCancelled(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	hostAddress := HostAddress{Host: address, Port: port}
+	config, err := NewSessionPoolConf(
+		username,
+		password,
+		[]HostAddress{hostAddress},
+		validSpaceName)
+	if err != nil {
+		t.Errorf("failed to create session pool config, %s", err.Error())
+	}
+
+	// allow only one session in the pool so it is easier to test
+	config.maxSize = 1
+
+	// create session pool
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
+
+	cancel()
+	_, err = sessionPool.Execute(ctx, "SHOW HOSTS;")
+
+	assert.Contains(t, err.Error(), "context canceled")
+}
+
 func TestSessionPoolCreateTagAndEdge(t *testing.T) {
 	ctx := context.Background()
 

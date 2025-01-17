@@ -1,8 +1,6 @@
 module github.com/vesoft-inc/nebula-go/v3
 
-go 1.22.0
-
-toolchain go1.23.0
+go 1.18
 
 require (
 	github.com/apache/thrift v0.21.0

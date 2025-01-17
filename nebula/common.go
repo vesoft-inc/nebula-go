@@ -115,6 +115,12 @@ const (
   PropertyType_DATETIME PropertyType = 25
   PropertyType_TIME PropertyType = 26
   PropertyType_GEOGRAPHY PropertyType = 31
+  PropertyType_LIST_STRING PropertyType = 32
+  PropertyType_LIST_INT PropertyType = 33
+  PropertyType_LIST_FLOAT PropertyType = 34
+  PropertyType_SET_STRING PropertyType = 35
+  PropertyType_SET_INT PropertyType = 36
+  PropertyType_SET_FLOAT PropertyType = 37
 )
 
 func (p PropertyType) String() string {
@@ -136,6 +142,12 @@ func (p PropertyType) String() string {
   case PropertyType_DATETIME: return "DATETIME"
   case PropertyType_TIME: return "TIME"
   case PropertyType_GEOGRAPHY: return "GEOGRAPHY"
+  case PropertyType_LIST_STRING: return "LIST_STRING"
+  case PropertyType_LIST_INT: return "LIST_INT"
+  case PropertyType_LIST_FLOAT: return "LIST_FLOAT"
+  case PropertyType_SET_STRING: return "SET_STRING"
+  case PropertyType_SET_INT: return "SET_INT"
+  case PropertyType_SET_FLOAT: return "SET_FLOAT"
   }
   return "<UNSET>"
 }
@@ -159,6 +171,12 @@ func PropertyTypeFromString(s string) (PropertyType, error) {
   case "DATETIME": return PropertyType_DATETIME, nil 
   case "TIME": return PropertyType_TIME, nil 
   case "GEOGRAPHY": return PropertyType_GEOGRAPHY, nil 
+  case "LIST_STRING": return PropertyType_LIST_STRING, nil 
+  case "LIST_INT": return PropertyType_LIST_INT, nil 
+  case "LIST_FLOAT": return PropertyType_LIST_FLOAT, nil 
+  case "SET_STRING": return PropertyType_SET_STRING, nil 
+  case "SET_INT": return PropertyType_SET_INT, nil 
+  case "SET_FLOAT": return PropertyType_SET_FLOAT, nil 
   }
   return PropertyType(0), fmt.Errorf("not a valid PropertyType string")
 }

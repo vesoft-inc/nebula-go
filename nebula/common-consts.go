@@ -24,7 +24,7 @@ var _ = bytes.Equal
 var _ = strings.Contains
 var _ = regexp.MatchString
 
-const Version = "3.0.0"
+const Version = []byte("3.0.0")
 
 func init() {
 }

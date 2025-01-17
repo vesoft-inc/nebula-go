@@ -71,7 +71,7 @@ func main() {
   flag.BoolVar(&useHttp, "http", false, "Use http")
   flag.Var(headers, "H", "Headers to set on the http(s) request (e.g. -H \"Key: Value\")")
   flag.Parse()
-
+  
   if len(urlString) > 0 {
     var err error
     parsedUrl, err = url.Parse(urlString)
@@ -88,7 +88,7 @@ func main() {
       flag.Usage()
     }
   }
-
+  
   cmd := flag.Arg(0)
   var err error
   var cfg *thrift.TConfiguration = nil
@@ -149,7 +149,7 @@ func main() {
     fmt.Fprintln(os.Stderr, "Error opening socket to ", host, ":", port, " ", err)
     os.Exit(1)
   }
-
+  
   switch cmd {
   case "chainAddEdges":
     if flag.NArg() - 1 != 1 {

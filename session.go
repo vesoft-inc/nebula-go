@@ -374,19 +374,22 @@ func map2Nmap(m map[string]interface{}) (*nebula.NMap, error) {
 // construct go-type to nebula.Value
 func value2Nvalue(param interface{}) (value *nebula.Value, err error) {
 	value = nebula.NewValue()
-	if v, ok := param.(bool); ok {
+	switch v := param.(type) {
+	case bool:
 		value.BVal = &v
-	} else if v, ok := param.(int); ok {
+	case int:
 		ival := int64(v)
 		value.IVal = &ival
-	} else if v, ok := param.(float64); ok {
+	case int64:
+		value.IVal = &v
+	case float64:
 		if v == float64(int64(v)) {
 			iv := int64(v)
 			value.IVal = &iv
 		} else {
 			value.FVal = &v
 		}
-	} else if v, ok := param.(float32); ok {
+	case float32:
 		if v == float32(int64(v)) {
 			iv := int64(v)
 			value.IVal = &iv
@@ -394,36 +397,36 @@ func value2Nvalue(param interface{}) (value *nebula.Value, err error) {
 			fval := float64(v)
 			value.FVal = &fval
 		}
-	} else if v, ok := param.(string); ok {
+	case string:
 		value.SVal = []byte(v)
-	} else if param == nil {
+	case nil:
 		nval := nebula.NullType___NULL__
 		value.NVal = &nval
-	} else if v, ok := param.([]interface{}); ok {
-		nv, er := slice2Nlist([]interface{}(v))
+	case []interface{}:
+		nv, er := slice2Nlist(v)
 		if er != nil {
 			err = er
 		}
 		value.LVal = nv
-	} else if v, ok := param.(map[string]interface{}); ok {
-		nv, er := map2Nmap(map[string]interface{}(v))
+	case map[string]interface{}:
+		nv, er := map2Nmap(v)
 		if er != nil {
 			err = er
 		}
 		value.MVal = nv
-	} else if v, ok := param.(nebula.Value); ok {
+	case nebula.Value:
 		value = &v
-	} else if v, ok := param.(nebula.Date); ok {
-		value.DVal = &v
-	} else if v, ok := param.(nebula.DateTime); ok {
-		value.DtVal = &v
-	} else if v, ok := param.(nebula.Duration); ok {
-		value.DuVal = &v
-	} else if v, ok := param.(nebula.Time); ok {
-		value.TVal = &v
-	} else if v, ok := param.(nebula.Geography); ok {
-		value.GgVal = &v
-	} else {
+	case nebula.Date:
+		value.SetDVal(&v)
+	case nebula.DateTime:
+		value.SetDtVal(&v)
+	case nebula.Duration:
+		value.SetDuVal(&v)
+	case nebula.Time:
+		value.SetTVal(&v)
+	case nebula.Geography:
+		value.SetGgVal(&v)
+	default:
 		// unsupported other Value type, use this function carefully
 		err = fmt.Errorf("only support convert boolean/float/int/int64/string/map/list to nebula.Value but %T", param)
 	}

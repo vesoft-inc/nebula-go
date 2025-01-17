@@ -16,6 +16,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestSession_Execute_AfterContextCancelled(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	config := GetDefaultConf()
+	host := HostAddress{address, port}
+	pool, err := NewConnectionPool(ctx, []HostAddress{host}, config, DefaultLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cancel()
+
+	_, err = pool.GetSession(ctx, username, password)
+
+	assert.Contains(t, err.Error(), "context canceled")
+}
+
 func TestSession_Execute(t *testing.T) {
 	ctx := context.Background()
 
