@@ -1,4 +1,3 @@
-version: '3.4'
 services:
   metad0:
     image: vesoft/nebula-metad:nightly
@@ -266,6 +265,7 @@ services:
 
   graphd0:
     image: vesoft/nebula-graphd:nightly
+    container_name: nebula-docker-compose_graphd0_1
     environment:
       USER: root
       TZ:   "${TZ}"
@@ -314,6 +314,7 @@ services:
 
   graphd1:
     image: vesoft/nebula-graphd:nightly
+    container_name: nebula-docker-compose_graphd1_1
     environment:
       USER: root
       TZ:   "${TZ}"
@@ -362,6 +363,7 @@ services:
 
   graphd2:
     image: vesoft/nebula-graphd:nightly
+    container_name: nebula-docker-compose_graphd2_1
     environment:
       USER: root
       TZ:   "${TZ}"

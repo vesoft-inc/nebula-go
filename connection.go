@@ -213,7 +213,8 @@ func (cn *connection) ExecuteJsonWithParameter(ctx context.Context, sessionID in
 	jsonResp, err := cn.graph.ExecuteJsonWithParameter(ctx, sessionID, []byte(stmt), params)
 	if err != nil {
 		// reopen the connection if timeout
-		if _, ok := err.(thrift.TTransportException); ok {
+		_, ok := err.(thrift.TTransportException)
+		if ok {
 			if err.(thrift.TTransportException).TypeId() == thrift.TIMED_OUT {
 				reopenErr := cn.reopen(ctx)
 				if reopenErr != nil {

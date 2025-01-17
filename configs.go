@@ -12,7 +12,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"time"
@@ -108,7 +108,7 @@ func openAndReadFile(path string) ([]byte, error) {
 		return nil, fmt.Errorf("unable to open file %s: %s", path, err)
 	}
 	// read file
-	b, err := ioutil.ReadAll(f)
+	b, err := io.ReadAll(f)
 	if err != nil {
 		return nil, fmt.Errorf("unable to ReadAll file %s: %s", path, err)
 	}

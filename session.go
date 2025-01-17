@@ -287,7 +287,6 @@ func (session *Session) ShowSpaces(ctx context.Context) ([]SpaceName, error) {
 func (session *Session) reConnect(ctx context.Context) error {
 	newConnection, err := session.connPool.getIdleConn(ctx)
 	if err != nil {
-		err = fmt.Errorf(err.Error())
 		return err
 	}
 
@@ -373,21 +372,21 @@ func map2Nmap(m map[string]interface{}) (*nebula.NMap, error) {
 }
 
 // construct go-type to nebula.Value
-func value2Nvalue(any interface{}) (value *nebula.Value, err error) {
+func value2Nvalue(param interface{}) (value *nebula.Value, err error) {
 	value = nebula.NewValue()
-	if v, ok := any.(bool); ok {
+	if v, ok := param.(bool); ok {
 		value.BVal = &v
-	} else if v, ok := any.(int); ok {
+	} else if v, ok := param.(int); ok {
 		ival := int64(v)
 		value.IVal = &ival
-	} else if v, ok := any.(float64); ok {
+	} else if v, ok := param.(float64); ok {
 		if v == float64(int64(v)) {
 			iv := int64(v)
 			value.IVal = &iv
 		} else {
 			value.FVal = &v
 		}
-	} else if v, ok := any.(float32); ok {
+	} else if v, ok := param.(float32); ok {
 		if v == float32(int64(v)) {
 			iv := int64(v)
 			value.IVal = &iv
@@ -395,38 +394,38 @@ func value2Nvalue(any interface{}) (value *nebula.Value, err error) {
 			fval := float64(v)
 			value.FVal = &fval
 		}
-	} else if v, ok := any.(string); ok {
+	} else if v, ok := param.(string); ok {
 		value.SVal = []byte(v)
-	} else if any == nil {
+	} else if param == nil {
 		nval := nebula.NullType___NULL__
 		value.NVal = &nval
-	} else if v, ok := any.([]interface{}); ok {
+	} else if v, ok := param.([]interface{}); ok {
 		nv, er := slice2Nlist([]interface{}(v))
 		if er != nil {
 			err = er
 		}
 		value.LVal = nv
-	} else if v, ok := any.(map[string]interface{}); ok {
+	} else if v, ok := param.(map[string]interface{}); ok {
 		nv, er := map2Nmap(map[string]interface{}(v))
 		if er != nil {
 			err = er
 		}
 		value.MVal = nv
-	} else if v, ok := any.(nebula.Value); ok {
+	} else if v, ok := param.(nebula.Value); ok {
 		value = &v
-	} else if v, ok := any.(nebula.Date); ok {
+	} else if v, ok := param.(nebula.Date); ok {
 		value.DVal = &v
-	} else if v, ok := any.(nebula.DateTime); ok {
+	} else if v, ok := param.(nebula.DateTime); ok {
 		value.DtVal = &v
-	} else if v, ok := any.(nebula.Duration); ok {
+	} else if v, ok := param.(nebula.Duration); ok {
 		value.DuVal = &v
-	} else if v, ok := any.(nebula.Time); ok {
+	} else if v, ok := param.(nebula.Time); ok {
 		value.TVal = &v
-	} else if v, ok := any.(nebula.Geography); ok {
+	} else if v, ok := param.(nebula.Geography); ok {
 		value.GgVal = &v
 	} else {
 		// unsupported other Value type, use this function carefully
-		err = fmt.Errorf("only support convert boolean/float/int/string/map/list to nebula.Value but %T", any)
+		err = fmt.Errorf("only support convert boolean/float/int/int64/string/map/list to nebula.Value but %T", param)
 	}
 	return
 }
