@@ -127,7 +127,7 @@ func (mgr *SchemaManager) ApplyTag(tag LabelSchema) (*ResultSet, error) {
 	if ttlCol != tag.TTLCol || ttlDuration != tag.TTLDuration {
 		if mgr.verbose {
 			log.Printf(
-				"ApplyTag: Alter the tag TTL. name=%s, col from %s to %s, duration from %d to %d\n",
+				"ApplyTag: alter the tag TTL. name=%s, col from %s to %s, duration from %d to %d\n",
 				tag.Name,
 				ttlCol,
 				tag.TTLCol,
@@ -244,7 +244,7 @@ func (mgr *SchemaManager) ApplyEdge(edge LabelSchema) (*ResultSet, error) {
 	if ttlCol != edge.TTLCol || ttlDuration != edge.TTLDuration {
 		if mgr.verbose {
 			log.Printf(
-				"ApplyEdge: Alter the edge TTL. name=%s, col from %s to %s, duration from %d to %d\n",
+				"ApplyEdge: alter the edge TTL. name=%s, col from %s to %s, duration from %d to %d\n",
 				edge.Name,
 				ttlCol,
 				edge.TTLCol,
