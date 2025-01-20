@@ -12,18 +12,21 @@
 package nebula_go
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSchemaManagerApplyTag(t *testing.T) {
+	ctx := context.Background()
+
 	spaceName := "test_space_apply_tag"
-	err := prepareSpace(spaceName)
+	err := prepareSpace(ctx, spaceName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace(spaceName)
+	defer dropSpace(ctx, spaceName)
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
@@ -39,15 +42,15 @@ func TestSchemaManagerApplyTag(t *testing.T) {
 	config.maxSize = 1
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
 	schemaManager := NewSchemaManager(sessionPool).WithVerbose(true)
 
-	spaces, err := sessionPool.ShowSpaces()
+	spaces, err := sessionPool.ShowSpaces(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -68,17 +71,17 @@ func TestSchemaManagerApplyTag(t *testing.T) {
 			},
 		},
 	}
-	_, err = schemaManager.ApplyTag(tagSchema)
+	_, err = schemaManager.ApplyTag(ctx, tagSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
-	tags, err := sessionPool.ShowTags()
+	tags, err := sessionPool.ShowTags(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(tags))
 	assert.Equal(t, "account", tags[0].Name)
-	labels, err := sessionPool.DescTag("account")
+	labels, err := sessionPool.DescTag(ctx, "account")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -106,17 +109,17 @@ func TestSchemaManagerApplyTag(t *testing.T) {
 			},
 		},
 	}
-	_, err = schemaManager.ApplyTag(tagSchema)
+	_, err = schemaManager.ApplyTag(ctx, tagSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
-	tags, err = sessionPool.ShowTags()
+	tags, err = sessionPool.ShowTags(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(tags))
 	assert.Equal(t, "account", tags[0].Name)
-	labels, err = sessionPool.DescTag("account")
+	labels, err = sessionPool.DescTag(ctx, "account")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -142,17 +145,17 @@ func TestSchemaManagerApplyTag(t *testing.T) {
 			},
 		},
 	}
-	_, err = schemaManager.ApplyTag(tagSchema)
+	_, err = schemaManager.ApplyTag(ctx, tagSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
-	tags, err = sessionPool.ShowTags()
+	tags, err = sessionPool.ShowTags(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(tags))
 	assert.Equal(t, "account", tags[0].Name)
-	labels, err = sessionPool.DescTag("account")
+	labels, err = sessionPool.DescTag(ctx, "account")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -164,12 +167,14 @@ func TestSchemaManagerApplyTag(t *testing.T) {
 }
 
 func TestSchemaManagerApplyEdge(t *testing.T) {
+	ctx := context.Background()
+
 	spaceName := "test_space_apply_edge"
-	err := prepareSpace(spaceName)
+	err := prepareSpace(ctx, spaceName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace(spaceName)
+	defer dropSpace(ctx, spaceName)
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
@@ -185,15 +190,15 @@ func TestSchemaManagerApplyEdge(t *testing.T) {
 	config.maxSize = 1
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
 	schemaManager := NewSchemaManager(sessionPool).WithVerbose(true)
 
-	spaces, err := sessionPool.ShowSpaces()
+	spaces, err := sessionPool.ShowSpaces(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -214,17 +219,17 @@ func TestSchemaManagerApplyEdge(t *testing.T) {
 			},
 		},
 	}
-	_, err = schemaManager.ApplyEdge(edgeSchema)
+	_, err = schemaManager.ApplyEdge(ctx, edgeSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
-	edges, err := sessionPool.ShowEdges()
+	edges, err := sessionPool.ShowEdges(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(edges))
 	assert.Equal(t, "account_email", edges[0].Name)
-	labels, err := sessionPool.DescEdge("account_email")
+	labels, err := sessionPool.DescEdge(ctx, "account_email")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -247,17 +252,17 @@ func TestSchemaManagerApplyEdge(t *testing.T) {
 			},
 		},
 	}
-	_, err = schemaManager.ApplyEdge(edgeSchema)
+	_, err = schemaManager.ApplyEdge(ctx, edgeSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
-	edges, err = sessionPool.ShowEdges()
+	edges, err = sessionPool.ShowEdges(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(edges))
 	assert.Equal(t, "account_email", edges[0].Name)
-	labels, err = sessionPool.DescEdge("account_email")
+	labels, err = sessionPool.DescEdge(ctx, "account_email")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -277,17 +282,17 @@ func TestSchemaManagerApplyEdge(t *testing.T) {
 			},
 		},
 	}
-	_, err = schemaManager.ApplyEdge(edgeSchema)
+	_, err = schemaManager.ApplyEdge(ctx, edgeSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
-	edges, err = sessionPool.ShowEdges()
+	edges, err = sessionPool.ShowEdges(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(edges))
 	assert.Equal(t, "account_email", edges[0].Name)
-	labels, err = sessionPool.DescEdge("account_email")
+	labels, err = sessionPool.DescEdge(ctx, "account_email")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -297,12 +302,14 @@ func TestSchemaManagerApplyEdge(t *testing.T) {
 }
 
 func TestSchemaManagerApplyTagWithTTL(t *testing.T) {
+	ctx := context.Background()
+
 	spaceName := "test_space_apply_tag_with_ttl"
-	err := prepareSpace(spaceName)
+	err := prepareSpace(ctx, spaceName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace(spaceName)
+	defer dropSpace(ctx, spaceName)
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
@@ -318,15 +325,15 @@ func TestSchemaManagerApplyTagWithTTL(t *testing.T) {
 	config.maxSize = 1
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
 	schemaManager := NewSchemaManager(sessionPool).WithVerbose(true)
 
-	spaces, err := sessionPool.ShowSpaces()
+	spaces, err := sessionPool.ShowSpaces(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -354,21 +361,21 @@ func TestSchemaManagerApplyTagWithTTL(t *testing.T) {
 		TTLDuration: 100,
 		TTLCol:      "created_at",
 	}
-	_, err = schemaManager.ApplyTag(tagSchema)
+	_, err = schemaManager.ApplyTag(ctx, tagSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
-	tags, err := sessionPool.ShowTags()
+	tags, err := sessionPool.ShowTags(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(tags))
-	labels, err := sessionPool.DescTag("user")
+	labels, err := sessionPool.DescTag(ctx, "user")
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 2, len(labels))
-	ttlCol, ttlDuration, err := sessionPool.GetTagTTL("user")
+	ttlCol, ttlDuration, err := sessionPool.GetTagTTL(ctx, "user")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -378,16 +385,16 @@ func TestSchemaManagerApplyTagWithTTL(t *testing.T) {
 	// update ttl
 	tagSchema.TTLDuration = 300
 
-	_, err = schemaManager.ApplyTag(tagSchema)
+	_, err = schemaManager.ApplyTag(ctx, tagSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
-	labels, err = sessionPool.DescTag("user")
+	labels, err = sessionPool.DescTag(ctx, "user")
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 2, len(labels))
-	ttlCol, ttlDuration, err = sessionPool.GetTagTTL("user")
+	ttlCol, ttlDuration, err = sessionPool.GetTagTTL(ctx, "user")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -398,16 +405,16 @@ func TestSchemaManagerApplyTagWithTTL(t *testing.T) {
 	tagSchema.TTLDuration = 0
 	tagSchema.TTLCol = ""
 
-	_, err = schemaManager.ApplyTag(tagSchema)
+	_, err = schemaManager.ApplyTag(ctx, tagSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
-	labels, err = sessionPool.DescTag("user")
+	labels, err = sessionPool.DescTag(ctx, "user")
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 2, len(labels))
-	ttlCol, ttlDuration, err = sessionPool.GetTagTTL("user")
+	ttlCol, ttlDuration, err = sessionPool.GetTagTTL(ctx, "user")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -416,12 +423,14 @@ func TestSchemaManagerApplyTagWithTTL(t *testing.T) {
 }
 
 func TestSchemaManagerApplyEdgeWithTTL(t *testing.T) {
+	ctx := context.Background()
+
 	spaceName := "test_space_apply_edge_with_ttl"
-	err := prepareSpace(spaceName)
+	err := prepareSpace(ctx, spaceName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer dropSpace(spaceName)
+	defer dropSpace(ctx, spaceName)
 
 	hostAddress := HostAddress{Host: address, Port: port}
 	config, err := NewSessionPoolConf(
@@ -437,15 +446,15 @@ func TestSchemaManagerApplyEdgeWithTTL(t *testing.T) {
 	config.maxSize = 1
 
 	// create session pool
-	sessionPool, err := NewSessionPool(*config, DefaultLogger{})
+	sessionPool, err := NewSessionPool(ctx, *config, DefaultLogger{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sessionPool.Close()
+	defer sessionPool.Close(ctx)
 
 	schemaManager := NewSchemaManager(sessionPool).WithVerbose(true)
 
-	spaces, err := sessionPool.ShowSpaces()
+	spaces, err := sessionPool.ShowSpaces(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -468,21 +477,21 @@ func TestSchemaManagerApplyEdgeWithTTL(t *testing.T) {
 		TTLDuration: 100,
 		TTLCol:      "created_at",
 	}
-	_, err = schemaManager.ApplyEdge(edgeSchema)
+	_, err = schemaManager.ApplyEdge(ctx, edgeSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
-	edges, err := sessionPool.ShowEdges()
+	edges, err := sessionPool.ShowEdges(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(edges))
-	labels, err := sessionPool.DescEdge("friend")
+	labels, err := sessionPool.DescEdge(ctx, "friend")
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(labels))
-	ttlCol, ttlDuration, err := sessionPool.GetEdgeTTL("friend")
+	ttlCol, ttlDuration, err := sessionPool.GetEdgeTTL(ctx, "friend")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -492,16 +501,16 @@ func TestSchemaManagerApplyEdgeWithTTL(t *testing.T) {
 	// update ttl
 	edgeSchema.TTLDuration = 300
 
-	_, err = schemaManager.ApplyEdge(edgeSchema)
+	_, err = schemaManager.ApplyEdge(ctx, edgeSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
-	labels, err = sessionPool.DescEdge("friend")
+	labels, err = sessionPool.DescEdge(ctx, "friend")
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(labels))
-	ttlCol, ttlDuration, err = sessionPool.GetEdgeTTL("friend")
+	ttlCol, ttlDuration, err = sessionPool.GetEdgeTTL(ctx, "friend")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -512,16 +521,16 @@ func TestSchemaManagerApplyEdgeWithTTL(t *testing.T) {
 	edgeSchema.TTLDuration = 0
 	edgeSchema.TTLCol = ""
 
-	_, err = schemaManager.ApplyEdge(edgeSchema)
+	_, err = schemaManager.ApplyEdge(ctx, edgeSchema)
 	if err != nil {
 		t.Fatal(err)
 	}
-	labels, err = sessionPool.DescEdge("friend")
+	labels, err = sessionPool.DescEdge(ctx, "friend")
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 1, len(labels))
-	ttlCol, ttlDuration, err = sessionPool.GetEdgeTTL("friend")
+	ttlCol, ttlDuration, err = sessionPool.GetEdgeTTL(ctx, "friend")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -641,7 +641,7 @@ func TestResultSet(t *testing.T) {
 		PlanNodeDescs: []*graph.PlanNodeDescription{
 			{
 				Name:         []byte("Project"),
-				Id:           0,
+				ID:           0,
 				OutputVar:    []byte("__Project_0"),
 				Description:  []*graph.Pair{},
 				Profiles:     []*graph.ProfilingStats{},
@@ -649,7 +649,7 @@ func TestResultSet(t *testing.T) {
 				Dependencies: []int64{2}},
 			{
 				Name:         []byte("Start"),
-				Id:           2,
+				ID:           2,
 				OutputVar:    []byte("__Start_2"),
 				Description:  []*graph.Pair{},
 				Profiles:     []*graph.ProfilingStats{},

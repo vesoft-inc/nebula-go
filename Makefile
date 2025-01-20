@@ -40,3 +40,28 @@ run-examples:
 	go run examples/goroutines_example/graph_client_goroutines_example.go && \
 	go run examples/json_example/parse_json_example.go && \
 	go run examples/session_pool_example/session_pool_example.go
+
+########################################################################
+#######  BEGIN: APACHE THRIFT CODE GENERATION PART
+########################################################################
+# Variables
+THRIFT_DIR := thriftfiles
+OUTPUT_DIR := nebula
+PACKAGE_PREFIX := nebula
+
+# Find all Thrift files in the directory
+THRIFT_FILES := $(wildcard $(THRIFT_DIR)/*.thrift)
+
+# Default target
+generate-from-contracts:
+		thrift --gen go:package_prefix=github.com/vesoft-inc/nebula-go/v3/ -out  . thriftfiles/graph.thrift \
+
+		thrift --gen go:package_prefix=github.com/vesoft-inc/nebula-go/v3/ -out . thriftfiles/meta.thrift \
+
+		thrift --gen go:package_prefix=github.com/vesoft-inc/nebula-go/v3/ -out . thriftfiles/storage.thrift \
+
+		thrift --gen go:package_prefix=github.com/vesoft-inc/nebula-go/v3/ -out . thriftfiles/common.thrift
+
+########################################################################
+#######  END: APACHE THRIFT CODE GENERATION PART
+########################################################################

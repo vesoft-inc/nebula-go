@@ -9,6 +9,7 @@
 package nebula_go
 
 import (
+	"context"
 	"fmt"
 	"sync"
 
@@ -30,8 +31,8 @@ type Session struct {
 	timezoneInfo
 }
 
-func (session *Session) reconnectWithExecuteErr(err error) error {
-	if _err := session.reConnect(); _err != nil {
+func (session *Session) reconnectWithExecuteErr(ctx context.Context, err error) error {
+	if _err := session.reConnect(ctx); _err != nil {
 		return fmt.Errorf("failed to reconnect, %s", _err.Error())
 	}
 	session.log.Info(fmt.Sprintf("Successfully reconnect to host: %s, port: %d",
@@ -39,12 +40,12 @@ func (session *Session) reconnectWithExecuteErr(err error) error {
 	return nil
 }
 
-func (session *Session) executeWithReconnect(f func() (interface{}, error)) (interface{}, error) {
+func (session *Session) executeWithReconnect(ctx context.Context, f func() (interface{}, error)) (interface{}, error) {
 	resp, err := f()
 	if err == nil {
 		return resp, nil
 	}
-	if err2 := session.reconnectWithExecuteErr(err); err2 != nil {
+	if err2 := session.reconnectWithExecuteErr(ctx, err); err2 != nil {
 		return nil, err2
 	}
 	// Execute with the new connection
@@ -52,7 +53,7 @@ func (session *Session) executeWithReconnect(f func() (interface{}, error)) (int
 }
 
 // ExecuteWithParameter returns the result of the given query as a ResultSet
-func (session *Session) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
+func (session *Session) ExecuteWithParameter(ctx context.Context, stmt string, params map[string]interface{}) (*ResultSet, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
 	paramsMap, err := parseParams(params)
@@ -61,18 +62,18 @@ func (session *Session) ExecuteWithParameter(stmt string, params map[string]inte
 	}
 
 	fn := func() (*graph.ExecutionResponse, error) {
-		return session.connection.executeWithParameter(session.sessionID, stmt, paramsMap)
+		return session.connection.executeWithParameter(ctx, session.sessionID, stmt, paramsMap)
 	}
-	return session.tryExecuteLocked(fn)
+	return session.tryExecuteLocked(ctx, fn)
 
 }
 
 // Execute returns the result of the given query as a ResultSet
-func (session *Session) Execute(stmt string) (*ResultSet, error) {
-	return session.ExecuteWithParameter(stmt, map[string]interface{}{})
+func (session *Session) Execute(ctx context.Context, stmt string) (*ResultSet, error) {
+	return session.ExecuteWithParameter(ctx, stmt, map[string]interface{}{})
 }
 
-func (session *Session) tryExecuteLocked(fn func() (*graph.ExecutionResponse, error)) (*ResultSet, error) {
+func (session *Session) tryExecuteLocked(ctx context.Context, fn func() (*graph.ExecutionResponse, error)) (*ResultSet, error) {
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
 	}
@@ -87,18 +88,18 @@ func (session *Session) tryExecuteLocked(fn func() (*graph.ExecutionResponse, er
 		}
 		return resSet, nil
 	}
-	resp, err := session.executeWithReconnect(execFunc)
+	resp, err := session.executeWithReconnect(ctx, execFunc)
 	if err != nil {
 		return nil, err
 	}
 	return resp.(*ResultSet), err
 }
 
-func (session *Session) ExecuteWithTimeout(stmt string, timeoutMs int64) (*ResultSet, error) {
-	return session.ExecuteWithParameterTimeout(stmt, map[string]interface{}{}, timeoutMs)
+func (session *Session) ExecuteWithTimeout(ctx context.Context, stmt string, timeoutMs int64) (*ResultSet, error) {
+	return session.ExecuteWithParameterTimeout(ctx, stmt, map[string]interface{}{}, timeoutMs)
 }
 
-func (session *Session) ExecuteWithParameterTimeout(stmt string, params map[string]interface{}, timeoutMs int64) (*ResultSet, error) {
+func (session *Session) ExecuteWithParameterTimeout(ctx context.Context, stmt string, params map[string]interface{}, timeoutMs int64) (*ResultSet, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
 	if timeoutMs <= 0 {
@@ -110,9 +111,9 @@ func (session *Session) ExecuteWithParameterTimeout(stmt string, params map[stri
 	}
 
 	fn := func() (*graph.ExecutionResponse, error) {
-		return session.connection.executeWithParameterTimeout(session.sessionID, stmt, paramsMap, timeoutMs)
+		return session.connection.executeWithParameterTimeout(ctx, session.sessionID, stmt, paramsMap, timeoutMs)
 	}
-	return session.tryExecuteLocked(fn)
+	return session.tryExecuteLocked(ctx, fn)
 }
 
 // ExecuteJson returns the result of the given query as a json string
@@ -175,14 +176,14 @@ func (session *Session) ExecuteWithParameterTimeout(stmt string, params map[stri
 //	        }
 //	    ]
 //	}
-func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
-	return session.ExecuteJsonWithParameter(stmt, map[string]interface{}{})
+func (session *Session) ExecuteJson(ctx context.Context, stmt string) ([]byte, error) {
+	return session.ExecuteJsonWithParameter(ctx, stmt, map[string]interface{}{})
 }
 
 // ExecuteJson returns the result of the given query as a json string
 // Date and Datetime will be returned in UTC
 // The result is a JSON string in the same format as ExecuteJson()
-func (session *Session) ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error) {
+func (session *Session) ExecuteJsonWithParameter(ctx context.Context, stmt string, params map[string]interface{}) ([]byte, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
 	if session.connection == nil {
@@ -198,21 +199,21 @@ func (session *Session) ExecuteJsonWithParameter(stmt string, params map[string]
 		paramsMap[k] = nv
 	}
 	execFunc := func() (interface{}, error) {
-		resp, err := session.connection.ExecuteJsonWithParameter(session.sessionID, stmt, paramsMap)
+		resp, err := session.connection.ExecuteJsonWithParameter(ctx, session.sessionID, stmt, paramsMap)
 		if err != nil {
 			return nil, err
 		}
 		return resp, nil
 	}
-	resp, err := session.executeWithReconnect(execFunc)
+	resp, err := session.executeWithReconnect(ctx, execFunc)
 	if err != nil {
 		return nil, err
 	}
 	return resp.([]byte), err
 }
 
-func (session *Session) ExecuteAndCheck(stmt string) (*ResultSet, error) {
-	rs, err := session.Execute(stmt)
+func (session *Session) ExecuteAndCheck(ctx context.Context, stmt string) (*ResultSet, error) {
+	rs, err := session.Execute(ctx, stmt)
 	if err != nil {
 		return nil, err
 	}
@@ -234,7 +235,7 @@ type SpaceConf struct {
 	Comment        string
 }
 
-func (session *Session) CreateSpace(conf SpaceConf) (*ResultSet, error) {
+func (session *Session) CreateSpace(ctx context.Context, conf SpaceConf) (*ResultSet, error) {
 	if conf.Partition == 0 {
 		conf.Partition = 100
 	}
@@ -268,11 +269,11 @@ func (session *Session) CreateSpace(conf SpaceConf) (*ResultSet, error) {
 		q += fmt.Sprintf(` COMMENT = "%s"`, conf.Comment)
 	}
 
-	return session.ExecuteAndCheck(q + ";")
+	return session.ExecuteAndCheck(ctx, q+";")
 }
 
-func (session *Session) ShowSpaces() ([]SpaceName, error) {
-	rs, err := session.ExecuteAndCheck("SHOW SPACES;")
+func (session *Session) ShowSpaces(ctx context.Context) ([]SpaceName, error) {
+	rs, err := session.ExecuteAndCheck(ctx, "SHOW SPACES;")
 	if err != nil {
 		return nil, err
 	}
@@ -283,8 +284,8 @@ func (session *Session) ShowSpaces() ([]SpaceName, error) {
 	return names, nil
 }
 
-func (session *Session) reConnect() error {
-	newConnection, err := session.connPool.getIdleConn()
+func (session *Session) reConnect(ctx context.Context) error {
+	newConnection, err := session.connPool.getIdleConn(ctx)
 	if err != nil {
 		return err
 	}
@@ -297,7 +298,7 @@ func (session *Session) reConnect() error {
 // Release logs out and releases connection hold by session.
 // The connection will be added into the activeConnectionQueue of the connection pool
 // so that it could be reused.
-func (session *Session) Release() {
+func (session *Session) Release(ctx context.Context) {
 	if session == nil {
 		return
 	}
@@ -307,7 +308,7 @@ func (session *Session) Release() {
 		session.log.Warn("Session has been released")
 		return
 	}
-	if err := session.connection.signOut(session.sessionID); err != nil {
+	if err := session.connection.signOut(ctx, session.sessionID); err != nil {
 		session.log.Warn(fmt.Sprintf("Sign out failed, %s", err.Error()))
 	}
 
@@ -327,12 +328,12 @@ func IsError(resp *graph.ExecutionResponse) bool {
 }
 
 // Ping checks if the session is valid
-func (session *Session) Ping() error {
+func (session *Session) Ping(ctx context.Context) error {
 	if session.connection == nil {
 		return fmt.Errorf("failed to ping: Session has been released")
 	}
 	// send ping request
-	resp, err := session.Execute(`RETURN "NEBULA GO PING"`)
+	resp, err := session.Execute(ctx, `RETURN "NEBULA GO PING"`)
 	// check connection level error
 	if err != nil {
 		return fmt.Errorf("session ping failed, %s" + err.Error())

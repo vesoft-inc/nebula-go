@@ -1309,7 +1309,7 @@ func prettyFormatJsonString(value []byte) string {
 }
 
 func name(planNodeDesc *graph.PlanNodeDescription) string {
-	return fmt.Sprintf("%s_%d", planNodeDesc.GetName(), planNodeDesc.GetId())
+	return fmt.Sprintf("%s_%d", planNodeDesc.GetName(), planNodeDesc.GetID())
 }
 
 func condEdgeLabel(condNode *graph.PlanNodeDescription, doBranch bool) string {
@@ -1366,7 +1366,7 @@ func findBranchEndNode(p *graph.PlanDescription, condNodeId int64, isDoBranch bo
 		if node.IsSetBranchInfo() {
 			bInfo := node.GetBranchInfo()
 			if bInfo.GetConditionNodeID() == condNodeId && bInfo.GetIsDoBranch() == isDoBranch {
-				return node.GetId()
+				return node.GetID()
 			}
 		}
 	}
@@ -1381,7 +1381,7 @@ func findFirstStartNodeFrom(p *graph.PlanDescription, nodeId int64) int64 {
 			if strings.ToLower(string(node.GetName())) != "start" {
 				return -1
 			}
-			return node.GetId()
+			return node.GetID()
 		}
 		node = nodeById(p, deps[0])
 	}
@@ -1401,12 +1401,12 @@ func (res ResultSet) MakeDotGraph() string {
 			builder.WriteString(conditionalNodeString(planNodeName))
 			dep := nodeById(p, planNodeDesc.GetDependencies()[0])
 			// then branch
-			thenNodeId := findBranchEndNode(p, planNodeDesc.GetId(), true)
+			thenNodeId := findBranchEndNode(p, planNodeDesc.GetID(), true)
 			builder.WriteString(edgeString(name(nodeById(p, thenNodeId)), name(dep)))
 			thenStartId := findFirstStartNodeFrom(p, thenNodeId)
 			builder.WriteString(conditionalEdgeString(name(planNodeDesc), name(nodeById(p, thenStartId)), "Y"))
 			// else branch
-			elseNodeId := findBranchEndNode(p, planNodeDesc.GetId(), false)
+			elseNodeId := findBranchEndNode(p, planNodeDesc.GetID(), false)
 			builder.WriteString(edgeString(name(nodeById(p, elseNodeId)), name(dep)))
 			elseStartId := findFirstStartNodeFrom(p, elseNodeId)
 			builder.WriteString(conditionalEdgeString(name(planNodeDesc), name(nodeById(p, elseStartId)), "N"))
@@ -1416,7 +1416,7 @@ func (res ResultSet) MakeDotGraph() string {
 			builder.WriteString(conditionalNodeString(planNodeName))
 			dep := nodeById(p, planNodeDesc.GetDependencies()[0])
 			// do branch
-			doNodeId := findBranchEndNode(p, planNodeDesc.GetId(), true)
+			doNodeId := findBranchEndNode(p, planNodeDesc.GetID(), true)
 			builder.WriteString(edgeString(name(nodeById(p, doNodeId)), name(planNodeDesc)))
 			doStartId := findFirstStartNodeFrom(p, doNodeId)
 			builder.WriteString(conditionalEdgeString(name(planNodeDesc), name(nodeById(p, doStartId)), "Do"))
@@ -1541,7 +1541,7 @@ func (res ResultSet) MakePlanByRow() [][]interface{} {
 	var rows [][]interface{}
 	for _, planNodeDesc := range planNodeDescs {
 		var row []interface{}
-		row = append(row, planNodeDesc.GetId(), string(planNodeDesc.GetName()))
+		row = append(row, planNodeDesc.GetID(), string(planNodeDesc.GetName()))
 
 		if planNodeDesc.IsSetDependencies() {
 			var deps []string
@@ -1572,7 +1572,7 @@ func (res ResultSet) MakePlanByTck() [][]interface{} {
 	var rows [][]interface{}
 	for _, planNodeDesc := range planNodeDescs {
 		var row []interface{}
-		row = append(row, planNodeDesc.GetId(), string(planNodeDesc.GetName()))
+		row = append(row, planNodeDesc.GetID(), string(planNodeDesc.GetName()))
 
 		if planNodeDesc.IsSetDependencies() {
 			var deps []string
