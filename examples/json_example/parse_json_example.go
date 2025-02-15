@@ -34,8 +34,8 @@ type JsonObj struct {
 	Results []struct {
 		Columns []string `json:"columns"`
 		Data    []struct {
-			Row  []interface{} `json:"row"`
-			Meta []interface{} `json:"meta"`
+			Row  []any `json:"row"`
+			Meta []any `json:"meta"`
 		} `json:"data"`
 		LatencyInUs int    `json:"latencyInUs"`
 		SpaceName   string `json:"spaceName"`
@@ -58,7 +58,7 @@ type JsonObj struct {
 					IsDoBranch      bool `json:"isDoBranch"`
 					ConditionNodeID int  `json:"conditionNodeId"`
 				} `json:"branchInfo"`
-				Dependencies []interface{} `json:"dependencies"`
+				Dependencies []any `json:"dependencies"`
 			} `json:"planNodeDescs"`
 			NodeIndexMap struct {
 			} `json:"nodeIndexMap"`
@@ -121,7 +121,7 @@ func main() {
 		fmt.Println(string(row))
 
 		// Get a property
-		birthday := jsonObj.Results[0].Data[0].Row[0].(map[string]interface{})["person.birthday"]
+		birthday := jsonObj.Results[0].Data[0].Row[0].(map[string]any)["person.birthday"]
 		fmt.Printf("person.birthday is %s \n\n", birthday)
 	}
 	// With error

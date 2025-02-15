@@ -153,11 +153,11 @@ func (pool *SessionPool) executeFn(execFunc func(s *pureSession) (*ResultSet, er
 // one in the pool config after the execution of the query.
 // 3. The query should not change the user password nor drop a user.
 func (pool *SessionPool) Execute(stmt string) (*ResultSet, error) {
-	return pool.ExecuteWithParameter(stmt, map[string]interface{}{})
+	return pool.ExecuteWithParameter(stmt, map[string]any{})
 }
 
 // ExecuteWithParameter returns the result of the given query as a ResultSet
-func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
+func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]any) (*ResultSet, error) {
 
 	// Execute the query
 	execFunc := func(s *pureSession) (*ResultSet, error) {
@@ -171,11 +171,11 @@ func (pool *SessionPool) ExecuteWithParameter(stmt string, params map[string]int
 }
 
 func (pool *SessionPool) ExecuteWithTimeout(stmt string, timeoutMs int64) (*ResultSet, error) {
-	return pool.ExecuteWithParameterTimeout(stmt, map[string]interface{}{}, timeoutMs)
+	return pool.ExecuteWithParameterTimeout(stmt, map[string]any{}, timeoutMs)
 }
 
 // ExecuteWithParameter returns the result of the given query as a ResultSet
-func (pool *SessionPool) ExecuteWithParameterTimeout(stmt string, params map[string]interface{}, timeoutMs int64) (*ResultSet, error) {
+func (pool *SessionPool) ExecuteWithParameterTimeout(stmt string, params map[string]any, timeoutMs int64) (*ResultSet, error) {
 	// Execute the query
 	if timeoutMs <= 0 {
 		return nil, fmt.Errorf("timeout should be a positive number")
@@ -251,14 +251,14 @@ func (pool *SessionPool) ExecuteWithParameterTimeout(stmt string, params map[str
 //	    ]
 //	}
 func (pool *SessionPool) ExecuteJson(stmt string) ([]byte, error) {
-	return pool.ExecuteJsonWithParameter(stmt, map[string]interface{}{})
+	return pool.ExecuteJsonWithParameter(stmt, map[string]any{})
 }
 
 // ExecuteJson returns the result of the given query as a json string
 // Date and Datetime will be returned in UTC
 // The result is a JSON string in the same format as ExecuteJson()
 // TODO(Aiee) check the space name
-func (pool *SessionPool) ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error) {
+func (pool *SessionPool) ExecuteJsonWithParameter(stmt string, params map[string]any) ([]byte, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
@@ -638,7 +638,7 @@ func (pool *SessionPool) timeoutSessionList() (closing []*pureSession) {
 }
 
 // parseParams converts the params map to a map of nebula.Value
-func parseParams(params map[string]interface{}) (map[string]*nebula.Value, error) {
+func parseParams(params map[string]any) (map[string]*nebula.Value, error) {
 	paramsMap := make(map[string]*nebula.Value)
 	for k, v := range params {
 		nv, err := value2Nvalue(v)
@@ -741,7 +741,7 @@ func (session *pureSession) executeFn(fn func() (*graph.ExecutionResponse, error
 	return rs, nil
 }
 
-func (session *pureSession) executeWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
+func (session *pureSession) executeWithParameter(stmt string, params map[string]any) (*ResultSet, error) {
 	paramsMap, err := parseParams(params)
 	if err != nil {
 		return nil, err
@@ -752,7 +752,7 @@ func (session *pureSession) executeWithParameter(stmt string, params map[string]
 	return session.executeFn(fn)
 }
 
-func (session *pureSession) executeWithParameterTimeout(stmt string, params map[string]interface{}, timeout int64) (*ResultSet, error) {
+func (session *pureSession) executeWithParameterTimeout(stmt string, params map[string]any, timeout int64) (*ResultSet, error) {
 	paramsMap, err := parseParams(params)
 	if err != nil {
 		return nil, err

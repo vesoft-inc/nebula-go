@@ -39,7 +39,7 @@ func (session *Session) reconnectWithExecuteErr(err error) error {
 	return nil
 }
 
-func (session *Session) executeWithReconnect(f func() (interface{}, error)) (interface{}, error) {
+func (session *Session) executeWithReconnect(f func() (any, error)) (any, error) {
 	resp, err := f()
 	if err == nil {
 		return resp, nil
@@ -52,7 +52,7 @@ func (session *Session) executeWithReconnect(f func() (interface{}, error)) (int
 }
 
 // ExecuteWithParameter returns the result of the given query as a ResultSet
-func (session *Session) ExecuteWithParameter(stmt string, params map[string]interface{}) (*ResultSet, error) {
+func (session *Session) ExecuteWithParameter(stmt string, params map[string]any) (*ResultSet, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
 	paramsMap, err := parseParams(params)
@@ -69,14 +69,14 @@ func (session *Session) ExecuteWithParameter(stmt string, params map[string]inte
 
 // Execute returns the result of the given query as a ResultSet
 func (session *Session) Execute(stmt string) (*ResultSet, error) {
-	return session.ExecuteWithParameter(stmt, map[string]interface{}{})
+	return session.ExecuteWithParameter(stmt, map[string]any{})
 }
 
 func (session *Session) tryExecuteLocked(fn func() (*graph.ExecutionResponse, error)) (*ResultSet, error) {
 	if session.connection == nil {
 		return nil, fmt.Errorf("failed to execute: Session has been released")
 	}
-	execFunc := func() (interface{}, error) {
+	execFunc := func() (any, error) {
 		resp, err := fn()
 		if err != nil {
 			return nil, err
@@ -95,10 +95,10 @@ func (session *Session) tryExecuteLocked(fn func() (*graph.ExecutionResponse, er
 }
 
 func (session *Session) ExecuteWithTimeout(stmt string, timeoutMs int64) (*ResultSet, error) {
-	return session.ExecuteWithParameterTimeout(stmt, map[string]interface{}{}, timeoutMs)
+	return session.ExecuteWithParameterTimeout(stmt, map[string]any{}, timeoutMs)
 }
 
-func (session *Session) ExecuteWithParameterTimeout(stmt string, params map[string]interface{}, timeoutMs int64) (*ResultSet, error) {
+func (session *Session) ExecuteWithParameterTimeout(stmt string, params map[string]any, timeoutMs int64) (*ResultSet, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
 	if timeoutMs <= 0 {
@@ -176,13 +176,13 @@ func (session *Session) ExecuteWithParameterTimeout(stmt string, params map[stri
 //	    ]
 //	}
 func (session *Session) ExecuteJson(stmt string) ([]byte, error) {
-	return session.ExecuteJsonWithParameter(stmt, map[string]interface{}{})
+	return session.ExecuteJsonWithParameter(stmt, map[string]any{})
 }
 
 // ExecuteJson returns the result of the given query as a json string
 // Date and Datetime will be returned in UTC
 // The result is a JSON string in the same format as ExecuteJson()
-func (session *Session) ExecuteJsonWithParameter(stmt string, params map[string]interface{}) ([]byte, error) {
+func (session *Session) ExecuteJsonWithParameter(stmt string, params map[string]any) ([]byte, error) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
 	if session.connection == nil {
@@ -197,7 +197,7 @@ func (session *Session) ExecuteJsonWithParameter(stmt string, params map[string]
 		}
 		paramsMap[k] = nv
 	}
-	execFunc := func() (interface{}, error) {
+	execFunc := func() (any, error) {
 		resp, err := session.connection.ExecuteJsonWithParameter(session.sessionID, stmt, paramsMap)
 		if err != nil {
 			return nil, err
@@ -335,17 +335,17 @@ func (session *Session) Ping() error {
 	resp, err := session.Execute(`RETURN "NEBULA GO PING"`)
 	// check connection level error
 	if err != nil {
-		return fmt.Errorf("session ping failed, %s" + err.Error())
+		return fmt.Errorf("session ping failed, %s", err.Error())
 	}
 	// check session level error
 	if !resp.IsSucceed() {
-		return fmt.Errorf("session ping failed, %s" + resp.GetErrorMsg())
+		return fmt.Errorf("session ping failed, %s", resp.GetErrorMsg())
 	}
 	return nil
 }
 
 // construct Slice to nebula.NList
-func slice2Nlist(list []interface{}) (*nebula.NList, error) {
+func slice2Nlist(list []any) (*nebula.NList, error) {
 	sv := []*nebula.Value{}
 	var ret nebula.NList
 	for _, item := range list {
@@ -360,7 +360,7 @@ func slice2Nlist(list []interface{}) (*nebula.NList, error) {
 }
 
 // construct map to nebula.NMap
-func map2Nmap(m map[string]interface{}) (*nebula.NMap, error) {
+func map2Nmap(m map[string]any) (*nebula.NMap, error) {
 	var ret nebula.NMap
 	kvs, err := parseParams(m)
 	if err != nil {
@@ -371,7 +371,7 @@ func map2Nmap(m map[string]interface{}) (*nebula.NMap, error) {
 }
 
 // construct go-type to nebula.Value
-func value2Nvalue(param interface{}) (value *nebula.Value, err error) {
+func value2Nvalue(param any) (value *nebula.Value, err error) {
 	value = nebula.NewValue()
 	switch v := param.(type) {
 	case bool:
@@ -401,13 +401,13 @@ func value2Nvalue(param interface{}) (value *nebula.Value, err error) {
 	case nil:
 		nval := nebula.NullType___NULL__
 		value.NVal = &nval
-	case []interface{}:
+	case []any:
 		nv, er := slice2Nlist(v)
 		if er != nil {
 			err = er
 		}
 		value.LVal = nv
-	case map[string]interface{}:
+	case map[string]any:
 		nv, er := map2Nmap(v)
 		if er != nil {
 			err = er
