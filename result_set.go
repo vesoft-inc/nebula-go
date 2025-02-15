@@ -298,7 +298,7 @@ func (res ResultSet) GetRowValuesByIndex(index int) (*Record, error) {
 }
 
 // Scan scans the rows into the given value.
-func (res ResultSet) Scan(v interface{}) error {
+func (res ResultSet) Scan(v any) error {
 	size := res.GetRowSize()
 	if size == 0 {
 		return nil
@@ -1272,7 +1272,7 @@ func (dt DateTimeWrapper) GetLocalDateTimeWithTimezoneName(timezoneName string) 
 		Microsec: int32(localDT.Nanosecond() / 1000)}, nil
 }
 
-func checkIndex(index int, list interface{}) error {
+func checkIndex(index int, list any) error {
 	if _, ok := list.([]*nebula.Row); ok {
 		if index < 0 || index >= len(list.([]*nebula.Row)) {
 			return fmt.Errorf("failed to get Value, the index is out of range")
@@ -1535,12 +1535,12 @@ func MakeOperatorInfo(planNodeDesc *graph.PlanNodeDescription) string {
 }
 
 // explain/profile format="row"
-func (res ResultSet) MakePlanByRow() [][]interface{} {
+func (res ResultSet) MakePlanByRow() [][]any {
 	p := res.GetPlanDesc()
 	planNodeDescs := p.GetPlanNodeDescs()
-	var rows [][]interface{}
+	var rows [][]any
 	for _, planNodeDesc := range planNodeDescs {
-		var row []interface{}
+		var row []any
 		row = append(row, planNodeDesc.GetId(), string(planNodeDesc.GetName()))
 
 		if planNodeDesc.IsSetDependencies() {
@@ -1566,12 +1566,12 @@ func (res ResultSet) MakePlanByRow() [][]interface{} {
 }
 
 // explain/profile format="tck"
-func (res ResultSet) MakePlanByTck() [][]interface{} {
+func (res ResultSet) MakePlanByTck() [][]any {
 	p := res.GetPlanDesc()
 	planNodeDescs := p.GetPlanNodeDescs()
-	var rows [][]interface{}
+	var rows [][]any
 	for _, planNodeDesc := range planNodeDescs {
-		var row []interface{}
+		var row []any
 		row = append(row, planNodeDesc.GetId(), string(planNodeDesc.GetName()))
 
 		if planNodeDesc.IsSetDependencies() {
