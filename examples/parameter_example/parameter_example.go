@@ -61,11 +61,11 @@ func main() {
 			}
 		}
 
-		params := make(map[string]interface{})
+		params := make(map[string]any)
 		params["p1"] = true
 		params["p2"] = 3
-		params["p3"] = []interface{}{true, 3}
-		params["p4"] = map[string]interface{}{"a": true, "b": 3}
+		params["p3"] = []any{true, 3}
+		params["p4"] = map[string]any{"a": true, "b": 3}
 		params["p5"] = int64(9223372036854775807)
 
 		// Extract data from the resultSet

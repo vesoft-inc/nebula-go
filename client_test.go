@@ -1006,11 +1006,11 @@ func TestExecuteJson(t *testing.T) {
 		if err != nil {
 			t.Fatalf("fail to get the result in json format, %s", err.Error())
 		}
-		var jsonObj map[string]interface{}
-		exp := []interface{}{
+		var jsonObj map[string]any
+		exp := []any{
 			float64(1), float64(2.2), "hello",
-			[]interface{}{float64(1), float64(2), "abc"},
-			map[string]interface{}{"key": "value"},
+			[]any{float64(1), float64(2), "abc"},
+			map[string]any{"key": "value"},
 			"汉字"}
 
 		// Parse JSON
@@ -1018,15 +1018,15 @@ func TestExecuteJson(t *testing.T) {
 
 		// Get errorcode
 		errorCode := float64(0)
-		respErrorCode := jsonObj["errors"].([]interface{})[0].(map[string]interface{})["code"]
+		respErrorCode := jsonObj["errors"].([]any)[0].(map[string]any)["code"]
 		assert.Equal(t, errorCode, respErrorCode)
 
 		// Get data
-		rowData := jsonObj["results"].([]interface{})[0].(map[string]interface{})["data"].([]interface{})[0].(map[string]interface{})["row"]
+		rowData := jsonObj["results"].([]any)[0].(map[string]any)["data"].([]any)[0].(map[string]any)["row"]
 		assert.Equal(t, exp, rowData)
 
 		// Get space name
-		respSpace := jsonObj["results"].([]interface{})[0].(map[string]interface{})["spaceName"]
+		respSpace := jsonObj["results"].([]any)[0].(map[string]any)["spaceName"]
 		assert.Equal(t, "test_data", respSpace)
 
 	}
@@ -1037,9 +1037,9 @@ func TestExecuteJson(t *testing.T) {
 		if err != nil {
 			t.Fatalf("fail to get the result in json format, %s", err.Error())
 		}
-		var jsonObj map[string]interface{}
-		exp := []interface{}{
-			map[string]interface{}{
+		var jsonObj map[string]any
+		exp := []any{
+			map[string]any{
 				"person.age":            float64(10),
 				"person.birthday":       `2010-09-10T02:08:02.000000000Z`,
 				"person.book_num":       float64(100),
@@ -1061,7 +1061,7 @@ func TestExecuteJson(t *testing.T) {
 
 		// Parse JSON
 		json.Unmarshal(jsonStrResult, &jsonObj)
-		rowData := jsonObj["results"].([]interface{})[0].(map[string]interface{})["data"].([]interface{})[0].(map[string]interface{})["row"]
+		rowData := jsonObj["results"].([]any)[0].(map[string]any)["data"].([]any)[0].(map[string]any)["row"]
 		assert.Equal(t, exp, rowData)
 	}
 
@@ -1071,17 +1071,17 @@ func TestExecuteJson(t *testing.T) {
 		if err != nil {
 			t.Fatalf("fail to get the result in json format, %s", err.Error())
 		}
-		var jsonObj map[string]interface{}
+		var jsonObj map[string]any
 
 		// Parse JSON
 		json.Unmarshal(jsonStrResult, &jsonObj)
 
 		errorCode := float64(-1009)
-		respErrorCode := jsonObj["errors"].([]interface{})[0].(map[string]interface{})["code"]
+		respErrorCode := jsonObj["errors"].([]any)[0].(map[string]any)["code"]
 		assert.Equal(t, errorCode, respErrorCode)
 
 		errorMsg := "SemanticError: `invalidTag': Unknown tag"
-		respErrorMsg := jsonObj["errors"].([]interface{})[0].(map[string]interface{})["message"]
+		respErrorMsg := jsonObj["errors"].([]any)[0].(map[string]any)["message"]
 		assert.Equal(t, errorMsg, respErrorMsg)
 	}
 }
@@ -1118,23 +1118,23 @@ func TestExecuteWithParameter(t *testing.T) {
 	loadTestData(t, session)
 
 	// Update the params map
-	params := make(map[string]interface{})
+	params := make(map[string]any)
 	params["p1"] = true
 	params["p2"] = 3
-	params["p3"] = []interface{}{true, 3}
-	params["p4"] = map[string]interface{}{"a": true, "b": "Bob"}
+	params["p3"] = []any{true, 3}
+	params["p4"] = map[string]any{"a": true, "b": "Bob"}
 	params["p5"] = int64(9223372036854775807)  // Max int64
 	params["p6"] = int64(-9223372036854775808) // Min int64
 	params["p7"] = int64(42)                   // Normal int64 value
 
 	// Simple result
 	{
-		query := `RETURN 
-			toBoolean($p1) and false, 
-			$p2+3, 
-			$p3[1]>3, 
-			$p5, 
-			$p6, 
+		query := `RETURN
+			toBoolean($p1) and false,
+			$p2+3,
+			$p3[1]>3,
+			$p5,
+			$p6,
 			$p7,
 			$p5 + 1 AS overflow_add,
 			$p6 - 1 AS overflow_subtract,
@@ -1403,7 +1403,7 @@ func tryToExecute(e executer, query string) (resp *ResultSet, err error) {
 	return
 }
 
-func tryToExecuteWithParameter(session *Session, query string, params map[string]interface{}) (resp *ResultSet, err error) {
+func tryToExecuteWithParameter(session *Session, query string, params map[string]any) (resp *ResultSet, err error) {
 	for i := 3; i > 0; i-- {
 		resp, err = session.ExecuteWithParameter(query, params)
 		if err == nil && resp.IsSucceed() {
