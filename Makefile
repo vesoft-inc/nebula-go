@@ -1,42 +1,38 @@
-.PHONY: build unit test fmt up up-ssl down ssl-test run-examples
+.PHONY: build unit test e2e fmt run-examples
 
 default: build
+
+gen-code:
+	rm -rf internal/generated_code/v5.0.0/proto/common
+	rm -rf internal/generated_code/v5.0.0/proto/vector
+	rm -rf internal/generated_code/v5.0.0/proto/graph
+	cd proto && \
+	protoc --go_out=. --go-grpc_out=.  ./*.proto && \
+	mv ./github.com/vesoft-inc/nebula-go/v5/internal/generated_code/v5.0.0/proto/* ../internal/generated_code/v5.0.0/proto/ && \
+	rm -rf ./github.com
 
 build: fmt
 	go mod tidy
 	go build
-unit:
-	go mod tidy
-	go test -v -race --covermode=atomic --coverprofile coverage.out
+
 test:
 	go mod tidy
-	go test -v -race --tags=integration --covermode=atomic --coverprofile coverage.out
+	go list ./... |grep -v example|grep -v e2e|grep -v generated_code| xargs go test  -v -race -timeout 30s  --covermode=atomic  --coverprofile coverage.out
+
+e2e-up:
+	cd e2e/docker-compose && docker-compose pull && docker-compose up -d
+	cd e2e/docker-compose-ssl && docker-compose pull && docker-compose up -d
+	cd e2e/import && go run main.go
+
+e2e-down:
+	cd e2e/docker-compose && docker-compose down
+	cd e2e/docker-compose-ssl && docker-compose down
+
+e2e:
+	 go test -v -race  --covermode=atomic  --coverprofile ./e2e.out  ./e2e/... --cover -coverpkg=./...
 
 fmt:
-	go fmt
-
-lint:
-	@test -z `gofmt -l *.go` || (echo "Please run 'make fmt' to format Go code" && exit 1)
-
-up:
-	cd ./nebula-docker-compose && docker compose up -d
-
-up-ssl:
-	cd ./nebula-docker-compose && enable_ssl=true docker compose -f docker-compose-ssl.yaml up -d
-
-down:
-	cd ./nebula-docker-compose && docker compose down -v
-
-ssl-test:
-	ssl_test=true go test -v --tags=integration -run TestSslConnection;
-	ssl_test=true go test -v --tags=integration -run TestSslSessionPool;
-
-ssl-test-self-signed:
-	self_signed=true go test -v --tags=integration -run TestSslConnection;
+	go fmt $(shell go list ./... | grep -v /generated_code/)
 
 run-examples:
-	go run examples/basic_example/graph_client_basic_example.go && \
-	go run examples/parameter_example/parameter_example.go && \
-	go run examples/goroutines_example/graph_client_goroutines_example.go && \
-	go run examples/json_example/parse_json_example.go && \
-	go run examples/session_pool_example/session_pool_example.go
+	go run examples/basic_example.go

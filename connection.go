@@ -1,237 +1,248 @@
-/*
- *
- * Copyright (c) 2020 vesoft inc. All rights reserved.
- *
- * This source code is licensed under Apache 2.0 License.
- *
- */
-
-package nebula_go
+// Copyright 2025 vesoft inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+package nebula_ng
 
 import (
 	"context"
 	"crypto/tls"
-	"fmt"
+	"encoding/json"
+	"math"
 	"net"
-	"net/http"
-	"strconv"
+	"sync"
 	"time"
 
-	"github.com/vesoft-inc/fbthrift/thrift/lib/go/thrift"
-	"github.com/vesoft-inc/nebula-go/v3/nebula"
-	"github.com/vesoft-inc/nebula-go/v3/nebula/graph"
-	"golang.org/x/net/http2"
+	"github.com/vesoft-inc/nebula-go/v5/internal/decode"
+	"github.com/vesoft-inc/nebula-go/v5/internal/generated_code/v5.0.0/proto"
+	"github.com/vesoft-inc/nebula-go/v5/internal/generated_code/v5.0.0/proto/common"
+	"github.com/vesoft-inc/nebula-go/v5/internal/generated_code/v5.0.0/proto/graph"
+	"github.com/vesoft-inc/nebula-go/v5/internal/grpcutil"
+	"github.com/vesoft-inc/nebula-go/v5/internal/internal_error"
+	"github.com/vesoft-inc/nebula-go/v5/pkg/errors"
+	"github.com/vesoft-inc/nebula-go/v5/pkg/types"
+	"github.com/vesoft-inc/nebula-go/v5/pkg/version"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/connectivity"
 )
 
+var defaultConnector = &graphConnector{}
+var defaultMsgSize = math.MaxInt64
+
+const defaultPingTimeout = 1 * time.Second
+const defaultCloseTimeout = 1 * time.Second
+
+type graphConnector struct{}
+
 type connection struct {
-	severAddress HostAddress
-	timeout      time.Duration
-	returnedAt   time.Time // the connection was created or returned.
-	sslConfig    *tls.Config
-	useHTTP2     bool
-	httpHeader   http.Header
-	handshakeKey string
-	graph        *graph.GraphServiceClient
+	mu          sync.Mutex
+	graphClient graph.GraphServiceClient
+	clientConn  *grpc.ClientConn
+	sessionId   int64
+	version     string
+	timeout     time.Duration
+	tlsConfig   *tls.Config
+	address     string
 }
 
-func newConnection(severAddress HostAddress) *connection {
-	return &connection{
-		severAddress: severAddress,
-		timeout:      0 * time.Millisecond,
-		returnedAt:   time.Now(),
-		sslConfig:    nil,
-		handshakeKey: "",
-		graph:        nil,
+func (c *graphConnector) connect(address string, cfg *connConfig) (types.Client, error) {
+	cn := &connection{
+		address: address,
 	}
-}
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.connectTimeout)
+	defer cancel()
 
-// open opens a transport for the connection
-// if sslConfig is not nil, an SSL transport will be created
-func (cn *connection) open(hostAddress HostAddress, timeout time.Duration, sslConfig *tls.Config,
-	useHTTP2 bool, httpHeader http.Header, handshakeKey string) error {
-	ip := hostAddress.Host
-	port := hostAddress.Port
-	newAdd := net.JoinHostPort(ip, strconv.Itoa(port))
-	cn.timeout = timeout
-	cn.useHTTP2 = useHTTP2
-	cn.handshakeKey = handshakeKey
-
-	var (
-		err       error
-		transport thrift.Transport
-		pf        thrift.ProtocolFactory
-	)
-	if useHTTP2 {
-		if sslConfig != nil {
-			transport, err = thrift.NewHTTPPostClientWithOptions("https://"+newAdd, thrift.HTTPClientOptions{
-				Client: &http.Client{
-					Transport: &http2.Transport{
-						TLSClientConfig: sslConfig,
-					},
-				},
-			})
-		} else {
-			transport, err = thrift.NewHTTPPostClientWithOptions("http://"+newAdd, thrift.HTTPClientOptions{
-				Client: &http.Client{
-					Transport: &http2.Transport{
-						// So http2.Transport doesn't complain the URL scheme isn't 'https'
-						AllowHTTP: true,
-						// Pretend we are dialing a TLS endpoint. (Note, we ignore the passed tls.Config)
-						DialTLSContext: func(ctx context.Context, network, addr string, cfg *tls.Config) (net.Conn, error) {
-							_ = cfg
-							var d net.Dialer
-							return d.DialContext(ctx, network, addr)
-						},
-					},
-				},
-			})
-		}
-		if err != nil {
-			return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
-		}
-		pf = thrift.NewBinaryProtocolFactoryDefault()
-		if httpHeader != nil {
-			client, ok := transport.(*thrift.HTTPClient)
-			if !ok {
-				return fmt.Errorf("failed to get thrift http client")
+	if cfg.enableTLS {
+		if cfg.tlsConfig == nil {
+			host, _, err := net.SplitHostPort(address)
+			if err != nil {
+				return nil, err
 			}
-			for k, vv := range httpHeader {
-				if k == "Content-Type" {
-					// fbthrift will add "Content-Type" header, so we need to skip it
-					continue
-				}
-				for _, v := range vv {
-					// fbthrift set header with http.Header.Add, so we need to set header one by one
-					client.SetHeader(k, v)
-				}
+			tlsCfg, err := grpcutil.NewTLSConfig(host, cfg.ca, cfg.cert, cfg.key, cfg.insecureSkipVerify)
+			if err != nil {
+				return nil, err
 			}
+			cfg.tlsConfig = tlsCfg
 		}
-	} else {
-		bufferSize := 128 << 10
-
-		var sock thrift.Transport
-		if sslConfig != nil {
-			sock, err = thrift.NewSSLSocketTimeout(newAdd, sslConfig, timeout)
-		} else {
-			sock, err = thrift.NewSocket(thrift.SocketAddr(newAdd), thrift.SocketTimeout(timeout))
-		}
-		if err != nil {
-			return fmt.Errorf("failed to create a net.Conn-backed Transport,: %s", err.Error())
-		}
-		// Set transport
-		bufferedTranFactory := thrift.NewBufferedTransportFactory(bufferSize)
-		transport = thrift.NewHeaderTransport(bufferedTranFactory.GetTransport(sock))
-		pf = thrift.NewHeaderProtocolFactory()
 	}
 
-	cn.graph = graph.NewGraphServiceClientFactory(transport, pf)
-	if err = cn.graph.Open(); err != nil {
-		return fmt.Errorf("failed to open transport, error: %s", err.Error())
+	if err := cn.open(address, cfg.connectTimeout, cfg.tlsConfig); err != nil {
+		return nil, err
 	}
-	if !cn.graph.IsOpen() {
-		return fmt.Errorf("transport is off")
+	if err := cn.authenticate(ctx, cfg.username, cfg.password, cfg.authInfo); err != nil {
+		_ = cn.clientConn.Close()
+		return nil, err
 	}
-	return cn.verifyClientVersion()
+	cn.timeout = cfg.requestTimeout
+	return cn, nil
 }
 
-func (cn *connection) verifyClientVersion() error {
-	req := graph.NewVerifyClientVersionReq()
-	if cn.handshakeKey != "" {
-		req.SetVersion([]byte(cn.handshakeKey))
-	}
-	resp, err := cn.graph.VerifyClientVersion(req)
+func (cn *connection) open(address string, timeout time.Duration, tlsCfg *tls.Config) error {
+	grpcConn, err := grpcutil.NewGrpcClient(address, timeout, tlsCfg)
 	if err != nil {
-		cn.close()
-		return fmt.Errorf("failed to verify client handshakeKey: %s", err.Error())
+		return err
 	}
-	if resp.GetErrorCode() != nebula.ErrorCode_SUCCEEDED {
-		return fmt.Errorf("incompatible handshakeKey between client and server: %s", string(resp.GetErrorMsg()))
+	cn.clientConn = grpcConn
+	cn.graphClient = graph.NewGraphServiceClient(grpcConn)
+	return nil
+}
+
+func (cn *connection) authenticate(ctx context.Context, username, password string, authInfo map[string]string) error {
+	d := grpcutil.GetCtxDuration(ctx)
+	if authInfo == nil {
+		authInfo = make(map[string]string)
+		authInfo["password"] = password
+	}
+
+	bs, err := json.Marshal(authInfo)
+	if err != nil {
+		return err
+	}
+	clientInfo := &common.ClientInfo{
+		Lang:            common.ClientInfo_GO,
+		ProtocolVersion: proto.PROTOCOL_VERSION,
+		Version:         []byte(version.ClientVersion),
+	}
+	in := graph.AuthRequest{
+		Username:   []byte(username),
+		AuthInfo:   bs,
+		ClientInfo: clientInfo,
+	}
+	resp, err := cn.graphClient.Authenticate(ctx, &in)
+	if err != nil {
+		_ = cn.closeConn()
+		return grpcutil.GetGrpcError(cn.address, err, d)
+	}
+	respErr := resp.GetStatus()
+	if string(respErr.GetCode()) != string(errors.ERROR_SUCCESSFUL_COMPLETION) {
+		_ = cn.closeConn()
+		return internal_error.ErrServerResponse(string(respErr.GetCode()), string(respErr.GetMessage()))
+	}
+	cn.sessionId = resp.GetSessionId()
+
+	cn.version = string(resp.GetVersion())
+	return nil
+}
+
+func (cn *connection) Execute(stmt string) (types.Result, error) {
+	if cn.timeout == 0 {
+		return cn.ExecuteContext(context.Background(), stmt)
+	} else {
+		ctx, cancel := context.WithTimeout(context.Background(), cn.timeout)
+		defer cancel()
+		return cn.ExecuteContext(ctx, stmt)
+	}
+}
+
+func (cn *connection) ExecuteContext(ctx context.Context, stmt string) (types.Result, error) {
+	if ctx.Err() != nil {
+		return nil, ctx.Err()
+	}
+	d := grpcutil.GetCtxDuration(ctx)
+	cn.mu.Lock()
+	defer cn.mu.Unlock()
+	in := &graph.ExecuteRequest{
+		SessionId: cn.sessionId,
+		Stmt:      []byte(stmt),
+	}
+	resp, err := cn.graphClient.Execute(ctx, in)
+	if err != nil {
+		return nil, grpcutil.GetGrpcError(cn.address, err, d)
+	}
+	t, err := decode.NewResultTable(resp.Result)
+	if err != nil {
+		return nil, internal_error.ErrDecodeFailed(err.Error())
+	}
+	resultResp := resultSet{
+		index:   0,
+		table:   t,
+		summary: resp.Summary,
+		cursor:  resp.Cursor,
+	}
+	if err := cn.isSucceed(resp); err != nil {
+		return &resultResp, err
+	}
+
+	return &resultResp, nil
+}
+
+func (cn *connection) isSucceed(resp *graph.ExecuteResponse) error {
+	respErr := resp.GetStatus()
+	if string(respErr.GetCode()) != string(errors.ERROR_SUCCESSFUL_COMPLETION) {
+		return internal_error.ErrServerResponse(string(respErr.GetCode()), string(respErr.GetMessage()))
 	}
 	return nil
 }
 
-// reopen reopens the current connection.
-// Because the code generated by Fbthrift does not handle the seqID,
-// the message will be dislocated when the timeout occurs, resulting in unexpected response.
-// When the timeout occurs, the connection will be reopened to avoid the impact of the message.
-func (cn *connection) reopen() error {
-	cn.close()
-	return cn.open(cn.severAddress, cn.timeout, cn.sslConfig, cn.useHTTP2, cn.httpHeader, cn.handshakeKey)
+func (cn *connection) Ping() error {
+	ctx, cancel := context.WithTimeout(context.Background(), defaultPingTimeout)
+	defer cancel()
+
+	return cn.PingContext(ctx)
+
 }
 
-// Authenticate
-func (cn *connection) authenticate(username, password string) (*graph.AuthResponse, error) {
-	resp, err := cn.graph.Authenticate([]byte(username), []byte(password))
-	if err != nil {
-		err = fmt.Errorf("authentication fails, %s", err.Error())
-		if e := cn.graph.Close(); e != nil {
-			err = fmt.Errorf("fail to close transport, error: %s", e.Error())
-		}
-		return nil, err
+func (cn *connection) PingContext(ctx context.Context) error {
+	d := grpcutil.GetCtxDuration(ctx)
+	cn.mu.Lock()
+	defer cn.mu.Unlock()
+	stmt := []byte("RETURN 1")
+	in := &graph.ExecuteRequest{
+		SessionId: cn.sessionId,
+		Stmt:      stmt,
 	}
-
-	return resp, nil
-}
-
-func (cn *connection) execute(sessionID int64, stmt string) (*graph.ExecutionResponse, error) {
-	return cn.executeWithParameter(sessionID, stmt, map[string]*nebula.Value{})
-}
-
-func (cn *connection) executeWithParameter(sessionID int64, stmt string,
-	params map[string]*nebula.Value) (*graph.ExecutionResponse, error) {
-	resp, err := cn.graph.ExecuteWithParameter(sessionID, []byte(stmt), params)
+	resp, err := cn.graphClient.Execute(ctx, in)
 	if err != nil {
-		return nil, err
+		return grpcutil.GetGrpcError(cn.address, err, d)
 	}
-
-	return resp, nil
+	if err := cn.isSucceed(resp); err != nil {
+		return err
+	}
+	return nil
 }
 
-func (cn *connection) executeWithParameterTimeout(sessionID int64, stmt string, params map[string]*nebula.Value, timeoutMs int64) (*graph.ExecutionResponse, error) {
-	return cn.graph.ExecuteWithTimeout(sessionID, []byte(stmt), params, timeoutMs)
+func (cn *connection) closeConn() error {
+	return cn.clientConn.Close()
 }
 
-func (cn *connection) executeJson(sessionID int64, stmt string) ([]byte, error) {
-	return cn.ExecuteJsonWithParameter(sessionID, stmt, map[string]*nebula.Value{})
-}
-
-func (cn *connection) ExecuteJsonWithParameter(sessionID int64, stmt string, params map[string]*nebula.Value) ([]byte, error) {
-	jsonResp, err := cn.graph.ExecuteJsonWithParameter(sessionID, []byte(stmt), params)
+func (cn *connection) Close() error {
+	cn.mu.Lock()
+	defer cn.mu.Unlock()
+	if cn.IsClosed() {
+		return nil
+	}
+	// logout via statement, ignore the logout error
+	in := &graph.ExecuteRequest{
+		SessionId: cn.sessionId,
+		Stmt:      []byte("SESSION CLOSE"),
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), defaultCloseTimeout)
+	defer cancel()
+	_, err := cn.graphClient.Execute(ctx, in)
+	_ = cn.closeConn()
 	if err != nil {
-		// reopen the connection if timeout
-		_, ok := err.(thrift.TransportException)
-		if ok {
-			if err.(thrift.TransportException).TypeID() == thrift.TIMED_OUT {
-				reopenErr := cn.reopen()
-				if reopenErr != nil {
-					return nil, reopenErr
-				}
-				return cn.graph.ExecuteJsonWithParameter(sessionID, []byte(stmt), params)
-			}
-		}
+		return grpcutil.GetGrpcError(cn.address, err, defaultCloseTimeout)
 	}
-
-	return jsonResp, err
+	return nil
 }
 
-// Check connection to host address
-func (cn *connection) ping() bool {
-	_, err := cn.execute(0, "YIELD 1")
-	return err == nil
+func (cn *connection) GetSessionId() (int64, error) {
+	return cn.sessionId, nil
 }
 
-// Sign out and release session ID
-func (cn *connection) signOut(sessionID int64) error {
-	// Release session ID to graphd
-	return cn.graph.Signout(sessionID)
+func (cn *connection) GetVersion() (string, error) {
+	return cn.version, nil
 }
 
-// Update returnedAt for cleaner
-func (cn *connection) release() {
-	cn.returnedAt = time.Now()
-}
-
-// Close transport
-func (cn *connection) close() {
-	cn.graph.Close()
+func (cn *connection) IsClosed() bool {
+	return cn.clientConn.GetState() == connectivity.Shutdown
 }

@@ -1,12 +1,19 @@
-/*
- *
- * Copyright (c) 2020 vesoft inc. All rights reserved.
- *
- * This source code is licensed under Apache 2.0 License.
- *
- */
+// Copyright 2025 vesoft inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// Copyright (c) 2022 vesoft inc. All rights reserved.
 
-package nebula_go
+package nebula_ng
 
 import (
 	"log"
@@ -16,23 +23,36 @@ type Logger interface {
 	Info(msg string)
 	Warn(msg string)
 	Error(msg string)
-	Fatal(msg string)
 }
 
-type DefaultLogger struct{}
+type nebulaLogger struct{}
+type emptyLogger struct{}
 
-func (l DefaultLogger) Info(msg string) {
+var (
+	DefaultLogger = &nebulaLogger{}
+	EmptyLogger   = &emptyLogger{}
+)
+
+func (l nebulaLogger) Info(msg string) {
 	log.Printf("[INFO] %s\n", msg)
 }
 
-func (l DefaultLogger) Warn(msg string) {
+func (l nebulaLogger) Warn(msg string) {
 	log.Printf("[WARNING] %s\n", msg)
 }
 
-func (l DefaultLogger) Error(msg string) {
+func (l nebulaLogger) Error(msg string) {
 	log.Printf("[ERROR] %s\n", msg)
 }
 
-func (l DefaultLogger) Fatal(msg string) {
-	log.Fatalf("[FATAL] %s\n", msg)
+func (l emptyLogger) Info(msg string) {
+	return
+}
+
+func (l emptyLogger) Warn(msg string) {
+	return
+}
+
+func (l emptyLogger) Error(msg string) {
+	return
 }

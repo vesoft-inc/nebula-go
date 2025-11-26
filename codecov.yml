@@ -1,0 +1,15 @@
+coverage:
+  status:
+    patch: off
+    project:
+      default:
+        threshold: "5"
+        paths:
+          - "!internal/generated_code/**"
+          - "!e2e/**"
+          - "!examples/**"
+
+ignore:
+  - "e2e"
+  - "internal/generated_code"
+  - "examples"
