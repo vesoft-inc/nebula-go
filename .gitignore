@@ -1,25 +1,9 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
+# ide
 .vscode/
+coverage.out
 
-# Test binary, build with `go test -c`
-*.test
-
-# Docker compose for testing
-nebula-docker-compose/data/
-nebula-docker-compose/logs/
-# Output of the go coverage tool, specifically when used with LiteIDE
+**/certs*/*.cnf
+**/certs*/*.csr
+**/certs*/*srl
+**/logs
 *.out
-
-.DS_Store
-
-.idea/
-
-# ssl 
-*.cnf
-*.csr
-*.srl
