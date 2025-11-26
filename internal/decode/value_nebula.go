@@ -147,6 +147,12 @@ type (
 	NebulaEmbeddingVector struct {
 		Values []float32
 	}
+	NebulaSet struct {
+		Values []*NebulaValue
+	}
+	NebulaMap struct {
+		Values map[*NebulaValue]*NebulaValue
+	}
 )
 
 func (v *NebulaBool) GetValue()            {}
@@ -175,6 +181,8 @@ func (v *NebulaPath) GetValue()            {}
 func (v *NebulaDecimal) GetValue()         {}
 func (v *NebulaGeography) GetValue()       {}
 func (v *NebulaEmbeddingVector) GetValue() {}
+func (v *NebulaSet) GetValue()             {}
+func (v *NebulaMap) GetValue()             {}
 func (v *NebulaValue) GetValue()           {}
 
 // formatFloat formats a float64 value to string with proper handling of special cases
@@ -271,6 +279,12 @@ func (v *NebulaValue) String() string {
 	case types.ValueTypeEmbeddingVector:
 		ev, _ := v.AsEmbeddingVector()
 		return ev.String()
+	case types.ValueTypeSet:
+		s, _ := v.AsSet()
+		return s.String()
+	case types.ValueTypeMap:
+		m, _ := v.AsMap()
+		return m.String()
 	default:
 		return fmt.Sprintf("%v", v.Data)
 	}
@@ -333,6 +347,10 @@ func (v *NebulaValue) GetType() types.ValueType {
 		return types.ValueTypeGeography
 	case *NebulaEmbeddingVector:
 		return types.ValueTypeEmbeddingVector
+	case *NebulaSet:
+		return types.ValueTypeSet
+	case *NebulaMap:
+		return types.ValueTypeMap
 	default:
 		return types.ValueUnSupport
 	}
@@ -454,6 +472,14 @@ func (v *NebulaValue) AsList() (types.List, error) {
 	return asValue[*NebulaList](v, types.ValueTypeList)
 }
 
+func (v *NebulaValue) AsSet() (types.Set, error) {
+	return asValue[*NebulaSet](v, types.ValueTypeSet)
+}
+
+func (v *NebulaValue) AsMap() (types.Map, error) {
+	return asValue[*NebulaMap](v, types.ValueTypeMap)
+}
+
 func (v *NebulaValue) AsRecord() (types.Record, error) {
 	return asValue[*NebulaRecord](v, types.ValueTypeRecord)
 }
@@ -525,6 +551,21 @@ func (l *NebulaList) GetValues() []types.Value {
 func (l *NebulaList) Size() int {
 	return len(l.Values)
 }
+func (s *NebulaSet) String() string {
+	valuesStr := make([]string, 0, len(s.Values))
+	for _, v := range s.Values {
+		valuesStr = append(valuesStr, v.String())
+	}
+	return fmt.Sprintf("{%s}", strings.Join(valuesStr, ","))
+}
+
+func (s *NebulaSet) GetValues() []types.Value {
+	values := make([]types.Value, 0, len(s.Values))
+	for _, v := range s.Values {
+		values = append(values, v)
+	}
+	return values
+}
 
 func (r *NebulaRecord) String() string {
 	mv := mapValue(r.GetValues())
@@ -534,6 +575,34 @@ func (r *NebulaRecord) String() string {
 func (r *NebulaRecord) GetValues() map[string]types.Value {
 	values := make(map[string]types.Value)
 	for k, v := range r.Values {
+		values[k] = v
+	}
+	return values
+}
+
+func (m *NebulaMap) String() string {
+	mm := m.GetValues()
+	keys := make([]types.Value, 0, len(mm))
+	values := make([]types.Value, 0, len(mm))
+	for key := range mm {
+		keys = append(keys, key)
+		values = append(values, mm[key])
+	}
+	sort.Slice(keys, func(i, j int) bool {
+		return keys[i].String() < keys[j].String()
+	})
+	kvStr := make([]string, 0, len(mm))
+	for _, k := range keys {
+		v := mm[k]
+		kvTemp := fmt.Sprintf(`%s:%s`, k, v)
+		kvStr = append(kvStr, kvTemp)
+	}
+	return "{" + strings.Join(kvStr, ",") + "}"
+}
+
+func (m *NebulaMap) GetValues() map[types.Value]types.Value {
+	values := make(map[types.Value]types.Value)
+	for k, v := range m.Values {
 		values[k] = v
 	}
 	return values
@@ -1214,6 +1283,27 @@ func DeepCopyValue(src *NebulaValue, dst *NebulaValue) {
 		for i, v := range srcList.Values {
 			DeepCopyValue(v, dstList.Values[i])
 		}
+	case types.ValueTypeSet:
+		srcSet := src.Data.(*NebulaSet)
+		if dst.needReset(types.ValueTypeSet) {
+			dst.Data = &NebulaSet{}
+		}
+		dstSet := dst.Data.(*NebulaSet)
+		dstSet.Values = constructListValue(dstSet.Values, len(srcSet.Values))
+		for i, v := range srcSet.Values {
+			DeepCopyValue(v, dstSet.Values[i])
+		}
+	case types.ValueTypeMap:
+		srcMap := src.Data.(*NebulaMap)
+		if dst.needReset(types.ValueTypeMap) {
+			dst.Data = &NebulaMap{}
+		}
+		dstMap := dst.Data.(*NebulaMap)
+		dstMap.Values = make(map[*NebulaValue]*NebulaValue)
+		for key, v := range srcMap.Values {
+			dstMap.Values[key] = &NebulaValue{}
+			DeepCopyValue(v, dstMap.Values[key])
+		}
 	case types.ValueTypeRecord:
 		srcRecord := src.Data.(*NebulaRecord)
 		if dst.needReset(types.ValueTypeRecord) {
@@ -1224,6 +1314,14 @@ func DeepCopyValue(src *NebulaValue, dst *NebulaValue) {
 		for key, v := range srcRecord.Values {
 			DeepCopyValue(v, dstRecord.Values[key])
 		}
+	case types.ValueTypeEmbeddingVector:
+		srcEv := src.Data.(*NebulaEmbeddingVector)
+		if dst.needReset(types.ValueTypeEmbeddingVector) {
+			dst.Data = &NebulaEmbeddingVector{}
+		}
+		dstEv := dst.Data.(*NebulaEmbeddingVector)
+		dstEv.Values = make([]float32, len(srcEv.Values))
+		copy(dstEv.Values, srcEv.Values)
 	case types.ValueTypeNode:
 		srcNode := src.Data.(*NebulaNode)
 		if dst.needReset(types.ValueTypeNode) {
@@ -1278,6 +1376,41 @@ func DeepCopyValue(src *NebulaValue, dst *NebulaValue) {
 		}
 		dstDecimal := dst.Data.(*NebulaDecimal)
 		dstDecimal.Sval = srcDecimal.Sval
+	case types.ValueTypeGeography:
+		srcGeography := src.Data.(*NebulaGeography)
+		if dst.needReset(types.ValueTypeGeography) {
+			dst.Data = &NebulaGeography{}
+		}
+		dstGeography := dst.Data.(*NebulaGeography)
+		dstGeography.SRID = srcGeography.SRID
+		dstGeography.Shape = srcGeography.Shape
+		if srcGeography.Point != nil {
+			dstGeography.Point = &types.Point{
+				Lng: srcGeography.Point.Lng,
+				Lat: srcGeography.Point.Lat,
+			}
+		}
+		if srcGeography.LineString != nil {
+			dstGeography.LineString = make(types.LineString, len(srcGeography.LineString))
+			for i, coord := range srcGeography.LineString {
+				dstGeography.LineString[i] = &types.Point{
+					Lng: coord.Lng,
+					Lat: coord.Lat,
+				}
+			}
+		}
+		if srcGeography.Polygon != nil {
+			dstGeography.Polygon = make(types.Polygon, len(srcGeography.Polygon))
+			for i, ring := range srcGeography.Polygon {
+				dstGeography.Polygon[i] = make(types.LineString, len(ring))
+				for j, coord := range ring {
+					dstGeography.Polygon[i][j] = &types.Point{
+						Lng: coord.Lng,
+						Lat: coord.Lat,
+					}
+				}
+			}
+		}
 	}
 }
 

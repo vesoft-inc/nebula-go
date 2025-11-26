@@ -127,5 +127,7 @@ const (
 	ColumnTypeDecimal
 	ColumnTypeVector
 	ColumnTypeGeography
+	ColumnTypeSet
+	ColumnTypeMap
 	ColumnTypeAny ColumnType = 0xFF
 )

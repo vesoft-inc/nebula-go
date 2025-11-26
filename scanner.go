@@ -110,6 +110,15 @@ type (
 	NullGeography struct {
 		nullable[types.Geography]
 	}
+	NullSet struct {
+		nullable[types.Set]
+	}
+	NullMap struct {
+		nullable[types.Map]
+	}
+	NullEmbeddingVector struct {
+		nullable[types.EmbeddingVector]
+	}
 	NullValue struct {
 		nullable[types.Value]
 	}
@@ -320,6 +329,18 @@ func (n *NullRecord) scan(value types.Value) error {
 	})
 }
 
+func (n *NullSet) scan(value types.Value) error {
+	return n.scanComposite(value, func() decode.Valuer {
+		return &decode.NebulaSet{}
+	})
+}
+
+func (n *NullMap) scan(value types.Value) error {
+	return n.scanComposite(value, func() decode.Valuer {
+		return &decode.NebulaMap{}
+	})
+}
+
 func (n *NullDuration) scan(value types.Value) error {
 	return n.scanComposite(value, func() decode.Valuer {
 		return &decode.NebulaDuration{}
@@ -377,6 +398,12 @@ func (n *NullPath) scan(value types.Value) error {
 func (n *NullGeography) scan(value types.Value) error {
 	return n.scanComposite(value, func() decode.Valuer {
 		return &decode.NebulaGeography{}
+	})
+}
+
+func (n *NullEmbeddingVector) scan(value types.Value) error {
+	return n.scanComposite(value, func() decode.Valuer {
+		return &decode.NebulaEmbeddingVector{}
 	})
 }
 

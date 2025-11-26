@@ -33,6 +33,16 @@ type (
 		typ       types.ColumnType
 		subSchema typeSchema
 	}
+	columnTypeSchemaSet struct {
+		typ       types.ColumnType
+		subSchema typeSchema
+	}
+	columnTypeSchemaMap struct {
+		typ         types.ColumnType
+		keySchema   typeSchema
+		valueSchema typeSchema
+	}
+
 	columnTypeSchemaVector struct {
 		typ       types.ColumnType
 		dim       uint32
@@ -96,6 +106,33 @@ func newTypeSchema(r *bytesReader) (typeSchema, error) {
 			subSchema: subSchema,
 		}
 		return &typ, nil
+	case types.ColumnTypeSet:
+		subSchema, err := newTypeSchema(r)
+		if err != nil {
+			return nil, err
+		}
+		typ := columnTypeSchemaSet{
+			typ:       t,
+			subSchema: subSchema,
+		}
+		return &typ, nil
+
+	case types.ColumnTypeMap:
+		keySchema, err := newTypeSchema(r)
+		if err != nil {
+			return nil, err
+		}
+		valueSchema, err := newTypeSchema(r)
+		if err != nil {
+			return nil, err
+		}
+		typ := columnTypeSchemaMap{
+			typ:         t,
+			keySchema:   keySchema,
+			valueSchema: valueSchema,
+		}
+		return &typ, nil
+
 	case types.ColumnTypeRecord:
 		// filed num + [name + "0" + type]
 		schema := make(map[string]typeSchema)
@@ -241,6 +278,14 @@ func (s *columnTypeSchemaBasic) getType() types.ColumnType {
 }
 
 func (s *columnTypeSchemaList) getType() types.ColumnType {
+	return s.typ
+}
+
+func (s *columnTypeSchemaSet) getType() types.ColumnType {
+	return s.typ
+}
+
+func (s *columnTypeSchemaMap) getType() types.ColumnType {
 	return s.typ
 }
 
