@@ -568,6 +568,98 @@ func (c *vectorDecoder) decodePathValue() decodeFlatFn {
 	}
 }
 
+func (c *vectorDecoder) decodeSetValue() decodeFlatFn {
+	return func(dctx *decodeContext, value *NebulaValue, v *vector.NestedVector, index uint32, columnType typeSchema) error {
+		// offset + size
+		length := 4 + 4
+		header := v.VectorData[index*uint32(length) : index*(uint32(length))+uint32(length)]
+		offset := bytesToUint32(header[:4])
+		size := bytesToUint32(header[4:8])
+		if value.needReset(types.ValueTypeSet) {
+			value.Data = &NebulaSet{}
+		}
+		l := value.Data.(*NebulaSet)
+		l.Values = constructListValue(l.Values, int(size))
+		schema, ok := columnType.(*columnTypeSchemaSet)
+		if !ok {
+			return errTypeAssertion
+		}
+		for i := uint32(0); i < size; i++ {
+			vv := l.Values[i]
+			dataVector := v.NestedVectors[0]
+			wrapper := &vectorWrapper{
+				vector:        dataVector,
+				decodeContext: dctx,
+				decoder:       defaultDecoder,
+				vectorType:    vectorTypeFlat,
+			}
+			wrapper.typ = schema.subSchema
+			if err := wrapper.prepare(); err != nil {
+				return err
+			}
+			if err := c.decodeValue(dctx, vv, v.NestedVectors[0], vectorTypeFlat, offset+i, schema.subSchema); err != nil {
+				return err
+			}
+		}
+		value.Data = l
+		return nil
+	}
+}
+
+func (c *vectorDecoder) decodeMapValue() decodeFlatFn {
+	return func(dctx *decodeContext, value *NebulaValue, v *vector.NestedVector, index uint32, columnType typeSchema) error {
+		// offset + size
+		length := 4 + 4
+		header := v.VectorData[index*uint32(length) : index*(uint32(length))+uint32(length)]
+		offset := bytesToUint32(header[:4])
+		size := bytesToUint32(header[4:8])
+		if value.needReset(types.ValueTypeMap) {
+			value.Data = &NebulaMap{}
+		}
+		m := value.Data.(*NebulaMap)
+		m.Values = make(map[*NebulaValue]*NebulaValue)
+		schema, ok := columnType.(*columnTypeSchemaMap)
+		if !ok {
+			return errTypeAssertion
+		}
+		for i := uint32(0); i < size; i++ {
+			key := &NebulaValue{}
+			val := &NebulaValue{}
+			keyDataVector := v.NestedVectors[0]
+			wrapperKey := &vectorWrapper{
+				vector:        keyDataVector,
+				decodeContext: dctx,
+				decoder:       defaultDecoder,
+				vectorType:    vectorTypeFlat,
+			}
+			wrapperKey.typ = schema.keySchema
+			if err := wrapperKey.prepare(); err != nil {
+				return err
+			}
+			valDataVector := v.NestedVectors[1]
+			wrapperVal := &vectorWrapper{
+				vector:        valDataVector,
+				decodeContext: dctx,
+				decoder:       defaultDecoder,
+				vectorType:    vectorTypeFlat,
+			}
+			wrapperVal.typ = schema.valueSchema
+			if err := wrapperVal.prepare(); err != nil {
+				return err
+			}
+			if err := c.decodeValue(dctx, key, v.NestedVectors[0], vectorTypeFlat, offset+i, schema.keySchema); err != nil {
+				return err
+			}
+			if err := c.decodeValue(dctx, val, v.NestedVectors[1], vectorTypeFlat, offset+i, schema.valueSchema); err != nil {
+				return err
+			}
+			m.Values[key] = val
+		}
+		value.Data = m
+		return nil
+	}
+}
+
 func (c *vectorDecoder) decodeAnyValue() decodeFlatFn {
 	return func(dctx *decodeContext, value *NebulaValue, v *vector.NestedVector, index uint32, columnType typeSchema) error {
 		dataTypeVector := v.NestedVectors[0]
@@ -808,7 +900,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		if r.error() != nil {
 			return r.error()
 		}
-		size := int(bytesToInt16(sizeBytes))
+		size := int(bytesToUint16(sizeBytes))
 		bs := r.readN(size)
 		if r.error() != nil {
 			return r.error()
@@ -829,7 +921,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		if !ok {
 			return errors.Wrap(errInvalidColumnType, "")
 		}
-		size := int(bytesToInt16(sizeBytes))
+		size := int(bytesToUint16(sizeBytes))
 		l := make([]*NebulaValue, 0, size)
 		var bitSize int
 		if size%8 != 0 {
@@ -858,9 +950,68 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		value.Data = &NebulaList{
 			Values: l,
 		}
+	case types.ColumnTypeSet:
+		typeBytes := r.readN(1)
+		sizeBytes := r.readN(4)
+		if r.error() != nil {
+			return r.error()
+		}
+		subType, ok := columnTypeMap[typeBytes[0]]
+		if !ok {
+			return errors.Wrap(errInvalidColumnType, "")
+		}
+		size := int(bytesToUint32(sizeBytes))
+		l := make([]*NebulaValue, 0, size)
+		var bitSize int
+		if size%8 != 0 {
+			bitSize = size/8 + 1
+		} else {
+			bitSize = size / 8
+		}
+		nullBitByte := r.readN(bitSize)
+		if r.error() != nil {
+			return r.error()
+		}
+		if r.error() != nil {
+			return r.error()
+		}
+		for i := 0; i < size; i++ {
+			if nullBitByte[i/8]&(1<<(i%8)) == 0 {
+				l = append(l, &NebulaValue{Data: nil})
+			} else {
+				v := &NebulaValue{}
+				if err := decodeAnyCompositeValue(dctx, v, r, subType, false); err != nil {
+					return err
+				}
+				l = append(l, v)
+			}
+		}
+		value.Data = &NebulaSet{
+			Values: l,
+		}
+	case types.ColumnTypeMap:
+		kValue := &NebulaValue{}
+		vValue := &NebulaValue{}
+		if err := decodeAnyCompositeValue(dctx, kValue, r, types.ColumnTypeSet, false); err != nil {
+			return err
+		}
+		if err := decodeAnyCompositeValue(dctx, vValue, r, types.ColumnTypeSet, false); err != nil {
+			return err
+		}
+		keys := kValue.Data.(*NebulaSet)
+		values := vValue.Data.(*NebulaSet)
+		data := &NebulaMap{}
+		data.Values = make(map[*NebulaValue]*NebulaValue)
+		if len(keys.Values) != len(values.Values) {
+			return internal_error.ErrDecodeFailed("map key size not equal to value size")
+		}
+		for i := 0; i < len(keys.Values); i++ {
+			data.Values[keys.Values[i]] = values.Values[i]
+		}
+		value.Data = data
 	case types.ColumnTypeRecord:
 		sizeBytes := r.readN(2)
-		size := int(bytesToInt16(sizeBytes))
+		size := int(bytesToUint16(sizeBytes))
 		m := make(map[string]*NebulaValue, 0)
 		for i := 0; i < size; i++ {
 			bs := r.readN(2)
@@ -896,7 +1047,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		nodeTypeId := int32(nodeId >> 48)
 		graphId := bytesToInt32(graphIdBytes)
 		_ = graphId
-		propSize := bytesToInt16(propSizeBytes)
+		propSize := bytesToUint16(propSizeBytes)
 		keys := make([]string, 0, propSize)
 		values := make([]*NebulaValue, 0, propSize)
 		for i := 0; i < int(propSize); i++ {
@@ -946,7 +1097,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		graphId := bytesToInt32(graphIdBytes)
 		edgeTypeID := bytesToInt32(edgeTypeIdBytes)
 		edgeRank := bytesToInt64(edgeRankBytes)
-		propSize := bytesToInt16(propSizeBytes)
+		propSize := bytesToUint16(propSizeBytes)
 		propNames := make([]string, 0, propSize)
 		propValues := make([]*NebulaValue, 0, propSize)
 		noDirectType := edgeTypeID & 0x3FFFFFFF
@@ -1076,6 +1227,8 @@ func init() {
 		types.ColumnTypeDecimal:       d.decodeDecimalValue(),
 		types.ColumnTypeVector:        d.decodeVectorValue(),
 		types.ColumnTypeGeography:     d.decodeGeographyValue(),
+		types.ColumnTypeSet:           d.decodeSetValue(),
+		types.ColumnTypeMap:           d.decodeMapValue(),
 		types.ColumnTypeAny:           d.decodeAnyValue(),
 	}
 }

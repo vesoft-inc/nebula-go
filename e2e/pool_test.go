@@ -85,8 +85,8 @@ func TestSessionSet(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var name, path, owner nebula.NullString
-	if err := resp.Scan(&name, &path, &owner); err != nil {
+	var path, owner nebula.NullString
+	if err := resp.Scan(&path, &owner); err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, path.Valid, true)
@@ -105,7 +105,7 @@ func TestSessionSet(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, v.String(), "test_graph")
+	assert.Equal(t, "/test_schema/test_graph", v.String())
 	v, err = row.GetValueByName("timezone")
 	if err != nil {
 		t.Fatal(err)

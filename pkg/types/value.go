@@ -50,7 +50,9 @@ type (
 		AsDouble() (Double, error)
 		AsString() (String, error)
 		AsList() (List, error)
+		AsSet() (Set, error)
 		AsRecord() (Record, error)
+		AsMap() (Map, error)
 		AsDuration() (Duration, error)
 		AsLocalTime() (LocalTime, error)
 		AsLocalDatetime() (LocalDatetime, error)
@@ -72,6 +74,14 @@ type (
 	Record interface {
 		String() string
 		GetValues() map[string]Value
+	}
+	Set interface {
+		String() string
+		GetValues() []Value
+	}
+	Map interface {
+		String() string
+		GetValues() map[Value]Value
 	}
 
 	Duration interface {
@@ -209,6 +219,8 @@ const (
 	ValueTypeDecimal
 	ValueTypeGeography
 	ValueTypeEmbeddingVector
+	ValueTypeSet
+	ValueTypeMap
 	ValueUnSupport = 0xff
 )
 
@@ -341,7 +353,14 @@ func (nv *EmptyValue) AsList() (List, error) {
 	return nil, nil
 }
 
+func (nv *EmptyValue) AsMap() (Map, error) {
+	return nil, nil
+}
+
 func (nv *EmptyValue) AsRecord() (Record, error) {
+	return nil, nil
+}
+func (nv *EmptyValue) AsSet() (Set, error) {
 	return nil, nil
 }
 

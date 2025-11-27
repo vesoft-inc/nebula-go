@@ -17,7 +17,7 @@ services:
         --meta_server_addrs=metad0:9559 \
         --port=9559 \
         --data_path=/data/meta \
-        --local_ip=$${LOCAL_IP} \
+        --host=$${LOCAL_IP} \
         --containerized=true \
         --license_manager_url=license.vesoft-inc.com:9119
     # healthcheck:
@@ -58,7 +58,7 @@ services:
         --meta_server_addrs=metad0:9559 \
         --port=9779 \
         --data_path=/data/storage \
-        --local_ip=$${LOCAL_IP} \
+        --host=$${LOCAL_IP} \
         --containerized=true \
         --memory_strategy=static 
     depends_on:
@@ -114,7 +114,7 @@ services:
         --containerized=true \
         --meta_server_addrs=metad0:9559 \
         --port=9669 \
-        --local_ip=$${LOCAL_IP} \
+        --host=$${LOCAL_IP} \
         --memory_strategy=static \
         --redirect_stdout=true
     depends_on:
