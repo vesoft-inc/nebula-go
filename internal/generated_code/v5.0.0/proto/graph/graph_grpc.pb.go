@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.9.1
-// source: graph.proto
+// source: nebula/graph.proto
 
 package graph
 
@@ -201,5 +201,5 @@ var GraphService_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "graph.proto",
+	Metadata: "nebula/graph.proto",
 }

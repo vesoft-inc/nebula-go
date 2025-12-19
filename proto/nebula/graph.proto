@@ -23,8 +23,8 @@
 // gRPC requires the proto3 syntax
 syntax = "proto3";
 
-import "common.proto";
-import "vector.proto";
+import "nebula/common.proto";
+import "nebula/vector.proto";
 
 /**
  * Data structures defined in this file is mainly for data exchanging.

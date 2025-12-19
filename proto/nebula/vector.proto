@@ -8,7 +8,7 @@
 // gRPC requires the proto3 syntax
 syntax = "proto3";
 
-import "common.proto";
+import "nebula/common.proto";
 
 package nebula.proto.vector;
 
