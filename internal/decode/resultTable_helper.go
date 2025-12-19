@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -887,9 +887,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		if r.error() != nil {
 			return r.error()
 		}
-		v := &NebulaValue{}
-		decodeBasicValue(bs, v, typ, offset)
-		value.Data = v
+		decodeBasicValue(bs, value, typ, offset)
 		return nil
 	}
 	switch typ {
@@ -1046,7 +1044,6 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		nodeId := bytesToInt64(nodeIdBytes)
 		nodeTypeId := int32(nodeId >> 48)
 		graphId := bytesToInt32(graphIdBytes)
-		_ = graphId
 		propSize := bytesToUint16(propSizeBytes)
 		keys := make([]string, 0, propSize)
 		values := make([]*NebulaValue, 0, propSize)
