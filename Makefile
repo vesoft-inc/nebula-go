@@ -7,7 +7,7 @@ gen-code:
 	rm -rf internal/generated_code/v5.0.0/proto/vector
 	rm -rf internal/generated_code/v5.0.0/proto/graph
 	cd proto && \
-	protoc --go_out=. --go-grpc_out=.  ./*.proto && \
+	protoc --go_out=. --go-grpc_out=. ./nebula/*.proto && \
 	mv ./github.com/vesoft-inc/nebula-go/v5/internal/generated_code/v5.0.0/proto/* ../internal/generated_code/v5.0.0/proto/ && \
 	rm -rf ./github.com
 
