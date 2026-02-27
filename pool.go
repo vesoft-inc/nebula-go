@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -215,7 +215,9 @@ func (dp *driverPool) clearIdleConn() {
 		_ = dp.freeConn[i].Close()
 		delete(dp.connMap, dp.freeConn[i])
 	}
-	dp.freeConn = dp.freeConn[index:]
+	newFree := make([]types.Client, len(dp.freeConn)-index)
+	copy(newFree, dp.freeConn[index:])
+	dp.freeConn = newFree
 }
 
 func (dp *driverPool) openMinConn() {
@@ -253,11 +255,13 @@ func (dp *driverPool) getClient(timeout context.Context) (types.Client, error) {
 		dp.mu.Unlock()
 		select {
 		case <-timeout.Done():
+			dp.mu.Lock()
 			close(req)
 			delete(dp.requestConnChan, index)
+			dp.mu.Unlock()
 			return nil, internal_error.ErrInternal("cannot get the valid connection")
 		case conn := <-req:
-			dc = conn.(*driverConn)
+			dc = conn
 		}
 	} else {
 		dc = dp.freeConn[len(dp.freeConn)-1]
@@ -286,8 +290,9 @@ func (dp *driverPool) GetClient() (types.Client, error) {
 		// ping
 		pingTimeout := dp.pingTimeout
 		pingCtx, pingCancel := context.WithTimeout(context.Background(), pingTimeout)
-		defer pingCancel()
-		if lastErr = dc.PingContext(pingCtx); lastErr == nil {
+		lastErr = dc.PingContext(pingCtx)
+		pingCancel()
+		if lastErr == nil {
 			return dc, nil
 		} else {
 			go func() {

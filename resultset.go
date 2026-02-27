@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,11 +24,12 @@ import (
 )
 
 type resultSet struct {
-	index   int
-	table   *decode.ResultTable
-	summary *graph.Summary
-	cursor  []byte
-	values  []types.Value // values is used to store the values of the current row
+	index      int
+	table      *decode.ResultTable
+	summary    *graph.Summary
+	cursor     []byte
+	values     []types.Value // values is used to store the values of the current row
+	columnsMap map[string]int
 }
 
 type rowData struct {
@@ -226,16 +227,19 @@ func (rd *rowData) Values() []types.Value {
 
 func (rd *rowData) GetValueByName(name string) (types.Value, error) {
 	names := rd.resultSet.Columns()
-	var index int = -1
-	for i, n := range names {
-		if string(n) == name {
-			index = i
-			break
+	var index int
+	if rd.resultSet.columnsMap == nil {
+		rd.resultSet.columnsMap = make(map[string]int)
+		for i, n := range names {
+			rd.resultSet.columnsMap[string(n)] = i
 		}
 	}
-	if index == -1 {
+	if idx, ok := rd.resultSet.columnsMap[name]; ok {
+		index = idx
+	} else {
 		return nil, internal_error.ErrInternal(fmt.Sprintf("column %s not found", name))
 	}
+
 	return rd.values[index], nil
 }
 
