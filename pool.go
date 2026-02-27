@@ -215,9 +215,9 @@ func (dp *driverPool) clearIdleConn() {
 		_ = dp.freeConn[i].Close()
 		delete(dp.connMap, dp.freeConn[i])
 	}
-	newFree := make([]types.Client, dp.maxIdle)
+	newFree := make([]types.Client, len(dp.freeConn)-index)
 	copy(newFree, dp.freeConn[index:])
-	dp.freeConn = newFree[:dp.maxIdle]
+	dp.freeConn = newFree
 }
 
 func (dp *driverPool) openMinConn() {
@@ -261,7 +261,7 @@ func (dp *driverPool) getClient(timeout context.Context) (types.Client, error) {
 			dp.mu.Unlock()
 			return nil, internal_error.ErrInternal("cannot get the valid connection")
 		case conn := <-req:
-			dc = conn.(*driverConn)
+			dc = conn
 		}
 	} else {
 		dc = dp.freeConn[len(dp.freeConn)-1]
