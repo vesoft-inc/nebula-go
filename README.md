@@ -8,7 +8,7 @@ Official NebulaGraph Go client which communicates with Nebula service using [gRP
 workspace=/app/myapp
 # in your project, run go mod edit
 cd ${workspace}
-go get github.com/vesoft-inc/nebula-go/v5@5.2.0
+go get github.com/vesoft-inc/nebula-go/v5@v5.2.0
 ```
 
 ## Usage example
