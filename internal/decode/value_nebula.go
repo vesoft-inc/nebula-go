@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,7 @@ import (
 	"bytes"
 	"fmt"
 	"math"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -1088,9 +1089,7 @@ func (m mapValue) string() string {
 	for key := range m {
 		keys = append(keys, key)
 	}
-	sort.Slice(keys, func(i, j int) bool {
-		return keys[i] < keys[j]
-	})
+	slices.Sort(keys)
 	for _, k := range keys {
 		v := m[k]
 		kvTemp := fmt.Sprintf(`%s:%s`, k, v)
@@ -1100,7 +1099,7 @@ func (m mapValue) string() string {
 }
 
 var valuePool = sync.Pool{
-	New: func() interface{} {
+	New: func() any {
 		return &NebulaValue{}
 	},
 }
