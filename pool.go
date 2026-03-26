@@ -296,8 +296,10 @@ func (dp *driverPool) GetClient() (types.Client, error) {
 			return dc, nil
 		} else {
 			go func() {
-				dc.Close()
-				dp.PutClient(dc)
+				dp.mu.Lock()
+				delete(dp.connMap, dc)
+				dp.mu.Unlock()
+				_ = dc.Close()
 			}()
 		}
 	}
