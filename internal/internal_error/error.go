@@ -73,7 +73,7 @@ func ErrConnRequestTimeout(address string, msg string, duration time.Duration) e
 	if msg != "" {
 		return errors.NewNebulaError(errors.ERROR_CONN_REQUEST_TIMEOUT, "%s, %s", tpl, msg)
 	}
-	return errors.NewNebulaError(errors.ERROR_CONN_REQUEST_TIMEOUT, tpl)
+	return errors.NewNebulaError(errors.ERROR_CONN_REQUEST_TIMEOUT, "%s", tpl)
 }
 
 func ErrConnIsClosed(address string) error {
