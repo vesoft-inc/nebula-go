@@ -17,6 +17,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"math"
 	"net"
 	"sync"
@@ -237,6 +238,24 @@ func (cn *connection) Close() error {
 
 func (cn *connection) GetSessionId() (int64, error) {
 	return cn.sessionId, nil
+}
+
+func (cn *connection) SetSchema(schema string) error {
+	stmt := fmt.Sprintf("SESSION SET SCHEMA `%s`", schema)
+	_, err := cn.Execute(stmt)
+	return err
+}
+
+func (cn *connection) SetGraph(graph string) error {
+	stmt := fmt.Sprintf("SESSION SET GRAPH `%s`", graph)
+	_, err := cn.Execute(stmt)
+	return err
+}
+
+func (cn *connection) SetSessionConfig(key, value string) error {
+	stmt := fmt.Sprintf("SESSION SET %s=%s", key, value)
+	_, err := cn.Execute(stmt)
+	return err
 }
 
 func (cn *connection) GetVersion() (string, error) {

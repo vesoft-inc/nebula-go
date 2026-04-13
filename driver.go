@@ -246,6 +246,27 @@ func (dc *driverConn) replaceFromPool() error {
 	return nil
 }
 
+func (dc *driverConn) SetSchema(schema string) error {
+	if dc.IsClosed() {
+		return internal_error.ErrConnIsClosed(dc.currentAddress)
+	}
+	return dc.conn.SetSchema(schema)
+}
+
+func (dc *driverConn) SetGraph(graph string) error {
+	if dc.IsClosed() {
+		return internal_error.ErrConnIsClosed(dc.currentAddress)
+	}
+	return dc.conn.SetGraph(graph)
+}
+
+func (dc *driverConn) SetSessionConfig(key, value string) error {
+	if dc.IsClosed() {
+		return internal_error.ErrConnIsClosed(dc.currentAddress)
+	}
+	return dc.conn.SetSessionConfig(key, value)
+}
+
 func (dc *driverConn) GetSessionId() (int64, error) {
 	if dc.IsClosed() {
 		return 0, internal_error.ErrConnIsClosed(dc.currentAddress)

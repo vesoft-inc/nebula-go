@@ -122,19 +122,19 @@ func (dp *driverPool) openNewConn(address string) (types.Client, error) {
 	case nebulaVersionCurrent:
 		// set schema and graph
 		if dp.sessionConfig.currentSchema != "" {
-			if _, err := dc.Execute(fmt.Sprintf("SESSION SET SCHEMA `%s`", dp.sessionConfig.currentSchema)); err != nil {
+			if err := dc.SetSchema(dp.sessionConfig.currentSchema); err != nil {
 				_ = dc.Close()
 				return nil, err
 			}
 		}
 		if dp.sessionConfig.currentGraph != "" {
-			if _, err := dc.Execute(fmt.Sprintf("SESSION SET GRAPH `%s`", dp.sessionConfig.currentGraph)); err != nil {
+			if err := dc.SetGraph(dp.sessionConfig.currentGraph); err != nil {
 				_ = dc.Close()
 				return nil, err
 			}
 		}
 		for k, v := range dp.sessionConfig.configs {
-			if _, err := dc.Execute(fmt.Sprintf("SESSION SET %s=%s", k, v)); err != nil {
+			if err := dc.SetSessionConfig(k, v); err != nil {
 				_ = dc.Close()
 				return nil, err
 			}

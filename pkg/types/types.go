@@ -85,6 +85,9 @@ type (
 		PingContext(ctx context.Context) error
 		IsClosed() bool
 		Close() error
+		SetSchema(string) error
+		SetGraph(string) error
+		SetSessionConfig(string, string) error
 		GetSessionId() (int64, error)
 		GetVersion() (string, error)
 	}

@@ -54,6 +54,16 @@ func (d *dummyConn) PingContext(ctx context.Context) error {
 	return nil
 }
 
+func (d *dummyConn) SetSchema(schema string) error {
+	return nil
+}
+func (d *dummyConn) SetGraph(graph string) error {
+	return nil
+}
+func (d *dummyConn) SetSessionConfig(key, value string) error {
+	return nil
+}
+
 func (d *dummyConn) GetSessionId() (int64, error) {
 	return 0, nil
 }
