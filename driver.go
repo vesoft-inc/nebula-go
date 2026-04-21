@@ -62,7 +62,7 @@ const (
 	defaultMaxOpenConns   = 100
 	defaultMinOpenConns   = 1
 	defaultMaxIdleConns   = 5
-	defaultMaxLieTime     = 30 * time.Minute
+	defaultMaxLifeTime    = 30 * time.Minute
 	defaultRequestTimeout = 1 * time.Minute
 	defaultConnectTimeout = 3 * time.Second
 	defaultTicker         = 5 * time.Second
@@ -107,7 +107,7 @@ func NewNebulaPool(addresses, username, password string, opts ...PoolOptionsFn) 
 		requestCount:    0,
 		openerCh:        make(chan struct{}, openConnChannelSize),
 		connector:       defaultConnector,
-		connMaxLifeTime: defaultMaxLieTime,
+		connMaxLifeTime: defaultMaxLifeTime,
 		maxOpen:         defaultMaxOpenConns,
 		minOpen:         defaultMinOpenConns,
 		maxIdle:         defaultMaxIdleConns,
