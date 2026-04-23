@@ -184,7 +184,7 @@ func (c *vectorDecoder) decodeDecimalValue() decodeFlatFn {
 			chunk := v.NestedVectors[chunkIndex]
 			data := chunk.VectorData[chunkOffset : chunkOffset+strLen]
 			offset := dctx.timezoneOffset
-			decodeBasicValue(data, value, types.ColumnTypeString, offset)
+			decodeBasicValue(data, value, types.ColumnTypeDecimal, offset)
 		}
 		return nil
 	}
