@@ -364,11 +364,13 @@ func (v *NebulaValue) IsNull() bool {
 func asValue[T Valuer](v *NebulaValue, valueTyp types.ValueType) (T, error) {
 	var t T
 	if v.GetType() != valueTyp {
-		return t, internal_error.ErrType("value is not " + valueTyp.String())
+		errMsg := fmt.Sprintf("value is not %s, but %s", valueTyp.String(), v.GetType().String())
+		return t, internal_error.ErrType(errMsg)
 	}
 	data, ok := v.Data.(T)
 	if !ok {
-		return t, internal_error.ErrType("value is not " + valueTyp.String())
+		errMsg := fmt.Sprintf("value is not %s, but %s", valueTyp.String(), v.GetType().String())
+		return t, internal_error.ErrType(errMsg)
 	}
 	return data, nil
 }
