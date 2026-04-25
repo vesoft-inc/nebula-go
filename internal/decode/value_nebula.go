@@ -369,7 +369,7 @@ func asValue[T Valuer](v *NebulaValue, valueTyp types.ValueType) (T, error) {
 	}
 	data, ok := v.Data.(T)
 	if !ok {
-		errMsg := fmt.Sprintf("value is not %s, but %s", valueTyp.String(), v.GetType().String())
+		errMsg := fmt.Sprintf("value has nebula type %s but unexpected Go value type %T", valueTyp.String(), v.Data)
 		return t, internal_error.ErrType(errMsg)
 	}
 	return data, nil
