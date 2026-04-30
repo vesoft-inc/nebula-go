@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -265,27 +265,26 @@ func (rt *ResultTable) constructGraphsSchema() graphsSchema {
 }
 
 func (rt *ResultTable) getCurrentBatch() error {
-	if rt.currentBatch == nil {
-		if len(rt.batches) == 0 {
-			return io.EOF
-		} else {
-			rt.currentBatch = rt.batches[0]
-		}
-	}
-	if rt.currentBatchRowIndex >= rt.currentBatch.numRecords() {
-		rt.batchIndex++
-		rt.currentBatchRowIndex = 0
-		if rt.batchIndex >= uint64(rt.numBatches) {
+	for {
+		if len(rt.batches) == 0 || rt.batchIndex >= uint64(rt.numBatches) {
 			return io.EOF
 		}
+		if rt.currentBatch == nil {
+			rt.currentBatch = rt.batches[rt.batchIndex]
+		}
+		if rt.currentBatchRowIndex < rt.currentBatch.numRecords() {
+			return nil
+		}
+
 		batch, ok := rt.currentBatch.(*batch)
 		if ok {
 			batch.vectors = nil
 		}
 
-		rt.currentBatch = rt.batches[rt.batchIndex]
+		rt.batchIndex++
+		rt.currentBatchRowIndex = 0
+		rt.currentBatch = nil
 	}
-	return nil
 }
 
 func (rt *ResultTable) Scan(values []types.Value) error {
