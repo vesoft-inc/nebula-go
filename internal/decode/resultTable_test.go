@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -90,4 +90,31 @@ func TestTable(t *testing.T) {
 			assert.NoError(t, err, tc.name)
 		}
 	}
+}
+
+func TestTableSkipsEmptyBatches(t *testing.T) {
+	batches := []batcher{
+		&dummpBatch{name: "empty-head", rows: 0},
+		&dummpBatch{name: "first-data", rows: 1},
+		&dummpBatch{name: "empty-middle", rows: 0},
+		&dummpBatch{name: "second-data", rows: 2},
+		&dummpBatch{name: "empty-tail", rows: 0},
+	}
+
+	tbl := &ResultTable{
+		batches:     batches,
+		numBatches:  len(batches),
+		columnNames: []string{"c1"},
+	}
+
+	for i := 0; i < 3; i++ {
+		_, err := tbl.Next()
+		assert.NoError(t, err)
+	}
+
+	assert.Equal(t, uint64(3), tbl.batchIndex)
+	assert.Equal(t, uint32(2), tbl.currentBatchRowIndex)
+
+	_, err := tbl.Next()
+	assert.ErrorIs(t, err, io.EOF)
 }
