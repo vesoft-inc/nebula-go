@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,7 @@ package types
 
 import (
 	"context"
+	"iter"
 )
 
 type (
@@ -31,6 +32,10 @@ type (
 		// Scan copies the columns in the current row into the values pointed at by dest.
 		// If there's no more row, return io.EOF
 		Scan(...any) error
+		// All returns a sequence of all remaining rows in the table.
+		// If there's an error during iteration,
+		// the error will be returned as the second value of the sequence.
+		All() iter.Seq2[Row, error]
 		Columns() []string
 		ColumnTypes() []ColumnType //not support yet
 	}

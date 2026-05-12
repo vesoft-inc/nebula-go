@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   go-client:
-    runs-on: 
+    runs-on:
       - self-hosted
       - linux
       - x64
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           cache: false
-          go-version: 1.22.4
+          go-version: 1.23
       - name: NebulaGo Unit tests
         run: make test
       - name: NebulaGo e2e tests
@@ -39,7 +39,7 @@ jobs:
           files: ./coverage.out,./e2e.out
           fail_ci_if_error: true
           verbose: true
-          
+
       - name: Teardown e2e
         if: always()
         run: make e2e-down

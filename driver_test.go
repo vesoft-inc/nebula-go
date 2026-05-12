@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -100,7 +100,9 @@ func TestPoolRetry(t *testing.T) {
 	// when using pool, user should put the client back to pool
 	// means alway create a connection at last.
 	// so if retry times is 2, pool would open connection 4 times if all connections are broken
-	timeoutCtx, _ := context.WithTimeout(context.Background(), 25*time.Millisecond)
+	timeoutCtx, cancel := context.WithTimeout(context.Background(), 25*time.Millisecond)
+	defer cancel()
+
 	testcases := []struct {
 		connectTimes int
 		ctx          context.Context
