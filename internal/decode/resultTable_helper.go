@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -808,7 +808,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		if r.error() != nil {
 			return r.error()
 		}
-		size := int(bytesToInt16(sizeBytes))
+		size := int(bytesToUint16(sizeBytes))
 		bs := r.readN(size)
 		if r.error() != nil {
 			return r.error()
@@ -829,7 +829,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		if !ok {
 			return errors.Wrap(errInvalidColumnType, "")
 		}
-		size := int(bytesToInt16(sizeBytes))
+		size := int(bytesToUint16(sizeBytes))
 		l := make([]*NebulaValue, 0, size)
 		var bitSize int
 		if size%8 != 0 {
@@ -860,7 +860,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		}
 	case types.ColumnTypeRecord:
 		sizeBytes := r.readN(2)
-		size := int(bytesToInt16(sizeBytes))
+		size := int(bytesToUint16(sizeBytes))
 		m := make(map[string]*NebulaValue, 0)
 		for i := 0; i < size; i++ {
 			bs := r.readN(2)
@@ -896,7 +896,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		nodeTypeId := int32(nodeId >> 48)
 		graphId := bytesToInt32(graphIdBytes)
 		_ = graphId
-		propSize := bytesToInt16(propSizeBytes)
+		propSize := bytesToUint16(propSizeBytes)
 		keys := make([]string, 0, propSize)
 		values := make([]*NebulaValue, 0, propSize)
 		for i := 0; i < int(propSize); i++ {
@@ -946,7 +946,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		graphId := bytesToInt32(graphIdBytes)
 		edgeTypeID := bytesToInt32(edgeTypeIdBytes)
 		edgeRank := bytesToInt64(edgeRankBytes)
-		propSize := bytesToInt16(propSizeBytes)
+		propSize := bytesToUint16(propSizeBytes)
 		propNames := make([]string, 0, propSize)
 		propValues := make([]*NebulaValue, 0, propSize)
 		noDirectType := edgeTypeID & 0x3FFFFFFF
