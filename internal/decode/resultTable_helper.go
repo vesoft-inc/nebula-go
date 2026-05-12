@@ -231,7 +231,7 @@ func (c *vectorDecoder) decodeVectorValue() decodeFlatFn {
 		offset := int(index) * dim * 4
 		data := v.VectorData
 		l := &NebulaEmbeddingVector{Values: make([]float32, 0, dim)}
-		for i := 0; i < dim; i++ {
+		for i := range dim {
 			currOff := offset + i*4
 			val := math.Float32frombits(order.Uint32(data[currOff : currOff+4]))
 			l.Values = append(l.Values, val)
@@ -258,7 +258,7 @@ func (c *vectorDecoder) decodeListValue() decodeFlatFn {
 			return errTypeAssertion
 		}
 
-		for i := uint32(0); i < size; i++ {
+		for i := range size {
 			vv := l.Values[i]
 			dataVector := v.NestedVectors[0]
 			wrapper := &vectorWrapper{
@@ -506,7 +506,7 @@ func (c *vectorDecoder) decodePathValue() decodeFlatFn {
 		pathHeaderSchema := &columnTypeSchemaBasic{
 			typ: types.ColumnTypeInt64,
 		}
-		for i := int32(0); i < totalNum; i++ {
+		for i := range totalNum {
 			data := path.Values[i]
 			dataVector = sentinelPair.cur
 			adjVector = sentinelPair.adj
@@ -584,7 +584,7 @@ func (c *vectorDecoder) decodeSetValue() decodeFlatFn {
 		if !ok {
 			return errTypeAssertion
 		}
-		for i := uint32(0); i < size; i++ {
+		for i := range size {
 			vv := l.Values[i]
 			dataVector := v.NestedVectors[0]
 			wrapper := &vectorWrapper{
@@ -622,7 +622,7 @@ func (c *vectorDecoder) decodeMapValue() decodeFlatFn {
 		if !ok {
 			return errTypeAssertion
 		}
-		for i := uint32(0); i < size; i++ {
+		for i := range size {
 			key := &NebulaValue{}
 			val := &NebulaValue{}
 			keyDataVector := v.NestedVectors[0]
@@ -934,7 +934,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		if r.error() != nil {
 			return r.error()
 		}
-		for i := 0; i < size; i++ {
+		for i := range size {
 			if nullBitByte[i/8]&(1<<(i%8)) == 0 {
 				l = append(l, &NebulaValue{Data: nil})
 			} else {
@@ -973,7 +973,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		if r.error() != nil {
 			return r.error()
 		}
-		for i := 0; i < size; i++ {
+		for i := range size {
 			if nullBitByte[i/8]&(1<<(i%8)) == 0 {
 				l = append(l, &NebulaValue{Data: nil})
 			} else {
@@ -1011,7 +1011,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		sizeBytes := r.readN(2)
 		size := int(bytesToUint16(sizeBytes))
 		m := make(map[string]*NebulaValue, 0)
-		for i := 0; i < size; i++ {
+		for range size {
 			bs := r.readN(2)
 			if r.error() != nil {
 				return r.error()
@@ -1152,7 +1152,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		p := &NebulaPath{
 			Values: make([]*NebulaValue, 0, elementNum),
 		}
-		for i := 0; i < elementNum; i++ {
+		for range elementNum {
 			subTypeBytes := r.readN(1)
 			if r.error() != nil {
 				return r.error()
@@ -1175,7 +1175,7 @@ func decodeAnyCompositeValue(dctx *decodeContext, value *NebulaValue, r *bytesRe
 		}
 		size := int(bytesToInt16(sizeBytes))
 		l := &NebulaEmbeddingVector{Values: make([]float32, 0, size)}
-		for i := 0; i < size; i++ {
+		for range size {
 			fval := math.Float32frombits(order.Uint32(r.readN(4)))
 			l.Values = append(l.Values, fval)
 		}

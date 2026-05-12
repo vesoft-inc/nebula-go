@@ -107,7 +107,7 @@ func TestTableSkipsEmptyBatches(t *testing.T) {
 		columnNames: []string{"c1"},
 	}
 
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		_, err := tbl.Next()
 		assert.NoError(t, err)
 	}

@@ -1438,7 +1438,7 @@ func constructMapValue(originalMap map[string]*NebulaValue, srcMap map[string]*N
 func constructListString(originalList []string, expectedLen int) []string {
 	if originalList == nil {
 		originalList = make([]string, 0, expectedLen)
-		for i := 0; i < expectedLen; i++ {
+		for range expectedLen {
 			originalList = append(originalList, "")
 		}
 		return originalList
@@ -1457,7 +1457,7 @@ func constructListString(originalList []string, expectedLen int) []string {
 func constructListValue(originalList []*NebulaValue, expectedLen int) []*NebulaValue {
 	if originalList == nil {
 		originalList = make([]*NebulaValue, 0, expectedLen)
-		for i := 0; i < expectedLen; i++ {
+		for range expectedLen {
 			originalList = append(originalList, &NebulaValue{})
 		}
 		return originalList

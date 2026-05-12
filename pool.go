@@ -228,7 +228,7 @@ func (dp *driverPool) openMinConn() {
 		return
 	}
 
-	for i := 0; i < needOpen; i++ {
+	for range needOpen {
 		dp.openerCh <- struct{}{}
 	}
 }

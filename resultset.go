@@ -103,7 +103,7 @@ func (rs *resultSet) Scan(dsts ...any) error {
 	}
 	if rs.values == nil {
 		rs.values = make([]types.Value, 0, len(dsts))
-		for i := 0; i < len(dsts); i++ {
+		for range dsts {
 			rs.values = append(rs.values, &decode.NebulaValue{})
 		}
 	}
