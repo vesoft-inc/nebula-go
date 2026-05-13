@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,8 +14,6 @@
 package nebula_ng
 
 import (
-	"fmt"
-
 	"github.com/vesoft-inc/nebula-go/v5/internal/decode"
 	"github.com/vesoft-inc/nebula-go/v5/internal/internal_error"
 	"github.com/vesoft-inc/nebula-go/v5/pkg/types"
@@ -201,7 +199,7 @@ func (n *NullInt) scan(value types.Value) error {
 		case types.ValueTypeInt64:
 			i, err = value.AsInt64()
 		default:
-			return 0, internal_error.ErrType(fmt.Sprintf("value type not match"))
+			return 0, internal_error.ErrType("value type not match")
 		}
 		if err != nil {
 			return 0, err
@@ -256,7 +254,7 @@ func (n *NullUInt) scan(value types.Value) error {
 		case types.ValueTypeInt64:
 			i, err = value.AsUInt64()
 		default:
-			return 0, internal_error.ErrType(fmt.Sprintf("value type not match"))
+			return 0, internal_error.ErrType("value type not match")
 		}
 		if err != nil {
 			return 0, err
@@ -308,7 +306,7 @@ func (n *NullDouble) scan(value types.Value) error {
 		case types.ValueTypeDouble:
 			d, err = value.AsDouble()
 		default:
-			return 0, internal_error.ErrType(fmt.Sprintf("value type not match"))
+			return 0, internal_error.ErrType("value type not match")
 		}
 		if err != nil {
 			return 0, err

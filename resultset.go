@@ -16,6 +16,7 @@ package nebula_ng
 import (
 	"fmt"
 	"io"
+	"iter"
 
 	"github.com/vesoft-inc/nebula-go/v5/internal/decode"
 	"github.com/vesoft-inc/nebula-go/v5/internal/generated_code/v5.0.0/proto/graph"
@@ -98,7 +99,7 @@ func (rs *resultSet) Scan(dsts ...any) error {
 		return io.EOF
 	}
 	if len(dsts) != len(rs.Columns()) {
-		return internal_error.ErrInternal(fmt.Sprintf("scanner length not match values length"))
+		return internal_error.ErrInternal("scanner length not match values length")
 	}
 	if rs.values == nil {
 		rs.values = make([]types.Value, 0, len(dsts))
@@ -118,6 +119,21 @@ func (rs *resultSet) Scan(dsts ...any) error {
 	}
 	rs.index++
 	return nil
+}
+
+func (rs *resultSet) All() iter.Seq2[types.Row, error] {
+	return func(yield func(types.Row, error) bool) {
+		for rs.HasNext() {
+			row, err := rs.Next()
+			if err != nil {
+				yield(row, err)
+				return
+			}
+			if !yield(row, nil) {
+				return
+			}
+		}
+	}
 }
 
 func (rs *resultSet) convertValue(src types.Value, dst any) error {
@@ -163,7 +179,7 @@ func (rs *resultSet) convertBasicValue(src types.Value, dst any) error {
 			v, _ := src.AsInt64()
 			*d = int(v)
 		default:
-			return internal_error.ErrInternal(fmt.Sprintf("value type not match"))
+			return internal_error.ErrInternal("value type not match")
 		}
 	case *uint:
 		switch src.GetType() {
@@ -180,7 +196,7 @@ func (rs *resultSet) convertBasicValue(src types.Value, dst any) error {
 			v, _ := src.AsInt64()
 			*d = uint(v)
 		default:
-			return internal_error.ErrInternal(fmt.Sprintf("value type not match"))
+			return internal_error.ErrInternal("value type not match")
 		}
 	case *float32:
 		switch src.GetType() {
@@ -188,7 +204,7 @@ func (rs *resultSet) convertBasicValue(src types.Value, dst any) error {
 			v, _ := src.AsFloat()
 			*d = float32(v)
 		default:
-			return internal_error.ErrInternal(fmt.Sprintf("value type not match"))
+			return internal_error.ErrInternal("value type not match")
 		}
 	case *float64:
 		switch src.GetType() {
@@ -199,7 +215,7 @@ func (rs *resultSet) convertBasicValue(src types.Value, dst any) error {
 			v, _ := src.AsDouble()
 			*d = float64(v)
 		default:
-			return internal_error.ErrInternal(fmt.Sprintf("value type not match"))
+			return internal_error.ErrInternal("value type not match")
 		}
 	case *string:
 		switch src.GetType() {
@@ -207,7 +223,7 @@ func (rs *resultSet) convertBasicValue(src types.Value, dst any) error {
 			v, _ := src.AsString()
 			*d = string(v)
 		default:
-			return internal_error.ErrInternal(fmt.Sprintf("value type not match"))
+			return internal_error.ErrInternal("value type not match")
 		}
 	case *bool:
 		switch src.GetType() {
@@ -215,7 +231,7 @@ func (rs *resultSet) convertBasicValue(src types.Value, dst any) error {
 			v, _ := src.AsBool()
 			*d = bool(v)
 		default:
-			return internal_error.ErrInternal(fmt.Sprintf("value type not match"))
+			return internal_error.ErrInternal("value type not match")
 		}
 	}
 	return nil
@@ -245,7 +261,7 @@ func (rd *rowData) GetValueByName(name string) (types.Value, error) {
 
 func (rd *rowData) GetValueByIndex(index int) (types.Value, error) {
 	if index < 0 || index >= len(rd.values) {
-		return nil, internal_error.ErrInternal(fmt.Sprintf("index out of range"))
+		return nil, internal_error.ErrInternal("index out of range")
 	}
 	return rd.values[index], nil
 }

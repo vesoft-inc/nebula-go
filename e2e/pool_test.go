@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -208,6 +208,52 @@ func TestPoolOnExecute(t *testing.T) {
 			assert.Equal(t, string(value.Data), "%Y%m%d")
 		default:
 			t.Fatalf("unknown session config %s", name.Data)
+		}
+	}
+}
+
+func TestPoolResultSetAll(t *testing.T) {
+	addr := fmt.Sprintf("%s:%d", nebulaHost, nebulaPort)
+	pool, err := nebula.NewNebulaPool(addr, nebulaUser, nebulaPassword,
+		nebula.WithPoolExecuteOnOpenSession([]string{
+			`session set schema "/test_schema"`,
+			`session set graph "test_graph"`,
+		}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	s, err := pool.GetClient()
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp, err := s.Execute("call show_session_configs() yield name as n, `value` as v return n,v")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for row, err := range resp.All() {
+		assert.NoError(t, err)
+
+		n, err := row.GetValueByName("n")
+		assert.NoError(t, err)
+		name, err := n.AsString()
+		assert.NoError(t, err)
+		v, err := row.GetValueByName("v")
+		assert.NoError(t, err)
+		value, err := v.AsString()
+		assert.NoError(t, err)
+
+		switch name {
+		case "schema":
+			assert.Equal(t, value, "/test_schema")
+		case "graph":
+			assert.Equal(t, value, "test_graph")
+		case "timezone":
+			assert.Equal(t, value		, "Asia/Shanghai")
+		case "date_format":
+			assert.Equal(t, value, "%Y%m%d")
+		default:
+			t.Fatalf("unknown session config %s", name)
 		}
 	}
 }
