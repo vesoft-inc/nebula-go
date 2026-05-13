@@ -125,10 +125,11 @@ func (rs *resultSet) All() iter.Seq2[types.Row, error] {
 	return func(yield func(types.Row, error) bool) {
 		for rs.HasNext() {
 			row, err := rs.Next()
-			if !yield(row, err) {
+			if err != nil {
+				yield(row, err)
 				return
 			}
-			if err != nil {
+			if !yield(row, nil) {
 				return
 			}
 		}
