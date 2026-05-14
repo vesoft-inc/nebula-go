@@ -160,7 +160,7 @@ func TestPool(t *testing.T) {
 	pool.mu.Unlock()
 	//test max open
 	var wg sync.WaitGroup
-	for i := 0; i < maxOpen; i++ {
+	for range maxOpen {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
@@ -299,9 +299,9 @@ func TestPoolConcurrency(t *testing.T) {
 	concurrency := 200
 	loopsPerGoroutine := 1000
 	var eg errgroup.Group
-	for i := 0; i < concurrency; i++ {
+	for range concurrency {
 		eg.Go(func() error {
-			for l := 0; l < loopsPerGoroutine; l++ {
+			for range loopsPerGoroutine {
 				run(t, p)
 			}
 			return nil

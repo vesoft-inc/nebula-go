@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -181,7 +181,7 @@ func decodeGeographyData(r *bytesReader) (*NebulaGeography, error) {
 		}
 
 		coords := make([]*types.Point, 0, numCoords)
-		for i := int32(0); i < numCoords; i++ {
+		for range numCoords {
 			xBytes := r.readN(8)
 			yBytes := r.readN(8)
 			if r.error() != nil {
@@ -220,7 +220,7 @@ func decodeGeographyData(r *bytesReader) (*NebulaGeography, error) {
 		}
 
 		coords := make([]*types.Point, 0, numCoords)
-		for i := int32(0); i < numCoords; i++ {
+		for range numCoords {
 			xBytes := r.readN(8)
 			yBytes := r.readN(8)
 			if r.error() != nil {
@@ -233,7 +233,7 @@ func decodeGeographyData(r *bytesReader) (*NebulaGeography, error) {
 
 		// Create loops from coordinates and row indexes
 		polygonLoops := make([][]*types.Point, 0, loops)
-		for i := int32(0); i < loops; i++ {
+		for i := range loops {
 			start := int(rowIndexes[i])
 			end := int(rowIndexes[i+1])
 			if start < end && start < len(coords) && end <= len(coords) {

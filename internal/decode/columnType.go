@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,7 @@ package decode
 import (
 	"encoding/binary"
 	"fmt"
+	"maps"
 
 	"github.com/vesoft-inc/nebula-go/v5/pkg/types"
 )
@@ -141,7 +142,7 @@ func newTypeSchema(r *bytesReader) (typeSchema, error) {
 			return nil, r.error()
 		}
 		numFields := bytesToInt32(numFieldsBytes)
-		for i := int32(0); i < numFields; i++ {
+		for range numFields {
 			sizeBytes := r.readN(2)
 			if r.error() != nil {
 				return nil, r.error()
@@ -203,7 +204,7 @@ func newTypeSchema(r *bytesReader) (typeSchema, error) {
 			return nil, r.error()
 		}
 		elementNum := bytesToInt32(elementNumBytes)
-		for i := int32(0); i < elementNum; i++ {
+		for range elementNum {
 			elementSchema, err := newTypeSchema(r)
 			if err != nil {
 				return nil, err
@@ -215,9 +216,7 @@ func newTypeSchema(r *bytesReader) (typeSchema, error) {
 					if !ok {
 						typ.nodeSchema.graphElementProps[graphId] = types
 					} else {
-						for k, v := range types {
-							graph[k] = v
-						}
+						maps.Copy(graph, types)
 					}
 				}
 			} else if elementSchema.getType() == types.ColumnTypeEdge {
@@ -227,9 +226,7 @@ func newTypeSchema(r *bytesReader) (typeSchema, error) {
 					if !ok {
 						typ.edgeSchema.graphElementProps[graphId] = types
 					} else {
-						for k, v := range types {
-							graph[k] = v
-						}
+						maps.Copy(graph, types)
 					}
 				}
 			} else {

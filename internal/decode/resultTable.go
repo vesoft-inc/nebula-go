@@ -522,7 +522,7 @@ func decodePropVectorIndex(graphElementTypes graphElementProps, bs []byte, isNod
 			elementId = bytesToInt32(elementTypeIdBytes)
 		}
 		propNum := int(bytesToInt32(propNumBytes))
-		for j := 0; j < propNum; j++ {
+		for range propNum {
 			vectorIndexBytes := r.readN(4)
 			if r.error() != nil {
 				return r.error()
