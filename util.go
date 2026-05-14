@@ -38,8 +38,8 @@ func parseHostPort(address string) (string, int, error) {
 
 func parseAddresses(addresses string) ([]string, error) {
 	var hostAddresses []string
-	addrs := strings.Split(addresses, ",")
-	for _, addr := range addrs {
+	addrs := strings.SplitSeq(addresses, ",")
+	for addr := range addrs {
 		if addr == "" {
 			continue
 		}
