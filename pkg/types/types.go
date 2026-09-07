@@ -50,6 +50,7 @@ type (
 		ParseTimeUs() int64
 		BuildTimeUs() int64
 		OptimizeTimeUs() int64
+		ExecutionTimeUs() int64
 		SerializeTimeUs() int64
 		TotalServerTimeUs() int64
 		ExplainType() string
