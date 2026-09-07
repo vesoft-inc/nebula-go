@@ -42,6 +42,10 @@ func (s *summary) OptimizeTimeUs() int64 {
 	return s.summary.ElapsedTime.OptimizeTimeUs
 }
 
+func (s *summary) ExecutionTimeUs() int64 {
+	return s.summary.ElapsedTime.ExecutionTimeUs
+}
+
 func (s *summary) SerializeTimeUs() int64 {
 	return s.summary.ElapsedTime.SerializeTimeUs
 }
