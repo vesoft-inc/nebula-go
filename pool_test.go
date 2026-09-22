@@ -161,9 +161,7 @@ func TestPool(t *testing.T) {
 	//test max open
 	var wg sync.WaitGroup
 	for range maxOpen {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			c, err := pool.GetClient()
 			if err != nil {
 				t.Log(err)
@@ -173,7 +171,7 @@ func TestPool(t *testing.T) {
 			if err != nil {
 				t.Log(err)
 			}
-		}()
+		})
 	}
 	wg.Wait()
 
