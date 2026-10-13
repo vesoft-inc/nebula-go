@@ -95,6 +95,17 @@ type (
 		GetVersion() (string, error)
 	}
 
+	// StreamingClient is separate from Client to preserve existing application mocks.
+	StreamingClient interface {
+		StreamingExecute(ctx context.Context, stmt string) (StreamingResult, error)
+	}
+
+	StreamingResult interface {
+		Result
+		Err() error
+		Close() error
+	}
+
 	Pool interface {
 		GetClient() (Client, error)
 		PutClient(Client) error

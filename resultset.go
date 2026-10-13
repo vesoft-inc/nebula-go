@@ -34,8 +34,9 @@ type resultSet struct {
 }
 
 type rowData struct {
-	resultSet *resultSet
-	values    []types.Value
+	columnNames []string
+	resultSet   *resultSet
+	values      []types.Value
 }
 
 func (rs *resultSet) HasNext() bool {
@@ -242,7 +243,10 @@ func (rd *rowData) Values() []types.Value {
 }
 
 func (rd *rowData) GetValueByName(name string) (types.Value, error) {
-	names := rd.resultSet.Columns()
+	names := rd.columnNames
+	if names == nil {
+		names = rd.resultSet.Columns()
+	}
 	var index int
 	if rd.resultSet.columnsMap == nil {
 		rd.resultSet.columnsMap = make(map[string]int)

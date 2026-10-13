@@ -316,6 +316,15 @@ func (dp *driverPool) PutClient(c types.Client) error {
 		return internal_error.ErrInternal("invalid client type")
 	}
 
+	if cn, ok := dc.conn.(*connection); ok {
+		cn.mu.Lock()
+		active := cn.activeStream != nil
+		cn.mu.Unlock()
+		if active {
+			return errActiveStream
+		}
+	}
+
 	dp.mu.Lock()
 	defer dp.mu.Unlock()
 	return dp.putConnLocked(dc)

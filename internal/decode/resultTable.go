@@ -78,6 +78,8 @@ type ResultTable struct {
 	currentBatchRowIndex uint32
 	decodeContext        *decodeContext
 	decoder              decoder
+	zeroColumns          bool
+	emptyRowsLeft        uint64
 }
 
 type decodeContext struct {
@@ -91,6 +93,7 @@ type batcher interface {
 }
 
 type batch struct {
+	rows    uint32
 	vectors []*vectorWrapper
 }
 
@@ -181,6 +184,8 @@ func NewResultTable(table *vector.VectorResultTable) (*ResultTable, error) {
 		}
 	}
 	t.numBatches = len(table.Batch)
+	t.zeroColumns = len(t.columnNames) == 0
+	t.emptyRowsLeft = table.Meta.NumRecords
 	for i := 0; i < t.numBatches; i++ {
 		vs := make([]*vectorWrapper, 0, len(table.Batch[i].Vectors))
 		for colIndex, v := range table.Batch[i].Vectors {
@@ -203,6 +208,7 @@ func NewResultTable(table *vector.VectorResultTable) (*ResultTable, error) {
 
 		t.batches = append(t.batches, &batch{
 			vectors: vs,
+			rows:    table.Batch[i].GetNumRecords(),
 		})
 	}
 
@@ -288,6 +294,14 @@ func (rt *ResultTable) getCurrentBatch() error {
 }
 
 func (rt *ResultTable) Scan(values []types.Value) error {
+	// Unary zero-column tables carry their cardinality in the table metadata.
+	if rt.zeroColumns {
+		if rt.emptyRowsLeft == 0 {
+			return io.EOF
+		}
+		rt.emptyRowsLeft--
+		return nil
+	}
 	if err := rt.getCurrentBatch(); err != nil {
 		return err
 	}
@@ -304,20 +318,15 @@ func (rt *ResultTable) Next() ([]types.Value, error) {
 	for i := 0; i < len(rt.columnNames); i++ {
 		values = append(values, &NebulaValue{})
 	}
-	if err := rt.getCurrentBatch(); err != nil {
+	if err := rt.Scan(values); err != nil {
 		return nil, err
 	}
-
-	if err := rt.currentBatch.getRowByIndex(rt.currentBatchRowIndex, values); err != nil {
-		return nil, err
-	}
-	rt.currentBatchRowIndex++
 	return values, nil
 }
 
 func (b *batch) numRecords() uint32 {
 	if len(b.vectors) == 0 {
-		return 0
+		return b.rows
 	}
 	// all vectors in a batch have the same number of records
 	v := b.vectors[0]

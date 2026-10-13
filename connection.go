@@ -3,9 +3,9 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,14 +44,15 @@ const defaultCloseTimeout = 1 * time.Second
 type graphConnector struct{}
 
 type connection struct {
-	mu          sync.Mutex
-	graphClient graph.GraphServiceClient
-	clientConn  *grpc.ClientConn
-	sessionId   int64
-	version     string
-	timeout     time.Duration
-	tlsConfig   *tls.Config
-	address     string
+	mu           sync.Mutex
+	activeStream *streamingResult
+	graphClient  graph.GraphServiceClient
+	clientConn   *grpc.ClientConn
+	sessionId    int64
+	version      string
+	timeout      time.Duration
+	tlsConfig    *tls.Config
+	address      string
 }
 
 func (c *graphConnector) connect(address string, cfg *connConfig) (types.Client, error) {
@@ -150,6 +151,9 @@ func (cn *connection) ExecuteContext(ctx context.Context, stmt string) (types.Re
 	d := grpcutil.GetCtxDuration(ctx)
 	cn.mu.Lock()
 	defer cn.mu.Unlock()
+	if cn.activeStream != nil {
+		return nil, errActiveStream
+	}
 	in := &graph.ExecuteRequest{
 		SessionId: cn.sessionId,
 		Stmt:      []byte(stmt),
@@ -195,6 +199,9 @@ func (cn *connection) PingContext(ctx context.Context) error {
 	d := grpcutil.GetCtxDuration(ctx)
 	cn.mu.Lock()
 	defer cn.mu.Unlock()
+	if cn.activeStream != nil {
+		return errActiveStream
+	}
 	stmt := []byte("RETURN 1")
 	in := &graph.ExecuteRequest{
 		SessionId: cn.sessionId,
@@ -215,6 +222,12 @@ func (cn *connection) closeConn() error {
 }
 
 func (cn *connection) Close() error {
+	cn.mu.Lock()
+	active := cn.activeStream
+	cn.mu.Unlock()
+	if active != nil {
+		_ = active.Close()
+	}
 	cn.mu.Lock()
 	defer cn.mu.Unlock()
 	if cn.IsClosed() {

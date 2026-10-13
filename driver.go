@@ -16,6 +16,7 @@ package nebula_ng
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -177,6 +178,18 @@ func (dc *driverConn) ExecuteContext(ctx context.Context, stmt string) (types.Re
 	}
 
 	return result, nil
+}
+
+// StreamingExecute never retries a statement after a transport error.
+func (dc *driverConn) StreamingExecute(ctx context.Context, stmt string) (types.StreamingResult, error) {
+	if dc.IsClosed() {
+		return nil, internal_error.ErrConnIsClosed(dc.currentAddress)
+	}
+	client, ok := dc.conn.(types.StreamingClient)
+	if !ok {
+		return nil, fmt.Errorf("client does not implement types.StreamingClient")
+	}
+	return client.StreamingExecute(ctx, stmt)
 }
 
 func (dc *driverConn) Ping() error {
