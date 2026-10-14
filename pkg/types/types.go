@@ -100,6 +100,8 @@ type (
 		StreamingExecute(ctx context.Context, stmt string) (StreamingResult, error)
 	}
 
+	// StreamingResult has one consumer for iteration and column access.
+	// Close may be called concurrently to interrupt a blocked read.
 	StreamingResult interface {
 		Result
 		Err() error

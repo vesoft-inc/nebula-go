@@ -20,11 +20,11 @@ import (
 
 var errActiveStream = errors.New("the client has an unread streaming result; consume or close it first")
 
-// readMu serializes decoding. Close only uses cancellation and stateMu, so another goroutine
-// can interrupt Recv without waiting for readMu. There is no background receive loop.
+// A single consumer owns decoding and iteration, as with unary results.
+// Close may run concurrently: it only cancels and publishes terminal state,
+// without accessing the consumer-owned decoder. There is no background receive loop.
 type streamingResult struct {
 	resultSet
-	readMu      sync.Mutex
 	stateMu     sync.Mutex
 	stream      graph.GraphService_StreamingExecuteClient
 	metadata    *vector.VectorTableMetaData
@@ -209,14 +209,10 @@ func (rs *streamingResult) hasNext() bool {
 }
 
 func (rs *streamingResult) HasNext() bool {
-	rs.readMu.Lock()
-	defer rs.readMu.Unlock()
 	return rs.hasNext()
 }
 
 func (rs *streamingResult) Next() (types.Row, error) {
-	rs.readMu.Lock()
-	defer rs.readMu.Unlock()
 	if !rs.hasNext() {
 		if err := rs.Err(); err != nil {
 			return nil, err
@@ -234,8 +230,6 @@ func (rs *streamingResult) Next() (types.Row, error) {
 }
 
 func (rs *streamingResult) Scan(dest ...any) error {
-	rs.readMu.Lock()
-	defer rs.readMu.Unlock()
 	if !rs.hasNext() {
 		if err := rs.Err(); err != nil {
 			return err
@@ -272,8 +266,6 @@ func (rs *streamingResult) readMetadata() {
 }
 
 func (rs *streamingResult) Columns() []string {
-	rs.readMu.Lock()
-	defer rs.readMu.Unlock()
 	rs.readMetadata()
 	if rs.metadata == nil {
 		return nil
@@ -282,8 +274,6 @@ func (rs *streamingResult) Columns() []string {
 }
 
 func (rs *streamingResult) ColumnTypes() []types.ColumnType {
-	rs.readMu.Lock()
-	defer rs.readMu.Unlock()
 	rs.readMetadata()
 	if rs.metadata == nil {
 		return nil
