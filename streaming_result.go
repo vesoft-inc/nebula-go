@@ -7,8 +7,6 @@ import (
 	"fmt"
 	"io"
 	"iter"
-	"regexp"
-	"strconv"
 	"sync"
 	"sync/atomic"
 
@@ -19,22 +17,6 @@ import (
 	"github.com/vesoft-inc/nebula-go/v5/internal/internal_error"
 	"github.com/vesoft-inc/nebula-go/v5/pkg/types"
 )
-
-// Authenticate returns the release name, optionally with a development suffix.
-var streamingVersionPattern = regexp.MustCompile(`^[vV]?([0-9]+)\.([0-9]+)(\.[0-9]+)?(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$`)
-
-func supportsStreaming(version string) bool {
-	parts := streamingVersionPattern.FindStringSubmatch(version)
-	if parts == nil {
-		return false
-	}
-	major, err := strconv.ParseUint(parts[1], 10, 64)
-	if err != nil {
-		return false
-	}
-	minor, err := strconv.ParseUint(parts[2], 10, 64)
-	return err == nil && (major > 5 || (major == 5 && minor >= 4))
-}
 
 var errActiveStream = errors.New("the client has an unread streaming result; consume or close it first")
 
@@ -61,9 +43,6 @@ var _ types.StreamingClient = (*connection)(nil)
 func (cn *connection) StreamingExecute(ctx context.Context, stmt string) (types.StreamingResult, error) {
 	if err := ctx.Err(); err != nil {
 		return nil, err
-	}
-	if !supportsStreaming(cn.version) {
-		return nil, fmt.Errorf("streaming execution requires NebulaGraph 5.4 or later; server version is %q", cn.version)
 	}
 	ctx, cancel := context.WithCancel(ctx)
 	rs := &streamingResult{cancel: cancel}

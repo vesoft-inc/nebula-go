@@ -25,12 +25,7 @@ import (
 
 type streamTestServer struct {
 	graph.UnimplementedGraphServiceServer
-	stream  func(*graph.ExecuteRequest, graph.GraphService_StreamingExecuteServer) error
-	version string
-}
-
-func (s *streamTestServer) Authenticate(context.Context, *graph.AuthRequest) (*graph.AuthResponse, error) {
-	return &graph.AuthResponse{Status: &common.Status{Code: []byte("00000")}, SessionId: 1, Version: []byte(s.version)}, nil
+	stream func(*graph.ExecuteRequest, graph.GraphService_StreamingExecuteServer) error
 }
 
 func (s *streamTestServer) StreamingExecute(req *graph.ExecuteRequest, stream graph.GraphService_StreamingExecuteServer) error {
@@ -39,21 +34,15 @@ func (s *streamTestServer) StreamingExecute(req *graph.ExecuteRequest, stream gr
 func (s *streamTestServer) Execute(context.Context, *graph.ExecuteRequest) (*graph.ExecuteResponse, error) {
 	return &graph.ExecuteResponse{Status: &common.Status{Code: []byte("00000")}}, nil
 }
-func streamTestConnection(t *testing.T, serve func(*graph.ExecuteRequest, graph.GraphService_StreamingExecuteServer) error, versions ...string) *connection {
+func streamTestConnection(t *testing.T, serve func(*graph.ExecuteRequest, graph.GraphService_StreamingExecuteServer) error) *connection {
 	listener := bufconn.Listen(1024 * 1024)
 	server := grpc.NewServer()
-	version := "5.4"
-	if len(versions) > 0 {
-		version = versions[0]
-	}
-	graph.RegisterGraphServiceServer(server, &streamTestServer{stream: serve, version: version})
+	graph.RegisterGraphServiceServer(server, &streamTestServer{stream: serve})
 	go func() { _ = server.Serve(listener) }()
 	cc, err := grpc.NewClient("passthrough:///test", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) { return listener.Dial() }))
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = cc.Close(); server.Stop(); _ = listener.Close() })
-	cn := &connection{graphClient: graph.NewGraphServiceClient(cc), clientConn: cc}
-	require.NoError(t, cn.authenticate(context.Background(), "root", "test", nil))
-	return cn
+	return &connection{graphClient: graph.NewGraphServiceClient(cc), clientConn: cc, sessionId: 1}
 }
 func streamHeader() *graph.StreamingExecuteResponse {
 	return &graph.StreamingExecuteResponse{Response: &graph.StreamingExecuteResponse_Metadata{Metadata: &vector.VectorTableMetaData{TableType: 1, IsLittleEndian: true, RowType: &vector.RowType{NumColumns: 1, ColumnNames: []string{"x"}, ColumnTypes: []*vector.ValueType{{ValueType: []byte{0xb}}}}}}}
@@ -240,35 +229,4 @@ func TestStreamingCloseInterruptsReceive(t *testing.T) {
 	require.Error(t, rs.Err())
 	_, err = rs.Next()
 	require.NotEqual(t, io.EOF, err)
-}
-
-func TestStreamingServerVersion(t *testing.T) {
-	for _, tc := range []struct {
-		version   string
-		supported bool
-	}{
-		{"5.3", false}, {"5.3.99", false}, {"5.4", true}, {"5.4.0", true},
-		{"v5.4.1", true}, {"5.4.0-dev+abc", true}, {"5.10", true}, {"6.0", true},
-		{"4.99", false}, {"", false}, {"current", false}, {"5.4garbage", false},
-		{"5.4.0.1", false}, {"5.4\n", false},
-	} {
-		t.Run(tc.version, func(t *testing.T) {
-			cn := streamTestConnection(t, func(_ *graph.ExecuteRequest, s graph.GraphService_StreamingExecuteServer) error {
-				if !tc.supported {
-					t.Error("unsupported server received StreamingExecute")
-				}
-				return s.Send(streamFinal("00000"))
-			}, tc.version)
-			require.Equal(t, tc.version, cn.version)
-			result, err := cn.StreamingExecute(context.Background(), "RETURN 1")
-			if tc.supported {
-				require.NoError(t, err)
-				result.Close()
-			} else {
-				require.ErrorContains(t, err, "requires NebulaGraph 5.4")
-				require.Nil(t, result)
-				require.Nil(t, cn.activeStream)
-			}
-		})
-	}
 }
