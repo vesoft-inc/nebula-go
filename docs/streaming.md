@@ -1,6 +1,6 @@
 # 流式查询
 
-当前源码新增 `types.StreamingClient`。服务端需要实现当前流式协议。已发布的旧 graphd 虽声明了该 RPC，但没有处理它，不能用 `UNIMPLEMENTED` 判断支持情况。现有 unary `Execute` 继续可用。
+当前源码新增 `types.StreamingClient`。服务端从 5.4 开始支持当前流式协议。SDK 在发送 RPC 前检查登录返回的 `AuthResponse.version`；低于 5.4 或无法识别的版本明确报错，不自动退回 unary。开发构建也必须返回明确的版本号，例如 `5.4.0-dev`。已发布的旧 graphd 虽声明了该 RPC，但没有处理它，不能用 `UNIMPLEMENTED` 判断支持情况。现有 unary `Execute` 继续可用。
 
 ```go
 sc := client.(types.StreamingClient)
