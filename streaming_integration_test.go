@@ -239,18 +239,19 @@ func TestStreamingGraphTiming(t *testing.T) {
 		t.Skip("performance test is opt-in")
 	}
 	type sample struct {
-		Case      string    `json:"case"`
-		Round     int       `json:"round"`
-		Pair      int       `json:"pair"`
-		Order     int       `json:"order"`
-		Streaming bool      `json:"streaming"`
-		Rows      int       `json:"rows"`
-		Elapsed   float64   `json:"elapsed_us"`
-		Returned  float64   `json:"returned_us"`
-		FirstRow  float64   `json:"first_row_us"`
-		Server    [6]int64  `json:"server_us"`
-		Wire      bool      `json:"wire"`
-		Arrivals  []float64 `json:"frame_arrivals_us,omitempty"`
+		Case         string    `json:"case"`
+		Round        int       `json:"round"`
+		Pair         int       `json:"pair"`
+		Order        int       `json:"order"`
+		Streaming    bool      `json:"streaming"`
+		Rows         int       `json:"rows"`
+		LogicalBytes int64     `json:"logical_bytes"`
+		Elapsed      float64   `json:"elapsed_us"`
+		Returned     float64   `json:"returned_us"`
+		FirstRow     float64   `json:"first_row_us"`
+		Server       [6]int64  `json:"server_us"`
+		Wire         bool      `json:"wire"`
+		Arrivals     []float64 `json:"frame_arrivals_us,omitempty"`
 	}
 	var output *json.Encoder
 	if path := os.Getenv("NEBULA_STREAM_TEST_SAMPLES"); path != "" {
@@ -369,6 +370,13 @@ func TestStreamingGraphTiming(t *testing.T) {
 				summary.ExecutionTimeUs(), summary.SerializeTimeUs(), summary.TotalServerTimeUs()}}
 	}
 	count, rounds := 500, 3
+	largePairs := 0
+	if value := os.Getenv("NEBULA_STREAM_TEST_LARGE_PAIRS"); value != "" {
+		var err error
+		largePairs, err = strconv.Atoi(value)
+		require.NoError(t, err)
+		require.Greater(t, largePairs, 0)
+	}
 	for name, target := range map[string]*int{"NEBULA_STREAM_TEST_BENCH_PAIRS": &count, "NEBULA_STREAM_TEST_ROUNDS": &rounds} {
 		if value := os.Getenv(name); value != "" {
 			n, err := strconv.Atoi(value)
@@ -378,19 +386,32 @@ func TestStreamingGraphTiming(t *testing.T) {
 		}
 	}
 	type timingCase struct {
-		name, query string
-		rows        int
+		name, query  string
+		rows         int
+		logicalBytes int64
 	}
 	cases := []timingCase{
-		{"no_table", "EXPLAIN RETURN 1 AS x", 0},
-		{"empty", "FOR i IN [1] FILTER i < 0 RETURN i AS x", 0},
-		{"one_row", "RETURN 1 AS x", 1},
+		{"no_table", "EXPLAIN RETURN 1 AS x", 0, 0},
+		{"empty", "FOR i IN [1] FILTER i < 0 RETURN i AS x", 0, 0},
+		{"one_row", "RETURN 1 AS x", 1, 4},
 	}
 	for _, rows := range []int{2, 10, 100, 1023, 1024, 1025, 10000, 100000, 1000000} {
-		cases = append(cases, timingCase{fmt.Sprintf("rows_%d", rows), fmt.Sprintf("FOR i IN range(1,%d) RETURN i AS x ORDER BY i", rows), rows})
+		cases = append(cases, timingCase{fmt.Sprintf("rows_%d", rows), fmt.Sprintf("FOR i IN range(1,%d) RETURN i AS x ORDER BY i", rows), rows, int64(rows) * 4})
 	}
 	for _, rows := range []int{1, 100, 1024, 10000} {
-		cases = append(cases, timingCase{fmt.Sprintf("wide_%d", rows), fmt.Sprintf("FOR i IN range(1,%d) RETURN i AS i ORDER BY i NEXT RETURN repeat(CAST(i %% 10 AS STRING),128) AS x", rows), rows})
+		cases = append(cases, timingCase{fmt.Sprintf("wide_%d", rows), fmt.Sprintf("FOR i IN range(1,%d) RETURN i AS i ORDER BY i NEXT RETURN repeat(CAST(i %% 10 AS STRING),128) AS x", rows), rows, int64(rows) * 128})
+	}
+	if os.Getenv("NEBULA_STREAM_TEST_BYTE_MATRIX") != "" {
+		for _, total := range []int{1 << 20, 16 << 20} {
+			for _, width := range []int{16, 128, 4096, 131072} {
+				rows := total / width
+				cases = append(cases, timingCase{
+					fmt.Sprintf("bytes_%d_width_%d", total, width),
+					fmt.Sprintf("FOR i IN range(0,%d) RETURN i AS i ORDER BY i NEXT RETURN repeat(CAST(i %% 10 AS STRING),%d) AS x", rows-1, width),
+					rows, int64(total),
+				})
+			}
+		}
 	}
 	selected, mode := os.Getenv("NEBULA_STREAM_TEST_CASE"), os.Getenv("NEBULA_STREAM_TEST_MODE")
 	require.Contains(t, []string{"", "unary", "streaming"}, mode)
@@ -406,12 +427,53 @@ func TestStreamingGraphTiming(t *testing.T) {
 				continue
 			}
 			matched = true
+			// Validate full values before timing, without adding validation cost to samples.
+			if round == 0 && os.Getenv("NEBULA_STREAM_TEST_BYTE_MATRIX") != "" {
+				for _, streaming := range []bool{false, true} {
+					var result types.Result
+					var err error
+					if streaming {
+						result, err = client.(types.StreamingClient).StreamingExecute(context.Background(), c.query)
+					} else {
+						result, err = client.Execute(c.query)
+					}
+					require.NoError(t, err)
+					n := 0
+					for result.HasNext() {
+						row, err := result.Next()
+						require.NoError(t, err)
+						value, err := row.GetValueByIndex(0)
+						require.NoError(t, err)
+						if strings.HasPrefix(c.name, "wide_") || strings.HasPrefix(c.name, "bytes_") {
+							first := 1
+							if strings.HasPrefix(c.name, "bytes_") {
+								first = 0
+							}
+							actual, err := value.AsString()
+							require.NoError(t, err)
+							expected := strings.Repeat(strconv.Itoa((n+first)%10), int(c.logicalBytes/int64(c.rows)))
+							require.Equal(t, expected, string(actual), "%s row %d", c.name, n)
+						} else {
+							require.Equal(t, strconv.Itoa(n+1), value.String(), "%s row %d", c.name, n)
+						}
+						n++
+					}
+					require.Equal(t, c.rows, n)
+					if stream, ok := result.(types.StreamingResult); ok {
+						require.NoError(t, stream.Err())
+						require.NoError(t, stream.Close())
+					}
+				}
+			}
 			pairs := count
 			if c.rows >= 100000 {
 				pairs = min(pairs, 10)
 			}
 			if c.rows >= 1000000 {
 				pairs = min(pairs, 5)
+			}
+			if largePairs > 0 && (c.rows >= 100000 || c.logicalBytes >= 1<<20) {
+				pairs = largePairs
 			}
 			for warm := 0; warm < min(pairs, 20); warm++ {
 				if mode != "streaming" {
@@ -434,6 +496,7 @@ func TestStreamingGraphTiming(t *testing.T) {
 					s := measure(c.query, streaming)
 					require.Equal(t, c.rows, s.Rows)
 					s.Case = c.name
+					s.LogicalBytes = c.logicalBytes
 					s.Round = round
 					s.Pair = pair
 					s.Order = order
@@ -480,6 +543,7 @@ func TestStreamingGraphTiming(t *testing.T) {
 			s := measure(query, streaming)
 			require.Equal(t, 8192, s.Rows)
 			s.Case = "one_gib"
+			s.LogicalBytes = 1 << 30
 			s.Round = round
 			s.Order = order
 			if output != nil {
