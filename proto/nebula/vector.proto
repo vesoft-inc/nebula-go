@@ -79,7 +79,6 @@ message NestedVector {
 
 message VectorBatch {
     repeated NestedVector vectors = 1;
-    uint32 num_records = 2;  // Row count for a streaming batch with zero columns.
 }
 
 message VectorResultTable {

@@ -600,7 +600,6 @@ func (x *NestedVector) GetNestedVectors() []*NestedVector {
 type VectorBatch struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Vectors       []*NestedVector        `protobuf:"bytes,1,rep,name=vectors,proto3" json:"vectors,omitempty"`
-	NumRecords    uint32                 `protobuf:"varint,2,opt,name=num_records,json=numRecords,proto3" json:"num_records,omitempty"` // Row count for a streaming batch with zero columns.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -640,13 +639,6 @@ func (x *VectorBatch) GetVectors() []*NestedVector {
 		return x.Vectors
 	}
 	return nil
-}
-
-func (x *VectorBatch) GetNumRecords() uint32 {
-	if x != nil {
-		return x.NumRecords
-	}
-	return 0
 }
 
 type VectorResultTable struct {
@@ -815,11 +807,9 @@ const file_nebula_vector_proto_rawDesc = "" +
 	"vectorData\x12 \n" +
 	"\fnull_bit_map\x18\x05 \x01(\fR\n" +
 	"nullBitMap\x12H\n" +
-	"\x0enested_vectors\x18\x06 \x03(\v2!.nebula.proto.vector.NestedVectorR\rnestedVectors\"k\n" +
+	"\x0enested_vectors\x18\x06 \x03(\v2!.nebula.proto.vector.NestedVectorR\rnestedVectors\"J\n" +
 	"\vVectorBatch\x12;\n" +
-	"\avectors\x18\x01 \x03(\v2!.nebula.proto.vector.NestedVectorR\avectors\x12\x1f\n" +
-	"\vnum_records\x18\x02 \x01(\rR\n" +
-	"numRecords\"\xb9\x01\n" +
+	"\avectors\x18\x01 \x03(\v2!.nebula.proto.vector.NestedVectorR\avectors\"\xb9\x01\n" +
 	"\x11VectorResultTable\x12.\n" +
 	"\x13data_layout_version\x18\x01 \x01(\fR\x11dataLayoutVersion\x12<\n" +
 	"\x04meta\x18\x02 \x01(\v2(.nebula.proto.vector.VectorTableMetaDataR\x04meta\x126\n" +

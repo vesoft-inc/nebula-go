@@ -109,7 +109,6 @@ func TestStreamingGraphIntegration(t *testing.T) {
 		`SHOW PARAMETERS`,
 		`DESCRIBE GRAPH TYPE ldbc_type`,
 		`DESCRIBE EDGE TYPE KNOWS OF ldbc_type`,
-		`FINISH`,
 		`USE ldbc MATCH p=(n:Person{id:1})-[e:KNOWS]->(m:Person{id:1}) RETURN n,e,p,list[n,m] AS ns,{src:n,link:e} AS rec LIMIT 2`,
 		`RETURN date("2020-01-01") AS d, local_datetime("2020-01-01T12:00:00") AS dt`,
 		`CALL {VALUE x = 1 RETURN x AS x} RETURN *`,
@@ -161,6 +160,9 @@ func TestStreamingGraphLargeResult(t *testing.T) {
 			}
 			count := total / rowBytes
 			query := fmt.Sprintf("FOR i IN range(0,%d) RETURN i AS i ORDER BY i NEXT RETURN repeat(CAST(i %% 10 AS STRING),%d) AS x", count-1, rowBytes)
+			if os.Getenv("NEBULA_STREAM_TEST_NO_SORT") != "" {
+				query = fmt.Sprintf("FOR i IN range(0,%d) RETURN repeat(CAST(i %% 10 AS STRING),%d) AS x", count-1, rowBytes)
+			}
 			if hints := os.Getenv("NEBULA_STREAM_TEST_HINTS"); hints != "" {
 				query = hints + " " + query
 			}
@@ -261,7 +263,26 @@ func TestStreamingGraphTiming(t *testing.T) {
 		output = json.NewEncoder(file)
 	}
 	wire := os.Getenv("NEBULA_STREAM_TEST_WIRE") != ""
+	consumeNs := 0
+	if value := os.Getenv("NEBULA_STREAM_TEST_CONSUME_NS"); value != "" {
+		var err error
+		consumeNs, err = strconv.Atoi(value)
+		require.NoError(t, err)
+		require.GreaterOrEqual(t, consumeNs, 0)
+	}
+	require.False(t, wire && consumeNs > 0, "business consumption requires decoded rows")
+	withHints := func(query string) string {
+		if hints := os.Getenv("NEBULA_STREAM_TEST_HINTS"); hints != "" {
+			if strings.HasPrefix(query, "EXPLAIN ") {
+				query = "EXPLAIN " + hints + " " + strings.TrimPrefix(query, "EXPLAIN ")
+			} else {
+				query = hints + " " + query
+			}
+		}
+		return query
+	}
 	measure := func(query string, streaming bool) sample {
+		query = withHints(query)
 		if wire {
 			cn := client.(*driverConn).conn.(*connection)
 			req := &graph.ExecuteRequest{SessionId: cn.sessionId, Stmt: []byte(query)}
@@ -297,8 +318,6 @@ func TestStreamingGraphTiming(t *testing.T) {
 						}
 						if len(batch.Vectors) > 0 {
 							s.Rows += int(batch.Vectors[0].CommonMetaData.NumRecords)
-						} else {
-							s.Rows += int(batch.NumRecords)
 						}
 					}
 					if terminal := frame.GetFinal(); terminal != nil {
@@ -347,6 +366,11 @@ func TestStreamingGraphTiming(t *testing.T) {
 			}
 			if rows == 0 {
 				first = time.Since(start)
+			}
+			if consumeNs > 0 {
+				until := time.Now().Add(time.Duration(consumeNs))
+				for time.Now().Before(until) {
+				}
 			}
 			rows++
 		}
@@ -414,6 +438,19 @@ func TestStreamingGraphTiming(t *testing.T) {
 		}
 	}
 	selected, mode := os.Getenv("NEBULA_STREAM_TEST_CASE"), os.Getenv("NEBULA_STREAM_TEST_MODE")
+	if selected == "storage_16m" {
+		cases = append(cases, timingCase{
+			"storage_16m", "USE stream_bench MATCH (n@n) RETURN n.payload AS x ORDER BY n.id",
+			8192, 16 << 20,
+		})
+	}
+	if selected == "one_gib" {
+		cases = append(cases, timingCase{
+			"one_gib", "FOR i IN range(0,8191) RETURN i AS i ORDER BY i NEXT RETURN repeat(CAST(i % 10 AS STRING),131072) AS x",
+			8192, 1 << 30,
+		})
+	}
+	t.Logf("business consumption per decoded row: %d ns", consumeNs)
 	require.Contains(t, []string{"", "unary", "streaming"}, mode)
 	matched := false
 	for round := 0; round < rounds; round++ {
@@ -433,9 +470,9 @@ func TestStreamingGraphTiming(t *testing.T) {
 					var result types.Result
 					var err error
 					if streaming {
-						result, err = client.(types.StreamingClient).StreamingExecute(context.Background(), c.query)
+						result, err = client.(types.StreamingClient).StreamingExecute(context.Background(), withHints(c.query))
 					} else {
-						result, err = client.Execute(c.query)
+						result, err = client.Execute(withHints(c.query))
 					}
 					require.NoError(t, err)
 					n := 0
@@ -444,9 +481,9 @@ func TestStreamingGraphTiming(t *testing.T) {
 						require.NoError(t, err)
 						value, err := row.GetValueByIndex(0)
 						require.NoError(t, err)
-						if strings.HasPrefix(c.name, "wide_") || strings.HasPrefix(c.name, "bytes_") {
+						if strings.HasPrefix(c.name, "wide_") || strings.HasPrefix(c.name, "bytes_") || c.name == "one_gib" || c.name == "storage_16m" {
 							first := 1
-							if strings.HasPrefix(c.name, "bytes_") {
+							if strings.HasPrefix(c.name, "bytes_") || c.name == "one_gib" || c.name == "storage_16m" {
 								first = 0
 							}
 							actual, err := value.AsString()
@@ -552,4 +589,161 @@ func TestStreamingGraphTiming(t *testing.T) {
 			t.Logf("one_gib streaming=%v duration_us=%.3f mib_per_sec=%.2f", streaming, s.Elapsed, 1024e6/s.Elapsed)
 		}
 	}
+}
+
+func TestStreamingGraphZeroColumns(t *testing.T) {
+	client := streamingGraphClient(t)
+	for _, query := range []string{"FINISH", "FOR x IN [] FINISH"} {
+		t.Run(query, func(t *testing.T) {
+			result, err := client.(types.StreamingClient).StreamingExecute(context.Background(), query)
+			require.NoError(t, err)
+			defer result.Close()
+			require.Empty(t, result.Columns())
+			require.False(t, result.HasNext())
+			require.NoError(t, result.Err())
+			require.NotNil(t, result.Summary())
+		})
+	}
+}
+
+func TestStreamingGraphConcurrentDelivery(t *testing.T) {
+	value := os.Getenv("NEBULA_STREAM_TEST_CONCURRENT")
+	if value == "" {
+		t.Skip("concurrent delivery test is opt-in")
+	}
+	concurrency, err := strconv.Atoi(value)
+	require.NoError(t, err)
+	require.Contains(t, []int{0, 1, 16, 64}, concurrency)
+	duration := time.Duration(0)
+	if selected := os.Getenv("NEBULA_STREAM_TEST_CONCURRENT_DURATION"); selected != "" {
+		duration, err = time.ParseDuration(selected)
+		require.NoError(t, err)
+		require.Greater(t, duration, time.Duration(0))
+		require.LessOrEqual(t, duration, time.Minute)
+	}
+	if concurrency == 0 {
+		require.Greater(t, duration, time.Duration(0), "unary baseline needs an observation window")
+	}
+	clients := make([]types.Client, concurrency)
+	for i := range clients {
+		clients[i] = streamingGraphClient(t)
+	}
+	observer := streamingGraphClient(t)
+	expected := [10]string{}
+	for digit := range expected {
+		expected[digit] = strings.Repeat(strconv.Itoa(digit), 32768)
+	}
+	query := "FOR i IN range(0,1023) RETURN repeat(CAST(i % 10 AS STRING),32768) AS x"
+	if hints := os.Getenv("NEBULA_STREAM_TEST_HINTS"); hints != "" {
+		query = hints + " " + query
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	start := make(chan struct{})
+	consume := func(client types.Client) error {
+		result, err := client.(types.StreamingClient).StreamingExecute(ctx, query)
+		if err != nil {
+			return err
+		}
+		defer result.Close()
+		n := 0
+		for result.HasNext() {
+			row, err := result.Next()
+			if err != nil {
+				return err
+			}
+			column, err := row.GetValueByIndex(0)
+			if err != nil {
+				return err
+			}
+			actual, err := column.AsString()
+			if err != nil || string(actual) != expected[n%10] {
+				return fmt.Errorf("row %d mismatch: %v", n, err)
+			}
+			n++
+		}
+		if result.Err() != nil {
+			return result.Err()
+		}
+		if n != 1024 {
+			return fmt.Errorf("read %d rows, expected 1024", n)
+		}
+		return result.Close()
+	}
+	type outcome struct {
+		queries int
+		err     error
+	}
+	done := make(chan outcome, concurrency)
+	for _, client := range clients {
+		go func(client types.Client) {
+			<-start
+			deadline := time.Now().Add(duration)
+			queries := 0
+			for {
+				if err := consume(client); err != nil {
+					done <- outcome{queries: queries, err: err}
+					return
+				}
+				queries++
+				if !time.Now().Before(deadline) {
+					done <- outcome{queries: queries}
+					return
+				}
+			}
+		}(client)
+	}
+	stopObserver := make(chan struct{})
+	type observation struct {
+		latencies []float64
+		err       error
+	}
+	observed := make(chan observation, 1)
+	go func() {
+		var samples []float64
+		<-start
+		for {
+			select {
+			case <-stopObserver:
+				observed <- observation{latencies: samples}
+				return
+			default:
+			}
+			before := time.Now()
+			result, err := observer.Execute("RETURN 1 AS x")
+			if err != nil || !result.HasNext() {
+				observed <- observation{err: fmt.Errorf("mixed unary query failed: %v", err)}
+				return
+			}
+			_, err = result.Next()
+			if err != nil {
+				observed <- observation{err: err}
+				return
+			}
+			samples = append(samples, float64(time.Since(before).Nanoseconds())/1000)
+		}
+	}()
+	before := time.Now()
+	close(start)
+	completedQueries := 0
+	if concurrency == 0 {
+		time.Sleep(duration)
+	}
+	for range clients {
+		result := <-done
+		if result.err != nil {
+			t.Error(result.err)
+		}
+		completedQueries += result.queries
+	}
+	elapsed := time.Since(before)
+	close(stopObserver)
+	observationResult := <-observed
+	require.NoError(t, observationResult.err)
+	require.NotEmpty(t, observationResult.latencies)
+	sort.Float64s(observationResult.latencies)
+	count := len(observationResult.latencies)
+	t.Logf("streams=%d completed_queries=%d logical_mib=%d elapsed_seconds=%.6f aggregate_mib_per_sec=%.3f unary_samples=%d unary_p50_us=%.3f unary_p95_us=%.3f",
+		concurrency, completedQueries, completedQueries*32, elapsed.Seconds(), float64(completedQueries*32)/elapsed.Seconds(), count,
+		observationResult.latencies[count/2], observationResult.latencies[(95*count+99)/100-1])
 }

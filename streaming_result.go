@@ -138,7 +138,7 @@ func (rs *streamingResult) readResponse() error {
 			err = errors.New("streaming batch does not match metadata")
 			break
 		}
-		rows := part.Batch.NumRecords
+		rows := uint32(0)
 		if len(part.Batch.Vectors) > 0 {
 			rows = part.Batch.Vectors[0].GetCommonMetaData().GetNumRecords()
 			for _, v := range part.Batch.Vectors {

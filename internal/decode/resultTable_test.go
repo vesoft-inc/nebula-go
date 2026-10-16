@@ -19,31 +19,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vesoft-inc/nebula-go/v5/internal/generated_code/v5.0.0/proto/vector"
 	"github.com/vesoft-inc/nebula-go/v5/pkg/types"
 )
-
-func TestZeroColumnTableCardinality(t *testing.T) {
-	for _, count := range []uint64{0, 1, 17} {
-		table, err := NewResultTable(&vector.VectorResultTable{
-			Meta:  &vector.VectorTableMetaData{NumRecords: count, NumBatches: 1, RowType: &vector.RowType{}},
-			Batch: []*vector.VectorBatch{{}},
-		})
-		assert.NoError(t, err)
-		for i := uint64(0); i < count; i++ {
-			if i%2 == 0 {
-				row, err := table.Next()
-				assert.NoError(t, err)
-				assert.Empty(t, row)
-			} else {
-				assert.NoError(t, table.Scan(nil))
-			}
-		}
-		_, err = table.Next()
-		assert.ErrorIs(t, err, io.EOF)
-		assert.ErrorIs(t, table.Scan(nil), io.EOF)
-	}
-}
 
 type dummpBatch struct {
 	name string
