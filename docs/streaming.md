@@ -1,6 +1,6 @@
-# 流式查询
+# Streaming queries
 
-当前源码新增 `types.StreamingClient`。服务端需要实现当前流式协议。已发布的旧 graphd 虽声明了该 RPC，但没有处理它，不能用 `UNIMPLEMENTED` 判断支持情况。现有 unary `Execute` 继续可用。
+`types.StreamingClient` executes a statement through the `StreamingExecute` RPC and returns a forward-only result. The server must implement the current streaming protocol. Released graphd versions declare this RPC but do not handle it, so a call to them waits instead of failing with `UNIMPLEMENTED`. The unary `Execute` remains available.
 
 ```go
 sc := client.(types.StreamingClient)
@@ -19,10 +19,10 @@ for result.HasNext() {
 return result.Err()
 ```
 
-调用读到第一条响应消息后返回。第一条为表头时列信息已经可用；第一条为终帧时返回无表结果或错误。当前批次读取完才接收下一批。结果仍实现 `types.Result`，可交给现有读行函数。`RowSize()` 返回 `-1`；最终成功状态和统计需要读到成功终帧及正常 EOF 后才能取得。
+The call returns after the first response message. If that message is the header, column information is already available; if it is the final message, the call returns a result without a table, or the error. The next batch is received only after the current batch has been read. The result still implements `types.Result`, so existing row-reading functions accept it. `RowSize()` returns `-1`. The final status and statistics are available only after a successful final message followed by a normal end of stream.
 
-结果由一个 goroutine 消费，逐行读取和列信息访问不支持并发调用；与 unary 结果的消费方式一致。`Close()` 可以与消费并发执行。
+A result is consumed by one goroutine: row iteration and column access must not be called concurrently, the same as unary results. `Close()` may run concurrently with consumption.
 
-遍历后必须检查 `Err()`。中途失败时，已经处理的行不完整。`Close()` 可以重复调用，也可以从另一 goroutine 中断阻塞读取；关闭只取消本次 RPC。本地在结果读完或关闭之前拒绝该 client 的其他查询和 ping，连接池也拒绝归还仍有活跃流的 client。
+Check `Err()` after iteration. If the stream fails midway, the rows already processed are incomplete. `Close()` may be called more than once, and from another goroutine to interrupt a blocked read; it only cancels this RPC. Until the result is fully read or closed, the client rejects other queries and pings, and the pool rejects returning the client.
 
-`ctx` 的 deadline 覆盖完整遍历。关闭后，服务端 kill 尚未完成时，下次查询可能返回 `SESSION_IS_BUSY`。
+The deadline of `ctx` covers the whole iteration, including the time spent processing rows. After `Close()`, the next query may return `SESSION_IS_BUSY` until the server finishes killing the statement.
