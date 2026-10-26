@@ -28,6 +28,7 @@ type streamingResult struct {
 	stateMu     sync.Mutex
 	stream      graph.GraphService_StreamingExecuteClient
 	metadata    *vector.VectorTableMetaData
+	columnIndex map[string]int
 	cancel      context.CancelFunc
 	release     func()
 	releaseOnce sync.Once
@@ -127,11 +128,20 @@ func (rs *streamingResult) readResponse() error {
 			err = errors.New("invalid or duplicate streaming metadata")
 			break
 		}
+		rowType := part.Metadata.RowType
+		if int(rowType.NumColumns) != len(rowType.ColumnNames) || len(rowType.ColumnTypes) != len(rowType.ColumnNames) {
+			err = errors.New("streaming metadata has inconsistent column counts")
+			break
+		}
 		if part.Metadata.NumRecords != 0 || part.Metadata.NumBatches != 0 {
 			err = errors.New("streaming metadata contains result totals")
 			break
 		}
 		rs.metadata = part.Metadata
+		rs.columnIndex = make(map[string]int, len(rowType.ColumnNames))
+		for i, name := range rowType.ColumnNames {
+			rs.columnIndex[name] = i
+		}
 		rs.table, err = decode.NewResultTable(&vector.VectorResultTable{DataLayoutVersion: []byte("5.0.0"), Meta: rs.metadata})
 	case *graph.StreamingExecuteResponse_Batch:
 		if rs.metadata == nil || part.Batch == nil || len(part.Batch.Vectors) != len(rs.metadata.RowType.ColumnNames) {
@@ -193,7 +203,7 @@ func (rs *streamingResult) readResponse() error {
 	return err
 }
 
-func (rs *streamingResult) hasNext() bool {
+func (rs *streamingResult) HasNext() bool {
 	for {
 		if rs.done.Load() || rs.closed.Load() {
 			return false
@@ -208,29 +218,38 @@ func (rs *streamingResult) hasNext() bool {
 	}
 }
 
-func (rs *streamingResult) HasNext() bool {
-	return rs.hasNext()
-}
-
 func (rs *streamingResult) Next() (types.Row, error) {
-	if !rs.hasNext() {
+	if !rs.HasNext() {
 		if err := rs.Err(); err != nil {
 			return nil, err
 		}
 		return nil, io.EOF
 	}
 	row, err := rs.resultSet.Next()
-	if row != nil {
-		row.(*rowData).columnNames = rs.metadata.RowType.ColumnNames
-	}
 	if err != nil {
 		rs.finish(err)
+		return nil, err
 	}
-	return row, err
+	return &streamingRow{rowData: row.(*rowData), columnIndex: rs.columnIndex}, nil
+}
+
+// A streaming row outlives the batch table it was decoded from, so it resolves names
+// through the stream's column index instead of the current table.
+type streamingRow struct {
+	*rowData
+	columnIndex map[string]int
+}
+
+func (r *streamingRow) GetValueByName(name string) (types.Value, error) {
+	index, ok := r.columnIndex[name]
+	if !ok {
+		return nil, internal_error.ErrInternal(fmt.Sprintf("column %s not found", name))
+	}
+	return r.values[index], nil
 }
 
 func (rs *streamingResult) Scan(dest ...any) error {
-	if !rs.hasNext() {
+	if !rs.HasNext() {
 		if err := rs.Err(); err != nil {
 			return err
 		}

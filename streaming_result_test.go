@@ -157,6 +157,7 @@ func TestStreamingRejectsIncompleteOrMalformedResults(t *testing.T) {
 		{"duplicate metadata", []*graph.StreamingExecuteResponse{streamHeader(), streamHeader()}, nil},
 		{"batch before metadata", []*graph.StreamingExecuteResponse{streamBatch(1)}, nil},
 		{"empty batch", []*graph.StreamingExecuteResponse{streamHeader(), streamBatch()}, nil},
+		{"metadata without column types", []*graph.StreamingExecuteResponse{{Response: &graph.StreamingExecuteResponse_Metadata{Metadata: &vector.VectorTableMetaData{RowType: &vector.RowType{NumColumns: 1, ColumnNames: []string{"x"}}}}}}, nil},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			cn := streamTestConnection(t, func(_ *graph.ExecuteRequest, s graph.GraphService_StreamingExecuteServer) error {
@@ -169,7 +170,7 @@ func TestStreamingRejectsIncompleteOrMalformedResults(t *testing.T) {
 				return test.rpcErr
 			})
 			rs, err := cn.StreamingExecute(context.Background(), "query")
-			if test.name == "transport after final" || test.name == "message after final" || test.name == "batch before metadata" {
+			if test.name == "transport after final" || test.name == "message after final" || test.name == "batch before metadata" || test.name == "metadata without column types" {
 				require.Error(t, err)
 				require.Nil(t, rs)
 				require.Nil(t, cn.activeStream)
@@ -229,4 +230,59 @@ func TestStreamingCloseInterruptsReceive(t *testing.T) {
 	require.Error(t, rs.Err())
 	_, err = rs.Next()
 	require.NotEqual(t, io.EOF, err)
+}
+
+func TestStreamingRowsOutliveBatchesAndScanCrossesBatches(t *testing.T) {
+	cn := streamTestConnection(t, func(_ *graph.ExecuteRequest, s graph.GraphService_StreamingExecuteServer) error {
+		for _, m := range []*graph.StreamingExecuteResponse{streamHeader(), streamBatch(1), streamBatch(2, 3), streamBatch(4), streamFinal("00000")} {
+			if err := s.Send(m); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	rs, err := cn.StreamingExecute(context.Background(), "query")
+	require.NoError(t, err)
+	first, err := rs.Next()
+	require.NoError(t, err)
+	var got []int
+	for {
+		var x int
+		if err := rs.Scan(&x); err != nil {
+			require.ErrorIs(t, err, io.EOF)
+			break
+		}
+		got = append(got, x)
+	}
+	require.Equal(t, []int{2, 3, 4}, got)
+	require.NoError(t, rs.Err())
+	value, err := first.GetValueByName("x")
+	require.NoError(t, err)
+	n, err := value.AsInt64()
+	require.NoError(t, err)
+	require.EqualValues(t, 1, n)
+	_, err = first.GetValueByName("y")
+	require.Error(t, err)
+}
+
+func TestStreamingActiveStreamBlocksPingAndPoolReturn(t *testing.T) {
+	cn := streamTestConnection(t, func(_ *graph.ExecuteRequest, s graph.GraphService_StreamingExecuteServer) error {
+		if err := s.Send(streamHeader()); err != nil {
+			return err
+		}
+		<-s.Context().Done()
+		return s.Context().Err()
+	})
+	rs, err := cn.StreamingExecute(context.Background(), "query")
+	require.NoError(t, err)
+	require.ErrorIs(t, cn.PingContext(context.Background()), errActiveStream)
+	dc := &driverConn{conn: cn, createAt: time.Now()}
+	pool := &driverPool{connMap: map[types.Client]struct{}{dc: {}}, maxOpen: 1}
+	// A rejected client stays with the caller; the pool is unchanged.
+	require.ErrorIs(t, pool.PutClient(dc), errActiveStream)
+	require.Empty(t, pool.freeConn)
+	require.NoError(t, rs.Close())
+	require.NoError(t, cn.PingContext(context.Background()))
+	require.NoError(t, pool.PutClient(dc))
+	require.Equal(t, []types.Client{dc}, pool.freeConn)
 }

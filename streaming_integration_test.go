@@ -241,3 +241,21 @@ func TestStreamingGraphZeroColumns(t *testing.T) {
 		})
 	}
 }
+
+// A successful ROLLBACK returns no result table: unary has no columns, streaming sends no
+// metadata or batches before its successful final.
+func TestStreamingRollbackReturnsNoResult(t *testing.T) {
+	client := streamingGraphClient(t)
+	query := "START TRANSACTION RETURN 1 AS x ROLLBACK"
+	result, err := client.Execute(query)
+	require.NoError(t, err)
+	// A zero-column table would also have no columns and rows; only a missing table is correct.
+	require.Nil(t, result.(*resultSet).table)
+
+	stream, err := client.(types.StreamingClient).StreamingExecute(context.Background(), query)
+	require.NoError(t, err)
+	require.False(t, stream.HasNext())
+	require.NoError(t, stream.Err())
+	require.NotNil(t, stream.Summary())
+	require.Nil(t, stream.(*streamingResult).metadata)
+}
