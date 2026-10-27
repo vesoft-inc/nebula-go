@@ -15,7 +15,6 @@ package decode
 
 import (
 	"io"
-	"time"
 
 	"github.com/vesoft-inc/nebula-go/v5/internal/generated_code/v5.0.0/proto/vector"
 	"github.com/vesoft-inc/nebula-go/v5/pkg/errors"
@@ -67,7 +66,7 @@ const (
 )
 
 type ResultTable struct {
-	table                *vector.VectorResultTable
+	numRecords           uint64
 	numBatches           int
 	columnNames          []string
 	columnTypes          []typeSchema
@@ -152,43 +151,33 @@ func NewResultTable(table *vector.VectorResultTable) (*ResultTable, error) {
 		return nil, nil
 	}
 	if table.Batch != nil && len(table.Batch) > 0 {
-		// check if the length of table.Batch is equal to the length of table.Meta.VectorBatchMetaData
+		// Validate the batch count before parsing column types.
 		if int(table.Meta.NumBatches) != len(table.Batch) {
 			return nil, errBatchNotEqual
 		}
 	}
-	t := &ResultTable{table: table, decoder: defaultDecoder}
-	// construct graph schema
-	gsm := t.constructGraphsSchema()
-	timeZone := int32(table.Meta.TimeZoneOffset)
-	dctx := &decodeContext{
-		timezoneOffset: int64(timeZone) * int64(time.Minute/time.Second),
-		graphsSchema:   gsm,
+	schema, err := newResultSchema(table.Meta)
+	if err != nil {
+		return nil, err
 	}
-	t.decodeContext = dctx
+	return newResultTable(schema, table.Batch, table.Meta.NumRecords), nil
+}
 
-	if table.Meta.RowType != nil {
-		t.columnNames = table.Meta.RowType.ColumnNames
-		typs := table.Meta.RowType.ColumnTypes
-		for _, typ := range typs {
-			r := newBytesReader(typ.ValueType)
-			columnType, err := newTypeSchema(r)
-			if err != nil {
-				return nil, err
-			}
-			t.columnTypes = append(t.columnTypes, columnType)
-			t.ColumnTypeBytes = append(t.ColumnTypeBytes, typ.ValueType)
-		}
+func newResultTable(schema *resultSchema, batches []*vector.VectorBatch, rows uint64) *ResultTable {
+	t := &ResultTable{
+		numRecords: rows, decoder: defaultDecoder,
+		columnNames: schema.columnNames, columnTypes: schema.columnTypes,
+		ColumnTypeBytes: schema.columnTypeBytes, decodeContext: schema.context,
 	}
-	t.numBatches = len(table.Batch)
+	t.numBatches = len(batches)
 	for i := 0; i < t.numBatches; i++ {
-		vs := make([]*vectorWrapper, 0, len(table.Batch[i].Vectors))
-		for colIndex, v := range table.Batch[i].Vectors {
+		vs := make([]*vectorWrapper, 0, len(batches[i].Vectors))
+		for colIndex, v := range batches[i].Vectors {
 			typ := t.columnTypes[colIndex]
 			wrapper := &vectorWrapper{
 				vector:        v,
 				typ:           typ,
-				decodeContext: dctx,
+				decodeContext: schema.context,
 				decoder:       defaultDecoder,
 			}
 			if typ.getType() != types.ColumnTypeUnknown {
@@ -206,11 +195,11 @@ func NewResultTable(table *vector.VectorResultTable) (*ResultTable, error) {
 		})
 	}
 
-	return t, nil
+	return t
 }
 
 func (rt *ResultTable) NumRecords() uint64 {
-	return rt.table.Meta.NumRecords
+	return rt.numRecords
 }
 
 func (rt *ResultTable) ColumnNames() []string {
@@ -223,45 +212,6 @@ func (rt *ResultTable) ColumnTypes() []types.ColumnType {
 		types = append(types, t.getType())
 	}
 	return types
-}
-
-func (rt *ResultTable) constructGraphsSchema() graphsSchema {
-	if rt.table.Meta.GraphSchema == nil {
-		return nil
-	}
-	gsm := make(graphsSchema)
-	for _, g := range rt.table.Meta.GraphSchema {
-		gs := graphSchema{
-			name:        string(g.GraphName),
-			id:          g.GraphId,
-			nodesSchema: make(map[int32]*elementSchema),
-			edgesSchema: make(map[int32]*elementSchema),
-		}
-		for _, n := range g.NodeType {
-			lables := make([]string, 0, len(n.Label))
-			for _, l := range n.Label {
-				lables = append(lables, string(l))
-			}
-			gs.nodesSchema[n.NodeTypeId] = &elementSchema{
-				typeName: string(n.NodeTypeName),
-				typeId:   n.NodeTypeId,
-				labels:   lables,
-			}
-		}
-		for _, e := range g.EdgeType {
-			lables := make([]string, 0, len(e.Label))
-			for _, l := range e.Label {
-				lables = append(lables, string(l))
-			}
-			gs.edgesSchema[e.EdgeTypeId] = &elementSchema{
-				typeName: string(e.EdgeTypeName),
-				typeId:   e.EdgeTypeId,
-				labels:   lables,
-			}
-		}
-		gsm[g.GraphId] = &gs
-	}
-	return gsm
 }
 
 func (rt *ResultTable) getCurrentBatch() error {

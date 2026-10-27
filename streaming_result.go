@@ -27,6 +27,7 @@ type streamingResult struct {
 	resultSet
 	stateMu     sync.Mutex
 	stream      graph.GraphService_StreamingExecuteClient
+	decoder     *decode.StreamDecoder
 	metadata    *vector.VectorTableMetaData
 	columnIndex map[string]int
 	cancel      context.CancelFunc
@@ -119,6 +120,7 @@ func (rs *streamingResult) readResponse() error {
 		if err == io.EOF {
 			err = errors.New("stream ended before final; result is incomplete")
 		}
+		rs.clearBatch()
 		rs.finish(err)
 		return err
 	}
@@ -142,7 +144,7 @@ func (rs *streamingResult) readResponse() error {
 		for i, name := range rowType.ColumnNames {
 			rs.columnIndex[name] = i
 		}
-		rs.table, err = decode.NewResultTable(&vector.VectorResultTable{DataLayoutVersion: []byte("5.0.0"), Meta: rs.metadata})
+		rs.decoder, err = decode.NewStreamDecoder(rs.metadata)
 	case *graph.StreamingExecuteResponse_Batch:
 		if rs.metadata == nil || part.Batch == nil || len(part.Batch.Vectors) != len(rs.metadata.RowType.ColumnNames) {
 			err = errors.New("streaming batch does not match metadata")
@@ -165,12 +167,7 @@ func (rs *streamingResult) readResponse() error {
 			err = errors.New("stream contains an empty batch")
 			break
 		}
-		meta := &vector.VectorTableMetaData{
-			TableType: rs.metadata.TableType, RowType: rs.metadata.RowType,
-			NumRecords: uint64(rows), NumBatches: 1, TimeZoneOffset: rs.metadata.TimeZoneOffset,
-			IsLittleEndian: rs.metadata.IsLittleEndian, GraphSchema: rs.metadata.GraphSchema,
-		}
-		rs.table, err = decode.NewResultTable(&vector.VectorResultTable{DataLayoutVersion: []byte("5.0.0"), Meta: meta, Batch: []*vector.VectorBatch{part.Batch}})
+		rs.table = rs.decoder.BindBatch(part.Batch, uint64(rows))
 		rs.index = 0
 	case *graph.StreamingExecuteResponse_Final:
 		err = streamStatusError(part.Final.GetStatus())
@@ -191,16 +188,24 @@ func (rs *streamingResult) readResponse() error {
 			}
 			rs.stateMu.Unlock()
 		}
-		rs.table = nil
+		rs.clearBatch()
 		rs.finish(err)
 		return err
 	default:
 		err = errors.New("stream response has no recognized payload")
 	}
 	if err != nil {
+		rs.clearBatch()
 		rs.finish(err)
 	}
 	return err
+}
+
+func (rs *streamingResult) clearBatch() {
+	rs.table = nil
+	if rs.decoder != nil {
+		rs.decoder.ClearBatch()
+	}
 }
 
 func (rs *streamingResult) HasNext() bool {
@@ -211,7 +216,7 @@ func (rs *streamingResult) HasNext() bool {
 		if rs.resultSet.HasNext() {
 			return true
 		}
-		rs.table = nil
+		rs.clearBatch()
 		if rs.readResponse() != nil {
 			return false
 		}
@@ -227,6 +232,7 @@ func (rs *streamingResult) Next() (types.Row, error) {
 	}
 	row, err := rs.resultSet.Next()
 	if err != nil {
+		rs.clearBatch()
 		rs.finish(err)
 		return nil, err
 	}
@@ -257,6 +263,7 @@ func (rs *streamingResult) Scan(dest ...any) error {
 	}
 	err := rs.resultSet.Scan(dest...)
 	if err != nil {
+		rs.clearBatch()
 		rs.finish(err)
 	}
 	return err
@@ -294,15 +301,10 @@ func (rs *streamingResult) Columns() []string {
 
 func (rs *streamingResult) ColumnTypes() []types.ColumnType {
 	rs.readMetadata()
-	if rs.metadata == nil {
+	if rs.decoder == nil {
 		return nil
 	}
-	table, err := decode.NewResultTable(&vector.VectorResultTable{Meta: rs.metadata})
-	if err != nil {
-		rs.finish(err)
-		return nil
-	}
-	return table.ColumnTypes()
+	return rs.decoder.ColumnTypes()
 }
 
 func (rs *streamingResult) Summary() types.Summary {
