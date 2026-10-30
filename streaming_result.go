@@ -29,7 +29,6 @@ type streamingResult struct {
 	stream      graph.GraphService_StreamingExecuteClient
 	decoder     *decode.StreamDecoder
 	metadata    *vector.VectorTableMetaData
-	columnIndex map[string]int
 	cancel      context.CancelFunc
 	release     func()
 	releaseOnce sync.Once
@@ -140,9 +139,10 @@ func (rs *streamingResult) readResponse() error {
 			break
 		}
 		rs.metadata = part.Metadata
-		rs.columnIndex = make(map[string]int, len(rowType.ColumnNames))
+		// Retained rows resolve names after their batch is released.
+		rs.columnsMap = make(map[string]int, len(rowType.ColumnNames))
 		for i, name := range rowType.ColumnNames {
-			rs.columnIndex[name] = i
+			rs.columnsMap[name] = i
 		}
 		rs.decoder, err = decode.NewStreamDecoder(rs.metadata)
 	case *graph.StreamingExecuteResponse_Batch:
@@ -236,22 +236,7 @@ func (rs *streamingResult) Next() (types.Row, error) {
 		rs.finish(err)
 		return nil, err
 	}
-	return &streamingRow{rowData: row.(*rowData), columnIndex: rs.columnIndex}, nil
-}
-
-// A streaming row outlives the batch table it was decoded from, so it resolves names
-// through the stream's column index instead of the current table.
-type streamingRow struct {
-	*rowData
-	columnIndex map[string]int
-}
-
-func (r *streamingRow) GetValueByName(name string) (types.Value, error) {
-	index, ok := r.columnIndex[name]
-	if !ok {
-		return nil, internal_error.ErrInternal(fmt.Sprintf("column %s not found", name))
-	}
-	return r.values[index], nil
+	return row, nil
 }
 
 func (rs *streamingResult) Scan(dest ...any) error {

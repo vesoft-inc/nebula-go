@@ -256,6 +256,7 @@ func TestStreamingRowsOutliveBatchesAndScanCrossesBatches(t *testing.T) {
 	}
 	require.Equal(t, []int{2, 3, 4}, got)
 	require.NoError(t, rs.Err())
+	require.NoError(t, rs.Close())
 	value, err := first.GetValueByName("x")
 	require.NoError(t, err)
 	n, err := value.AsInt64()
