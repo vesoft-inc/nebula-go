@@ -1,0 +1,305 @@
+// Copyright 2026 vesoft inc. All Rights Reserved.
+package nebula_ng
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"io"
+	"iter"
+	"sync"
+	"sync/atomic"
+
+	"github.com/vesoft-inc/nebula-go/v5/internal/decode"
+	"github.com/vesoft-inc/nebula-go/v5/internal/generated_code/v5.0.0/proto/common"
+	"github.com/vesoft-inc/nebula-go/v5/internal/generated_code/v5.0.0/proto/graph"
+	"github.com/vesoft-inc/nebula-go/v5/internal/generated_code/v5.0.0/proto/vector"
+	"github.com/vesoft-inc/nebula-go/v5/internal/internal_error"
+	"github.com/vesoft-inc/nebula-go/v5/pkg/types"
+)
+
+var errActiveStream = errors.New("the client has an unread streaming result; consume or close it first")
+
+// A single consumer owns decoding and iteration, as with unary results.
+// Close may run concurrently: it only cancels and publishes terminal state,
+// without accessing the consumer-owned decoder. There is no background receive loop.
+type streamingResult struct {
+	resultSet
+	stateMu     sync.Mutex
+	stream      graph.GraphService_StreamingExecuteClient
+	decoder     *decode.StreamDecoder
+	metadata    *vector.VectorTableMetaData
+	cancel      context.CancelFunc
+	release     func()
+	releaseOnce sync.Once
+	closed      atomic.Bool
+	done        atomic.Bool
+	err         error
+}
+
+var _ types.StreamingResult = (*streamingResult)(nil)
+var _ types.StreamingClient = (*driverConn)(nil)
+var _ types.StreamingClient = (*connection)(nil)
+
+func (cn *connection) StreamingExecute(ctx context.Context, stmt string) (types.StreamingResult, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	ctx, cancel := context.WithCancel(ctx)
+	rs := &streamingResult{cancel: cancel}
+	rs.release = func() {
+		cn.mu.Lock()
+		if cn.activeStream == rs {
+			cn.activeStream = nil
+		}
+		cn.mu.Unlock()
+	}
+	cn.mu.Lock()
+	if cn.activeStream != nil {
+		cn.mu.Unlock()
+		cancel()
+		return nil, errActiveStream
+	}
+	cn.activeStream = rs
+	cn.mu.Unlock()
+	stream, err := cn.graphClient.StreamingExecute(ctx, &graph.ExecuteRequest{SessionId: cn.sessionId, Stmt: []byte(stmt)})
+	if err != nil {
+		rs.finish(err)
+		return nil, err
+	}
+	rs.stream = stream
+	if err = rs.readResponse(); err != nil {
+		return nil, err
+	}
+	return rs, nil
+}
+
+func streamStatusError(status *common.Status) error {
+	if status == nil {
+		return errors.New("stream final has no status")
+	}
+	if string(status.Code) != "00000" {
+		return internal_error.ErrServerResponse(string(status.Code), string(status.Message))
+	}
+	return nil
+}
+
+func (rs *streamingResult) finish(err error) {
+	rs.stateMu.Lock()
+	if !rs.done.Load() {
+		rs.err = err
+		rs.done.Store(true)
+	}
+	rs.stateMu.Unlock()
+	rs.releaseOnce.Do(func() {
+		rs.cancel()
+		if rs.release != nil {
+			rs.release()
+		}
+	})
+}
+
+func (rs *streamingResult) Err() error {
+	rs.stateMu.Lock()
+	defer rs.stateMu.Unlock()
+	return rs.err
+}
+
+func (rs *streamingResult) Close() error {
+	rs.closed.Store(true)
+	rs.finish(context.Canceled)
+	return nil
+}
+
+func (rs *streamingResult) RowSize() int { return -1 }
+
+func (rs *streamingResult) readResponse() error {
+	response, err := rs.stream.Recv()
+	if err != nil {
+		if err == io.EOF {
+			err = errors.New("stream ended before final; result is incomplete")
+		}
+		rs.clearBatch()
+		rs.finish(err)
+		return err
+	}
+	switch part := response.Response.(type) {
+	case *graph.StreamingExecuteResponse_Metadata:
+		if rs.metadata != nil || part.Metadata == nil || part.Metadata.RowType == nil {
+			err = errors.New("invalid or duplicate streaming metadata")
+			break
+		}
+		rowType := part.Metadata.RowType
+		if int(rowType.NumColumns) != len(rowType.ColumnNames) || len(rowType.ColumnTypes) != len(rowType.ColumnNames) {
+			err = errors.New("streaming metadata has inconsistent column counts")
+			break
+		}
+		if part.Metadata.NumRecords != 0 || part.Metadata.NumBatches != 0 {
+			err = errors.New("streaming metadata contains result totals")
+			break
+		}
+		rs.metadata = part.Metadata
+		// Retained rows resolve names after their batch is released.
+		rs.columnsMap = make(map[string]int, len(rowType.ColumnNames))
+		for i, name := range rowType.ColumnNames {
+			rs.columnsMap[name] = i
+		}
+		rs.decoder, err = decode.NewStreamDecoder(rs.metadata)
+	case *graph.StreamingExecuteResponse_Batch:
+		if rs.metadata == nil || part.Batch == nil || len(part.Batch.Vectors) != len(rs.metadata.RowType.ColumnNames) {
+			err = errors.New("streaming batch does not match metadata")
+			break
+		}
+		rows := uint32(0)
+		if len(part.Batch.Vectors) > 0 {
+			rows = part.Batch.Vectors[0].GetCommonMetaData().GetNumRecords()
+			for _, v := range part.Batch.Vectors {
+				if v.GetCommonMetaData().GetNumRecords() != rows {
+					err = errors.New("inconsistent streaming vector row counts")
+					break
+				}
+			}
+		}
+		if err != nil {
+			break
+		}
+		if rows == 0 {
+			err = errors.New("stream contains an empty batch")
+			break
+		}
+		rs.table = rs.decoder.BindBatch(part.Batch, uint64(rows))
+		rs.index = 0
+	case *graph.StreamingExecuteResponse_Final:
+		err = streamStatusError(part.Final.GetStatus())
+		_, endErr := rs.stream.Recv()
+		if endErr != io.EOF {
+			if endErr == nil {
+				endErr = errors.New("stream has a response after final")
+			}
+			if err == nil {
+				err = fmt.Errorf("stream did not end normally: %w", endErr)
+			}
+		}
+		if err == nil {
+			rs.stateMu.Lock()
+			if !rs.done.Load() {
+				rs.summary = part.Final.GetSummary()
+				rs.cursor = part.Final.GetCursor()
+			}
+			rs.stateMu.Unlock()
+		}
+		rs.clearBatch()
+		rs.finish(err)
+		return err
+	default:
+		err = errors.New("stream response has no recognized payload")
+	}
+	if err != nil {
+		rs.clearBatch()
+		rs.finish(err)
+	}
+	return err
+}
+
+func (rs *streamingResult) clearBatch() {
+	rs.table = nil
+	if rs.decoder != nil {
+		rs.decoder.ClearBatch()
+	}
+}
+
+func (rs *streamingResult) HasNext() bool {
+	for {
+		if rs.done.Load() || rs.closed.Load() {
+			return false
+		}
+		if rs.resultSet.HasNext() {
+			return true
+		}
+		rs.clearBatch()
+		if rs.readResponse() != nil {
+			return false
+		}
+	}
+}
+
+func (rs *streamingResult) Next() (types.Row, error) {
+	if !rs.HasNext() {
+		if err := rs.Err(); err != nil {
+			return nil, err
+		}
+		return nil, io.EOF
+	}
+	row, err := rs.resultSet.Next()
+	if err != nil {
+		rs.clearBatch()
+		rs.finish(err)
+		return nil, err
+	}
+	return row, nil
+}
+
+func (rs *streamingResult) Scan(dest ...any) error {
+	if !rs.HasNext() {
+		if err := rs.Err(); err != nil {
+			return err
+		}
+		return io.EOF
+	}
+	err := rs.resultSet.Scan(dest...)
+	if err != nil {
+		rs.clearBatch()
+		rs.finish(err)
+	}
+	return err
+}
+
+func (rs *streamingResult) All() iter.Seq2[types.Row, error] {
+	return func(yield func(types.Row, error) bool) {
+		for rs.HasNext() {
+			row, err := rs.Next()
+			if !yield(row, err) || err != nil {
+				return
+			}
+		}
+		if err := rs.Err(); err != nil {
+			yield(nil, err)
+		}
+	}
+}
+
+func (rs *streamingResult) readMetadata() {
+	for rs.metadata == nil {
+		if rs.done.Load() || rs.closed.Load() || rs.readResponse() != nil {
+			return
+		}
+	}
+}
+
+func (rs *streamingResult) Columns() []string {
+	rs.readMetadata()
+	if rs.metadata == nil {
+		return nil
+	}
+	return rs.metadata.RowType.ColumnNames
+}
+
+func (rs *streamingResult) ColumnTypes() []types.ColumnType {
+	rs.readMetadata()
+	if rs.decoder == nil {
+		return nil
+	}
+	return rs.decoder.ColumnTypes()
+}
+
+func (rs *streamingResult) Summary() types.Summary {
+	rs.stateMu.Lock()
+	defer rs.stateMu.Unlock()
+	return rs.resultSet.Summary()
+}
+
+func (rs *streamingResult) Cursor() []byte {
+	rs.stateMu.Lock()
+	defer rs.stateMu.Unlock()
+	return rs.resultSet.Cursor()
+}

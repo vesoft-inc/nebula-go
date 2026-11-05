@@ -242,9 +242,9 @@ func (rd *rowData) Values() []types.Value {
 }
 
 func (rd *rowData) GetValueByName(name string) (types.Value, error) {
-	names := rd.resultSet.Columns()
 	var index int
 	if rd.resultSet.columnsMap == nil {
+		names := rd.resultSet.Columns()
 		rd.resultSet.columnsMap = make(map[string]int)
 		for i, n := range names {
 			rd.resultSet.columnsMap[string(n)] = i

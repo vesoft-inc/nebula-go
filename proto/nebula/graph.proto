@@ -46,7 +46,7 @@ option optimize_for        = SPEED;
 service GraphService {
     rpc Authenticate(AuthRequest) returns (AuthResponse) {}
     rpc Execute(ExecuteRequest) returns (ExecuteResponse) {}
-    rpc StreamingExecute(ExecuteRequest) returns (stream ExecuteResponse) {}
+    rpc StreamingExecute(ExecuteRequest) returns (stream StreamingExecuteResponse) {}
 }
 
 message QueryStats {
@@ -103,6 +103,21 @@ message ExecuteResponse {
     nebula.proto.vector.VectorResultTable result  = 2;
     Summary                               summary = 3;
     bytes                                 cursor  = 4;
+}
+
+// A complete stream ends with exactly one final response and an OK RPC status.
+message StreamingExecuteResponse {
+    oneof response {
+        nebula.proto.vector.VectorTableMetaData metadata = 1;
+        nebula.proto.vector.VectorBatch batch = 2;
+        ExecuteFinal final = 3;
+    }
+}
+
+message ExecuteFinal {
+    nebula.proto.common.Status status = 1;
+    Summary summary = 2;
+    bytes cursor = 3;
 }
 
 message AuthRequest {

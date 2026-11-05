@@ -108,3 +108,7 @@ func main() {
 }
 
 ```
+
+## Streaming queries
+
+See [streaming queries](docs/streaming.md) for forward-only results, cancellation, and error handling.

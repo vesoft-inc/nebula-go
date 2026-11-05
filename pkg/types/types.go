@@ -95,6 +95,19 @@ type (
 		GetVersion() (string, error)
 	}
 
+	// StreamingClient is separate from Client to preserve existing application mocks.
+	StreamingClient interface {
+		StreamingExecute(ctx context.Context, stmt string) (StreamingResult, error)
+	}
+
+	// StreamingResult has one consumer for iteration and column access.
+	// Close may be called concurrently to interrupt a blocked read.
+	StreamingResult interface {
+		Result
+		Err() error
+		Close() error
+	}
+
 	Pool interface {
 		GetClient() (Client, error)
 		PutClient(Client) error

@@ -305,6 +305,9 @@ func (dp *driverPool) GetClient() (types.Client, error) {
 	}
 }
 
+// PutClient returns c to the pool. A client with an unread streaming result is rejected with
+// errActiveStream and stays owned by the caller, who may finish reading or close the result and
+// retry, or close the client.
 func (dp *driverPool) PutClient(c types.Client) error {
 	if c == nil {
 		return internal_error.ErrInternal("connection is nil")
@@ -314,6 +317,15 @@ func (dp *driverPool) PutClient(c types.Client) error {
 	if !ok {
 		// never happen from nebula client
 		return internal_error.ErrInternal("invalid client type")
+	}
+
+	if cn, ok := dc.conn.(*connection); ok {
+		cn.mu.Lock()
+		active := cn.activeStream != nil
+		cn.mu.Unlock()
+		if active {
+			return errActiveStream
+		}
 	}
 
 	dp.mu.Lock()
